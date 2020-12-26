@@ -13,7 +13,7 @@ This is the disassembled and [commented source code] for the demo DNA by Jeff Mi
 [64tass]: http://tass64.sourceforge.net/
 [vice]: http://vice-emu.sourceforge.net/
 [https://gridrunner.xyz]: https://mwenge.github.io/gridrunner.xyz
-[commented source code]:https://github.com/mwenge/iridisalpha/blob/master/src/dna/src/dna.asm
+[commented source code]:https://github.com/mwenge/iridisalpha/blob/master/dna/src/dna.asm
 To compile and run it do:
 
 ```sh
