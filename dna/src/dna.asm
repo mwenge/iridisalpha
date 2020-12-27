@@ -42,7 +42,7 @@ a68 = $68
 a7C = $7C
 aA5 = $A5
 aC0 = $C0
-aC5 = $C5
+LastKeyPressed = $C5
 aC6 = $C6
 aCC = $CC
 aiDC = $DC
@@ -258,12 +258,15 @@ eA8BC = $A8BC
 eEA31 = $EA31
 
 * = $0801
+;--------------------------------------------------------               
+; Start executing at position $0811 (2065)
+;--------------------------------------------------------               
         ; 10 SYS 2065
         .BYTE $0F,$08,$CF,$07,$9E,$32,$30,$36,$35,$20
         .BYTE $41,$42,$43,$00,$00,$00
 
 ;--------------------------------------------------------               
-; Execute
+; Execution starts here
 ; e0811 (SYS 2065)
 ;--------------------------------------------------------
         NOP 
@@ -309,8 +312,9 @@ eEA31 = $EA31
 ;         STA $D025    ;Sprite Multi-Color Register 0
 ;         LDA #$0B
 ;         STA $D02E    ;Sprite 7 Color
-;         JSR Initialize_RAM
+;         JSR ClearTextFromScreen
 ;         JMP Main_Loop
+
         JMP CopyCodeCharsetAndSprites
 
 ; This is redundant data overwritten by CopyCodeCharsetAndSprites
@@ -335,13 +339,13 @@ eEA31 = $EA31
         STA $D025    ;Sprite Multi-Color Register 0
         LDA #$0B
         STA $D02E    ;Sprite 7 Color
-        JSR Initialize_RAM
+        JSR ClearTextFromScreen
         JMP Main_Loop
 
 ;--------------------------------------------------------
 ; Initialize Screen Ram and Colour Ram 
 ;--------------------------------------------------------
-Initialize_RAM
+ClearTextFromScreen
         LDX #$00
 b0854   LDA #$20
         STA f0400,X
@@ -364,7 +368,7 @@ Main_Loop
         JSR SetGraphicsModes
         JSR DrawTitleScreen
         JSR DrawMoreStuff
-j087D   JMP j087D
+ML_Loop JMP ML_Loop ; Somehow this jumps to the main animation routine
 
 ;--------------------------------------------------------
 ; Set up the graphics?
@@ -390,11 +394,14 @@ SetGraphicsModes
 
 a08A7   .BYTE $00
 
+;--------------------------------------------------------
+; Main Animation Routine ?
+;--------------------------------------------------------
         LDA $D019 
         AND #$01
         BNE e08B5
 
-j08AF
+MainAnimationRoutine
         PLA
         TAY 
         PLA 
@@ -414,7 +421,7 @@ j08B9   LDX a08B8
         CLC 
         ASL 
         TAY 
-        LDA f098C,X
+        LDA AnimationData,X
         STA fCFFE,Y
         LDA f09B4,X
         STA fCFFF,Y
@@ -433,44 +440,44 @@ b08EC   LDA f0BA7,X
         TXA 
         PHA 
         CLC 
-        ADC a09DE
+        ADC CurrentPhase
         CMP #$27
         BMI b08FF
         SEC 
         SBC #$27
 b08FF   TAX 
-        LDA f098C,X
+        LDA AnimationData,X
         STA $D004,Y  ;Sprite 2 X Pos
         PLA 
         TAX 
         LDY a09DD
         STX a40
-        LDX a09DC
-a0911   =*+$01
-a0912   =*+$02
+        LDX InitialColorSet1
+ColorSet1PtrLo2   =*+$01
+ColorSet1PtrHi22   =*+$02
         LDA f09CD,X
         STA $D026,Y  ;Sprite Multi-Color Register 1
         INX 
-a0918   =*+$01
-a0919   =*+$02
+ColorSet1PtrLo1   =*+$01
+ColorSet1PtrHi1   =*+$02
         LDA f09CD,X
         CMP #$FF
         BNE b0920
         LDX #$00
-b0920   STX a09DC
-        LDX a09DB
-a0927   =*+$01
-a0928   =*+$02
+b0920   STX InitialColorSet1
+        LDX InitialColorSet2
+ColorSet2PtrLo2   =*+$01
+ColorSet2PtrHi2   =*+$02
         LDA f09D4,X
         STA $D029,Y  ;Sprite 2 Color
         INX 
-a092E   =*+$01
-a092F   =*+$02
+ColorSet2PtrLo1   =*+$01
+ColorSet2PtrHi1   =*+$02
         LDA f09D4,X
         CMP #$FF
         BNE b0936
         LDX #$00
-b0936   STX a09DB
+b0936   STX InitialColorSet2
         LDX a40
         INX 
         INY 
@@ -484,11 +491,11 @@ b0943   STY a09DD
         BNE b0978
         LDX #$00
         STX a08B8
-        JSR s09EC
+        JSR UpdateAnimationData
 b095A   =*+$02
-        JSR s0A7B
+        JSR CheckKeyboardInput
         DEC a41
-        JSR s0BC3
+        JSR UpdateSpritePointers
         LDA #$01
         STA a09DD
         LDA #$2E
@@ -507,85 +514,64 @@ b097E   STA $D012    ;Raster Position
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
 f098B   =*+$02
-        JMP j08AF
+        JMP MainAnimationRoutine
 
-f098C   ADC f616D,Y
-        .BYTE $57,$4E ;SRE f4E,X
-        .BYTE $47,$42 ;SRE a42
-        RTI 
+; Animation sequence data
+; This chucnk of data is used by the the CopyDataRight sub-routine below.
+AnimationData
+        .BYTE $79,$6D,$61,$57,$4E
+        .BYTE $47,$42,$40,$40,$42,$47,$4E,$57
+        .BYTE $61,$6D,$79,$86,$92,$9E,$A8,$B1
+        .BYTE $B8
+        .BYTE $BD,$BF,$BF,$BD,$B8,$B1,$A8
+        .BYTE $9E,$92,$86,$79,$6D,$61,$57,$4E
+        .BYTE $47,$42,$40
 
-        RTI 
+f09B4   .BYTE $30,$38,$40,$48,$50
+        .BYTE $58,$60,$68,$70,$78,$80,$88,$90
+        .BYTE $98,$A0,$A8,$B0,$B8,$C0,$C8,$D0
+        .BYTE $D8,$E0,$E8,$FF
+f09CD   .BYTE $02,$08,$07,$05
+        .BYTE $04,$06,$FF
+f09D4   .BYTE $0B,$0C,$0F,$01,$0F
+        .BYTE $0C,$FF
+InitialColorSet2   .BYTE $03
+InitialColorSet1   .BYTE $04
+a09DD   .BYTE $01
+CurrentPhase   .BYTE $08
 
-        .BYTE $42    ;JAM 
-        .BYTE $47,$4E ;SRE a4E
-        .BYTE $57,$61 ;SRE $61,X
-        ADC a8679
-        .BYTE $92    ;JAM 
-        .BYTE $9E,$A8,$B1 ;STX $B1A8,Y
-        CLV 
-b09A2   LDA fBFBF,X
-        LDA fB1B8,X
-        TAY 
-        .BYTE $9E,$92,$86 ;STX $8692,Y
-        ADC f616D,Y
-        .BYTE $57,$4E ;SRE f4E,X
-        .BYTE $47,$42 ;SRE a42
-        RTI 
 
-f09B4   BMI b09EE
-        RTI 
-
-        PHA 
-        BVC b0A12
-        RTS 
-
-        PLA 
-        BVS b0A36
-        .BYTE $80,$88 ;NOP #$88
-        BCC b095A
-        LDY #$A8
-        BCS b097E
-        CPY #$C8
-        BNE b09A2
-        CPX #$E8
-f09CD   =*+$01
-        .BYTE $FF,$02,$08 ;ISC $0802,X
-        .BYTE $07,$05 ;SLO a05
-        .BYTE $04,$06 ;NOP a06
-f09D4   =*+$01
-        .BYTE $FF,$0B,$0C ;ISC $0C0B,X
-        .BYTE $0F,$01,$0F ;SLO $0F01
-a09DB   =*+$02
-        .BYTE $0C,$FF,$03 ;NOP $03FF
-a09DD   =*+$01
-a09DC   .BYTE $04,$01 ;NOP a01
-a09DE   PHP 
-s09DF   LDX #$27
+; ------------------------------------------
+; Copy the data in each byte to its neighbour to the right.
+; ------------------------------------------
+CopyDataRight
+        LDX #$27
 b09E1   LDA f098B,X
-        STA f098C,X
+        STA AnimationData,X
         DEX 
         BNE b09E1
         RTS 
 
-s09EC   =*+$01
-a09EB   BRK #$CE
-        SEC 
-b09EE   ASL 
+; ------------------------------------------
+; Update the animation data
+; ------------------------------------------
+a09EB   .BYTE $00 
+
+UpdateAnimationData
+        DEC a0A38
         BNE b09FA
-        LDA a0A37
+        LDA CurrentSpeed
         STA a0A38
-        JSR s09DF
-b09FA   JSR s0C45
+        JSR CopyDataRight
+b09FA   JSR CalcAnimationShift
         DEC a0A35
         BNE b0A33
         LDA b0A36
         STA a0A35
-b0A0A   =*+$02
         LDX a09EB
         LDA f1000,X
         STA a42
-b0A12   =*+$02
-        LDY a0C43
+        LDY Wave2Enabled
         BEQ b0A19
         CLC 
         ROR 
@@ -593,7 +579,7 @@ b0A12   =*+$02
 b0A19   LDA a0C44
         CLC 
         ADC a42
-        STA f098C
+        STA AnimationData
         TXA 
         CLC 
         ADC a0A34
@@ -606,183 +592,172 @@ b0A19   LDA a0C44
 b0A30   STX a09EB
 b0A33   RTS 
 
-a0A35   =*+$01
-a0A34   ORA (p01,X)
-a0A37   =*+$01
-b0A36   ORA (p02,X)
-a0A39   =*+$01
-a0A38   ORA (p0F,X)
-f0A3B   =*+$01
-a0A3A   .BYTE $3F,$10,$0F ;RLA $0F10,X
-        ASL a0C0D
-        .BYTE $0B,$0A ;ANC #$0A
-        ORA #$08
-        .BYTE $07,$06 ;SLO a06
-        ORA a04
-        .BYTE $03,$02 ;SLO (p02,X)
-        ORA (p22,X)
-        ASL f0302,X
-        .BYTE $04,$05 ;NOP a05
-        ASL a07
-        PHP 
-        ORA #$0A
-        .BYTE $0B,$0C ;ANC #$0C
-        .BYTE $0D,$0E,$0F
-f0A5B   BPL b0A0A
-        .BYTE $3A    ;NOP 
+a0A34  .BYTE $01
+a0A35  .BYTE $01
+b0A36  .BYTE $01
+CurrentSpeed  .BYTE $02
+a0A38  .BYTE $01
+Wave1Frequency
+       .BYTE $0F
+LastRecordedKey  .BYTE $3F
+f0A3B  .BYTE $10,$0F,$0E,$0D,$0C,$0B
+       .BYTE $0A,$09,$08,$07,$06,$05,$04,$03
+       .BYTE $02,$01,$22,$1E,$02,$03,$04,$05
+       .BYTE $06,$07,$08,$09,$0A,$0B,$0C,$0D
+       .BYTE $0E,$0F
+
+f0A5B   .BYTE $10,$AD,$3A
+
+;------------------------------------------
+; Check if the user has pressed any key and update the display
+; settings accordingly.
+;------------------------------------------
+
+;CheckKeyboardInput
         ASL 
-        CMP #$40
+        CMP #$40 ; No Key pressed
         BEQ b0A69
-        LDA aC5
-        STA a0A3A
+        LDA LastKeyPressed
+        STA LastRecordedKey
         RTS 
 
-b0A69   LDA aC5
-        STA a0A3A
-        CMP #$0C
+b0A69   LDA LastKeyPressed
+        STA LastRecordedKey
+        CMP #$0C ; Z pressed
         BNE b0A78
-        DEC a0A39
-        JMP j0ABD
+        DEC Wave1Frequency
+        JMP UpdateDisplay
 
-b0A78   CMP #$17
-s0A7B   =*+$01
+b0A78   CMP #$17 ; X pressed
+CheckKeyboardInput   =*+$01    ; Not the real label, see above.
         BNE b0A82
-        INC a0A39
-        JMP j0ABD
+        INC Wave1Frequency
+        JMP UpdateDisplay
 
-b0A82   CMP #$0A
+b0A82   CMP #$0A ; A pressed
         BNE b0A94
-        INC a0A37
-        LDA a0A37
+        INC CurrentSpeed
+        LDA CurrentSpeed
         AND #$0F
         STA a0A38
-        JMP DrawMoreStuff
+        JMP DrawMoreStuff ; Returns from this routine
 
-b0A94   CMP #$0D
+b0A94   CMP #$0D ; S pressed
         BNE b0ACB
-        DEC a0A37
+        DEC CurrentSpeed
         JMP j0AA8
 
-        LDA a0A39
+        LDA Wave1Frequency
         AND #$1F
         TAX 
         LDA f0A3B,X
+
 j0AA8   =*+$01
         STA b0A36
         STA a0A35
         LDA f0A5B,X
         STA a0A34
-        LDA a0B8E
+        LDA Wave2Frequency
         AND #$1F
         TAX 
         LDA f0A3B,X
-j0ABD   =*+$01
+
+UpdateDisplay   =*+$01
         STA a0C40
         STA a0C41
         LDA f0A5B,X
         STA a0C42
-        JMP DrawMoreStuff
+        JMP DrawMoreStuff ; Returns from this routine
 
-b0ACB   CMP #$3E
+b0ACB   CMP #$3E ; Q pressed
         BNE b0ADD
-        INC a09DE
-        LDA a09DE
+        INC CurrentPhase
+        LDA CurrentPhase
         AND #$0F
-        STA a09DE
-        JMP DrawMoreStuff
+        STA CurrentPhase
+        JMP DrawMoreStuff ; Returns from this routine
 
-b0ADD   CMP #$14
+b0ADD   CMP #$14 ; C pressed
         BNE b0AE7
-        DEC a0B8E
-        JMP j0ABD
+        DEC Wave2Frequency
+        JMP UpdateDisplay
 
-b0AE7   CMP #$1F
+b0AE7   CMP #$1F ; V pressed
         BNE b0AF1
-        INC a0B8E
-        JMP j0ABD
+        INC Wave2Frequency
+        JMP UpdateDisplay
 
-b0AF1   CMP #$3C
+b0AF1   CMP #$3C ; Space pressed
         BNE b0B08
-        LDA a0DB7
+        LDA TextDisplayed
         EOR #$01
-        STA a0DB7
+        STA TextDisplayed
         BEQ b0B05
         JSR DrawTitleScreen
-        JMP DrawMoreStuff
+        JMP DrawMoreStuff ; Returns from this routine
 
-b0B05   JMP Initialize_RAM
+b0B05   JMP ClearTextFromScreen ; Returns from this sub-routine
 
-b0B08   CMP #$04
+b0B08   CMP #$04 ; F1/F2 pressed
         BNE b0B17
-        LDA a0C43
+        LDA Wave2Enabled
         EOR #$01
-        STA a0C43
-        JMP DrawMoreStuff
+        STA Wave2Enabled
+        JMP DrawMoreStuff ; Returns from this routine
 
-b0B17   CMP #$06
+b0B17   CMP #$06 ; F5/F6 pressed
         BNE b0B43
-        INC a0DFE
-        LDA a0DFE
-        CMP #$08
+        INC ColorSet1
+        LDA ColorSet1
+        CMP #$08 ; There are only 8 color sets, so wrap around at 8.
         BNE b0B2A
         LDA #$00
-        STA a0DFE
+        STA ColorSet1
 b0B2A   TAX 
-        LDA f0DEE,X
-        STA a0918
-        STA a0911
-        LDA f0DF6,X
-        STA a0919
-        STA a0912
+        LDA ColorData1,X
+        STA ColorSet1PtrLo1
+        STA ColorSet1PtrLo2
+        LDA ColorData2,X
+        STA ColorSet1PtrHi1
+        STA ColorSet1PtrHi22
         LDA #$00
-        STA a09DC
+        STA InitialColorSet1
         RTS 
 
-b0B43   CMP #$03
+b0B43   CMP #$03 ; F7/F8 pressed
         BNE b0B6E
-        INC a0DFF
-        LDA a0DFF
-        CMP #$08
+        INC ColorSet2
+        LDA ColorSet2
+        CMP #$08 ; There are only 8 color sets, so wrap around at 8.
         BNE b0B56
         LDA #$00
-        STA a0DFF
+        STA ColorSet2
 b0B56   TAX 
-        LDA f0DEE,X
-        STA a092E
-        STA a0927
-        LDA f0DF6,X
-        STA a092F
-        STA a0928
+        LDA ColorData1,X
+        STA ColorSet2PtrLo1
+        STA ColorSet2PtrLo2
+        LDA ColorData2,X
+        STA ColorSet2PtrHi1
+        STA ColorSet2PtrHi2
         LDA #$00
-        STA a09DB
+        STA InitialColorSet2
 b0B6E   RTS 
 
-        ORA (p14),Y
-        .BYTE $CB,$2C ;AXS #$2C
-        .BYTE $C3,$D8 ;DCP ($D8,X)
-        INC a4D92
-        SBC fBB59,X
-        .BYTE $02    ;JAM 
-        .BYTE $CF,$63,$6E ;DCP $6E63
-b0B80   =*+$01
-        .BYTE $43,$A3 ;SRE ($A3,X)
-        AND a8AE6
-        BVS b0B80
-        .BYTE $C7,$39 ;DCP $39
-        .BYTE $F7,$45 ;ISC f45,X
-        STX f9B,Y
-        AND #$42
-f0B8F   =*+$01
-a0B8E   STX aA5
-        .BYTE $D4,$75 ;NOP $75,X
-        STY aE2CB
-        EOR a970C
-        PHP 
-        CPX a64
-        .BYTE $AF,$8C,$98 ;LAX $988C
-        .BYTE $B7,$FA ;LAX $FA,Y
-        ORA #$02
-        .BYTE $04,$02 ;NOP a02
+;--------------------------------------------
+; Redundant Data?
+;--------------------------------------------
+        .BYTE $11,$14
+        .BYTE $CB,$2C,$C3,$D8,$EE,$92,$4D,$FD
+        .BYTE $59,$BB,$02,$CF,$63,$6E,$43
+        .BYTE $A3
+        .BYTE $2D,$E6,$8A,$70,$FA,$C7,$39,$F7
+        .BYTE $45,$96,$9B,$29,$42
+
+Wave2Frequency   .BYTE $86
+f0B8F   .BYTE $A5,$D4
+        .BYTE $75,$8C,$CB,$E2,$4D,$0C,$97,$08
+        .BYTE $E4,$64,$AF,$8C,$98,$B7,$FA,$09
+        .BYTE $02,$04,$02
         DEC a0BC2
 f0BA7   BNE b0BD8
         LDA #$05
@@ -792,13 +767,20 @@ f0BA7   BNE b0BD8
         STA $D025    ;Sprite Multi-Color Register 0
         INX 
         LDA f0DB8,X
-        BPL b0BBF
+        BPL a0BBF
         LDX #$00
-a0BC0   =*+$01
-a0BC1   =*+$02
-b0BBF   STX a0C3F
-s0BC3   =*+$01
-a0BC2   LDA a41
+
+
+;--------------------------------------------
+; Update the sprite pointers
+;--------------------------------------------
+a0BBF   .BYTE $8E
+a0BC0   .BYTE $3F
+a0BC1   .BYTE $0C
+a0BC2   .BYTE $A5
+
+UpdateSpritePointers
+       .BYTE $41
 
         ; Set the sprite pointers. This is the address containing
         ; each of the sprites 0 to 7. 
@@ -817,7 +799,7 @@ b0BD8   DEC a0BC0
         LDA #$02
         STA a0BC0
 
-        LDA b0BBF
+        LDA a0BBF
         CLC 
         ADC #$C2
         STA a07F8 ; set to $3100
@@ -831,13 +813,12 @@ b0BD8   DEC a0BC0
         STA a07FC ; set to $3340
         STA a07FD ; set to $3340
 
-        INC b0BBF
-        LDA b0BBF
+        INC a0BBF
+        LDA a0BBF
         CMP #$0E
         BNE b0C0F
         LDA #$00
-a0C0D   =*+$01
-        STA b0BBF
+        STA a0BBF
 b0C0F   DEC a0BC1
         LDA a0BC1
         CMP #$FF
@@ -846,10 +827,13 @@ b0C0F   DEC a0BC1
         STA a0BC1
 b0C1E   RTS 
 
+;--------------------------------------------
+; Redundant DAta?
+;--------------------------------------------
         AND f0101,Y
         ORA (p02,X)
         BRK #$40
-        LDA a0C43
+        LDA Wave2Enabled
         BNE b0C31
         LDA #$40
         STA a0C44
@@ -859,15 +843,23 @@ b0C31   DEC a0C41
         BNE b0C30
         LDA a0C40
         STA a0C41
-a0C3E   =*+$02
-        LDX a0C3E
-a0C40   =*+$01
-a0C41   =*+$02
-a0C3F   LDA f1000,X
-a0C42   CLC 
-a0C43   ROR 
-a0C44   CLC 
-s0C45   ADC #$40
+        .BYTE $AE,$3E
+
+
+;--------------------------------------------------------
+; sub-routine
+;--------------------------------------------------------
+a0C3E   .BYTE $0C
+a0C3F   .BYTE $BD
+a0C40   .BYTE $00
+
+a0C41   .BYTE $10
+a0C42   .BYTE $18
+Wave2Enabled   .BYTE $6A
+a0C44   .BYTE $18
+
+CalcAnimationShift
+        ADC #$40
         STA a0C44
         TXA 
         CLC 
@@ -879,8 +871,12 @@ s0C45   ADC #$40
 b0C56   STA a0C3E
         RTS 
 
+;--------------------------------------------------------
+; DrawTitleScreen
+;--------------------------------------------------------
         LDX #$07
-b0C5C   LDA f0CD9,X
+DrawTitleScreenInitialize
+        LDA f0CD9,X
         AND #$3F
         STA f0448,X
         LDA f0CE1,X
@@ -893,7 +889,7 @@ b0C5C   LDA f0CD9,X
         AND #$3F
 
 ;--------------------------------------------------------
-; DrawTitleScreen
+; DrawTitleScreen Main
 ;--------------------------------------------------------
 DrawTitleScreen
         STA f0510,X
@@ -919,7 +915,7 @@ DrawTitleScreen
         AND #$3F
         STA f06F0,X
         DEX 
-        BNE b0C5C
+        BNE DrawTitleScreenInitialize
         JMP MaybeDrawTitleAndBlurb ; Branches to an RTS
 
 ; The instruction text for the splash screen
@@ -950,52 +946,54 @@ InstructionText5
 InstructionText6
         .BYTE $46
 
-        LDA a0DB7
+;--------------------------------------------------------------
+; Draw stuff to screen
+;--------------------------------------------------------------
+
+;DrawMoreStuff
+        LDA TextDisplayed
         BNE b0D2D
 f0D29   =*+$02
-        INC a0DB7
+        INC TextDisplayed
         JSR DrawTitleScreen
 b0D2D   LDA #$20
 f0D31   =*+$02
         STA a0516
         STA a0606
-        LDA a0A39
+        LDA Wave1Frequency
         AND #$10
         BEQ DrawMoreStuff
         LDA #$31
         STA a0516
 
-;--------------------------------------------------------------
-; Draw stuff to screen
-;--------------------------------------------------------------
 
-DrawMoreStuff
-        LDA a0A39
+DrawMoreStuff ; This is not the real label, see above.
+        LDA Wave1Frequency
         AND #$0F
         TAX 
         LDA f0D31,X
         AND #$3F
         STA a0517
-        LDA a0B8E
+        LDA Wave2Frequency
         AND #$10
         BEQ b0D5B
         LDA #$31
         STA a0606
-b0D5B   LDA a0B8E
+b0D5B   LDA Wave2Frequency
         AND #$0F
         TAX 
         LDA f0D31,X
         AND #$3F
         STA a0607
-        LDX a0A37
+        LDX CurrentSpeed
         LDA f0D31,X
         AND #$3F
         STA a044F
-        LDX a09DE
+        LDX CurrentPhase
         LDA f0D31,X
         AND #$3F
         STA a06CF
-        LDA a0C43
+        LDA Wave2Enabled
         BNE b0D8D
         LDA #$06
         STA a05B2
@@ -1012,7 +1010,7 @@ b0D8D   LDA #<p200E
         .BYTE $03,$05,$04,$02,$06,$FF,$06,$05        ; $0DA1:             
         .BYTE $0E,$0D,$03,$FF,$09,$08,$07,$08        ; $0DA9:             
         .BYTE $09,$FF,$00,$00,$00,$02
-a0DB7
+TextDisplayed
         .BYTE $00
 f0DB8
         .BYTE $00        ; $0DB1:             
@@ -1030,15 +1028,15 @@ f0DB8
         .BYTE $25,$20,$25,$20,$25,$20                ; $0DD9:             
         .BYTE $20,$44,$4E,$41,$20,$20,$25,$20        ; $0DE1:             
         .BYTE $25,$20,$25,$20,$04
-f0DEE
+ColorData1
         .BYTE $1E,$43,$4F        ; $0DE9:             
         .BYTE $4E,$43,$45,$49,$56
-f0DF6
+ColorData2
         .BYTE $45,$44,$20        ; $0DF1:             
         .BYTE $41,$4E,$44,$20,$45
-a0DFE
+ColorSet1
         .BYTE $58
-a0DFF
+ColorSet2
         .BYTE $45,$43        ; $0DF9:             
         .BYTE $55,$54,$45,$44,$20,$42,$59,$20        ; $0E01:             
         .BYTE $0A,$1E,$59,$20,$41,$20,$4B,$20        ; $0E09:             
