@@ -1,6 +1,6 @@
 # Torus by Jeff Minter
 
-<img src="http://www.llamasoftarchive.org/oldsite/llamasoft/screens/c64torus.jpg" width=300>
+<img src="http://www.llamasoftarchive.org/oldsite/llamasoft/screens/c64torus.jpg" width=500>
 
 
 This is the disassembled and [commented source code] for the demo Torus by Jeff Minter. 
