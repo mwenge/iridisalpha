@@ -180,12 +180,12 @@ a0606 = $0606
 a0607 = $0607
 a06CF = $06CF
 a070A = $070A
-a07F8 = $07F8
-a07F9 = $07F9
-a07FA = $07FA
-a07FB = $07FB
-a07FC = $07FC
-a07FD = $07FD
+Sprite0Ptr = $07F8
+Sprite1Ptr = $07F9
+Sprite2Ptr = $07FA
+Sprite3Ptr = $07FB
+Sprite4Ptr = $07FC
+Sprite5Ptr = $07FD
 a07FE = $07FE
 a1712 = $1712
 a1E06 = $1E06
@@ -395,7 +395,8 @@ SetGraphicsModes
 a08A7   .BYTE $00
 
 ;--------------------------------------------------------
-; Main Animation Routine ?
+; Main Animation Routine
+; This is the main animation loop.
 ;--------------------------------------------------------
         LDA $D019 
         AND #$01
@@ -609,6 +610,7 @@ f0A3B  .BYTE $10,$0F,$0E,$0D,$0C,$0B
 f0A5B   .BYTE $10,$AD,$3A
 
 ;------------------------------------------
+; CheckKeyboardInput
 ; Check if the user has pressed any key and update the display
 ; settings accordingly.
 ;------------------------------------------
@@ -807,16 +809,16 @@ b0BD8   DEC a0BC0
         LDA a0BBF
         CLC 
         ADC #$C2
-        STA a07F8 ; set to $3100
-        STA a07F9 ; set to $3100
-        STA a07FA ; set to $3100
+        STA Sprite0Ptr ; set to $3100
+        STA Sprite1Ptr ; set to $3100
+        STA Sprite2Ptr ; set to $3100
 
         LDA a0BC1
         CLC 
         ADC #$C2
-        STA a07FB ; set to $3340
-        STA a07FC ; set to $3340
-        STA a07FD ; set to $3340
+        STA Sprite3Ptr ; set to $3340
+        STA Sprite4Ptr ; set to $3340
+        STA Sprite5Ptr ; set to $3340
 
         INC a0BBF
         LDA a0BBF
