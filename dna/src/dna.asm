@@ -2491,6 +2491,7 @@ b146E   LDA f0333,X
         STA a01
         CLI 
         JMP eA8BC ; Value at this address is $00,$00 - so presumably execution returns to $0810?
+                  ; Or is some sort of bankswitching being used?
 
         BRK #$00
         .BYTE $00
