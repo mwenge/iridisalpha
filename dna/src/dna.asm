@@ -754,10 +754,19 @@ b0B6E   RTS
         .BYTE $45,$96,$9B,$29,$42
 
 Wave2Frequency   .BYTE $86
+
 f0B8F   .BYTE $A5,$D4
         .BYTE $75,$8C,$CB,$E2,$4D,$0C,$97,$08
-        .BYTE $E4,$64,$AF,$8C,$98,$B7,$FA,$09
-        .BYTE $02,$04,$02
+        .BYTE $E4,$64,$AF,$8C,$98,$B7,$FA
+        .BYTE $09  ;a0BBF
+        .BYTE $02  ;a0BC0
+        .BYTE $04  ;a0BC1
+        .BYTE $02  ;a0BC2
+
+;--------------------------------------------
+; UpdateSpritePointers
+; Update the sprite pointers
+;--------------------------------------------
         DEC a0BC2
 f0BA7   BNE b0BD8
         LDA #$05
@@ -771,19 +780,15 @@ f0BA7   BNE b0BD8
         LDX #$00
 
 
-;--------------------------------------------
-; Update the sprite pointers
-;--------------------------------------------
-a0BBF   .BYTE $8E
-a0BC0   .BYTE $3F
-a0BC1   .BYTE $0C
-a0BC2   .BYTE $A5
-
-UpdateSpritePointers
-       .BYTE $41
+a0BBF             ; Not the real positions of these fields, see above.
+a0BC0   = *+$01
+a0BC1   = *+$02
 
         ; Set the sprite pointers. This is the address containing
         ; each of the sprites 0 to 7. 
+        STX a0C3F
+UpdateSpritePointers = *+$01 ; Not the real label
+a0BC2   LDA $41  
         AND #$01
         CLC 
         ADC #$C0
@@ -827,12 +832,21 @@ b0C0F   DEC a0BC1
         STA a0BC1
 b0C1E   RTS 
 
-;--------------------------------------------
-; Redundant DAta?
-;--------------------------------------------
-        AND f0101,Y
-        ORA (p02,X)
-        BRK #$40
+;--------------------------------------------------------
+;CalcAnimationShift Data
+;--------------------------------------------------------
+        .BYTE $39            ;a0C3E   
+        .BYTE $01            ;a0C3F   
+        .BYTE $01            ;a0C40   
+                             
+        .BYTE $01            ;a0C41   
+        .BYTE $02            ;a0C42   
+        .BYTE $00    ; Wave2Enabled
+        .BYTE $40            ;a0C44   
+
+;--------------------------------------------------------
+;CalcAnimationShift
+;--------------------------------------------------------
         LDA Wave2Enabled
         BNE b0C31
         LDA #$40
@@ -843,22 +857,20 @@ b0C31   DEC a0C41
         BNE b0C30
         LDA a0C40
         STA a0C41
-        .BYTE $AE,$3E
+a0C3E = *+$02
+        LDX a0C3E 
+a0C3F
+a0C40 = *+$01
+a0C41 = *+$02
+        LDA $1000,X 
+a0C42
+        CLC         
+Wave2Enabled
+        ROR A       
+a0C44
+        CLC         
 
-
-;--------------------------------------------------------
-; sub-routine
-;--------------------------------------------------------
-a0C3E   .BYTE $0C
-a0C3F   .BYTE $BD
-a0C40   .BYTE $00
-
-a0C41   .BYTE $10
-a0C42   .BYTE $18
-Wave2Enabled   .BYTE $6A
-a0C44   .BYTE $18
-
-CalcAnimationShift
+CalcAnimationShift ; Not the real start of the routine
         ADC #$40
         STA a0C44
         TXA 
@@ -876,16 +888,16 @@ b0C56   STA a0C3E
 ;--------------------------------------------------------
         LDX #$07
 DrawTitleScreenInitialize
-        LDA f0CD9,X
+        LDA ControlText1,X
         AND #$3F
         STA f0448,X
-        LDA f0CE1,X
+        LDA ControlText2,X
         AND #$3F
         STA f0470,X
-        LDA f0CE9,X
+        LDA ControlText3,X
         AND #$3F
         STA f04C0,X
-        LDA f0CF1,X
+        LDA ControlText4,X
         AND #$3F
 
 ;--------------------------------------------------------
@@ -893,22 +905,22 @@ DrawTitleScreenInitialize
 ;--------------------------------------------------------
 DrawTitleScreen
         STA f0510,X
-        LDA InstructionText1,X
+        LDA ControlText5,X
         AND #$3F
         STA f0538,X
-        LDA InstructionText2,X
+        LDA ControlText6,X
         AND #$3F
         STA f0588,X
-        LDA InstructionText3,X
+        LDA ControlText7,X
         AND #$3F
         STA f05B0,X
-        LDA InstructionText4,X
+        LDA ControlText8,X
         AND #$3F
         STA f0600,X
-        LDA InstructionText5,X
+        LDA ControlText9,X
         AND #$3F
         STA f0628,X
-        LDA InstructionText6,X
+        LDA ControlText10,X
         AND #$3F
         STA f06C8,X
         LDA f0D29,X
@@ -919,32 +931,24 @@ DrawTitleScreen
         JMP MaybeDrawTitleAndBlurb ; Branches to an RTS
 
 ; The instruction text for the splash screen
-; SPEED:F  <A S>  WAVE 1  FREQ: F  <Z X>  WAVE 2  ON  F1 FREQ: F  <C V>  PHASE:F   Q> >  0123456789ABC DEF
-        .BYTE $20,$53,$50,$45,$45,$44,$3A          ; $0CB9
-        .BYTE $46,$20,$20,$3C,$41,$20,$53,$3E      ; $0CC1
-        .BYTE $20,$20,$57,$41,$56,$45,$20,$31      ; $0CC9
-        .BYTE $20,$20,$46,$52,$45,$51,$3A,$20      ; $0CD1
-f0CD9
-        .BYTE $46,$20,$20,$3C,$5A,$20,$58,$3E      ; $0CD9
-f0CE1
-        .BYTE $20,$20,$57,$41,$56,$45,$20,$32      ; $0CE1
-f0CE9
-        .BYTE $20,$20,$4F,$4E,$20,$20,$20,$46      ; $0CE9
-f0CF1
-        .BYTE $31,$20,$46,$52,$45,$51,$3A,$20      ; $0CF1
-InstructionText1
-        .BYTE $46,$20,$20,$3C,$43,$20,$56,$3E      ; $0CF9
-InstructionText2
-        .BYTE $20,$20,$50,$48,$41,$53,$45,$3A      ; $0D01
-InstructionText3
-        .BYTE $46,$20,$20,$20,$51,$3E,$3E,$20      ; $0D09
-InstructionText4
-        .BYTE $20,$30,$31,$32,$33,$34,$35,$36      ; $0D11
-InstructionText5
-        .BYTE $37,$38,$39,$41,$42,$43,$44,$45      ; $0D19
+        .TEXT " SPEED:F  <A S>  WAVE 1  FREQ: "
+ControlText1   .TEXT "F  <Z X>"
+ControlText2   .TEXT "  WAVE 2"
+ControlText3   .TEXT "  ON   F"
+ControlText4   .TEXT "1 FREQ: "
+ControlText5
+        .TEXT "F  <C V>"
+ControlText6
+       .TEXT "  PHASE:"
+ControlText7
+       .TEXT "F   Q>> "
+ControlText8
+       .TEXT " 0123456"
+ControlText9
+       .TEXT "789ABCDE"
+ControlText10
+       .TEXT "F"
 
-InstructionText6
-        .BYTE $46
 
 ;--------------------------------------------------------------
 ; Draw stuff to screen
@@ -1025,34 +1029,18 @@ f0DB8
 ; "% % %  DNA  % % % ..  CONCEIVED AND EX ECUTED BY ..Y A K ..SPACE: CANCEL SCREEN TEXT 
 ; F5 AND F7 CHANGE COLOURS LISTEN TO TALKING HEADS..BE NICE TO HAIRY ANIMALS"
 ;-------------------------------------------------------------------------------------
-        .BYTE $25,$20,$25,$20,$25,$20                ; $0DD9:             
-        .BYTE $20,$44,$4E,$41,$20,$20,$25,$20        ; $0DE1:             
-        .BYTE $25,$20,$25,$20,$04
+        .TEXT "% % %  DNA  % % % ", $04
 ColorData1
-        .BYTE $1E,$43,$4F        ; $0DE9:             
-        .BYTE $4E,$43,$45,$49,$56
+         .TEXT $1E, "CONCEIV"
 ColorData2
-        .BYTE $45,$44,$20        ; $0DF1:             
-        .BYTE $41,$4E,$44,$20,$45
+         .TEXT "ED AND E"
 ColorSet1
-        .BYTE $58
+        .TEXT "X"
 ColorSet2
-        .BYTE $45,$43        ; $0DF9:             
-        .BYTE $55,$54,$45,$44,$20,$42,$59,$20        ; $0E01:             
-        .BYTE $0A,$1E,$59,$20,$41,$20,$4B,$20        ; $0E09:             
-        .BYTE $0A,$1E,$53,$50,$41,$43,$45,$3A        ; $0E11:             
-        .BYTE $20,$43,$41,$4E,$43,$45,$4C,$20        ; $0E19:             
-        .BYTE $53,$43,$52,$45,$45,$4E,$20,$54        ; $0E21:             
-        .BYTE $45,$58,$54,$46,$35,$20,$41,$4E        ; $0E29:             
-        .BYTE $44,$20,$46,$37,$20,$43,$48,$41        ; $0E31:             
-        .BYTE $4E,$47,$45,$20,$43,$4F,$4C,$4F        ; $0E39:             
-        .BYTE $55,$52,$53,$20,$4C,$49,$53,$54        ; $0E41:             
-        .BYTE $45,$4E,$20,$54,$4F,$20,$54,$41        ; $0E49:             
-        .BYTE $4C,$4B,$49,$4E,$47,$20,$48,$45        ; $0E51:             
-        .BYTE $41,$44,$53,$2E,$2E,$42,$45,$20        ; $0E59:             
-        .BYTE $4E,$49,$43,$45,$20,$54,$4F,$20        ; $0E61:             
-        .BYTE $48,$41,$49,$52,$59,$20,$41,$4E        ; $0E69:             
-        .BYTE $49,$4D,$41,$4C,$53,$20,$A2,$19        ; $0E71:             
+        .TEXT "ECUTED BY ", $0A, $1E, "Y A K ", $0A, $1E, "SPACE: CANCEL SCREEN"
+        .TEXT " TEXTF5 AND F7 CHANGE COLOURS LISTEN TO "
+        .TEXT "TALKING HEADS..BE NICE TO HAIRY ANIMALS "
+        .TEXT $A2, $19
 
 ;-------------------------------------------------------------------------------------
 DrawTitleAndBlurb
