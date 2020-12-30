@@ -10,6 +10,7 @@ You can play Iridis Alpha in your browser at [https://iridisalpha.xyz]. (Ctrl ke
 ## Also Contains:
 * [DNA], a demo by Jeff Minter containing some preparatory work for the main game.
 * [Torus], another demo by Jeff Minter containing some preparatory work for the main game.
+* [Torus2], another iteration on Torus.
 
 ## Requirements
 * [64tass][64tass], tested with v1.54, r1900
@@ -21,6 +22,7 @@ You can play Iridis Alpha in your browser at [https://iridisalpha.xyz]. (Ctrl ke
 [commented source code]:https://github.com/mwenge/gridrunner/blob/master/src/gridrunner.asm
 [DNA]:https://github.com/mwenge/iridisalpha/blob/master/dna
 [Torus]:https://github.com/mwenge/iridisalpha/blob/master/torus
+[Torus2]:https://github.com/mwenge/iridisalpha/blob/master/torus2
 
 To compile and run it do:
 
