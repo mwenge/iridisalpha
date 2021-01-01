@@ -2,150 +2,46 @@
 ; **** ZP FIELDS **** 
 ;
 f00 = $00
-f09 = $09
-f0A = $0A
-f20 = $20
-f2C = $2C
-f30 = $30
 f33 = $33
-f34 = $34
 f36 = $36
-f39 = $39
-f3A = $3A
 ;
 ; **** ZP ABSOLUTE ADRESSES **** 
 ;
 a00 = $00
 a01 = $01
-a04 = $04
-a05 = $05
-a06 = $06
-a07 = $07
-a0C = $0C
-a0F = $0F
 a14 = $14
 a15 = $15
-a20 = $20
-a30 = $30
-a31 = $31
-a32 = $32
-a34 = $34
-a36 = $36
-a66 = $66
-a7C = $7C
-a8B = $8B
-aA9 = $A9
-aC0 = $C0
-aC6 = $C6
-aiDC = $DC
-aDE = $DE
-aE6 = $E6
-aEE = $EE
-aF6 = $F6
 CharSetPtrLo = $FC
 CharSetPtrHi = $FD
-aFE = $FE
 aFF = $FF
 ;
 ; **** ZP POINTERS **** 
 ;
-p00 = $00
-p04 = $04
-p0A = $0A
-p0B = $0B
-p13 = $13
 p14 = $14
-p28 = $28
 p2C = $2C
-p30 = $30
-p31 = $31
-p35 = $35
-p39 = $39
-p3A = $3A
-p40 = $40
-p42 = $42
-p44 = $44
-p47 = $47
-p58 = $58
-pA4 = $A4
-pA9 = $A9
-pFF = $FF
 ;
 ; **** FIELDS **** 
 ;
-f0080 = $0080
-f00FE = $00FE
-f0280 = $0280
 f0333 = $0333
-f04C6 = $04C6
 f0522 = $0522
-f0718 = $0718
 f0800 = $0800
-f31B2 = $31B2
 f3540 = $3540
-f367F = $367F
-f36B2 = $36B2
-f3C09 = $3C09
-f3C7E = $3C7E
-f4609 = $4609
-f6CC6 = $6CC6
-f7E00 = $7E00
-f813A = $813A
 f9322 = $9322
-f9700 = $9700
-fA436 = $A436
-fA733 = $A733
-fA739 = $A739
-fA936 = $A936
-fC0C0 = $C0C0
-fC300 = $C300
-fC6C6 = $C6C6
-fDBFE = $DBFE
-fFC4C = $FC4C
-fFE06 = $FE06
-fFEE0 = $FEE0
-fFEE6 = $FEE6
-fFF0F = $FF0F
-fFFFF = $FFFF
 ;
 ; **** ABSOLUTE ADRESSES **** 
 ;
 a0031 = $0031
-a02C0 = $02C0
 a036D = $036D
 a038C = $038C
-a1AA9 = $1AA9
-a2AA9 = $2AA9
-a3032 = $3032
-a3036 = $3036
-a3132 = $3132
-a3432 = $3432
 a3A30 = $3A30
-a3A31 = $3A31
-a3A58 = $3A58
-a3A59 = $3A59
-a4C41 = $4C41
-a5445 = $5445
-a6AA0 = $6AA0
-a8100 = $8100
-a8830 = $8830
-a8C0A = $8C0A
-a8F42 = $8F42
-aCCD8 = $CCD8
-aD20B = $D20B
-aE60B = $E60B
-aF6DE = $F6DE
 ;
 ; **** POINTERS **** 
 ;
 p05 = $0005
-pC338 = $C338
 ;
 ; **** EXTERNAL JUMPS **** 
 ;
 CopyCharSetData = $0384
-e4C27 = $4C27
-e5246 = $5246
 eA8BC = $A8BC
 
         * = $0801
@@ -213,7 +109,6 @@ b083F   =*+$01
         .BYTE $0F,$1D
 
 b086A = *+$11
-b0870 = *+$17
 b087A = *+$21
         .TEXT "A 'LITTLE SOMETHING' FROM IRIDIS-ALPHA"
 
