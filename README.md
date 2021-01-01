@@ -1,5 +1,3 @@
-<img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" width=100>
-
 # Iridis Alpha by Jeff Minter
 
 <img src="https://user-images.githubusercontent.com/58846/103442991-ae494a00-4c52-11eb-9432-0f6ed61d3a5a.gif" width=500>
@@ -38,3 +36,5 @@ To just compile the game and get a binary (`iridisalpha.prg`) do:
 ```sh
 $ make iridisalpha
 ```
+## Original Cassette Artwork
+<img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" width=100>
