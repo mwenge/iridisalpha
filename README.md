@@ -20,7 +20,7 @@ You can play Iridis Alpha in your browser at [https://iridisalpha.xyz]. (Ctrl ke
 [64tass]: http://tass64.sourceforge.net/
 [vice]: http://vice-emu.sourceforge.net/
 [https://gridrunner.xyz]: https://mwenge.github.io/gridrunner.xyz
-[commented source code]:https://github.com/mwenge/gridrunner/blob/master/src/gridrunner.asm
+[commented source code]:https://github.com/mwenge/gridrunner/blob/master/src/iridisalpha.asm
 [DNA]:https://github.com/mwenge/iridisalpha/blob/master/dna
 [Torus]:https://github.com/mwenge/iridisalpha/blob/master/torus
 [Torus2]:https://github.com/mwenge/iridisalpha/blob/master/torus2
