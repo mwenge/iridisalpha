@@ -4,7 +4,7 @@
 
 This is the disassembled and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. 
 
-You can play Iridis Alpha in your browser at [https://iridisalpha.xyz]. (Ctrl key is 'Fire', Arrow Keys to move.)
+You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.)
 
 ## Also Contains:
 * [DNA], a demo by Jeff Minter containing some preparatory work for the main game.
