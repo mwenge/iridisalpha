@@ -1,9 +1,8 @@
-# Torus by Jeff Minter
+# Torus 2 by Jeff Minter
 
-<img src="http://www.llamasoftarchive.org/oldsite/llamasoft/screens/c64torus2.jpg" width=500>
+<img src="https://user-images.githubusercontent.com/58846/103443165-527fc080-4c54-11eb-95f1-ee020255cee6.gif" width=500>
 
-
-This is the disassembled and [commented source code] for the demo Torus by Jeff Minter. 
+This is the disassembled and [commented source code] for the demo Torus 2 by Jeff Minter. 
 
 ## Requirements
 
