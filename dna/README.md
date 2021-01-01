@@ -1,6 +1,6 @@
 # DNA by Jeff Minter
 
-<img src="http://www.llamasoftarchive.org/oldsite/llamasoft/screens/c64dna.jpg" width=300>
+<img src="https://user-images.githubusercontent.com/58846/103443219-cfab3580-4c54-11eb-8046-0f5f3bac9c79.gif" width=300>
 
 
 This is the disassembled and [commented source code] for the demo DNA by Jeff Minter. 
