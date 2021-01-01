@@ -1,6 +1,6 @@
 # Iridis Spaceship Demo by Jeff Minter
 
-<img src="http://www.llamasoftarchive.org/oldsite/llamasoft/screens/c64iridis_spaceship.jpg" width=500>
+<img src="https://user-images.githubusercontent.com/58846/103442890-dd12f080-4c51-11eb-9a85-46404fbc6849.gif" width=500>
 
 
 This is the disassembled and [commented source code] for the demo Iridis Spaceship Demo by Jeff Minter. 
