@@ -11,6 +11,7 @@ You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key 
 * [Torus], another demo by Jeff Minter containing some preparatory work for the main game.
 * [Torus2], another iteration on Torus.
 * [Iridis Spaceship], a non-interactive demo of the spaceship sprites.
+* [Made in France], Iridis Alpha's pause-mode mini game.
 
 ## Requirements
 * [64tass][64tass], tested with v1.54, r1900
@@ -24,6 +25,7 @@ You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key 
 [Torus]:https://github.com/mwenge/iridisalpha/blob/master/torus
 [Torus2]:https://github.com/mwenge/iridisalpha/blob/master/torus2
 [Iridis Spaceship]:https://github.com/mwenge/iridisalpha/blob/master/iridis_spaceship
+[Made in France]:https://github.com/mwenge/iridisalpha/blob/master/mif
 
 To compile and run it do:
 
