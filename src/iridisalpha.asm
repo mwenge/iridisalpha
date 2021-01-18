@@ -103,17 +103,15 @@ SCREEN_RAM = $0400
 ;
 e00FD = $00FD
 
-.include "padding1.asm"
-
-;        * = $0801
-;        .BYTE $0C,$08,$0A,$00,$9E,$32,$30,$36,$34,$00
+        * = $0801
+        .BYTE $0C,$08,$0A,$00,$9E,$31,$36,$33,$38,$34,$00
 
         * = $0810
 
 ;-------------------------------
-; j0810
+; LaunchDNA
 ;-------------------------------
-j0810   
+LaunchDNA   
         LDA #$00
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
@@ -127,13 +125,13 @@ j0810
         JMP j0D30
 
 b082F   LDX #$F8
-        JSR s15C6
+        JSR IA_SetupSound
         LDA #$7F
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
         LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
-        JSR InitializeSpritesAndInterrupts
-        JMP j08B8
+        JSR DNA_InitializeSpritesAndInterrupts
+        JMP IA_TitleScreenLoop
 
         .BYTE $00,$06,$02,$04,$05,$03,$07,$01
         .BYTE $01,$07,$03,$05,$04,$02,$06
@@ -142,15 +140,15 @@ f0854   .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
         .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
 a0864   .BYTE $02
 ;-------------------------------
-; InitializeSpritesAndInterrupts
+; DNA_InitializeSpritesAndInterrupts
 ;-------------------------------
-InitializeSpritesAndInterrupts   
+DNA_InitializeSpritesAndInterrupts   
         LDA #$00
         SEI 
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         STA a4001
-        JSR ClearScreen2
+        JSR DNA_ClearScreen
         LDA #$18
         STA $D018    ;VIC Memory Control Register
         LDA $D016    ;VIC Control Register 2
@@ -181,23 +179,24 @@ InitializeSpritesAndInterrupts
         RTS 
 
 ;-------------------------------
-; j08B8
+; IA_TitleScreenLoop
 ;-------------------------------
-j08B8   
+IA_TitleScreenLoop   
         LDA #$0B
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$FE
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        JSR s0A71
-        JSR s0CE6
-b08CB   JSR s1651
+        JSR IA_UpdateScreenColors
+        JSR IA_DrawTitleScreen
+b08CB   JSR IA_TitleCheckInput
         LDA a0864
         CMP #$04
         BEQ b08E2
         LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BNE b08CB
+
         LDA #$00
         STA aAAE0
         RTS 
@@ -224,9 +223,9 @@ j08F5
         RTI 
 
 ;-------------------------------
-; ClearScreen2
+; DNA_ClearScreen
 ;-------------------------------
-ClearScreen2   
+DNA_ClearScreen   
         LDX #$00
         LDA #$20
 b08FF   STA SCREEN_RAM,X
@@ -257,7 +256,7 @@ b091E   LDA f0990,Y
         JSR s0B2D
         JSR s0BC1
         JSR s14FE
-        JMP jEA31
+        JMP $EA31
 
 b0947   STA $D00F    ;Sprite 7 Y Pos
         LDA f09AF,Y
@@ -344,26 +343,26 @@ b0A6D   DEX
         RTS 
 
 ;-------------------------------
-; s0A71
+; IA_UpdateScreenColors
 ;-------------------------------
-s0A71   
+IA_UpdateScreenColors   
         LDX #$28
         LDA #$00
         STA a0B2C
 b0A78   LDA #$02
-        STA fD877,X
+        STA $D877,X
         LDA #$08
-        STA fD89F,X
+        STA $D89F,X
         LDA #$07
-        STA fD8C7,X
+        STA $D8C7,X
         LDA #$05
-        STA fD8EF,X
+        STA $D8EF,X
         LDA #$0E
-        STA fD917,X
+        STA $D917,X
         LDA #$04
-        STA fD93F,X
+        STA $D93F,X
         LDA #$06
-        STA fD967,X
+        STA $D967,X
         LDA #$00
         STA SCREEN_RAM + $0077,X
         STA SCREEN_RAM + $009F,X
@@ -397,12 +396,12 @@ b0AD0   LDA f0B25,X
         ASL 
         TAY 
         LDA f0B19,X
-        STA fCFFE,Y
+        STA $CFFE,Y
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         ORA f0B1F,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         LDA #$40
-        STA fCFFF,Y
+        STA $CFFF,Y
         DEX 
         BNE b0AD0
         LDA #$3F
@@ -548,9 +547,9 @@ f0C95   .TEXT "ECREATED BY JEFF MINTER...SPACE EASY/HAR"
 f0CBD   .TEXT "DLAST GILBY HIT 0000000; MODE IS NOW EAS"
         .TEXT "Y"
 ;-------------------------------
-; s0CE6
+; IA_DrawTitleScreen
 ;-------------------------------
-s0CE6   
+IA_DrawTitleScreen   
         LDX #$28
 b0CE8   LDA a0C1D,X
         AND #$3F
@@ -568,11 +567,11 @@ b0CE8   LDA a0C1D,X
         AND #$3F
         STA SCREEN_RAM + $031F,X
         LDA #$0C
-        STA fD9DF,X
-        STA fDA2F,X
-        STA fDA7F,X
-        STA fDACF,X
-        STA fDB1F,X
+        STA $D9DF,X
+        STA $DA2F,X
+        STA $DA7F,X
+        STA $DACF,X
+        STA $DB1F,X
         DEX 
         BNE b0CE8
         LDX #$06
@@ -652,10 +651,10 @@ b0D9C   LDA #$20
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $0300,X
         LDA #$0E
-        STA fD800,X
-        STA fD900,X
-        STA fDA00,X
-        STA fDB00,X
+        STA $D800,X
+        STA $D900,X
+        STA $DA00,X
+        STA $DB00,X
         DEX 
         BNE b0D9C
         RTS 
@@ -726,9 +725,9 @@ UpdateSpritePositions
         ASL 
         TAY 
         LDA f0EDB,X
-        STA fCFFE,Y
+        STA $CFFE,Y
         LDA f0F03,X
-        STA fCFFF,Y
+        STA $CFFF,Y
         STA $D005,Y  ;Sprite 2 Y Pos
         STA $D00F    ;Sprite 7 Y Pos
         STA $D00D    ;Sprite 6 Y Pos
@@ -806,7 +805,7 @@ b0E92   STY a0F6D
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        JMP jEA31
+        JMP $EA31
 
         LDX a0E07
 b0EC7   LDA f0F03,X
@@ -1439,9 +1438,9 @@ s15B4
         RTS 
 
 ;-------------------------------
-; s15C6
+; IA_SetupSound
 ;-------------------------------
-s15C6   
+IA_SetupSound   
         LDA #$0F
         STA $D405    ;Voice 1: Attack / Decay Cycle Control
         STA $D40C    ;Voice 2: Attack / Decay Cycle Control
@@ -1494,9 +1493,9 @@ a164E   .BYTE $01
 a164F   .BYTE $01
 a1650   .BYTE $04
 ;-------------------------------
-; s1651
+; IA_TitleCheckInput
 ;-------------------------------
-s1651   
+IA_TitleCheckInput   
         LDA lastKeyPressed
         CMP #$40
         BNE b1658
@@ -1580,7 +1579,7 @@ p4003   LDA #<p6B3E
         LDA #$00
         STA aAAD2
         STA a6D51
-        JSR s63C2
+        JSR EnterMainTitleScreen
         JSR s7EA8
         LDA #$36
         STA a01
@@ -1612,13 +1611,13 @@ p4003   LDA #<p6B3E
         STA a17
         LDA #>p0F8C
         STA $D418    ;Select Filter Mode and Volume
-        JSR s4081
+        JSR ZeroiseScreen
         JMP j4094
 
 ;-------------------------------
-; s4081
+; ZeroiseScreen
 ;-------------------------------
-s4081   
+ZeroiseScreen   
         LDA #$00
         TAX 
 b4084   STA f2200,X
@@ -1661,9 +1660,9 @@ a40D0   .BYTE $00
 a40D1   .BYTE $03
 a40D2   .BYTE $00
 ;------------------------------------------------
-; InitScreenPtrClearScreen
+; LaunchMIF
 ;------------------------------------------------
-InitScreenPtrClearScreen
+LaunchMIF
         SEI 
         LDA #$00
         STA $D020    ;Border Color
@@ -1804,12 +1803,12 @@ b41C7   LDA lastKeyPressed
         BNE b41C7
         LDA #$01
         STA aAAD2
-        JSR s63C2
-        JMP InitScreenPtrClearScreen
+        JSR EnterMainTitleScreen
+        JMP LaunchMIF
 
 b41D8   LDA a46AC
         BEQ b41BC
-        JMP InitScreenPtrClearScreen
+        JMP LaunchMIF
 
 ;-------------------------------
 ; InterruptHandler
@@ -1834,7 +1833,7 @@ b41ED   JSR s420B
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         LDA #$FE
         STA $D012    ;Raster Position
-        JMP jEA31
+        JMP $EA31
 
 a4209   .BYTE $01
 a420A   .BYTE $00
@@ -2066,7 +2065,7 @@ a4396   =*+$01
 ; s4395
 ;-------------------------------
 s4395   
-        LDA aEF00
+        LDA $EF00
         INC a4396
 b439B   RTS 
 
@@ -2904,9 +2903,9 @@ s4BEC
         STA a40
         LDA a4850
         BEQ b4C03
-        LDA #>p18C8
+        LDA #$18
         STA a41
-        LDA #<p18C8
+        LDA #$C8
         STA a40
         JMP j4DF0
 
@@ -3658,7 +3657,7 @@ b5291   LDA a527E
         BEQ b5290
         LDX #$A0
 b5298   LDA f5125,X
-        STA fDB47,X
+        STA $DB47,X
         DEX 
         BNE b5298
         LDA #$00
@@ -3673,7 +3672,7 @@ b52A7   LDA a527E
 
 b52B2   LDX #$A0
         LDA #$0B
-b52B6   STA fDB47,X
+b52B6   STA $DB47,X
         DEX 
         BNE b52B6
         LDA #$01
@@ -3836,7 +3835,7 @@ s53B9
         LDX a53B7
         LDA f542C,X
         LDY #$04
-b53D3   STA fDB4A,Y
+b53D3   STA $DB4A,Y
         DEY 
         BNE b53D3
         LDX a53B4
@@ -3860,7 +3859,7 @@ b53FB   LDA a53B8
         LDX a53B8
         LDA f542C,X
         LDY #$04
-b540B   STA fDBC2,Y
+b540B   STA $DBC2,Y
         DEY 
         BNE b540B
         LDX a53B5
@@ -4624,7 +4623,7 @@ b5A03   LDA #$01
 ; s5A11
 ;-------------------------------
 s5A11   
-        JSR s5A96
+        JSR ClearScreen3
         DEC a59BA
         BPL b5A1E
         BEQ b5A1E
@@ -4697,9 +4696,9 @@ b5A8C   DEY
         DEC a45
         BNE b5A8A
 ;-------------------------------
-; s5A96
+; ClearScreen3
 ;-------------------------------
-s5A96   
+ClearScreen3   
         LDX #$00
 b5A98   LDA #$20
         STA SCREEN_RAM,X
@@ -4707,10 +4706,10 @@ b5A98   LDA #$20
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $0248,X
         LDA #$01
-        STA fD800,X
-        STA fD900,X
-        STA fDA00,X
-        STA fDA48,X
+        STA $D800,X
+        STA $D900,X
+        STA $DA00,X
+        STA $DA48,X
         DEX 
         BNE b5A98
         RTS 
@@ -4831,7 +4830,7 @@ s5E00
         LDA #$23
         STA SCREEN_RAM + $0387
         LDA #$01
-        STA aDB87
+        STA $DB87
         LDA a6E12
         BPL b5E14
         EOR #$FF
@@ -4845,7 +4844,7 @@ b5E14   TAX
         ADC #$30
         STA SCREEN_RAM + $0388
         LDA f5E4F,Y
-        STA aDB88
+        STA $DB88
         STY a5E54
         RTS 
 
@@ -4914,19 +4913,19 @@ b5EB8   LDA #$08
         SBC a5E76
         TAY 
         LDA f5834,Y
-        STA aDB48
-        STA aDB49
-        STA aDB70
-        STA aDB71
+        STA $DB48
+        STA $DB49
+        STA $DB70
+        STA $DB71
         LDA #$08
         SEC 
         SBC a5E77
         TAY 
         LDA f5834,Y
-        STA aDB98
-        STA aDB99
-        STA aDBC0
-        STA aDBC1
+        STA $DB98
+        STA $DB99
+        STA $DBC0
+        STA $DBC1
         JMP j5EF6
 
         .BYTE $C0,$C0,$C0,$C0,$C0,$00,$00,$00
@@ -4965,8 +4964,8 @@ b5F21   LDA a6E12
 b5F28   PHA 
         TAY 
         LDA f67A5,Y
-        STA aDB4F
-        STA aDB50
+        STA $DB4F
+        STA $DB50
         LDA a797D
         BEQ b5F3A
         PLA 
@@ -4987,8 +4986,8 @@ b5F47   JSR s5F67
 b5F5B   PLA 
         TAY 
         LDA f67A5,Y
-        STA aDBC7
-        STA aDBC8
+        STA $DBC7
+        STA $DBC8
         RTS 
 
 ;-------------------------------
@@ -5069,7 +5068,7 @@ b604F   LDA f60C6,X
         AND #$3F
         STA SCREEN_RAM + $02F7,X
         LDA #$01
-        STA fDAF7,X
+        STA $DAF7,X
         DEX 
         BNE b604F
         LDX #$28
@@ -5106,13 +5105,13 @@ a60EF   .BYTE $00
 ; s60F0
 ;-------------------------------
 s60F0   
-        JSR s5A96
+        JSR ClearScreen3
         LDX a654F
         BEQ b6105
 b60F8   LDA #$1C
         STA SCREEN_RAM - $01,X
         LDA #$07
-        STA fD7FF,X
+        STA $D7FF,X
         DEX 
         BNE b60F8
 b6105   LDY #$00
@@ -5150,7 +5149,7 @@ b6148   LDA f616D,X
         AND #$3F
         STA SCREEN_RAM + $02F8,X
         LDA #$07
-        STA fDAF8,X
+        STA $DAF8,X
         DEX 
         BPL b6148
         LDX #$06
@@ -5227,7 +5226,7 @@ b61FE   LDA f62E4,X
         AND #$3F
         STA SCREEN_RAM + $0257,X
         LDA #$01
-        STA fDA57,X
+        STA $DA57,X
         DEX 
         BNE b61FE
         CLI 
@@ -5246,7 +5245,7 @@ b6223   LDA f630C,X
         AND #$3F
         STA SCREEN_RAM + $02A7,X
         LDA #$07
-        STA fDAA7,X
+        STA $DAA7,X
         DEX 
         BNE b6223
 b6233   LDA $DC00    ;CIA1: Data Port Register A
@@ -5345,7 +5344,7 @@ b62D2   JSR s79B0
         LDA #$20
         STA $D012    ;Raster Position
 f62E4   =*+$02
-        JMP jEA31
+        JMP $EA31
 
         .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
 f630C   .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READ"
@@ -5371,9 +5370,9 @@ s638F
         SEI 
         LDA #$34
         STA a01
-        LDA #<j0810
+        LDA #<LaunchDNA
         STA aFC
-        LDA #>j0810
+        LDA #>LaunchDNA
         STA aFD
         LDA #>pE800
         STA aFF
@@ -5398,11 +5397,11 @@ b63A6   LDA (pFC),Y
         RTS 
 
 ;-------------------------------
-; s63C2
+; EnterMainTitleScreen ($63C5)
 ;-------------------------------
-s63C2   
+EnterMainTitleScreen   
         JSR s638F
-        JSR j0810
+        JSR LaunchDNA
         SEI 
         LDA #<p62C5
         STA $0314    ;IRQ
@@ -5439,10 +5438,10 @@ b63FA   LDA f6425,X
         AND #$3F
         STA SCREEN_RAM + $015D,X
         LDA #$01
-        STA fD8BD,X
-        STA fD90D,X
+        STA $D8BD,X
+        STA $D90D,X
         LDA #$04
-        STA fD95D,X
+        STA $D95D,X
         DEX 
         BPL b63FA
         JMP j6446
@@ -5547,7 +5546,7 @@ b64F7   LDA f64C1,X
         AND #$3F
         STA SCREEN_RAM + $02B7,Y
         LDA #$02
-        STA fDAB7,Y
+        STA $DAB7,Y
         INY 
         INX 
         CPY #$0A
@@ -5590,7 +5589,7 @@ j6554
         STA $0314    ;IRQ
         LDA #>p65D0
         STA $0315    ;IRQ
-        JSR s5A96
+        JSR ClearScreen3
         LDA $D011    ;VIC Control Register 1
         AND #$7F
         STA $D011    ;VIC Control Register 1
@@ -5615,7 +5614,7 @@ b65A5   LDA f6789,X
         AND #$3F
         STA SCREEN_RAM + $019F,X
         LDA #$07
-        STA fD99F,X
+        STA $D99F,X
         DEX 
         BPL b65A5
         LDX #$03
@@ -5780,7 +5779,7 @@ b6709   LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JSR s79B0
-        JMP jEA31
+        JMP $EA31
 
 ;-------------------------------
 ; s6717
@@ -5995,7 +5994,7 @@ s6867
 b68D2   LDA #$00
         STA SCREEN_RAM + $01B7,X
         LDA #$04
-        STA fD9B7,X
+        STA $D9B7,X
         DEX 
         BNE b68D2
 b68DF   RTS 
@@ -6086,7 +6085,7 @@ b6971   LDA a6929
         JSR s650B
         JSR s6030
         JSR s5701
-        JMP j69B5
+        JMP AttractMode
 
 b6982   LDA a59B9
         BEQ b698A
@@ -6108,13 +6107,13 @@ b69A6   LDA a5509
         BEQ b6A02
         SEI 
         JSR s6030
-        JSR s5A96
+        JSR ClearScreen3
         JSR sAB00
 ;-------------------------------
-; j69B5
+; AttractMode
 ;-------------------------------
-j69B5   
-        JSR s4081
+AttractMode   
+        JSR ZeroiseScreen
         JSR s603C
         JSR s537C
         JSR s6907
@@ -6189,7 +6188,7 @@ b6A41   LDA lastKeyPressed
         ORA #$08
         STA $D016    ;VIC Control Register 2
         JSR s6030
-        JSR InitScreenPtrClearScreen
+        JSR LaunchMIF
         LDA #$00
         STA a40D0
         LDA #$02
@@ -6213,7 +6212,7 @@ j6A79
         STA $D412    ;Voice 3: Control Register
         LDA a6AC5
         STA SCREEN_RAM + $03F8
-        JSR s5A96
+        JSR ClearScreen3
         JSR s6867
         LDA a78B1
         STA a78B0
@@ -6434,7 +6433,7 @@ b6C26   LDX a680A
         JSR s778C
         JSR s6AC6
         JSR s5284
-        JMP jEA31
+        JMP $EA31
 
 ;-------------------------------
 ; j6C6E
@@ -7263,10 +7262,10 @@ s7316
 ;-------------------------------
 s731D   
         LDX #$28
-b731F   STA fD917,X
-        STA fD93F,X
-        STA fD967,X
-        STA fD98F,X
+b731F   STA $D917,X
+        STA $D93F,X
+        STA $D967,X
+        STA $D98F,X
         DEX 
         BNE b731F
         RTS 
@@ -7276,10 +7275,10 @@ b731F   STA fD917,X
 ;-------------------------------
 s732F   
         LDX #$28
-b7331   STA fD9DF,X
-        STA fDA07,X
-        STA fDA2F,X
-        STA fDA57,X
+b7331   STA $D9DF,X
+        STA $DA07,X
+        STA $DA2F,X
+        STA $DA57,X
         DEX 
         BNE b7331
         RTS 
@@ -7978,7 +7977,7 @@ s784E
 b7850   LDA b5085,X
         STA SCREEN_RAM + $0347,X
         LDA f5125,X
-        STA fDB47,X
+        STA $DB47,X
         DEX 
         BNE b7850
         RTS 
@@ -8750,7 +8749,7 @@ bAB66   LDA fAB7E,X
         AND #$3F
         STA SCREEN_RAM + $0167,X
         LDA #$01
-        STA fD967,X
+        STA $D967,X
         DEX 
         BNE bAB66
         CLI 
@@ -8937,7 +8936,7 @@ bAD33   DEY
         LDY aAD77
         LDA fAD78,Y
         LDX #$28
-bAD41   STA fD967,X
+bAD41   STA $D967,X
         DEX 
         BNE bAD41
         DEC aAD77
@@ -9250,10 +9249,10 @@ bAF99   LDA $D010    ;Sprites 0-7 MSB of X coordinate
 ;-------------------------------
 sAFA2   
         LDX #$00
-bAFA4   STA fD800,X
-        STA fD900,X
-        STA fDA00,X
-        STA fDB00,X
+bAFA4   STA $D800,X
+        STA $D900,X
+        STA $DA00,X
+        STA $DB00,X
         DEX 
         BNE bAFA4
         RTS 
@@ -9601,7 +9600,7 @@ bB4AA   NOP
         STA $D011    ;VIC Control Register 1
         LDX #$00
 bB4B9   LDA fB489,X
-        STA ROM_PLOT
+        STA $F0FF
         LDY #$14
 bB4C1   DEY 
         BNE bB4C1
@@ -9644,7 +9643,7 @@ jB515
         JSR sC781
         JSR sBD26
         JSR sC70E
-        JMP jEA31
+        JMP $EA31
 
 ;-------------------------------
 ; sB524
@@ -10747,7 +10746,7 @@ bC07E   LDA fBFAA,X
         AND #$3F
         STA SCREEN_RAM + $02D0,Y
         LDA #$01
-        STA fDAD0,Y
+        STA $DAD0,Y
         DEY 
         BPL bC07C
         LDX #$06
@@ -10894,7 +10893,7 @@ bC1F9   LDA fC243,X
         AND #$3F
         STA SCREEN_RAM + $023E,X
         LDA #$07
-        STA fDA3E,X
+        STA $DA3E,X
         DEX 
         BPL bC1F9
 bC209   JSR sAEB5
@@ -10944,7 +10943,7 @@ bC251   LDA fC763,X
         AND #$3F
         STA SCREEN_RAM + $023E,X
         LDA #$04
-        STA fDA3E,X
+        STA $DA3E,X
         DEX 
         BPL bC251
         LDA aC24E
@@ -11763,10 +11762,10 @@ bCA9F   LDA #$20
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $0247,X
         LDA #$01
-        STA fD800,X
-        STA fD900,X
-        STA fDA00,X
-        STA fDA47,X
+        STA $D800,X
+        STA $D900,X
+        STA $DA00,X
+        STA $DA47,X
         DEX 
         BNE bCA9F
         LDX #$27
@@ -12084,7 +12083,7 @@ bCD19   LDA (pFC),Y
 bCD28   LDA (pFC),Y
         STA SCREEN_RAM + $00E7,Y
         LDA #$04
-        STA fD8E7,Y
+        STA $D8E7,Y
         DEY 
         BPL bCD28
 bCD35   LDA lastKeyPressed
@@ -12117,16 +12116,16 @@ aCD4B   ORA (pAD,X)
         STA $D012    ;Raster Position
         LDA aCD4B
         BNE bCD6E
-        JMP jEA31
+        JMP $EA31
 
 bCD6E   LDX #$00
         LDY aCDD0
 bCD73   LDA fCDD2,Y
-        STA fD8A0,X
-        STA fD8F0,X
-        STA fD940,X
-        STA fD990,X
-        STA fD9E0,X
+        STA $D8A0,X
+        STA $D8F0,X
+        STA $D940,X
+        STA $D990,X
+        STA $D9E0,X
         INX 
         INY 
         CPY #$28
@@ -12137,11 +12136,11 @@ bCD8D   CPX #$28
         LDY aCDD1
         LDX #$00
 bCD96   LDA fCDE2,Y
-        STA fD8C8,X
-        STA fD918,X
-        STA fD968,X
-        STA fD9B8,X
-        STA fDA08,X
+        STA $D8C8,X
+        STA $D918,X
+        STA $D968,X
+        STA $D9B8,X
+        STA $DA08,X
         INX 
         INY 
         CPY #$28
@@ -12159,7 +12158,7 @@ bCDC1   LDA aCDD0
         BNE bCDCD
         LDA #$00
         STA aCDD0
-bCDCD   JMP jEA31
+bCDCD   JMP $EA31
 
 aCDD0   .BYTE $1C
 aCDD1   .BYTE $0C
@@ -12225,4 +12224,21 @@ sCEB9
         STA aCE94
         RTS 
 
-.include "paddingfinal.asm"
+pE800   SEI 
+aE801   LDA #>j4000
+        STA $0319    ;NMI
+        LDA #<j4000
+        STA $0318    ;NMI
+        LDA #$10
+        STA $DD04    ;CIA2: Timer A: Low-Byte
+        LDA #$00
+        STA $DD05    ;CIA2: Timer A: High-Byte
+        LDA #$7F
+        STA $DD0D    ;CIA2: CIA Interrupt Control Register
+        LDA #$81
+        STA $DD0D    ;CIA2: CIA Interrupt Control Register
+        LDA #$19
+        STA $DD0E    ;CIA2: CIA Control Register A
+        CLI 
+        JMP $0835
+

@@ -1799,10 +1799,3 @@ ROM_SCREEN LDA fBDBD,X
 
 ; $FFF0 - read/set cursor position         
 ROM_PLOT LDA fBDBD,X
-
-; $FFF3 - returns the addr of I/O devices  
-ROM_IOBASE LDA fBDBD,X
-        LDA fBDBD,X
-        LDA fBDBD,X
-        LDA fBDBD,X
-        LDA f0000,X
