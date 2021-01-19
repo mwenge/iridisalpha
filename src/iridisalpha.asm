@@ -106,11 +106,10 @@ e00FD = $00FD
         * = $0801
         .BYTE $0C,$08,$0A,$00,$9E,$31,$36,$33,$38,$34,$00
 
-        * = $0810
-
 ;-------------------------------
 ; LaunchDNA
 ;-------------------------------
+*=$0810
 LaunchDNA   
         LDA #$00
         STA $D404    ;Voice 1: Control Register
@@ -600,10 +599,10 @@ s0D40
         LDA #$34
         STA a01
         LDX #$00
-b0D47   LDA fE400,X
+b0D47   LDA $E400,X
         PHA 
         LDA f3040,X
-        STA fE400,X
+        STA $E400,X
         PLA 
         STA f3040,X
         DEX 
@@ -1552,6 +1551,7 @@ s16A4
 
 
 .include "paddingstart.asm"
+*=$2000
 .include "charset.asm"
 .include "sprites.asm"
 
@@ -5364,9 +5364,9 @@ p6362   .BYTE $00,$00,$20,$04,$00,$00,$00,$03
         .BYTE $01,$71,$63,$00,$00,$20,$04,$00
         .BYTE $00,$80,$CA,$7B,$00
 ;-------------------------------
-; s638F
+; SwapRoutines
 ;-------------------------------
-s638F   
+SwapRoutines   
         SEI 
         LDA #$34
         STA a01
@@ -5374,10 +5374,11 @@ s638F
         STA aFC
         LDA #>LaunchDNA
         STA aFD
-        LDA #>pE800
+        LDA #>$E800
         STA aFF
-        LDA #<pE800
+        LDA #<$E800
         STA aFE
+
 b63A4   LDY #$00
 b63A6   LDA (pFC),Y
         PHA 
@@ -5392,6 +5393,7 @@ b63A6   LDA (pFC),Y
         LDA aFF
         CMP #$F9
         BNE b63A4
+
         LDA #$36
         STA a01
         RTS 
@@ -5400,14 +5402,14 @@ b63A6   LDA (pFC),Y
 ; EnterMainTitleScreen ($63C5)
 ;-------------------------------
 EnterMainTitleScreen   
-        JSR s638F
+        JSR SwapRoutines
         JSR LaunchDNA
         SEI 
         LDA #<p62C5
         STA $0314    ;IRQ
         LDA #>p62C5
         STA $0315    ;IRQ
-        JMP s638F
+        JMP SwapRoutines
 
 ;-------------------------------
 ; j63D6
@@ -8688,6 +8690,7 @@ b7F01   LDA a7EE3
 
 .include "padding2.asm"
 
+*=$AAC0
 fAAC0   .BYTE $F0
 fAAC1   .BYTE $30,$30,$30,$30,$30,$30,$30,$00
         .BYTE $00,$00,$00,$00,$00,$C8,$18
@@ -8954,9 +8957,9 @@ bAD50   STA SCREEN_RAM + $0167,X
 
         ; Copy Charset and Sprties
         LDX #$00
-bAD5D   LDA fE000,X
+bAD5D   LDA $E000,X
         STA f2200,X
-        LDA fE100,X
+        LDA $E100,X
         STA f2300,X
         DEX 
         BNE bAD5D
@@ -8978,22 +8981,22 @@ sAD7C
         LDA #$34
         STA a01
         LDX #$00
-bAD83   LDA fE200,X
+bAD83   LDA $E200,X
         PHA 
         LDA a3000,X
-        STA fE200,X
+        STA $E200,X
         PLA 
         STA a3000,X
-        LDA fE300,X
+        LDA $E300,X
         PHA 
         LDA f3100,X
-        STA fE300,X
+        STA $E300,X
         PLA 
         STA f3100,X
-        LDA fE400,X
+        LDA $E400,X
         PHA 
         LDA f3200,X
-        STA fE400,X
+        STA $E400,X
         PLA 
         STA f3200,X
         DEX 
@@ -12224,10 +12227,11 @@ sCEB9
         STA aCE94
         RTS 
 
+
 pE800   SEI 
-aE801   LDA #>j4000
+        LDA #>$4000
         STA $0319    ;NMI
-        LDA #<j4000
+        LDA #<$4000
         STA $0318    ;NMI
         LDA #$10
         STA $DD04    ;CIA2: Timer A: Low-Byte
@@ -12241,4 +12245,3 @@ aE801   LDA #>j4000
         STA $DD0E    ;CIA2: CIA Control Register A
         CLI 
         JMP $0835
-
