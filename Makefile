@@ -8,12 +8,12 @@ C1541 = c1541
 all: clean d64 run
 original: clean d64_orig run_orig
 
-iridisalpha.prg: src/iridisalpha.asm src/e800data.asm
+iridisalpha.prg: src/iridisalpha.asm src/charsetandspritedata.asm
 	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/ia.prg -L bin/list-co1.txt -l bin/labels.txt src/iridisalpha.asm
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/e800data.prg src/e800data.asm
-	exomizer sfx sys bin/ia.prg bin/e800data.prg,0xe000 -n -o bin/iridisalpha.prg
+	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/charsetandspritedata.prg src/charsetandspritedata.asm
+	exomizer sfx sys bin/ia.prg bin/charsetandspritedata.prg,0xe000 -n -o bin/iridisalpha.prg
 	md5sum bin/ia.prg bin/ia-bench.prg
-	md5sum bin/e800data.prg bin/e800data-bench.prg
+	md5sum bin/charsetandspritedata.prg bin/charsetandspritedata-bench.prg
 
 iridisalpha-vsf.prg: src/iridisalpha.tas
 	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/iridisalpha-vsf.prg -L bin/list-co1.txt -l bin/labels.txt src/iridisalpha.tas
@@ -32,5 +32,5 @@ clean:
 	-rm $(D64_IMAGE)
 	-rm bin/iridisalpha.prg
 	-rm bin/ia.prg
-	-rm bin/e800data.prg
+	-rm bin/charsetandspritedata.prg
 	-rm bin/*.txt
