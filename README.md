@@ -6,6 +6,11 @@ This is the disassembled and [commented source code] for the 1986 Commodore 64 g
 
 You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.)
 
+## Current Status
+The game compiles and plays. Character set and sprite data has been separated out and commented. Because there is some much character and sprite data and Iridis Alpha contains two sub games, it was necessary to use a compressor ([Exomizser]) to produce the final binary. 
+
+Labelling the game logic is still in progress.
+
 ## Also Contains:
 * [DNA], a demo by Jeff Minter containing some preparatory work for the main game.
 * [Torus], another demo by Jeff Minter containing some preparatory work for the main game.
@@ -16,6 +21,7 @@ You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key 
 ## Requirements
 * [64tass][64tass], tested with v1.54, r1900
 * [VICE][vice]
+* [Exomizer][Exomizer]
 
 [64tass]: http://tass64.sourceforge.net/
 [vice]: http://vice-emu.sourceforge.net/
@@ -26,6 +32,7 @@ You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key 
 [Torus2]:https://github.com/mwenge/iridisalpha/blob/master/torus2
 [Iridis Spaceship]:https://github.com/mwenge/iridisalpha/blob/master/iridis_spaceship
 [Made in France]:https://github.com/mwenge/iridisalpha/blob/master/mif
+[Exomizer]:https://bitbucket.org/magli143/exomizer/wiki/Home
 
 To compile and run it do:
 
