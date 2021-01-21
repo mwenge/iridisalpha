@@ -98,6 +98,16 @@ p20 = $0020
 p27 = $0027
 p0029 = $0029
 SCREEN_RAM = $0400
+COLOR_RAM = $D800
+Sprite0Ptr = $07F8
+Sprite1Ptr = $07F9
+Sprite2Ptr = $07FA
+Sprite3Ptr = $07FB
+Sprite4Ptr = $07FC
+Sprite5Ptr = $07FD
+Sprite6Ptr = $07FE
+Sprite7Ptr = $07FF
+
 ;
 ; **** EXTERNAL JUMPS **** 
 ;
@@ -107,10 +117,10 @@ e00FD = $00FD
         .BYTE $0C,$08,$0A,$00,$9E,$31,$36,$33,$38,$34,$00
 
 ;-------------------------------
-; LaunchDNA
+; LaunchCurrentProgram
 ;-------------------------------
 *=$0810
-LaunchDNA   
+LaunchCurrentProgram   
         LDA #$00
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
@@ -121,7 +131,7 @@ LaunchDNA
         STA aAAE1
         LDA aAAD2
         BEQ b082F
-        JMP j0D30
+        JMP LaunchDNA
 
 b082F   LDX #$F8
         JSR IA_SetupSound
@@ -129,7 +139,7 @@ b082F   LDX #$F8
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
         LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
-        JSR DNA_InitializeSpritesAndInterrupts
+        JSR IA_InitializeSpritesAndInterrupts
         JMP IA_TitleScreenLoop
 
         .BYTE $00,$06,$02,$04,$05,$03,$07,$01
@@ -139,15 +149,15 @@ f0854   .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
         .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
 a0864   .BYTE $02
 ;-------------------------------
-; DNA_InitializeSpritesAndInterrupts
+; IA_InitializeSpritesAndInterrupts
 ;-------------------------------
-DNA_InitializeSpritesAndInterrupts   
+IA_InitializeSpritesAndInterrupts   
         LDA #$00
         SEI 
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         STA a4001
-        JSR DNA_ClearScreen
+        JSR IA_ClearScreen
         LDA #$18
         STA $D018    ;VIC Memory Control Register
         LDA $D016    ;VIC Control Register 2
@@ -159,7 +169,7 @@ DNA_InitializeSpritesAndInterrupts
         LDA #$FF
         STA $D015    ;Sprite display Enable
         LDA #$C0
-        STA SCREEN_RAM + $03FF
+        STA Sprite7Ptr
         LDA #$80
         STA $D01B    ;Sprite to Background Display Priority
         LDA #<p08EE
@@ -222,9 +232,9 @@ j08F5
         RTI 
 
 ;-------------------------------
-; DNA_ClearScreen
+; IA_ClearScreen
 ;-------------------------------
-DNA_ClearScreen   
+IA_ClearScreen   
         LDX #$00
         LDA #$20
 b08FF   STA SCREEN_RAM,X
@@ -349,19 +359,19 @@ IA_UpdateScreenColors
         LDA #$00
         STA a0B2C
 b0A78   LDA #$02
-        STA $D877,X
+        STA COLOR_RAM + $0077,X
         LDA #$08
-        STA $D89F,X
+        STA COLOR_RAM + $009F,X
         LDA #$07
-        STA $D8C7,X
+        STA COLOR_RAM + $00C7,X
         LDA #$05
-        STA $D8EF,X
+        STA COLOR_RAM + $00EF,X
         LDA #$0E
-        STA $D917,X
+        STA COLOR_RAM + $0117,X
         LDA #$04
-        STA $D93F,X
+        STA COLOR_RAM + $013F,X
         LDA #$06
-        STA $D967,X
+        STA COLOR_RAM + $0167,X
         LDA #$00
         STA SCREEN_RAM + $0077,X
         STA SCREEN_RAM + $009F,X
@@ -418,7 +428,7 @@ b0AD0   LDA f0B25,X
         LDA #$01
         STA $D02D    ;Sprite 6 Color
         LDA #$F5
-        STA SCREEN_RAM + $03FE
+        STA Sprite6Ptr
 f0B19   RTS 
 
         .BYTE $20,$50,$80,$B0,$E0
@@ -488,7 +498,7 @@ j0B94
         LDA f0BAC,X
         STA $D001,Y  ;Sprite 0 Y Pos
         LDA a0C1D
-        STA SCREEN_RAM + $03F8,X
+        STA Sprite0Ptr,X
         LDA f0854,X
         STA $D027,X  ;Sprite 0 Color
         INX 
@@ -566,10 +576,10 @@ b0CE8   LDA a0C1D,X
         AND #$3F
         STA SCREEN_RAM + $031F,X
         LDA #$0C
-        STA $D9DF,X
-        STA $DA2F,X
-        STA $DA7F,X
-        STA $DACF,X
+        STA COLOR_RAM + $01DF,X
+        STA COLOR_RAM + $022F,X
+        STA COLOR_RAM + $027F,X
+        STA COLOR_RAM + $02CF,X
         STA $DB1F,X
         DEX 
         BNE b0CE8
@@ -580,727 +590,7 @@ b0D26   LDA fC803,X
         BPL b0D26
         RTS 
 
-;-------------------------------
-; j0D30
-;-------------------------------
-j0D30   
-        LDA #$7F
-        STA $DC0D    ;CIA1: CIA Interrupt Control Register
-        LDA #$00
-        STA a1126
-        JSR s0D40
-        JMP InitializeSpritesMain
-
-;-------------------------------
-; s0D40
-;-------------------------------
-s0D40   
-        SEI 
-        LDA #$34
-        STA a01
-        LDX #$00
-b0D47   LDA $E400,X
-        PHA 
-        LDA f3040,X
-        STA $E400,X
-        PLA 
-        STA f3040,X
-        DEX 
-        BNE b0D47
-        LDA #$36
-        STA a01
-        RTS 
-
-;-------------------------------
-; InitializeSpritesMain
-;-------------------------------
-InitializeSpritesMain   
-        LDA #$00
-        STA $D020    ;Border Color
-        STA $D021    ;Background Color 0
-        LDA #$18
-        STA $D018    ;VIC Memory Control Register
-        LDA #$FF
-        STA $D015    ;Sprite display Enable
-        STA $D01B    ;Sprite to Background Display Priority
-        LDA #$00
-        STA $D010    ;Sprites 0-7 MSB of X coordinate
-        STA $D017    ;Sprites Expand 2x Vertical (Y)
-        STA $D01D    ;Sprites Expand 2x Horizontal (X)
-        LDA #$3F
-        STA $D01C    ;Sprites Multi-Color Mode Select
-        LDA #$01
-        STA $D02D    ;Sprite 6 Color
-        STA $D026    ;Sprite Multi-Color Register 1
-        LDA #$02
-        STA $D025    ;Sprite Multi-Color Register 0
-        LDA #$0B
-        STA $D02E    ;Sprite 7 Color
-        JSR ClearScreenMain
-        JMP j0DBC
-
-;-------------------------------
-; ClearScreenMain
-;-------------------------------
-ClearScreenMain   
-        LDX #$00
-b0D9C   LDA #$20
-        STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $0300,X
-        LDA #$0E
-        STA $D800,X
-        STA $D900,X
-        STA $DA00,X
-        STA $DB00,X
-        DEX 
-        BNE b0D9C
-        RTS 
-
-;-------------------------------
-; j0DBC
-;-------------------------------
-j0DBC   
-        JSR s0DCF
-        JSR s1203
-        JSR s104D
-        CLI 
-b0DC6   LDA a1126
-        BEQ b0DC6
-        JSR s0D40
-        RTS 
-
-;-------------------------------
-; s0DCF
-;-------------------------------
-s0DCF   
-        SEI 
-        LDA #<InterruptHandler2
-        STA $0314    ;IRQ
-        LDA #>InterruptHandler2
-        STA $0315    ;IRQ
-        LDA #$00
-        STA a0DF6
-        LDA $D011    ;VIC Control Register 1
-        AND #$7F
-        STA $D011    ;VIC Control Register 1
-        LDA #$30
-        STA $D012    ;Raster Position
-        LDA #$01
-        STA $D019    ;VIC Interrupt Request Register (IRR)
-        STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        CLI 
-        RTS 
-
-a0DF6   .BYTE $00
-;-------------------------------
-; InterruptHandler2
-;-------------------------------
-InterruptHandler2   
-        LDA $D019    ;VIC Interrupt Request Register (IRR)
-        AND #$01
-        BNE b0E04
-        PLA 
-        TAY 
-        PLA 
-        TAX 
-        PLA 
-        RTI 
-
-b0E04   JMP UpdateSpritePositions
-
-a0E07   .BYTE $00
-
-;-------------------------------
-; UpdateSpritePositions
-;-------------------------------
-UpdateSpritePositions   
-        LDX a0E07
-        LDY a0F6D
-        TYA 
-        STA a40
-        CLC 
-        ASL 
-        TAY 
-        LDA f0EDB,X
-        STA $CFFE,Y
-        LDA f0F03,X
-        STA $CFFF,Y
-        STA $D005,Y  ;Sprite 2 Y Pos
-        STA $D00F    ;Sprite 7 Y Pos
-        STA $D00D    ;Sprite 6 Y Pos
-        INC f1127,X
-        LDA f1127,X
-        STA $D00C    ;Sprite 6 X Pos
-        LDA a41
-        AND #$01
-        BEQ b0E3B
-        INC f113F,X
-b0E3B   LDA f113F,X
-        STA $D00E    ;Sprite 7 X Pos
-        TXA 
-        PHA 
-        CLC 
-        ADC a0F6E
-        CMP #$27
-        BMI b0E4E
-        SEC 
-        SBC #$27
-b0E4E   TAX 
-        LDA f0EDB,X
-        STA $D004,Y  ;Sprite 2 X Pos
-        PLA 
-        TAX 
-        LDY a0F6D
-        STX a40
-        LDX a0F6C
-a0E60   =*+$01
-a0E61   =*+$02
-        LDA f0F1C,X
-        STA $D026,Y  ;Sprite Multi-Color Register 1
-        INX 
-a0E67   =*+$01
-a0E68   =*+$02
-        LDA f0F1C,X
-        CMP #$FF
-        BNE b0E6F
-        LDX #$00
-b0E6F   STX a0F6C
-        LDX a0F6B
-a0E76   =*+$01
-a0E77   =*+$02
-        LDA f0F23,X
-        STA $D029,Y  ;Sprite 2 Color
-        INX 
-a0E7D   =*+$01
-a0E7E   =*+$02
-        LDA f0F23,X
-        CMP #$FF
-        BNE b0E85
-        LDX #$00
-b0E85   STX a0F6B
-        LDX a40
-        INX 
-        INY 
-        CPY #$04
-        BNE b0E92
-        LDY #$01
-b0E92   STY a0F6D
-        STX a0E07
-        LDA f0F03,X
-        CMP #$FF
-        BNE b0EC7
-        LDX #$00
-        STX a0E07
-        JSR s0F7C
-        JSR s100B
-        DEC a41
-        JSR s115B
-        LDA #$01
-        STA a0F6D
-        LDA #$2E
-        STA $D012    ;Raster Position
-        LDA #$01
-        STA $D019    ;VIC Interrupt Request Register (IRR)
-        STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        JMP $EA31
-
-        LDX a0E07
-b0EC7   LDA f0F03,X
-        SEC 
-        SBC #$02
-        STA $D012    ;Raster Position
-        LDA #$01
-        STA $D019    ;VIC Interrupt Request Register (IRR)
-        STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        .BYTE $4C,$FE
-f0EDA   .BYTE $0D
-f0EDB   .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
-        .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
-        .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-f0F03   .BYTE $30,$38,$40,$48,$50,$58,$60,$68
-        .BYTE $70,$78,$80,$88,$90,$98,$A0,$A8
-        .BYTE $B0,$B8,$C0,$C8,$D0,$D8,$E0,$E8
-        .BYTE $FF
-f0F1C   .BYTE $02,$08,$07,$05,$04,$06,$FF
-f0F23   .BYTE $0B,$0C,$0F,$01,$0F,$0C,$FF
-f0F2A   .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
-        .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
-        .BYTE $80,$7F,$7E,$7D,$7B,$78,$75,$71
-        .BYTE $6D,$68,$63,$5E,$58,$52,$4C,$46
-        .BYTE $40,$39,$33,$2D,$27,$21,$1C,$17
-        .BYTE $12,$0E,$0A,$07,$04,$02,$01,$00
-        .BYTE $00,$00,$01,$02,$04,$07,$0A,$0E
-        .BYTE $12,$17,$1C,$21,$27,$2D,$33,$39
-        .BYTE $FF
-a0F6B   .BYTE $00
-a0F6C   .BYTE $00
-a0F6D   .BYTE $01
-a0F6E   .BYTE $05
-;-------------------------------
-; s0F6F
-;-------------------------------
-s0F6F   
-        LDX #$27
-b0F71   LDA f0EDA,X
-        STA f0EDB,X
-        DEX 
-        BNE b0F71
-        RTS 
-
-a0F7B   .BYTE $00
-;-------------------------------
-; s0F7C
-;-------------------------------
-s0F7C   
-        DEC a0FC8
-        BNE b0F8A
-        LDA a0FC7
-        STA a0FC8
-        JSR s0F6F
-p0F8C   =*+$02
-b0F8A   JSR s11CF
-        DEC a0FC5
-        BNE b0FC3
-        LDA a0FC6
-        STA a0FC5
-        LDX a0F7B
-        LDA f0F2A,X
-        STA a42
-        LDY a11CD
-        BEQ b0FA9
-        CLC 
-        ROR 
-        STA a42
-b0FA9   LDA a11CE
-        CLC 
-        ADC a42
-        STA f0EDB
-        TXA 
-        CLC 
-        ADC a0FC4
-        TAX 
-        CPX #$40
-        BMI b0FC0
-        SEC 
-        SBC #$40
-        TAX 
-b0FC0   STX a0F7B
-b0FC3   RTS 
-
-a0FC4   .BYTE $02
-a0FC5   .BYTE $01
-a0FC6   .BYTE $05
-a0FC7   .BYTE $01
-a0FC8   .BYTE $01
-a0FC9   .BYTE $11
-a0FCA   .BYTE $00
-f0FCB   .BYTE $10,$0F,$0E,$0D,$0C,$0B,$0A,$09
-        .BYTE $08,$07,$06,$05,$04,$03,$02,$01
-        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-f0FEB   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-        .BYTE $01,$02,$03,$04,$05,$06,$07,$08
-        .BYTE $09,$0A,$0B,$0C,$0D,$0E,$0F,$10
-;-------------------------------
-; s100B
-;-------------------------------
-s100B   
-        LDA a0FCA
-        CMP #$40
-        BEQ b1018
-        LDA lastKeyPressed
-        STA a0FCA
-        RTS 
-
-b1018   LDA lastKeyPressed
-        STA a0FCA
-        CMP #$0C
-        BNE b1027
-        DEC a0FC9
-        JMP s104D
-
-b1027   CMP #$17
-        BNE b1031
-        INC a0FC9
-        JMP s104D
-
-b1031   CMP #$0A
-        BNE b1043
-        INC a0FC7
-;-------------------------------
-; j1038
-;-------------------------------
-j1038   
-        LDA a0FC7
-        AND #$0F
-        STA a0FC8
-        JMP j12CB
-
-b1043   CMP #$0D
-        BNE b107A
-        DEC a0FC7
-        JMP j1038
-
-;-------------------------------
-; s104D
-;-------------------------------
-s104D   
-        LDA a0FC9
-        AND #$1F
-        TAX 
-        LDA f0FCB,X
-        STA a0FC6
-        STA a0FC5
-        LDA f0FEB,X
-        STA a0FC4
-        LDA a1125
-        AND #$1F
-        TAX 
-        LDA f0FCB,X
-        STA a11CA
-        STA a11CB
-        LDA f0FEB,X
-        STA a11CC
-        JMP j12CB
-
-b107A   CMP #$3E
-        BNE b108C
-        INC a0F6E
-        LDA a0F6E
-        AND #$0F
-        STA a0F6E
-        JMP j12CB
-
-b108C   CMP #$14
-        BNE b1096
-        DEC a1125
-        JMP s104D
-
-b1096   CMP #$1F
-        BNE b10A0
-        INC a1125
-        JMP s104D
-
-b10A0   CMP #$3C
-        BNE b10B7
-        LDA a1341
-        EOR #$01
-        STA a1341
-        BEQ b10B4
-        JSR s1203
-        JMP j12CB
-
-b10B4   JMP ClearScreenMain
-
-b10B7   CMP #$04
-        BNE b10C6
-        LDA a11CD
-        EOR #$01
-        STA a11CD
-        JMP j12CB
-
-b10C6   CMP #$06
-        BNE b10F2
-        INC a1388
-        LDA a1388
-        CMP #$08
-        BNE b10D9
-        LDA #$00
-        STA a1388
-b10D9   TAX 
-        LDA f1378,X
-        STA a0E67
-        STA a0E60
-        LDA f1380,X
-        STA a0E68
-        STA a0E61
-        LDA #$00
-        STA a0F6C
-        RTS 
-
-b10F2   CMP #$03
-        BNE b111D
-        INC a1389
-        LDA a1389
-        CMP #$08
-        BNE b1105
-        LDA #$00
-        STA a1389
-b1105   TAX 
-        LDA f1378,X
-        STA a0E7D
-        STA a0E76
-        LDA f1380,X
-        STA a0E7E
-        STA a0E77
-        LDA #$00
-        STA a0F6B
-b111D   CMP #$31
-        BNE b1124
-        INC a1126
-b1124   RTS 
-
-a1125   .BYTE $12
-a1126   .BYTE $00
-f1127   .BYTE $4E,$05,$66,$FD,$12,$28,$CC,$87
-        .BYTE $37,$93,$F5,$3B,$09,$9D,$A8,$7D
-        .BYTE $DD,$67,$20,$C4,$AA,$35,$02,$74
-f113F   .BYTE $94,$E2,$33,$38,$C6,$DF,$23,$42
-        .BYTE $71,$12,$29,$67,$7F,$EA,$A9,$34
-        .BYTE $A5,$81,$01,$4C,$29,$36,$55
-        .BYTE $98
-a1157   .BYTE $00
-a1158   .BYTE $01
-a1159   .BYTE $04
-a115A   .BYTE $01
-;-------------------------------
-; s115B
-;-------------------------------
-s115B   
-        DEC a115A
-        BNE b1181
-        LDA #$05
-        STA a115A
-        LDX a11C9
-        LDA f1342,X
-        STA $D025    ;Sprite Multi-Color Register 0
-        INX 
-        LDA f1342,X
-        BPL b1176
-        LDX #$00
-b1176   STX a11C9
-        LDA #$C0
-        STA SCREEN_RAM + $03FF
-        STA SCREEN_RAM + $03FE
-b1181   DEC a1158
-        BNE b11C7
-        LDA #$05
-        STA a1158
-        LDA a1157
-        CLC 
-        ADC #$C1
-        STA SCREEN_RAM + $03F8
-        STA SCREEN_RAM + $03F9
-        STA SCREEN_RAM + $03FA
-        LDA a1159
-        CLC 
-        ADC #$C1
-        STA SCREEN_RAM + $03FB
-        STA SCREEN_RAM + $03FC
-        STA SCREEN_RAM + $03FD
-        INC a1157
-        LDA a1157
-        CMP #$04
-        BNE b11B8
-        LDA #$00
-        STA a1157
-b11B8   DEC a1159
-        LDA a1159
-        CMP #$FF
-        BNE b11C7
-        LDA #$03
-        STA a1159
-b11C7   RTS 
-
-a11C8   .BYTE $00
-a11C9   .BYTE $00
-a11CA   .BYTE $03
-a11CB   .BYTE $03
-a11CC   .BYTE $01
-a11CD   .BYTE $01
-a11CE   .BYTE $00
-;-------------------------------
-; s11CF
-;-------------------------------
-s11CF   
-        LDA a11CD
-        BNE b11DA
-        LDA #$40
-        STA a11CE
-b11D9   RTS 
-
-b11DA   DEC a11CB
-        BNE b11D9
-        LDA a11CA
-        STA a11CB
-        LDX a11C8
-        LDA f0F2A,X
-        CLC 
-        ROR 
-        CLC 
-        ADC #$40
-        STA a11CE
-        TXA 
-        CLC 
-        ADC a11CC
-        CMP #$40
-        BMI b11FF
-        SEC 
-        SBC #$40
-b11FF   STA a11C8
-        RTS 
-
-;-------------------------------
-; s1203
-;-------------------------------
-s1203   
-        LDX #$07
-b1205   LDA f1263,X
-        AND #$3F
-        STA SCREEN_RAM + $0048,X
-        LDA f126B,X
-        AND #$3F
-        STA SCREEN_RAM + $0070,X
-        LDA f1273,X
-        AND #$3F
-        STA SCREEN_RAM + $00C0,X
-        LDA f127B,X
-        AND #$3F
-        STA SCREEN_RAM + $0110,X
-        LDA f1283,X
-        AND #$3F
-        STA SCREEN_RAM + $0138,X
-        LDA f128B,X
-        AND #$3F
-        STA SCREEN_RAM + $0188,X
-        LDA f1293,X
-        AND #$3F
-        STA SCREEN_RAM + $01B0,X
-        LDA f129B,X
-        AND #$3F
-        STA SCREEN_RAM + $0200,X
-        LDA f12A3,X
-        AND #$3F
-        STA SCREEN_RAM + $0228,X
-        LDA f12AB,X
-        AND #$3F
-        STA SCREEN_RAM + $02C8,X
-        LDA f12B3,X
-        AND #$3F
-        STA SCREEN_RAM + $02F0,X
-        DEX 
-        BNE b1205
-        JMP j1439
-
-f1263   .TEXT " SPEED:F"
-f126B   .TEXT "  <A S> "
-f1273   .TEXT " WAVE 1 "
-f127B   .TEXT " FREQ: F"
-f1283   .TEXT "  <Z X> "
-f128B   .TEXT " WAVE 2 "
-f1293   .TEXT " ON   F1"
-f129B   .TEXT " FREQ: F"
-f12A3   .TEXT "  <C V> "
-f12AB   .TEXT " PHASE:F"
-f12B3   .TEXT "   Q>>  "
-f12BB   .TEXT "0123456789ABCDEF"
-;-------------------------------
-; j12CB
-;-------------------------------
-j12CB   
-        LDA a1341
-        BNE b12D6
-        INC a1341
-        JSR s1203
-b12D6   LDA #$20
-        STA SCREEN_RAM + $0116
-        STA SCREEN_RAM + $0206
-        LDA a0FC9
-        AND #$10
-        BEQ b12EA
-        LDA #$31
-        STA SCREEN_RAM + $0116
-b12EA   LDA a0FC9
-        AND #$0F
-        TAX 
-        LDA f12BB,X
-        AND #$3F
-        STA SCREEN_RAM + $0117
-        LDA a1125
-        AND #$10
-        BEQ b1304
-        LDA #$31
-        STA SCREEN_RAM + $0206
-b1304   LDA a1125
-        AND #$0F
-        TAX 
-        LDA f12BB,X
-        AND #$3F
-        STA SCREEN_RAM + $0207
-        LDX a0FC7
-        LDA f12BB,X
-        AND #$3F
-        STA SCREEN_RAM + $004F
-        LDX a0F6E
-        LDA f12BB,X
-        AND #$3F
-        STA SCREEN_RAM + $02CF
-        LDA a11CD
-        BNE b1336
-        LDA #$06
-        STA SCREEN_RAM + $01B2
-        STA SCREEN_RAM + $01B3
-        RTS 
-
-b1336   LDA #<p200E
-        STA SCREEN_RAM + $01B2
-        LDA #>p200E
-        STA SCREEN_RAM + $01B3
-        RTS 
-
-a1341   .BYTE $01
-f1342   .BYTE $06,$02,$04,$05,$03,$07,$01,$07
-        .BYTE $03,$05,$04,$02,$06,$FF,$06,$05
-        .BYTE $0E,$0D,$03,$FF,$09,$08,$07,$08
-        .BYTE $09,$FF,$00,$00,$00,$02,$00,$00
-        .BYTE $07,$FF,$01,$0F,$0D,$0C,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$FF
-        .BYTE $06,$0E,$0B,$02,$05,$FF
-f1378   .BYTE $1C,$23,$42,$50,$56,$5C,$64,$72
-f1380   .BYTE $0F,$0F,$13,$13,$13,$13,$13,$13
-a1388   .BYTE $00
-a1389   .BYTE $01
-        .TEXT "    % % %  DNA  % % %   "
-f13A2   .TEXT " CONCEIVED AND EXECUTED B"
-f13BB   .TEXT "Y            Y A K       "
-f13D4   .TEXT " SPACE: CANCEL SCREEN TEX"
-f13ED   .TEXT "TF5 AND F7 CHANGE COLOURS"
-f1406   .TEXT " LISTEN TO TALKING HEADS."
-f141F   .TEXT ".BE NICE TO HAIRY ANIMALS "
-;-------------------------------
-; j1439
-;-------------------------------
-j1439   
-        LDX #$19
-b143B   LDA a1389,X
-        AND #$3F
-        STA SCREEN_RAM + $002B,X
-        LDA f13A2,X
-        AND #$3F
-        STA SCREEN_RAM + $00A3,X
-        LDA f13BB,X
-        AND #$3F
-        STA SCREEN_RAM + $011B,X
-        LDA f13D4,X
-        AND #$3F
-        STA SCREEN_RAM + $020B,X
-        LDA f13ED,X
-        AND #$3F
-        STA SCREEN_RAM + $025B,X
-        LDA f1406,X
-        AND #$3F
-        STA SCREEN_RAM + $034B,X
-        LDA f141F,X
-        AND #$3F
-        STA SCREEN_RAM + $039B,X
-        DEX 
-        BNE b143B
-        RTS 
+.include "dna.asm"
 
 f1477   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
         .BYTE $0D,$0E,$0E,$0F,$10,$11,$12,$13
@@ -4449,7 +3739,7 @@ j5841
         RTS 
 
 b5847   LDA #$F0
-        STA SCREEN_RAM + $03F8
+        STA Sprite0Ptr
         INC f583C
         INC a583D
         INC a583D
@@ -4706,10 +3996,10 @@ b5A98   LDA #$20
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $0248,X
         LDA #$01
-        STA $D800,X
-        STA $D900,X
-        STA $DA00,X
-        STA $DA48,X
+        STA COLOR_RAM + $0000,X
+        STA COLOR_RAM + $0100,X
+        STA COLOR_RAM + $0200,X
+        STA COLOR_RAM + $0248,X
         DEX 
         BNE b5A98
         RTS 
@@ -5068,7 +4358,7 @@ b604F   LDA f60C6,X
         AND #$3F
         STA SCREEN_RAM + $02F7,X
         LDA #$01
-        STA $DAF7,X
+        STA COLOR_RAM + $02F7,X
         DEX 
         BNE b604F
         LDX #$28
@@ -5149,7 +4439,7 @@ b6148   LDA f616D,X
         AND #$3F
         STA SCREEN_RAM + $02F8,X
         LDA #$07
-        STA $DAF8,X
+        STA COLOR_RAM + $02F8,X
         DEX 
         BPL b6148
         LDX #$06
@@ -5226,7 +4516,7 @@ b61FE   LDA f62E4,X
         AND #$3F
         STA SCREEN_RAM + $0257,X
         LDA #$01
-        STA $DA57,X
+        STA COLOR_RAM + $0257,X
         DEX 
         BNE b61FE
         CLI 
@@ -5245,7 +4535,7 @@ b6223   LDA f630C,X
         AND #$3F
         STA SCREEN_RAM + $02A7,X
         LDA #$07
-        STA $DAA7,X
+        STA COLOR_RAM + $02A7,X
         DEX 
         BNE b6223
 b6233   LDA $DC00    ;CIA1: Data Port Register A
@@ -5370,9 +4660,9 @@ SwapRoutines
         SEI 
         LDA #$34
         STA a01
-        LDA #<LaunchDNA
+        LDA #<LaunchCurrentProgram
         STA aFC
-        LDA #>LaunchDNA
+        LDA #>LaunchCurrentProgram
         STA aFD
         LDA #>$E800
         STA aFF
@@ -5403,7 +4693,7 @@ b63A6   LDA (pFC),Y
 ;-------------------------------
 EnterMainTitleScreen   
         JSR SwapRoutines
-        JSR LaunchDNA
+        JSR LaunchCurrentProgram
         SEI 
         LDA #<p62C5
         STA $0314    ;IRQ
@@ -5440,10 +4730,10 @@ b63FA   LDA f6425,X
         AND #$3F
         STA SCREEN_RAM + $015D,X
         LDA #$01
-        STA $D8BD,X
-        STA $D90D,X
+        STA COLOR_RAM + $00BD,X
+        STA COLOR_RAM + $010D,X
         LDA #$04
-        STA $D95D,X
+        STA COLOR_RAM + $015D,X
         DEX 
         BPL b63FA
         JMP j6446
@@ -5548,7 +4838,7 @@ b64F7   LDA f64C1,X
         AND #$3F
         STA SCREEN_RAM + $02B7,Y
         LDA #$02
-        STA $DAB7,Y
+        STA COLOR_RAM + $02B7,Y
         INY 
         INX 
         CPY #$0A
@@ -5606,7 +4896,7 @@ j6554
         STA $D01C    ;Sprites Multi-Color Mode Select
         LDX #$07
 b6595   LDA #$C1
-        STA SCREEN_RAM + $03F8,X
+        STA Sprite0Ptr,X
         LDA f65EC,X
         STA $D027,X  ;Sprite 0 Color
         DEX 
@@ -5616,7 +4906,7 @@ b65A5   LDA f6789,X
         AND #$3F
         STA SCREEN_RAM + $019F,X
         LDA #$07
-        STA $D99F,X
+        STA COLOR_RAM + $019F,X
         DEX 
         BPL b65A5
         LDX #$03
@@ -5957,7 +5247,7 @@ s6867
         STA $D015    ;Sprite display Enable
         STA $D01C    ;Sprites Multi-Color Mode Select
         LDA #$C0
-        STA SCREEN_RAM + $03FF
+        STA Sprite7Ptr
         LDA #$00
         STA $D017    ;Sprites Expand 2x Vertical (Y)
         STA $D01D    ;Sprites Expand 2x Horizontal (X)
@@ -5996,7 +5286,7 @@ s6867
 b68D2   LDA #$00
         STA SCREEN_RAM + $01B7,X
         LDA #$04
-        STA $D9B7,X
+        STA COLOR_RAM + $01B7,X
         DEX 
         BNE b68D2
 b68DF   RTS 
@@ -6027,7 +5317,7 @@ p6904   JMP j692A
 s6907   
         LDA #$D3
         STA a6C25
-        STA SCREEN_RAM + $03F8
+        STA Sprite0Ptr
         LDA #$02
         STA a7178
         LDA #$40
@@ -6213,7 +5503,7 @@ j6A79
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
         LDA a6AC5
-        STA SCREEN_RAM + $03F8
+        STA Sprite0Ptr
         JSR ClearScreen3
         JSR s6867
         LDA a78B1
@@ -6254,7 +5544,7 @@ b6ACA   LDA f67C7,Y
         LDA f67B5,X
         STA $D027,Y  ;Sprite 0 Color
         LDA f67D5,Y
-        STA SCREEN_RAM + $03F8,Y
+        STA Sprite0Ptr,Y
         LDX a42
         DEX 
         DEX 
@@ -6284,7 +5574,7 @@ b6B06   LDA f67CF,Y
         LDA f67B5,X
         STA $D027,Y  ;Sprite 0 Color
         LDA f67DB,Y
-        STA SCREEN_RAM + $03F8,Y
+        STA Sprite0Ptr,Y
         LDX a42
         DEX 
         DEX 
@@ -6396,7 +5686,7 @@ s6BF8
         LDA a40D2
         BNE b6C24
         LDA a6C25
-        STA SCREEN_RAM + $03F8
+        STA Sprite0Ptr
         STA a6AC5
         LDA a760C
         STA $D001    ;Sprite 0 Y Pos
@@ -6508,7 +5798,7 @@ b6CD6   JSR s6B02
         LDA a6C25
         CLC 
         ADC #$13
-        STA SCREEN_RAM + $03F8
+        STA Sprite0Ptr
 b6D07   LDX a680C
         LDA f67B5,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
@@ -7264,10 +6554,10 @@ s7316
 ;-------------------------------
 s731D   
         LDX #$28
-b731F   STA $D917,X
-        STA $D93F,X
-        STA $D967,X
-        STA $D98F,X
+b731F   STA COLOR_RAM + $0117,X
+        STA COLOR_RAM + $013F,X
+        STA COLOR_RAM + $0167,X
+        STA COLOR_RAM + $018F,X
         DEX 
         BNE b731F
         RTS 
@@ -7277,10 +6567,10 @@ b731F   STA $D917,X
 ;-------------------------------
 s732F   
         LDX #$28
-b7331   STA $D9DF,X
-        STA $DA07,X
-        STA $DA2F,X
-        STA $DA57,X
+b7331   STA COLOR_RAM + $01DF,X
+        STA COLOR_RAM + $0207,X
+        STA COLOR_RAM + $022F,X
+        STA COLOR_RAM + $0257,X
         DEX 
         BNE b7331
         RTS 
@@ -8752,7 +8042,7 @@ bAB66   LDA fAB7E,X
         AND #$3F
         STA SCREEN_RAM + $0167,X
         LDA #$01
-        STA $D967,X
+        STA COLOR_RAM + $0167,X
         DEX 
         BNE bAB66
         CLI 
@@ -8939,7 +8229,7 @@ bAD33   DEY
         LDY aAD77
         LDA fAD78,Y
         LDX #$28
-bAD41   STA $D967,X
+bAD41   STA COLOR_RAM + $0167,X
         DEX 
         BNE bAD41
         DEC aAD77
@@ -9097,7 +8387,7 @@ SetUpScreen
         STA $D001    ;Sprite 0 Y Pos
         LDX #$07
 bAE71   LDA #$F0
-        STA SCREEN_RAM + $03F8,X
+        STA Sprite0Ptr,X
         DEX 
         BNE bAE71
 
@@ -9106,9 +8396,9 @@ bAE71   LDA #$F0
         STA $D40C    ;Voice 2: Attack / Decay Cycle Control
         STA $D413    ;Voice 3: Attack / Decay Cycle Control
         LDA #$EE
-        STA SCREEN_RAM + $03F9
-        STA SCREEN_RAM + $03FA
-        STA SCREEN_RAM + $03FB
+        STA Sprite1Ptr
+        STA Sprite2Ptr
+        STA Sprite3Ptr
         LDA $D016    ;VIC Control Register 2
         AND #$EF
         ORA #$10
@@ -9252,9 +8542,9 @@ bAF99   LDA $D010    ;Sprites 0-7 MSB of X coordinate
 ;-------------------------------
 sAFA2   
         LDX #$00
-bAFA4   STA $D800,X
-        STA $D900,X
-        STA $DA00,X
+bAFA4   STA COLOR_RAM + $0000,X
+        STA COLOR_RAM + $0100,X
+        STA COLOR_RAM + $0200,X
         STA $DB00,X
         DEX 
         BNE bAFA4
@@ -10263,12 +9553,12 @@ sBBC8
 bBBCA   LDA fBB1D,X
         BNE bBBD7
         LDA #$F0
-        STA SCREEN_RAM + $03F8,X
+        STA Sprite0Ptr,X
         JMP jBBDF
 
 bBBD7   JSR sBBE3
         LDA #$FC
-        STA SCREEN_RAM + $03F8,X
+        STA Sprite0Ptr,X
 ;-------------------------------
 ; jBBDF
 ;-------------------------------
@@ -10396,7 +9686,7 @@ bBCD0   TXA
         LDA fBCF1,X
         STA $D000,Y  ;Sprite 0 X Pos
         LDA fBCB6,X
-        STA SCREEN_RAM + $03F8,X
+        STA Sprite0Ptr,X
         LDA fBCBE,X
         STA $D027,X  ;Sprite 0 Color
         INX 
@@ -10414,7 +9704,7 @@ sBCF9
         LDA aAED1
         STA $D000    ;Sprite 0 X Pos
         LDA aB682
-        STA SCREEN_RAM + $03F8
+        STA Sprite0Ptr
         LDA #$08
         STA $D027    ;Sprite 0 Color
         LDA aAED2
@@ -10723,8 +10013,8 @@ jC041
         LDA #$FF
         STA $D01B    ;Sprite to Background Display Priority
         LDA #$F0
-        STA SCREEN_RAM + $03FE
-        STA SCREEN_RAM + $03FF
+        STA Sprite6Ptr
+        STA Sprite7Ptr
         JSR ClearScreen
         LDY #$27
 bC07C   LDX #$06
@@ -10749,7 +10039,7 @@ bC07E   LDA fBFAA,X
         AND #$3F
         STA SCREEN_RAM + $02D0,Y
         LDA #$01
-        STA $DAD0,Y
+        STA COLOR_RAM + $02D0,Y
         DEY 
         BPL bC07C
         LDX #$06
@@ -10795,7 +10085,7 @@ bC117   TXA
         LDA #$00
         STA $D027,X  ;Sprite 0 Color
         LDA aC0EC
-        STA SCREEN_RAM + $03F8,X
+        STA Sprite0Ptr,X
         DEX 
         BPL bC117
         RTS 
@@ -10896,7 +10186,7 @@ bC1F9   LDA fC243,X
         AND #$3F
         STA SCREEN_RAM + $023E,X
         LDA #$07
-        STA $DA3E,X
+        STA COLOR_RAM + $023E,X
         DEX 
         BPL bC1F9
 bC209   JSR sAEB5
@@ -10946,7 +10236,7 @@ bC251   LDA fC763,X
         AND #$3F
         STA SCREEN_RAM + $023E,X
         LDA #$04
-        STA $DA3E,X
+        STA COLOR_RAM + $023E,X
         DEX 
         BPL bC251
         LDA aC24E
@@ -11240,7 +10530,7 @@ bC514   TXA
         LDA #$06
         STA $D02B,X  ;Sprite 4 Color
 bC526   LDA aC578
-        STA SCREEN_RAM + $03FC,X
+        STA Sprite4Ptr,X
         TXA 
         PHA 
         LDA aC425
@@ -11765,10 +11055,10 @@ bCA9F   LDA #$20
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $0247,X
         LDA #$01
-        STA $D800,X
-        STA $D900,X
-        STA $DA00,X
-        STA $DA47,X
+        STA COLOR_RAM + $0000,X
+        STA COLOR_RAM + $0100,X
+        STA COLOR_RAM + $0200,X
+        STA COLOR_RAM + $0247,X
         DEX 
         BNE bCA9F
         LDX #$27
@@ -12086,7 +11376,7 @@ bCD19   LDA (pFC),Y
 bCD28   LDA (pFC),Y
         STA SCREEN_RAM + $00E7,Y
         LDA #$04
-        STA $D8E7,Y
+        STA COLOR_RAM + $00E7,Y
         DEY 
         BPL bCD28
 bCD35   LDA lastKeyPressed
@@ -12124,11 +11414,11 @@ aCD4B   ORA (pAD,X)
 bCD6E   LDX #$00
         LDY aCDD0
 bCD73   LDA fCDD2,Y
-        STA $D8A0,X
-        STA $D8F0,X
-        STA $D940,X
-        STA $D990,X
-        STA $D9E0,X
+        STA COLOR_RAM + $00A0,X
+        STA COLOR_RAM + $00F0,X
+        STA COLOR_RAM + $0140,X
+        STA COLOR_RAM + $0190,X
+        STA COLOR_RAM + $01E0,X
         INX 
         INY 
         CPY #$28
@@ -12139,11 +11429,11 @@ bCD8D   CPX #$28
         LDY aCDD1
         LDX #$00
 bCD96   LDA fCDE2,Y
-        STA $D8C8,X
-        STA $D918,X
-        STA $D968,X
-        STA $D9B8,X
-        STA $DA08,X
+        STA COLOR_RAM + $00C8,X
+        STA COLOR_RAM + $0118,X
+        STA COLOR_RAM + $0168,X
+        STA COLOR_RAM + $01B8,X
+        STA COLOR_RAM + $0208,X
         INX 
         INY 
         CPY #$28
