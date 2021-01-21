@@ -7,7 +7,7 @@ This is the disassembled and [commented source code] for the 1986 Commodore 64 g
 You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.)
 
 ## Current Status
-The game compiles and plays. Character set and sprite data has been separated out and commented. Because there is some much character and sprite data and Iridis Alpha contains two sub games, it was necessary to use a compressor ([Exomizser]) to produce the final binary. 
+The game compiles and plays. Character set and sprite data has been separated out and commented. Because there is so much character and sprite data, and because Iridis Alpha contains two sub games, it was necessary to use a compressor ([Exomizser]) to produce the final binary. 
 
 Labelling the game logic is still in progress.
 
@@ -44,5 +44,5 @@ The compiled game is written to the `bin` folder.
 To just compile the game and get a binary (`iridisalpha.prg`) do:
 
 ```sh
-$ make iridisalpha
+$ make iridisalpha.prg
 ```
