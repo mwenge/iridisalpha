@@ -590,6 +590,10 @@ b0D26   LDA fC803,X
         BPL b0D26
         RTS 
 
+;-------------------------------
+; The DNA pause mode mini game. Accessed by pressing *
+; from within the Made in France pause mode mini game.
+;-------------------------------
 .include "dna.asm"
 
 f1477   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
@@ -847,9 +851,9 @@ s16A4
 
 a4001   =*+$01
 ;-------------------------------
-; j4000
+; MainControlLoop
 ;-------------------------------
-j4000   
+MainControlLoop   
         LDA #$00
         SEI 
 p4003   LDA #<p6B3E
@@ -1065,9 +1069,6 @@ s4184
         CLI 
         RTS 
 
-;-------------------------------
-; j41A5
-;-------------------------------
 ;-------------------------------
 ; j41A5
 ;-------------------------------
@@ -5457,7 +5458,7 @@ b6A24   LDA a78B4
         BEQ b6A31
         LDA #$00
         STA a78B4
-        JMP j4000
+        JMP MainControlLoop
 
 b6A31   JSR s5325
         LDA a40D2
@@ -9916,7 +9917,7 @@ bBF51   LDA fBFAA,X
         STX aFF
         LDY #$00
 bBF86   LDX #$30
-bBF88   LDA j4000,X
+bBF88   LDA MainControlLoop,X
         STA $D401    ;Voice 1: Frequency Control - High-Byte
         STA $D408    ;Voice 2: Frequency Control - High-Byte
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
@@ -11304,7 +11305,7 @@ jCC89
 bCC8C   LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BEQ bCC8C
-        JMP j4000
+        JMP MainControlLoop
 
 ;-------------------------------
 ; sCC96
