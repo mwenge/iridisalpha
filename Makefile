@@ -12,7 +12,8 @@ iridisalpha.prg: src/iridisalpha.asm src/e800data.asm
 	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/ia.prg -L bin/list-co1.txt -l bin/labels.txt src/iridisalpha.asm
 	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/e800data.prg src/e800data.asm
 	exomizer sfx sys bin/ia.prg bin/e800data.prg,0xe000 -n -o bin/iridisalpha.prg
-	md5sum bin/ia.prg bin/iridisalpha-vsf.prg
+	md5sum bin/ia.prg bin/ia-bench.prg
+	md5sum bin/e800data.prg bin/e800data-bench.prg
 
 iridisalpha-vsf.prg: src/iridisalpha.tas
 	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/iridisalpha-vsf.prg -L bin/list-co1.txt -l bin/labels.txt src/iridisalpha.tas
