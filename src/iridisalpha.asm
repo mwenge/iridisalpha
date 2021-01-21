@@ -8688,7 +8688,7 @@ b7F01   LDA a7EE3
         STA a7176
         RTS 
 
-.include "padding2.asm"
+.include "padding.asm"
 
 *=$AAC0
 fAAC0   .BYTE $F0
