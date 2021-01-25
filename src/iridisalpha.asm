@@ -127,7 +127,7 @@ LaunchCurrentProgram
         STA $D412    ;Voice 3: Control Register
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
-        STA a0864
+        STA f7PressedOrTimedOutToAttractMode
         STA aAAE1
         LDA mifDNAPauseModeActive
         BEQ b082F
@@ -139,7 +139,7 @@ b082F   LDX #$F8
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
         LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
-        JSR IA_InitializeSpritesAndInterrupts
+        JSR InitializeSpritesAndInterruptsForTitleScreen
         JMP IA_TitleScreenLoop
 
         .BYTE $00,$06,$02,$04,$05,$03,$07,$01
@@ -147,16 +147,16 @@ b082F   LDX #$F8
 f0853   .BYTE $00
 f0854   .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
         .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
-a0864   .BYTE $02
+f7PressedOrTimedOutToAttractMode   .BYTE $02
 ;-------------------------------
-; IA_InitializeSpritesAndInterrupts
+; InitializeSpritesAndInterruptsForTitleScreen
 ;-------------------------------
-IA_InitializeSpritesAndInterrupts   
+InitializeSpritesAndInterruptsForTitleScreen   
         LDA #$00
         SEI 
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
-        STA a4001
+        STA difficultySelected
         JSR IA_ClearScreen
         LDA #$18
         STA $D018    ;VIC Memory Control Register
@@ -172,9 +172,9 @@ IA_InitializeSpritesAndInterrupts
         STA Sprite7Ptr
         LDA #$80
         STA $D01B    ;Sprite to Background Display Priority
-        LDA #<p08EE
+        LDA #<TitleScreenInterruptHandler
         STA $0314    ;IRQ
-        LDA #>p08EE
+        LDA #>TitleScreenInterruptHandler
         STA $0315    ;IRQ
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
@@ -198,32 +198,45 @@ IA_TitleScreenLoop
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         JSR IA_UpdateScreenColors
         JSR IA_DrawTitleScreen
+
+        ; Loop waiting for input
 b08CB   JSR IA_TitleCheckInput
-        LDA a0864
+        LDA f7PressedOrTimedOutToAttractMode
         CMP #$04
-        BEQ b08E2
+        BEQ ExitTitleLoop
+
+        ; Has user pressed fire?
         LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BNE b08CB
 
+        ; User has pressed fire, launch game.
         LDA #$00
-        STA aAAE0
+        STA attractModeSelected
         RTS 
 
-b08E2   LDA #$FF
-        STA aAAE0
+ExitTitleLoop
+        LDA #$FF
+        STA attractModeSelected
+
+        ;Wait for key to be released
 b08E7   LDA lastKeyPressed
         CMP #$40
         BNE b08E7
         RTS 
 
-p08EE   LDA $D019    ;VIC Interrupt Request Register (IRR)
+;-------------------------------
+; TitleScreenInterruptHandler
+;-------------------------------
+TitleScreenInterruptHandler
+        LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
-        BNE b090F
+        BNE TitleScreenAnimation
+
 ;-------------------------------
-; j08F5
+; ReturnFromTitleScreenInterruptHandler
 ;-------------------------------
-j08F5   
+ReturnFromTitleScreenInterruptHandler   
         PLA 
         TAY 
         PLA 
@@ -245,7 +258,11 @@ b08FF   STA SCREEN_RAM,X
         BNE b08FF
         RTS 
 
-b090F   LDY a09EC
+;-------------------------------
+; TitleScreenAnimation
+;-------------------------------
+TitleScreenAnimation
+        LDY a09EC
         CPY #$0C
         BNE b091E
         JSR s0B5A
@@ -262,9 +279,9 @@ b091E   LDA f0990,Y
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JSR s0AC6
-        JSR s0B2D
+        JSR UpdateGilbyColorsInTitleScreenAnimation
         JSR s0BC1
-        JSR s14FE
+        JSR PlayTitleScreenMusic
         JMP $EA31
 
 b0947   STA $D00F    ;Sprite 7 Y Pos
@@ -287,6 +304,7 @@ b095D   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         LDA f09ED,Y
         TAX 
         LDA f0853,X
+
         STA $D02E    ;Sprite 7 Color
         LDA $D016    ;VIC Control Register 2
         AND #$F8
@@ -295,8 +313,10 @@ b095D   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         INC a09EC
-        JMP j08F5
 
+        JMP ReturnFromTitleScreenInterruptHandler
+
+; Data for the title screen animation sequence
 f0990   .BYTE $48
 f0991   .BYTE $4E,$54,$5A
         .BYTE $60,$66,$6C,$72,$78,$7E,$84,$8A
@@ -436,9 +456,9 @@ f0B1F   .BYTE $10,$00,$00,$00,$00,$00
 f0B25   .BYTE $20,$F1,$F2,$F1,$F3,$F1,$F4
 a0B2C   .BYTE $01
 ;-------------------------------
-; s0B2D
+; UpdateGilbyColorsInTitleScreenAnimation
 ;-------------------------------
-s0B2D   
+UpdateGilbyColorsInTitleScreenAnimation   
         LDA a0B2C
         BNE b0B34
 b0B32   RTS 
@@ -596,7 +616,8 @@ b0D26   LDA fC803,X
 ;-------------------------------
 .include "dna.asm"
 
-f1477   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
+; Data seeding generated music in title screen
+titleMusicHiBytes   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
         .BYTE $0D,$0E,$0E,$0F,$10,$11,$12,$13
         .BYTE $15,$16,$17,$19,$1A,$1C,$1D,$1F
         .BYTE $21,$23,$25,$27,$2A,$2C,$2F,$32
@@ -604,7 +625,7 @@ f1477   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
         .BYTE $54,$59,$5E,$64,$6A,$70,$77,$7E
         .BYTE $86,$8E,$96,$9F,$A8,$B3,$BD,$C8
         .BYTE $D4,$E1,$EE,$FD
-f14B3   .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F
+titleMusicLowBytes   .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F
         .BYTE $4E,$18,$EF,$D2,$C3,$C3,$D1,$EF
         .BYTE $1F,$60,$B5,$1E,$9C,$31,$DF,$A5
         .BYTE $87,$86,$A2,$DF,$3E,$C1,$6B,$3C
@@ -625,9 +646,9 @@ a14FC   =*+$01
 a14FD   =*+$02
 a14FB   ASL a0E07
 ;-------------------------------
-; s14FE
+; PlayTitleScreenMusic
 ;-------------------------------
-s14FE   
+PlayTitleScreenMusic   
         DEC a164E
         BEQ b1504
         RTS 
@@ -638,7 +659,7 @@ b1504   LDA a164F
         BNE b152C
         LDA #$C0
         STA a14F6
-        INC a0864
+        INC f7PressedOrTimedOutToAttractMode
         LDX a14FA
         LDA f14EF,X
         STA a14FC
@@ -647,7 +668,7 @@ b1504   LDA a164F
         AND #$03
         STA a14FA
         BNE b152C
-        JSR s1620
+        JSR UpdateMusicCounters
 b152C   DEC a14F5
         BNE b154E
         LDA #$30
@@ -658,7 +679,7 @@ b152C   DEC a14F5
         ADC a14FC
         TAY 
         STY a14FB
-        JSR s1590
+        JSR PlayNoteVoice1
         INX 
         TXA 
         AND #$03
@@ -673,7 +694,7 @@ b154E   DEC a14F4
         ADC a14FB
         STA a14FD
         TAY 
-        JSR s15A2
+        JSR PlayNoteVoice2
         INX 
         TXA 
         AND #$03
@@ -687,7 +708,7 @@ b1570   DEC a14F3
         CLC 
         ADC a14FD
         TAY 
-        JSR s15B4
+        JSR PlayNoteVoice3
         INX 
         TXA 
         AND #$03
@@ -695,38 +716,38 @@ b1570   DEC a14F3
 b158F   RTS 
 
 ;-------------------------------
-; s1590
+; PlayNoteVoice1
 ;-------------------------------
-s1590   
+PlayNoteVoice1   
         LDA #$21
         STA $D404    ;Voice 1: Control Register
-        LDA f14B3,Y
+        LDA titleMusicLowBytes,Y
         STA $D400    ;Voice 1: Frequency Control - Low-Byte
-        LDA f1477,Y
+        LDA titleMusicHiBytes,Y
         STA $D401    ;Voice 1: Frequency Control - High-Byte
         RTS 
 
 ;-------------------------------
-; s15A2
+; PlayNoteVoice2
 ;-------------------------------
-s15A2   
+PlayNoteVoice2   
         LDA #$21
         STA $D40B    ;Voice 2: Control Register
-        LDA f14B3,Y
+        LDA titleMusicLowBytes,Y
         STA $D407    ;Voice 2: Frequency Control - Low-Byte
-        LDA f1477,Y
+        LDA titleMusicHiBytes,Y
         STA $D408    ;Voice 2: Frequency Control - High-Byte
         RTS 
 
 ;-------------------------------
-; s15B4
+; PlayNoteVoice3
 ;-------------------------------
-s15B4   
+PlayNoteVoice3   
         LDA #$21
         STA $D412    ;Voice 3: Control Register
-        LDA f14B3,Y
+        LDA titleMusicLowBytes,Y
         STA $D40E    ;Voice 3: Frequency Control - Low-Byte
-        LDA f1477,Y
+        LDA titleMusicHiBytes,Y
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
         RTS 
 
@@ -754,9 +775,9 @@ f15E0   .BYTE $00,$03,$06,$08,$00,$0C,$04,$08
         .BYTE $04,$07,$00,$0C,$07,$08,$0A,$08
         .BYTE $0C,$00,$0C,$03,$0C,$03,$07,$00
 ;-------------------------------
-; s1620
+; UpdateMusicCounters
 ;-------------------------------
-s1620   
+UpdateMusicCounters   
         JSR s16A4
         AND #$0F
         BEQ b1630
@@ -795,45 +816,50 @@ IA_TitleCheckInput
         RTS 
 
 b1658   LDY #$00
-        STY a0864
-        CMP #$3C
+        STY f7PressedOrTimedOutToAttractMode
+        CMP #$3C ; Space pressed?
         BNE b168F
-        LDA a4001
+
+        ; Space pressed.
+        LDA difficultySelected
         EOR #$01
-        STA a4001
-        BNE b167B
+        STA difficultySelected
+        BNE b167B ; Difficulty hard?
+
+        ;Update difficulty easy.
         LDX #$03
-b166D   LDA f169C,X
+b166D   LDA txtEasy,X
         AND #$3F
         STA SCREEN_RAM + $0344,X
         DEX 
         BPL b166D
         JMP j1688
 
+        ;Update difficulty hard.
 b167B   LDX #$03
-b167D   LDA f16A0,X
+b167D   LDA txtHard,X
         AND #$3F
         STA SCREEN_RAM + $0344,X
         DEX 
         BPL b167D
-;-------------------------------
-; j1688
-;-------------------------------
+
 j1688   
+        ; Wait to release key.
         LDA lastKeyPressed
         CMP #$40
         BNE j1688
 b168E   RTS 
-
+       
+        ;F7 pressed?
 b168F   CMP #$03
         BNE b168E
         LDA #$04
-        STA a0864
+        STA f7PressedOrTimedOutToAttractMode
         STA aAAE1
         RTS 
 
-f169C   .TEXT "EASY"
-f16A0   .TEXT "UGH!"
+txtEasy   .TEXT "EASY"
+txtHard   .TEXT "UGH!"
 a16A5   =*+$01
 ;-------------------------------
 ; s16A4
@@ -849,7 +875,7 @@ s16A4
 .include "charset.asm"
 .include "sprites.asm"
 
-a4001   =*+$01
+difficultySelected   =*+$01
 ;-------------------------------
 ; MainControlLoop
 ;-------------------------------
@@ -865,20 +891,20 @@ p4003   LDA #<p6B3E
         LDX #$F8
         TXS 
         LDA #$01
-        STA a797D
+        STA inGameMode
         LDA #$02
-        STA a59BA
+        STA gilbiesLeft
         LDA #$7F
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
         LDA #$00
         STA mifDNAPauseModeActive
         STA a6D51
         JSR EnterMainTitleScreen
-        JSR s7EA8
+        JSR DetectGameOrAttractMode
         LDA #$36
         STA a01
-        LDA a4001
-        STA a6B51
+        LDA difficultySelected
+        STA difficultySetting
         LDA #$01
         STA a4E19
         STA a4E1A
@@ -906,7 +932,7 @@ p4003   LDA #<p6B3E
         LDA #>p0F8C
         STA $D418    ;Select Filter Mode and Volume
         JSR ZeroiseScreen
-        JMP j4094
+        JMP PrepareToLaunchIA
 
 ;-------------------------------
 ; ZeroiseScreen
@@ -923,9 +949,9 @@ b4084   STA f2200,X
         RTS 
 
 ;-------------------------------
-; j4094
+; PrepareToLaunchIA
 ;-------------------------------
-j4094   
+PrepareToLaunchIA   
         LDX #$05
 b4096   LDA #$08
         STA f5EF0,X
@@ -936,8 +962,8 @@ b40A0   LDA #$30
         STA fAAC1,X
         DEX 
         BPL b40A0
-        JSR s73BC
-        JSR s680E
+        JSR CopyInSpriteData
+        JSR PrepareSpriteData
         LDA #$00
         STA a78B1
         LDA #$00
@@ -946,10 +972,14 @@ b40A0   LDA #$30
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDA #$09
         STA $D023    ;Background Color 2, Multi-Color Register 1
-        JSR s683E
-        JMP j68E0
+        JSR PrepareScreen
+        JMP InitializeSprites
 
 
+f40C8   .BYTE $00,$06,$02,$04,$05,$03,$07,$01
+pauseModeSelected   .BYTE $00
+reasonGilbyDied   .BYTE $03
+a40D2   .BYTE $00
 ;-------------------------------
 ; 'Made In France' - a pause mode mini game.
 ; Accessed by pressing F1 during play.
@@ -1080,7 +1110,7 @@ s49D4
 b49E1   JSR s4BBF
         JSR s4F5B
         JSR s502A
-        JSR s53B9
+        JSR UpdateEnergyStorage
         JSR s552A
         DEC a49F6
         BEQ b49F7
@@ -1237,7 +1267,7 @@ b4B1C   LDY a48D5
         TAX 
         LDA f6B45,X
         STA f67E2,Y
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$7F
         CLC 
         ADC #$20
@@ -1245,7 +1275,7 @@ b4B1C   LDY a48D5
         TYA 
         AND #$08
         BNE b4B5A
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$3F
         CLC 
         ADC #$40
@@ -1262,7 +1292,7 @@ b4B1C   LDY a48D5
         STA f67FC,Y
 b4B59   RTS 
 
-b4B5A   JSR s7316
+b4B5A   JSR GetSomeSequenceData
         AND #$3F
         CLC 
         ADC #$98
@@ -1294,7 +1324,7 @@ f4BB1   .BYTE $00,$00,$02,$03,$04,$05,$00,$00
 ;-------------------------------
 s4BBF   
         LDY #$00
-        LDA a40D0
+        LDA pauseModeSelected
         BEQ b4BC7
         RTS 
 
@@ -1340,7 +1370,7 @@ b4C0B   LDA #$00
         STA a79AE
         LDA #>p48E9
         STA a79AF
-        JSR s7C91
+        JSR Reseta79A4
         LDA #$1C
         STA a48D7
         TXA 
@@ -1349,14 +1379,14 @@ b4C0B   LDA #$00
         BNE b4C5C
         LDA a78C7
         BNE b4C42
-        LDA a7EE1
+        LDA inAttractMode
         BNE b4C42
-        INC a78B0
-        LDA a78B0
+        INC currentTopWorldProgress
+        LDA currentTopWorldProgress
         CMP a4E19
         BNE b4C42
         LDA #$00
-        STA a78B0
+        STA currentTopWorldProgress
 b4C42   LDY #$22
         LDA (p40),Y
         JSR s5735
@@ -1370,14 +1400,14 @@ b4C42   LDY #$22
 
 b4C5C   LDA a78C7
         BNE b4C76
-        LDA a7EE1
+        LDA inAttractMode
         BNE b4C76
-        INC a78B2
-        LDA a78B2
+        INC currentBottomWorldProgress
+        LDA currentBottomWorldProgress
         CMP a4E1A
         BNE b4C76
         LDA #$00
-        STA a78B2
+        STA currentBottomWorldProgress
 b4C76   LDY #$22
         LDA (p40),Y
         JSR s5735
@@ -1391,23 +1421,23 @@ b4C76   LDY #$22
 ; j4C8D
 ;-------------------------------
 j4C8D   
-        JSR s5238
+        JSR DrawWorldProgressPointers
         PLA 
         TAX 
         LDY #$22
         LDA (p40),Y
         BEQ b4CB1
-        LDA a7EE1
+        LDA inAttractMode
         BNE b4CB1
         TXA 
         AND #$08
         BNE b4CAB
-        JSR s5562
-        JSR s5678
+        JSR DecreaseEnergyTopOnly
+        JSR RunSomeAttractModeGamePlay
         JMP b4CB1
 
 b4CAB   JSR s56BD
-        JSR s5575
+        JSR DecreaseEnergyBottomOnly
 b4CB1   LDY #$1D
         LDA (p40),Y
         BEQ j4CBB
@@ -1434,7 +1464,7 @@ j4CBB
         DEC a49D2
         JMP b4CE2
 
-b4CDC   JMP j4D84
+b4CDC   JMP SetUpAttractMode
 
 b4CDF   DEC a49D3
 b4CE2   LDY #$24
@@ -1445,7 +1475,7 @@ b4CE2   LDY #$24
 b4CEB   LDA a7176
         AND #$10
         BEQ b4CDC
-        LDA a797D
+        LDA inGameMode
         BNE b4CDC
         LDA a4F57
         BNE b4D0D
@@ -1510,9 +1540,9 @@ b4D7F   LDY #$1E
         JMP j4DDD
 
 ;-------------------------------
-; j4D84
+; SetUpAttractMode
 ;-------------------------------
-j4D84   
+SetUpAttractMode   
         LDA f48AB,X
         BEQ b4D98
         LDA #$00
@@ -1892,7 +1922,7 @@ s502A
         LDY #$00
         LDA a78C7
         BNE b5029
-        LDA a7EE1
+        LDA inAttractMode
         BNE b5029
         LDA a4F57
         BEQ b503C
@@ -1992,25 +2022,25 @@ f51C6   .BYTE $92,$90,$94,$96,$98
 ; s51CB
 ;-------------------------------
 s51CB   
-        LDX a78B0
+        LDX currentTopWorldProgress
         LDA f51C6,X
         STA a73AD
         LDA #$00
         STA a73AC
-        LDX a78B2
+        LDX currentBottomWorldProgress
         LDA f51C6,X
         STA a73AF
         LDA #$00
         STA a73AE
-        JSR s52CE
+        JSR InitializeSomeGameStorage
         LDA a5279
         BNE b51F7
         LDA #$08
         STA a5E76
         STA a5E77
-b51F7   LDA a78B0
+b51F7   LDA currentTopWorldProgress
         STA a78B1
-        LDA a78B2
+        LDA currentBottomWorldProgress
         STA a78B3
         JSR s5715
         LDX #$08
@@ -2024,7 +2054,7 @@ b5208   LDA #$ED
         BNE b5208
         STX a5279
         JSR s7C8B
-        JSR s7C91
+        JSR Reseta79A4
         LDA #<p5D33
         STA a79AE
         LDA #>p5D33
@@ -2033,23 +2063,26 @@ b5208   LDA #$ED
         STA a79AC
         LDA #>p5D7E
         STA a79AD
+        ;Fall through
+
 ;-------------------------------
-; s5238
+; DrawWorldProgressPointers
 ;-------------------------------
-s5238   
+DrawWorldProgressPointers   
         LDX #$0A
         LDA #$20
 b523C   STA SCREEN_RAM + $0365,X
         STA SCREEN_RAM + $03DD,X
         DEX 
         BNE b523C
-        LDX a78B0
+
+        LDX currentTopWorldProgress
         LDY f527F,X
-        LDA #$98
+        LDA #$98 ; Top world progress pointer
         STA SCREEN_RAM + $0365,Y
-        LDX a78B2
+        LDX currentBottomWorldProgress
         LDY f527F,X
-        LDA #$99
+        LDA #$99 ; Bottom world progress pointer
         STA SCREEN_RAM + $03DD,Y
         RTS 
 
@@ -2111,22 +2144,22 @@ s52C2
         BNE b52B2
 a52CD   .BYTE $00
 ;-------------------------------
-; s52CE
+; InitializeSomeGameStorage
 ;-------------------------------
-s52CE   
+InitializeSomeGameStorage   
         LDA #$07
         STA a47
         LDA #$63
         STA a46
-        LDX a78B0
-        JSR s52E3
+        LDX currentTopWorldProgress
+        JSR InitSomeGameStorage
         LDA #$B3
         STA a46
-        LDX a78B2
+        LDX currentBottomWorldProgress
 ;-------------------------------
-; s52E3
+; InitSomeGameStorage
 ;-------------------------------
-s52E3   
+InitSomeGameStorage   
         TXA 
         ASL 
         ASL 
@@ -2167,9 +2200,9 @@ a5322   .BYTE $00
 a5323   .BYTE $00
 a5324   .BYTE $00
 ;-------------------------------
-; s5325
+; UpdateScores
 ;-------------------------------
-s5325   
+UpdateScores   
         LDA a5322
         BNE b532F
         LDA a5321
@@ -2209,13 +2242,13 @@ b536E   DEC a5323
 b537B   RTS 
 
 ;-------------------------------
-; s537C
+; DrawEnergyBars
 ;-------------------------------
-s537C   
+DrawEnergyBars   
         LDX #$03
-        STX a53B4
-        STX a53B5
-b5384   LDA #$80
+        STX currEnergyTop
+        STX currEnergyBottom
+b5384   LDA #$80 ; Char for energy bars
         STA SCREEN_RAM + $0373,X
         STA SCREEN_RAM + $039B,X
         LDA #$20
@@ -2224,10 +2257,11 @@ b5384   LDA #$80
         DEX 
         CPX #$FF
         BNE b5384
+
         STA SCREEN_RAM + $037B
         STA SCREEN_RAM + $03A3
         LDA #$00
-        STA a53B6
+        STA currCoreEnergyLevel
         LDX #$0E
         LDA #$20
 b53A8   STA SCREEN_RAM + $03A4,X
@@ -2237,15 +2271,15 @@ b53A8   STA SCREEN_RAM + $03A4,X
         STA SCREEN_RAM + $03A5
 b53B3   RTS 
 
-a53B4   .BYTE $03
-a53B5   .BYTE $03
-a53B6   .BYTE $00
+currEnergyTop   .BYTE $03
+currEnergyBottom   .BYTE $03
+currCoreEnergyLevel   .BYTE $00
 a53B7   .BYTE $00
 a53B8   .BYTE $00
 ;-------------------------------
-; s53B9
+; UpdateEnergyStorage
 ;-------------------------------
-s53B9   
+UpdateEnergyStorage   
         DEC a543D
         BNE b53B3
         LDA #$04
@@ -2259,7 +2293,7 @@ s53B9
 b53D3   STA $DB4A,Y
         DEY 
         BNE b53D3
-        LDX a53B4
+        LDX currEnergyTop
         INC SCREEN_RAM + $0373,X
         LDA SCREEN_RAM + $0373,X
         CMP #$88
@@ -2267,12 +2301,12 @@ b53D3   STA $DB4A,Y
         LDA #$20
         STA SCREEN_RAM + $0373,X
         DEX 
-        STX a53B4
+        STX currEnergyTop
         CPX #$FF
         BNE b53FB
 b53F3   LDA #$00
-        STA a40D1
-        JMP j57F6
+        STA reasonGilbyDied
+        JMP GilbyDied
 
 b53FB   LDA a53B8
         BEQ b542B
@@ -2283,7 +2317,7 @@ b53FB   LDA a53B8
 b540B   STA $DBC2,Y
         DEY 
         BNE b540B
-        LDX a53B5
+        LDX currEnergyBottom
         INC SCREEN_RAM + $039B,X
         LDA SCREEN_RAM + $039B,X
         CMP #$88
@@ -2291,7 +2325,7 @@ b540B   STA $DBC2,Y
         LDA #$20
         STA SCREEN_RAM + $039B,X
         DEX 
-        STX a53B5
+        STX currEnergyBottom
         CPX #$FF
         BEQ b53F3
 b542B   RTS 
@@ -2301,11 +2335,11 @@ f542C   .BYTE $01,$06,$02,$04,$05,$03,$07,$01
         .BYTE $06
 a543D   .BYTE $01
 ;-------------------------------
-; s543E
+; IncreaseEnergyTop
 ;-------------------------------
-s543E   
+IncreaseEnergyTop   
         STX a5529
-        LDX a53B4
+        LDX currEnergyTop
         INC SCREEN_RAM + $0373,X
         LDA SCREEN_RAM + $0373,X
         CMP #$88
@@ -2313,17 +2347,17 @@ s543E
         LDA #$20
         STA SCREEN_RAM + $0373,X
         DEX 
-        STX a53B4
+        STX currEnergyTop
         CPX #$FF
         BNE b547B
 b545B   JMP b53F3
 
 ;-------------------------------
-; j545E
+; IncreaseEnergyBottom
 ;-------------------------------
-j545E   
+IncreaseEnergyBottom   
         STX a5529
-        LDX a53B5
+        LDX currEnergyBottom
         INC SCREEN_RAM + $039B,X
         LDA SCREEN_RAM + $039B,X
         CMP #$88
@@ -2331,22 +2365,22 @@ j545E
         LDA #$20
         STA SCREEN_RAM + $039B,X
         DEX 
-        STX a53B5
+        STX currEnergyBottom
         CMP #$FF
         BEQ b545B
 b547B   LDX a5529
         RTS 
 
 b547F   LDA #$01
-        STA a40D1
-        JMP j57F6
+        STA reasonGilbyDied
+        JMP GilbyDied
 
 ;-------------------------------
-; s5487
+; DecreaseEnergyTop
 ;-------------------------------
-s5487   
+DecreaseEnergyTop   
         STX a5529
-        LDX a53B4
+        LDX currEnergyTop
         DEC SCREEN_RAM + $0373,X
         LDA SCREEN_RAM + $0373,X
         CMP #$7F
@@ -2354,18 +2388,19 @@ s5487
         LDA #$80
         STA SCREEN_RAM + $0373,X
         INX 
-        STX a53B4
+        STX currEnergyTop
         CPX #$08
         BEQ b547F
         LDA #$87
         STA SCREEN_RAM + $0373,X
         BNE b547B
+
 ;-------------------------------
-; j54AB
+; DecreaseEnergyBottom
 ;-------------------------------
-j54AB   
+DecreaseEnergyBottom   
         STX a5529
-        LDX a53B5
+        LDX currEnergyBottom
         DEC SCREEN_RAM + $039B,X
         LDA SCREEN_RAM + $039B,X
         CMP #$7F
@@ -2373,21 +2408,22 @@ j54AB
         LDA #$80
         STA SCREEN_RAM + $039B,X
         INX 
-        STX a53B5
+        STX currEnergyBottom
         CPX #$08
         BEQ b547F
         LDA #$87
         STA SCREEN_RAM + $039B,X
         BNE b547B
+
 ;-------------------------------
-; s54CF
+; DecreaseCoreEnergyLevel
 ;-------------------------------
-s54CF   
-        LDX a53B6
+DecreaseCoreEnergyLevel   
+        LDX currCoreEnergyLevel
         CPX #$FF
         BNE b54DF
         INX 
-        STX a53B6
+        STX currCoreEnergyLevel
         LDA #$87
         STA SCREEN_RAM + $03A5
 b54DF   DEC SCREEN_RAM + $03A5,X
@@ -2399,16 +2435,14 @@ b54DF   DEC SCREEN_RAM + $03A5,X
         INX 
         CPX #$0E
         BEQ b54FC
-;-------------------------------
-; j54F3
-;-------------------------------
+
 j54F3   
         LDA #$87
         STA SCREEN_RAM + $03A5,X
-        STX a53B6
+        STX currCoreEnergyLevel
         RTS 
 
-b54FC   LDA a797D
+b54FC   LDA inGameMode
         BEQ b5505
         DEX 
         JMP j54F3
@@ -2418,10 +2452,10 @@ b5508   RTS
 
 a5509   .BYTE $00
 ;-------------------------------
-; s550A
+; IncreaseCoreEnergyLevel
 ;-------------------------------
-s550A   
-        LDX a53B6
+IncreaseCoreEnergyLevel   
+        LDX currCoreEnergyLevel
         CPX #$FF
         BEQ b5528
         INC SCREEN_RAM + $03A5,X
@@ -2431,7 +2465,7 @@ s550A
         LDA #$20
         STA SCREEN_RAM + $03A5,X
         DEX 
-        STX a53B6
+        STX currCoreEnergyLevel
         CPX #$FF
         BNE b5508
 b5528   RTS 
@@ -2447,70 +2481,72 @@ b552F   RTS
 
 b5530   LDA a7177
         BNE b552F
-        LDA a53B4
+        LDA currEnergyTop
         CMP #$04
         BPL b5547
-        JSR s550A
+        JSR IncreaseCoreEnergyLevel
         BEQ b554D
-        JSR s5487
+        JSR DecreaseEnergyTop
         JMP b554D
 
-b5547   JSR s54CF
-        JSR s543E
-b554D   LDA a53B5
+b5547   JSR DecreaseCoreEnergyLevel
+        JSR IncreaseEnergyTop
+b554D   LDA currEnergyBottom
         CMP #$04
         BPL b555C
-        JSR s550A
+        JSR IncreaseCoreEnergyLevel
         BEQ b552F
-        JMP j54AB
+        JMP DecreaseEnergyBottom
 
-b555C   JSR s54CF
-        JMP j545E
+b555C   JSR DecreaseCoreEnergyLevel
+        JMP IncreaseEnergyBottom
 
 ;-------------------------------
-; s5562
+; DecreaseEnergyTopOnly
 ;-------------------------------
-s5562   
+DecreaseEnergyTopOnly   
         LDY #$23
         LDA (p40),Y
         BEQ b5572
         STA a4A
-b556A   JSR s5487
+b556A   JSR DecreaseEnergyTop
         DEC a4A
         BNE b556A
         RTS 
 
-b5572   JMP s5487
+b5572   JMP DecreaseEnergyTop
+        ;Returns
 
 ;-------------------------------
-; s5575
+; DecreaseEnergyBottomOnly
 ;-------------------------------
-s5575   
+DecreaseEnergyBottomOnly   
         LDY #$23
         LDA (p40),Y
         BEQ b5585
         STA a4A
-b557D   JSR j54AB
+b557D   JSR DecreaseEnergyBottom
         DEC a4A
         BNE b557D
         RTS 
 
-b5585   JMP j54AB
+b5585   JMP DecreaseEnergyBottom
+        ;Returns
 
-a5588   .BYTE $01
-a5589   .BYTE $09
+currentLevelTopWorld   .BYTE $01
+currentLevelBottomWorld   .BYTE $09
 ;-------------------------------
-; s558A
+; UpdateLevelText
 ;-------------------------------
-s558A   
+UpdateLevelText   
         LDA #$01
         STA a4850
-        LDA a5588
+        LDA currentLevelTopWorld
         BNE b55BD
         LDA #$30
         STA SCREEN_RAM + $0360
         STA SCREEN_RAM + $0361
-        LDX a5589
+        LDX currentLevelBottomWorld
         BEQ b55B6
 b55A1   INC SCREEN_RAM + $0361
         LDA SCREEN_RAM + $0361
@@ -2523,12 +2559,12 @@ b55B3   DEX
         BNE b55A1
 b55B6   LDA a78B1
         PHA 
-        JMP j55E3
+        JMP UpdateSomeGameInfo
 
 b55BD   LDA #$30
         STA SCREEN_RAM + $03D8
         STA SCREEN_RAM + $03D9
-        LDX a5589
+        LDX currentLevelBottomWorld
         BEQ b55DF
 b55CA   INC SCREEN_RAM + $03D9
         LDA SCREEN_RAM + $03D9
@@ -2542,9 +2578,9 @@ b55DC   DEX
 b55DF   LDA a78B3
         PHA 
 ;-------------------------------
-; j55E3
+; UpdateSomeGameInfo
 ;-------------------------------
-j55E3   
+UpdateSomeGameInfo   
         LDA #<p4788
         STA a4E
         LDA #>p4788
@@ -2561,7 +2597,7 @@ b55EF   LDA a4E
         STA a4F
         DEX 
         BNE b55EF
-b55FF   LDA a5589
+b55FF   LDA currentLevelBottomWorld
         ASL 
         TAY 
         LDA (p4E),Y
@@ -2569,7 +2605,7 @@ b55FF   LDA a5589
         INY 
         LDA (p4E),Y
         PHA 
-        LDA a5588
+        LDA currentLevelTopWorld
         BNE b5644
         PLA 
         STA a49B8
@@ -2620,9 +2656,9 @@ b566C   DEY
         RTS 
 
 ;-------------------------------
-; s5678
+; RunSomeAttractModeGamePlay
 ;-------------------------------
-s5678   
+RunSomeAttractModeGamePlay   
         STX a5529
         LDX a78B1
         DEC f49BC,X
@@ -2642,11 +2678,11 @@ b569E   LDA #$04
         LDA #$03
         STA a6D86
         LDA f49C6,X
-        STA a5589
+        STA currentLevelBottomWorld
         LDA #$00
-        STA a5588
-        JSR s5753
-        JSR s558A
+        STA currentLevelTopWorld
+        JSR RunAttractModeGamePlay
+        JSR UpdateLevelText
 b56B9   LDX a5529
         RTS 
 
@@ -2673,17 +2709,17 @@ b56E3   LDA #$04
         LDA #$03
         STA a6D86
         LDA f49CB,X
-        STA a5589
+        STA currentLevelBottomWorld
         LDA #$01
-        STA a5588
-        JSR s5753
-        JSR s558A
+        STA currentLevelTopWorld
+        JSR RunAttractModeGamePlay
+        JSR UpdateLevelText
         JMP b56B9
 
 ;-------------------------------
-; s5701
+; InitializeGameVars
 ;-------------------------------
-s5701   
+InitializeGameVars   
         LDX #$05
         LDA #$00
 b5705   STA a49BB,X
@@ -2698,17 +2734,17 @@ b5705   STA a49BB,X
 ; s5715
 ;-------------------------------
 s5715   
-        LDX a78B0
+        LDX currentTopWorldProgress
         LDA f49C6,X
-        STA a5589
+        STA currentLevelBottomWorld
         LDA #$00
-        STA a5588
-        JSR s558A
-        INC a5588
-        LDX a78B2
+        STA currentLevelTopWorld
+        JSR UpdateLevelText
+        INC currentLevelTopWorld
+        LDX currentBottomWorldProgress
         LDA f49CB,X
-        STA a5589
-        JMP s558A
+        STA currentLevelBottomWorld
+        JMP UpdateLevelText
 
 ;-------------------------------
 ; s5735
@@ -2737,11 +2773,11 @@ b5751   RTS
 
 a5752   .BYTE $00
 ;-------------------------------
-; s5753
+; RunAttractModeGamePlay
 ;-------------------------------
-s5753   
+RunAttractModeGamePlay   
         LDX #$09
-        LDA a7EE1
+        LDA inAttractMode
         BNE b5751
         LDA #$13
 b575C   CMP f49C6,X
@@ -2772,9 +2808,9 @@ b5791   LDA a4E19
         CMP #$05
         BEQ b578E
         INC a4E19
-        INC a60EF
+        INC progressDisplaySelected
         LDA #$00
-        STA a797D
+        STA inGameMode
         JMP j57AB
 
 f57A6   .BYTE $03,$06,$09,$0C,$0F
@@ -2802,9 +2838,9 @@ b57CB   LDA a4E1A
         CMP #$05
         BEQ b57CA
         INC a4E1A
-        INC a60EF
+        INC progressDisplaySelected
         LDA #$00
-        STA a797D
+        STA inGameMode
         RTS 
 
 ;-------------------------------
@@ -2822,14 +2858,14 @@ a57EC   .BYTE $23
 f57ED   .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
         .BYTE $50
 ;-------------------------------
-; j57F6
+; GilbyDied
 ;-------------------------------
-j57F6   
+GilbyDied   
         LDA #$01
         STA a40D2
         LDA a59B9
         BNE b5833
-        LDA a7EE1
+        LDA inAttractMode
         BNE b5833
         LDX #$00
 b5807   LDA #<pFC
@@ -2848,7 +2884,7 @@ b5807   LDA #<pFC
         STA a79AE
         LDA #>p58EA
         STA a79AF
-        JSR s7C91
+        JSR Reseta79A4
         LDX #$23
         RTS 
 
@@ -2972,11 +3008,11 @@ b596E   LDA #$C0
         BNE b596E
         LDA #$01
         STA a59B9
-        JSR s6907
+        JSR SetUpGilbySprite
         LDA a78B1
-        STA a78B0
+        STA currentTopWorldProgress
         LDA a78B3
-        STA a78B2
+        STA currentBottomWorldProgress
         JSR s51CB
         LDA #$01
         STA a78C7
@@ -2992,21 +3028,21 @@ b596E   LDA #$C0
         LDA #$00
         STA $D015    ;Sprite display Enable
         JSR s7C8B
-        JMP s7C91
+        JMP Reseta79A4
 
 a59B9   .BYTE $00
-a59BA   .BYTE $02
+gilbiesLeft   .BYTE $02
 ;-------------------------------
 ; j59BB
 ;-------------------------------
 j59BB   
-        LDY a5AB8
+        LDY txtGilbiesLeft
         LDA f5CA7,Y
         STA $D021    ;Background Color 0
         INY 
         LDA f5CA7,Y
         BEQ b59D8
-        STY a5AB8
+        STY txtGilbiesLeft
         LDA $D012    ;Raster Position
         CLC 
         ADC #$01
@@ -3028,7 +3064,7 @@ b59E9   LDA f5CA7,X
         LDA #$40
         STA $D012    ;Raster Position
         LDA #$00
-        STA a5AB8
+        STA txtGilbiesLeft
         STA $D020    ;Border Color
 b5A03   LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
@@ -3041,42 +3077,46 @@ b5A03   LDA #$01
         RTI 
 
 ;-------------------------------
-; s5A11
+; PlayerKilled
 ;-------------------------------
-s5A11   
+PlayerKilled   
         JSR ClearScreen3
-        DEC a59BA
+        DEC gilbiesLeft
         BPL b5A1E
         BEQ b5A1E
         JMP DisplayGameOver
 
-b5A1E   JSR s7316
+b5A1E   JSR GetSomeSequenceData
         AND #$07
         TAY 
-        JSR s5A49
+        JSR DrawRestartLevelText
         LDX #$14
-b5A29   LDA a5AB8,X
+b5A29   LDA txtGilbiesLeft,X
         AND #$3F
         STA SCREEN_RAM + $00F8,X
         DEX 
         BNE b5A29
-        JSR s64E9
-        LDA a59BA
+        JSR DrawReasonGilbyDied
+
+        ; Show remanining gilbies
+        LDA gilbiesLeft
         CLC 
         ADC #$31
         STA SCREEN_RAM + $0109
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$07
         CLC 
         ADC #$08
         TAY 
+        ;Fall through
+
 ;-------------------------------
-; s5A49
+; DrawRestartLevelText
 ;-------------------------------
-s5A49   
-        LDA #<p5ACD
+DrawRestartLevelText   
+        LDA #<txtRestartLevelMsg
         STA a45
-        LDA #>p5ACD
+        LDA #>txtRestartLevelMsg
         STA a46
         STY a47
         CPY #$00
@@ -3116,6 +3156,7 @@ b5A8C   DEY
         BNE b5A8C
         DEC a45
         BNE b5A8A
+
 ;-------------------------------
 ; ClearScreen3
 ;-------------------------------
@@ -3135,15 +3176,15 @@ b5A98   LDA #$20
         BNE b5A98
         RTS 
 
-a5AB8   .TEXT $00, "  GILBIES LEFT: 0.. "
-p5ACD   .TEXT "TAKE OUT THAT BRIDGE% % I BET THAT HURT!"
-        .TEXT "GOT YOU, SPACE CADET%% SUPPERS READY! %%"
-        .TEXT "ZAPPED AGAIN........ONE DESTRUCTED DROID"
-        .TEXT "YOU BLEW THAT ONE!..ARE YOU NERVOUS??..."
-        .TEXT "GO GIVE THEM HELL!!!GO FORTH AND KILL!!!"
-        .TEXT "HAPPY HUNTING, ACE!!SEEK AND ANNIHILATE!"
-        .TEXT "YAK SEZ GO ZAP 'EM!!FLY FAST AND MEAN..."
-        .TEXT "LASERBLAZE THE SCUM!HEAVY METAL THUNDER"
+txtGilbiesLeft   .TEXT $00, "  GILBIES LEFT: 0.. "
+txtRestartLevelMsg .TEXT "TAKE OUT THAT BRIDGE% % I BET THAT HURT!"
+                   .TEXT "GOT YOU, SPACE CADET%% SUPPERS READY! %%"
+                   .TEXT "ZAPPED AGAIN........ONE DESTRUCTED DROID"
+                   .TEXT "YOU BLEW THAT ONE!..ARE YOU NERVOUS??..."
+                   .TEXT "GO GIVE THEM HELL!!!GO FORTH AND KILL!!!"
+                   .TEXT "HAPPY HUNTING, ACE!!SEEK AND ANNIHILATE!"
+                   .TEXT "YAK SEZ GO ZAP 'EM!!FLY FAST AND MEAN..."
+                   .TEXT "LASERBLAZE THE SCUM!HEAVY METAL THUNDER"
         .BYTE $21
 p5C0D   .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
         .BYTE $06,$00,$00,$00,$20,$01,$00,$00
@@ -3280,7 +3321,7 @@ a5E54   .BYTE $01
 ; s5E55
 ;-------------------------------
 s5E55   
-        LDA a797D
+        LDA inGameMode
         BEQ b5E5D
         JMP j5EF6
 
@@ -3317,8 +3358,8 @@ b5E95   LDA a5E76
 ;-------------------------------
 j5E9C   
         LDA #$02
-        STA a40D1
-        JMP j57F6
+        STA reasonGilbyDied
+        JMP GilbyDied
 
         BNE b5EB8
 b5EA6   DEC a5E77
@@ -3387,7 +3428,7 @@ b5F28   PHA
         LDA f67A5,Y
         STA $DB4F
         STA $DB50
-        LDA a797D
+        LDA inGameMode
         BEQ b5F3A
         PLA 
         RTS 
@@ -3433,8 +3474,9 @@ b5F77   CMP #$07
         BNE b5F76
         LDA #$01
         STA a5EFE
-f5F8F   RTS 
+        RTS 
 
+statusBarDetailStorage =*-$01
         .BYTE $88,$8A,$20,$90,$92,$91,$93,$31
         .BYTE $38,$AE,$B0,$AF,$B1,$30,$30,$30
         .BYTE $30,$30,$30,$30,$20,$20,$B2,$B4
@@ -3457,32 +3499,32 @@ p6001   .BYTE $A1,$A3,$A5,$A7,$A9,$AB,$AD,$8D
         .BYTE $30,$20,$9B,$9D,$20,$99,$20,$20
         .BYTE $20,$20,$20,$20,$20,$20,$20
 ;-------------------------------
-; s6030
+; StoreStatusBarDetail
 ;-------------------------------
-s6030   
+StoreStatusBarDetail   
         LDX #$A0
 b6032   LDA SCREEN_RAM + $0347,X
-        STA f5F8F,X
+        STA statusBarDetailStorage,X
         DEX 
         BNE b6032
         RTS 
 
 ;-------------------------------
-; s603C
+; DrawStatusBarDetail
 ;-------------------------------
-s603C   
+DrawStatusBarDetail   
         LDX #$A0
-b603E   LDA f5F8F,X
+b603E   LDA statusBarDetailStorage,X
         STA SCREEN_RAM + $0347,X
         DEX 
         BNE b603E
 b6047   RTS 
 
 ;-------------------------------
-; s6048
+; DrawGameStatusBars
 ;-------------------------------
-s6048   
-        LDA a797D
+DrawGameStatusBars   
+        LDA inGameMode
         BEQ b6047
         LDX #$28
 b604F   LDA f60C6,X
@@ -3521,7 +3563,7 @@ f609E   .BYTE $3F,$01,$03 ;RLA p0301,X
         .BYTE $00,$02,$00,$02,$00
 f60C6   .BYTE $02    ;JAM 
         .TEXT "  WARP GATE       GILBY   CORE  NOT-CORE"
-a60EF   .BYTE $00
+progressDisplaySelected   .BYTE $00
 ;-------------------------------
 ; s60F0
 ;-------------------------------
@@ -3578,7 +3620,7 @@ b615A   LDA fAAC1,X
         STA SCREEN_RAM + $0319,X
         DEX 
         BNE b615A
-        LDA a59BA
+        LDA gilbiesLeft
         CLC 
         ADC #$31
         STA SCREEN_RAM + $0305
@@ -3676,7 +3718,7 @@ b623A   LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BNE b623A
         LDA #$00
-        STA a60EF
+        STA progressDisplaySelected
         RTS 
 
 ;-------------------------------
@@ -3748,7 +3790,11 @@ f62AF   .BYTE $00,$01,$28,$29
 f62B3   .BYTE $9A,$9C,$9B,$9D,$9A,$9C,$9B,$9D
 f62BB   .BYTE $00,$04,$08,$0C,$10,$00,$04,$08
         .BYTE $0C,$10
-p62C5   LDA $D019    ;VIC Interrupt Request Register (IRR)
+;-------------------------------
+; GameSwitchAndGameOverInterruptHandler   
+;-------------------------------
+GameSwitchAndGameOverInterruptHandler   
+        LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE b62D2
         PLA 
@@ -3826,9 +3872,9 @@ EnterMainTitleScreen
         JSR SwapRoutines
         JSR LaunchCurrentProgram
         SEI 
-        LDA #<p62C5
+        LDA #<GameSwitchAndGameOverInterruptHandler
         STA $0314    ;IRQ
-        LDA #>p62C5
+        LDA #>GameSwitchAndGameOverInterruptHandler
         STA $0315    ;IRQ
         JMP SwapRoutines
 
@@ -3837,9 +3883,9 @@ EnterMainTitleScreen
 ;-------------------------------
 DisplayGameOver   
         SEI 
-        LDA #<p62C5
+        LDA #<GameSwitchAndGameOverInterruptHandler
         STA $0314    ;IRQ
-        LDA #>p62C5
+        LDA #>GameSwitchAndGameOverInterruptHandler
         STA $0315    ;IRQ
         CLI 
         LDA #$00
@@ -3952,20 +3998,20 @@ b64B4   PLA
         BNE s649E
         RTS 
 
-f64C1   .TEXT "DEPLETED..OVERLOAD..ENTROPY...HIT SOMMAT"
+txtReasonGilbyDied   .TEXT "DEPLETED..OVERLOAD..ENTROPY...HIT SOMMAT"
 ;-------------------------------
-; s64E9
+; DrawReasonGilbyDied
 ;-------------------------------
-s64E9   
+DrawReasonGilbyDied   
         LDA #$00
-        LDY a40D1
+        LDY reasonGilbyDied
         BEQ b64F6
 b64F0   CLC 
         ADC #$0A
         DEY 
         BNE b64F0
 b64F6   TAX 
-b64F7   LDA f64C1,X
+b64F7   LDA txtReasonGilbyDied,X
         AND #$3F
         STA SCREEN_RAM + $02B7,Y
         LDA #$02
@@ -4054,7 +4100,11 @@ b65C9   LDA lastKeyPressed
         BNE b65C9
         RTS 
 
-p65D0   LDA $D019    ;VIC Interrupt Request Register (IRR)
+;-------------------------------
+; p65D0
+;-------------------------------
+p65D0
+        LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE b65F4
         PLA 
@@ -4168,7 +4218,7 @@ b6651   LDA a65E2
         STA a65E2
         DEC a65E1
         BNE b6709
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$07
         CLC 
         ADC #$04
@@ -4177,7 +4227,7 @@ b6651   LDA a65E2
         STA a65DE
         LDA f674F,X
         STA a673D
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$07
         CLC 
         ADC #$04
@@ -4186,13 +4236,13 @@ b6651   LDA a65E2
         STA a65DF
         LDA f674F,X
         STA a673E
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$07
         CLC 
         ADC #$01
         STA a65E4
         STA a65E5
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$07
         CLC 
         ADC #$01
@@ -4320,18 +4370,19 @@ a680B   .BYTE $0E
 a680C   .BYTE $09
 a680D   .BYTE $0E
 ;-------------------------------
-; s680E
+; PrepareSpriteData
 ;-------------------------------
-s680E   
+PrepareSpriteData   
         LDA #$00
         LDY #$40
 b6812   STA f2FFF,Y
         DEY 
         BNE b6812
+
 ;-------------------------------
-; j6818
+; FixUpSpriteData
 ;-------------------------------
-j6818   
+FixUpSpriteData   
         LDX a6E12
         BPL b6822
         TXA 
@@ -4350,29 +4401,31 @@ b6822   LDA f6E13,X
         RTS 
 
 ;-------------------------------
-; s683E
+; PrepareScreen
 ;-------------------------------
-s683E   
+PrepareScreen   
         LDA #$00
         SEI 
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
-        JSR s6B5F
+        JSR ClearGameViewPort
         LDA #$18
         STA $D018    ;VIC Memory Control Register
         JSR s784E
-        JSR s537C
+        JSR DrawEnergyBars
         LDA $D016    ;VIC Control Register 2
         AND #$F7
         ORA #$10
         STA $D016    ;VIC Control Register 2
         LDA #$01
         STA $D027    ;Sprite 0 Color
-        JSR s5701
+        JSR InitializeGameVars
+        ;Fall through
+
 ;-------------------------------
-; s6867
+; SetupSpritesAndSound
 ;-------------------------------
-s6867   
+SetupSpritesAndSound   
         LDA #$FF
         SEI 
         STA $D015    ;Sprite display Enable
@@ -4385,9 +4438,9 @@ s6867
         STA a40D2
         STA a59B9
         LDA a78B1
-        STA a78B0
+        STA currentTopWorldProgress
         LDA a78B3
-        STA a78B2
+        STA currentBottomWorldProgress
         LDA #$80
         STA $D01B    ;Sprite to Background Display Priority
         STA $D404    ;Voice 1: Control Register
@@ -4398,9 +4451,9 @@ s6867
         JSR s71C2
         JSR s78FC
         SEI 
-        LDA #<p6B52
+        LDA #<CheckSpriteBackgroundCollision
         STA $0314    ;IRQ
-        LDA #>p6B52
+        LDA #>CheckSpriteBackgroundCollision
         STA $0315    ;IRQ
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
@@ -4410,9 +4463,9 @@ s6867
         STA $D011    ;VIC Control Register 1
         LDA #$10
         STA $D012    ;Raster Position
-        JSR s6048
+        JSR DrawGameStatusBars
         LDX #$28
-        LDA a797D
+        LDA inGameMode
         BNE b68DF
 b68D2   LDA #$00
         STA SCREEN_RAM + $01B7,X
@@ -4423,9 +4476,9 @@ b68D2   LDA #$00
 b68DF   RTS 
 
 ;-------------------------------
-; j68E0
+; InitializeSprites
 ;-------------------------------
-j68E0   
+InitializeSprites   
         LDA #$0B
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDA #$7F
@@ -4439,13 +4492,13 @@ j68E0
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$FE
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        JSR s6907
+        JSR SetUpGilbySprite
 p6904   JMP j692A
 
 ;-------------------------------
-; s6907
+; SetUpGilbySprite
 ;-------------------------------
-s6907   
+SetUpGilbySprite   
         LDA #$D3
         STA a6C25
         STA Sprite0Ptr
@@ -4466,9 +4519,9 @@ a6929   .BYTE $00
 ; j692A
 ;-------------------------------
 j692A   
-        LDA a7EE1
+        LDA inAttractMode
         BEQ b6932
-        JSR s7EC3
+        JSR GetSomeGameModeData
 b6932   LDA #$00
         JSR s51CB
         LDA #$01
@@ -4476,18 +4529,21 @@ b6932   LDA #$00
         STA a78C6
         LDA #$FF
         STA a7176
+        ;Fall through
+
 ;-------------------------------
-; j6944
+; BeginRunningGame
 ;-------------------------------
-j6944   
+BeginRunningGame   
         CLI 
         NOP 
         NOP 
         NOP 
-        LDA a7EE1
-        BEQ b6971
+        LDA inAttractMode
+        BEQ StartAttractMode
+
         CMP #$01
-        BNE b6971
+        BNE StartAttractMode
         LDA #$01
         STA aCC88
         LDA $D016    ;VIC Control Register 2
@@ -4501,45 +4557,50 @@ j6944
         STA aF0
         LDA #>f49C6
         STA aF1
-        JMP jC9C9
+        JMP DisplayHiScoreScreen
 
-b6971   LDA a6929
+StartAttractMode
+        LDA a6929
         BEQ b6982
         JSR s650B
-        JSR s6030
-        JSR s5701
-        JMP AttractMode
+        JSR StoreStatusBarDetail
+        JSR InitializeGameVars
+        JMP ResumeGame
 
 b6982   LDA a59B9
         BEQ b698A
-        JMP j6A10
+        JMP EnterMainControlLoop
 
-b698A   LDA a60EF
-        BEQ b69A6
+b698A   LDA progressDisplaySelected
+        BEQ DisplayProgress
         SEI 
         LDA $D016    ;VIC Control Register 2
         AND #$E7
         ORA #$08
         STA $D016    ;VIC Control Register 2
-        JSR s6030
+        JSR StoreStatusBarDetail
         JSR s61EC
         INC a5279
-        JMP j6A79
+        JMP SetUpGameScreen
 
-b69A6   LDA a5509
+DisplayProgress
+        LDA a5509
         BEQ b6A02
         SEI 
-        JSR s6030
+        JSR StoreStatusBarDetail
         JSR ClearScreen3
-        JSR sAB00
+        JSR DisplayProgressScreen
+
 ;-------------------------------
-; AttractMode
+; ResumeGame
 ;-------------------------------
-AttractMode   
+ResumeGame   
         JSR ZeroiseScreen
-        JSR s603C
-        JSR s537C
-        JSR s6907
+        JSR DrawStatusBarDetail
+        JSR DrawEnergyBars
+        JSR SetUpGilbySprite
+
+        ; Clear charset data
         LDX #$00
         TXA 
 b69C4   STA f2200,X
@@ -4548,38 +4609,41 @@ b69C4   STA f2200,X
         STA f2700,X
         DEX 
         BNE b69C4
-        JSR s6030
+
+        JSR StoreStatusBarDetail
         LDA #$01
         STA a78C7
         STA a78C6
         LDA aAAD1
         BEQ b69F0
-        INC a59BA
-        LDA a59BA
+        INC gilbiesLeft
+        LDA gilbiesLeft
         CMP #$04
         BNE b69F0
-        DEC a59BA
+        DEC gilbiesLeft
+
 b69F0   LDA #$00
         STA a5509
         LDA $D011    ;VIC Control Register 1
         AND #$F0
         ORA #$0B
         STA $D011    ;VIC Control Register 1
-        JMP j6A79
+        JMP SetUpGameScreen
 
 b6A02   JSR s5F00
         JSR s5E55
         JSR s5E00
         LDA a59B9
         BEQ b6A1C
+
 ;-------------------------------
-; j6A10
+; EnterMainControlLoop
 ;-------------------------------
-j6A10   
-        JSR s537C
-        JSR s6030
-        JSR s5A11
-        JMP j6A79
+EnterMainControlLoop   
+        JSR DrawEnergyBars
+        JSR StoreStatusBarDetail
+        JSR PlayerKilled
+        JMP SetUpGameScreen
 
 b6A1C   LDA a52CD
         BEQ b6A24
@@ -4590,16 +4654,19 @@ b6A24   LDA a78B4
         STA a78B4
         JMP MainControlLoop
 
-b6A31   JSR s5325
+b6A31   JSR UpdateScores
         LDA a40D2
         BNE b6A3E
-        LDA a40D0
-        BNE b6A41
-b6A3E   JMP j6944
+        LDA pauseModeSelected
+        BNE EnterPauseMode
+b6A3E   JMP BeginRunningGame
 
-b6A41   LDA lastKeyPressed
+EnterPauseMode
+        ; Wait for the player to release the key
+        LDA lastKeyPressed
         CMP #$40
-        BNE b6A41
+        BNE EnterPauseMode
+
         LDA #$00
         STA $D015    ;Sprite display Enable
         LDA #$80
@@ -4610,19 +4677,22 @@ b6A41   LDA lastKeyPressed
         AND #$C0
         ORA #$08
         STA $D016    ;VIC Control Register 2
-        JSR s6030
+        JSR StoreStatusBarDetail
         JSR LaunchMIF
+
+        ;We come back here when the player exits pause mode
         LDA #$00
-        STA a40D0
+        STA pauseModeSelected
         LDA #$02
         STA $D025    ;Sprite Multi-Color Register 0
         LDA #$01
         STA $D026    ;Sprite Multi-Color Register 1
         INC a5279
+
 ;-------------------------------
-; j6A79
+; SetUpGameScreen
 ;-------------------------------
-j6A79   
+SetUpGameScreen   
         LDA #$18
         STA $D018    ;VIC Memory Control Register
         LDA #$01
@@ -4636,13 +4706,13 @@ j6A79
         LDA a6AC5
         STA Sprite0Ptr
         JSR ClearScreen3
-        JSR s6867
+        JSR SetupSpritesAndSound
         LDA a78B1
-        STA a78B0
+        STA currentTopWorldProgress
         LDA a78B3
-        STA a78B2
+        STA currentBottomWorldProgress
         JSR s51CB
-        JSR s603C
+        JSR DrawStatusBarDetail
         LDX #$03
 b6AB3   LDA f7E49,X
         STA f67D8,X
@@ -4650,7 +4720,7 @@ b6AB3   LDA f7E49,X
         STA f67DE,X
         DEX 
         BNE b6AB3
-        JMP j6944
+        JMP BeginRunningGame
 
 a6AC5   .BYTE $D3
 ;-------------------------------
@@ -4720,8 +4790,15 @@ f6B44   .BYTE $BF
 f6B45   .BYTE $02
 f6B46   .BYTE $04,$08,$10,$20,$40,$02,$04,$08
         .BYTE $10,$20,$40
-a6B51   .BYTE $00
-p6B52   .BYTE $AD,$19,$D0,$29,$01,$D0,$66
+difficultySetting   .BYTE $00
+
+;-------------------------------
+; CheckSpriteBackgroundCollision
+;-------------------------------
+CheckSpriteBackgroundCollision
+        LDA $D019    ;VIC Interrupt Request Register (IRR)
+        AND #$01
+        BNE SpriteBackgroundCollisionDetected; Collision detected
 ;-------------------------------
 ; j6B59
 ;-------------------------------
@@ -4734,9 +4811,9 @@ j6B59
         RTI 
 
 ;-------------------------------
-; s6B5F
+; ClearGameViewPort
 ;-------------------------------
-s6B5F   
+ClearGameViewPort   
         LDX #$00
         LDA #$20
 b6B63   STA SCREEN_RAM,X
@@ -4785,14 +4862,15 @@ b6BA3   LDA a6D85
         STA $D020    ;Border Color
 b6BBE   RTS 
 
+SpriteBackgroundCollisionDetected
         LDY a6D84
         LDA a59B9
         BEQ b6BCA
         JMP j59BB
 
-b6BCA   LDA a60EF
+b6BCA   LDA progressDisplaySelected
         BEQ b6BD2
-        JMP p62C5
+        JMP GameSwitchAndGameOverInterruptHandler
 
 b6BD2   LDA f6D52,Y
         BEQ b6BDA
@@ -4821,7 +4899,7 @@ s6BF8
         STA a6AC5
         LDA a760C
         STA $D001    ;Sprite 0 Y Pos
-        LDX a53B4
+        LDX currEnergyTop
         LDA f40C8,X
         LDX a53B7
         BEQ b6C1A
@@ -4841,7 +4919,7 @@ b6C26   LDX a680A
         STA $D023    ;Background Color 2, Multi-Color Register 1
         LDA $D01F    ;Sprite to Background Collision Detect
         STA a6D51
-        JSR s7861
+        JSR CheckKeyboardInGame
         JSR s6DC1
         JSR s75A8
         JSR s49D4
@@ -4895,7 +4973,7 @@ b6C91   SEC
         BNE b6CD3
 b6CB5   CPY #$06
         BNE b6CD3
-        LDA a797D
+        LDA inGameMode
         BEQ b6CD6
         LDA #$90
         STA $D001    ;Sprite 0 Y Pos
@@ -4938,7 +5016,7 @@ b6D07   LDX a680C
         STA $D023    ;Background Color 2, Multi-Color Register 1
         LDA a40D2
         BNE j6D36
-        LDX a53B5
+        LDX currEnergyBottom
         LDA f40C8,X
         LDX a53B8
         BEQ b6D2C
@@ -5055,18 +5133,18 @@ s6E2D
         BNE b6E88
         LDA a40D2
         BNE b6E88
-        LDA a7EE1
+        LDA inAttractMode
         BNE b6E88
         LDA SCREEN_RAM + $01A4
         CMP #$77
         BEQ b6E67
         CMP #$7D
         BEQ b6E67
-        LDA a6B51
+        LDA difficultySetting
         BEQ b6E88
         LDA #$03
-        STA a40D1
-        JMP j57F6
+        STA reasonGilbyDied
+        JMP GilbyDied
 
 b6E67   JSR s51CB
         LDA #$01
@@ -5090,14 +5168,14 @@ b6E8E   LDA $DC00    ;CIA1: Data Port Register A
         AND #$1F
         CMP #$1F
         BEQ b6EA4
-        LDA a7EE1
+        LDA inAttractMode
         BEQ b6EA4
         LDA #$02
-        STA a7EE1
+        STA inAttractMode
 b6EA4   JSR s7EE4
-        LDA a7EE1
+        LDA inAttractMode
         BEQ b6EAF
-        DEC a7EE1
+        DEC inAttractMode
 b6EAF   LDA #<screenPtrLo
         STA a6E2B
         LDA #>screenPtrLo
@@ -5366,7 +5444,7 @@ b70B5   JSR s7671
         LDA #$1F
         STA a75A3
 b70E0   INC a6E12
-        LDA a797D
+        LDA inGameMode
         BEQ b70EF
         LDA a6E12
         CMP #$0C
@@ -5394,7 +5472,7 @@ b70FC   LDA a7176
         LDA #$24
         STA a75A3
 b7124   DEC a6E12
-        LDA a797D
+        LDA inGameMode
         BEQ b7133
         LDA a6E12
         CMP #$F4
@@ -5432,7 +5510,7 @@ b715A   LDA a7176
 ; j7173
 ;-------------------------------
 j7173   
-        JMP j6818
+        JMP FixUpSpriteData
 
 a7176   .BYTE $09
 a7177   .BYTE $04
@@ -5478,7 +5556,7 @@ b71A4   LDA a7176
 ;-------------------------------
 s71C2   
         LDY #$00
-        LDA a797D
+        LDA inGameMode
         BEQ b71E6
         LDX #$27
 b71CB   LDA (p10),Y
@@ -5673,9 +5751,9 @@ b72F9   LDA screenPtrLo
 
 a7317   =*+$01
 ;-------------------------------
-; s7316
+; GetSomeSequenceData
 ;-------------------------------
-s7316   
+GetSomeSequenceData   
         LDA a9ABB
         INC a7317
         RTS 
@@ -5782,13 +5860,14 @@ f73B0   .BYTE $00,$40,$80,$C0
 f73B4   .BYTE $00,$10,$20,$30
 f73B8   .BYTE $00,$04,$08,$0C
 ;-------------------------------
-; s73BC
+; CopyInSpriteData
 ;-------------------------------
-s73BC   
+CopyInSpriteData   
         LDA #<p8000
         STA a22
         LDA #>p8000
         STA a23
+
         LDY #$00
 b73C6   LDA #$60
 b73C8   STA (p22),Y
@@ -5798,6 +5877,7 @@ b73C8   STA (p22),Y
         LDA a23
         CMP #$90
         BNE b73C6
+
         LDA #$8C
         STA a23
 b73D9   LDA #$40
@@ -5815,7 +5895,8 @@ b73D9   LDA #$40
         STA a23
         CMP #$90
         BNE b73D9
-        JSR s7316
+
+        JSR GetSomeSequenceData
         AND #$7F
         CLC 
         ADC #$7F
@@ -5823,7 +5904,7 @@ b73D9   LDA #$40
         LDA #$00
         STA a24
         JSR s72E9
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$7F
         CLC 
         ADC #$20
@@ -5985,7 +6066,7 @@ s7519
 ;-------------------------------
 j7521   
         JSR s7561
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$0F
         CLC 
         ADC #$0C
@@ -6021,7 +6102,7 @@ b7546   LDA a24
 ;-------------------------------
 s7561   
         JSR s72E9
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$03
         TAX 
         LDA f7577,X
@@ -6048,7 +6129,7 @@ a75A7   .BYTE $0D
 s75A8   
         LDA a40D2
         BNE b75BF
-        LDA a40D0
+        LDA pauseModeSelected
         BNE b75BF
         LDA a78C7
         BEQ b75BA
@@ -6202,7 +6283,7 @@ b76DF   LDA a7177
         BNE b7717
         LDA a48D7
         BNE b76F8
-        JSR s7C91
+        JSR Reseta79A4
         LDA #<p7C24
         STA a79AE
         LDA #>p7C24
@@ -6239,7 +6320,7 @@ s772A
         LDA #$00
         STA a20
         STA a1F
-        LDA a40D0
+        LDA pauseModeSelected
         BEQ b7736
         RTS 
 
@@ -6407,9 +6488,9 @@ b7850   LDA b5085,X
 
 a7860   .BYTE $00
 ;-------------------------------
-; s7861
+; CheckKeyboardInGame
 ;-------------------------------
-s7861   
+CheckKeyboardInGame   
         LDA lastKeyPressed
         CMP #$40
         BNE b786D
@@ -6419,10 +6500,10 @@ b786C   RTS
 
 b786D   LDY a7860
         BNE b786C
-        LDY a7EE1
+        LDY inAttractMode
         BEQ b787C
         LDY #$02
-        STY a7EE1
+        STY inAttractMode
 b787C   LDY a59B9
         BNE b786C
         LDY a40D2
@@ -6432,18 +6513,18 @@ b787C   LDY a59B9
         INC a78B4
         RTS 
 
-b788E   CMP #$04
+b788E   CMP #$04 ; F1 Pressed
         BNE b7899
         INC a7860
-        INC a40D0
+        INC pauseModeSelected
 b7898   RTS 
 
-b7899   CMP #$3C
+b7899   CMP #$3C ; Space pressed
         BNE b78A1
-        INC a60EF
+        INC progressDisplaySelected
         RTS 
 
-b78A1   CMP #$19
+b78A1   CMP #$19 ; Y Pressed
         BNE b7898
         LDA aC822
         CMP #$1C
@@ -6451,9 +6532,9 @@ b78A1   CMP #$19
         INC a6929
         RTS 
 
-a78B0   .BYTE $00
+currentTopWorldProgress   .BYTE $00
 a78B1   .BYTE $00
-a78B2   .BYTE $00
+currentBottomWorldProgress   .BYTE $00
 a78B3   .BYTE $00
 a78B4   .BYTE $00
 f78B5   .BYTE $09,$0B,$07,$0E,$0D
@@ -6491,14 +6572,14 @@ b78CE   LDX a78C6
 ; s78FC
 ;-------------------------------
 s78FC   
-        LDX a78B0
+        LDX currentTopWorldProgress
         LDA f78B5,X
         STA a680A
         LDA f78BA,X
         STA a680B
         LDA f78BF,X
         JSR s731D
-        LDX a78B2
+        LDX currentBottomWorldProgress
         LDA f78B5,X
         STA a680C
         LDA f78BA,X
@@ -6522,16 +6603,16 @@ b7939   STA f67D5,X
         STA f67E3
         STA f67E8
         STA f67E9
-        JSR s7C91
+        JSR Reseta79A4
         LDA #<p5DB0
         STA a79AE
         LDA #>p5DB0
         STA a79AF
         LDA #$30
         STA a48D7
-        LDA a797D
+        LDA inGameMode
         BEQ b797C
-        LDX a78B0
+        LDX currentTopWorldProgress
         LDA f78B5,X
         STA a680C
         LDA f78BA,X
@@ -6540,7 +6621,7 @@ b7939   STA f67D5,X
         JSR s732F
 b797C   RTS 
 
-a797D   .BYTE $01
+inGameMode   .BYTE $01
 f797E   .BYTE $00,$94,$00,$00,$11,$0F,$00,$00
         .BYTE $03,$00,$00,$21,$0F,$00,$08,$03
         .BYTE $00,$00,$21,$0F,$00,$00,$00,$00
@@ -6803,9 +6884,9 @@ s7C8B
         RTS 
 
 ;-------------------------------
-; s7C91
+; Reseta79A4
 ;-------------------------------
-s7C91   
+Reseta79A4   
         LDA #$00
         STA a79A4
 b7C96   RTS 
@@ -6851,7 +6932,7 @@ j7CD8
         LDA f67EB,X
         EOR f6B46,X
         STA f67EB,X
-b7CE1   LDA a40D0
+b7CE1   LDA pauseModeSelected
         BNE b7CE9
         JSR s7D3F
 b7CE9   JSR s7E69
@@ -7023,7 +7104,7 @@ f7E64   .BYTE $03,$03,$03,$03,$03
 ; s7E69
 ;-------------------------------
 s7E69   
-        LDA a40D0
+        LDA pauseModeSelected
         BEQ b7E6F
         RTS 
 
@@ -7050,55 +7131,56 @@ b7E8B   DEC f7E5C,X
 b7EA7   RTS 
 
 ;-------------------------------
-; s7EA8
+; DetectGameOrAttractMode
 ;-------------------------------
-s7EA8   
-        LDA aAAE0
+DetectGameOrAttractMode   
+        LDA attractModeSelected
         BNE b7EB8
         LDA #$01
-        STA a797D
+        STA inGameMode
         LDA #$00
-        STA a7EE1
+        STA inAttractMode
         RTS 
 
 b7EB8   LDA #$00
-        STA a797D
+        STA inGameMode
         LDA #$FF
-        STA a7EE1
+        STA inAttractMode
         RTS 
 
 ;-------------------------------
-; s7EC3
+; GetSomeGameModeData
 ;-------------------------------
-s7EC3   
+GetSomeGameModeData   
         LDX #$09
-b7EC5   JSR s7316
+b7EC5   JSR GetSomeSequenceData
         AND #$0F
         STA f49C6,X
         DEX 
         BPL b7EC5
-        JSR s7316
+
+        JSR GetSomeSequenceData
         AND #$03
-        STA a78B0
-        JSR s7316
+        STA currentTopWorldProgress
+        JSR GetSomeSequenceData
         AND #$03
-        STA a78B2
+        STA currentBottomWorldProgress
         RTS 
 
-a7EE1   .BYTE $AD
+inAttractMode   .BYTE $AD
 a7EE2   .BYTE $09
 a7EE3   .BYTE $09
 ;-------------------------------
 ; s7EE4
 ;-------------------------------
 s7EE4   
-        LDA a7EE1
+        LDA inAttractMode
         BNE b7EEA
         RTS 
 
 b7EEA   DEC a7EE2
         BNE b7F01
-        JSR s7316
+        JSR GetSomeSequenceData
         AND #$1F
         ORA #$01
         STA a7EE2
@@ -7119,22 +7201,22 @@ aAAD0   .BYTE $00
 aAAD1   .BYTE $00
 mifDNAPauseModeActive   .BYTE $00,$0C,$00,$00,$00,$00,$0A,$F6
         .BYTE $F9,$04,$F9,$FC,$00,$00
-aAAE0   .BYTE $FF
+attractModeSelected   .BYTE $FF
 aAAE1   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$02,$02,$01,$01,$00
         .BYTE $00,$00,$00,$00,$10,$00,$10,$00
         .BYTE $00,$00,$10,$00,$04,$40
         .BYTE $00
 ;-------------------------------
-; sAB00
+; DisplayProgressScreen
 ;-------------------------------
-sAB00   
+DisplayProgressScreen   
         LDA #$00
         STA $D015    ;Sprite display Enable
         STA aAD23
-        LDA #<pABE6
+        LDA #<ProgressScreenInterruptHandler
         STA $0314    ;IRQ
-        LDA #>pABE6
+        LDA #>ProgressScreenInterruptHandler
         STA $0315    ;IRQ
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
@@ -7177,8 +7259,10 @@ bAB66   LDA fAB7E,X
         DEX 
         BNE bAB66
         CLI 
+
 bAB77   LDA aAD23
         BEQ bAB77
+
 fAB7E   =*+$02
         JMP SetupScreenAndInitializeGame
 
@@ -7196,7 +7280,11 @@ fABC6   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00
 aABE5   .BYTE $00
-pABE6   LDA $D019    ;VIC Interrupt Request Register (IRR)
+;-------------------------------
+; ProgressScreenInterruptHandler   
+;-------------------------------
+ProgressScreenInterruptHandler   
+        LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE bABF3
         PLA 
@@ -7606,9 +7694,9 @@ bAEE8   LDA (screenPtrLo2),Y
 bAF12   RTS 
 
 ;-------------------------------
-; sAF13
+; DrawInvertedWorld
 ;-------------------------------
-sAF13   
+DrawInvertedWorld   
         LDX #$28
 bAF15   LDA SCREEN_RAM + $02A7,X
         STA SCREEN_RAM + $02CF,X
@@ -7669,9 +7757,9 @@ bAF99   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         RTS 
 
 ;-------------------------------
-; sAFA2
+; ClearColorRAM
 ;-------------------------------
-sAFA2   
+ClearColorRAM   
         LDX #$00
 bAFA4   STA COLOR_RAM + $0000,X
         STA COLOR_RAM + $0100,X
@@ -7822,9 +7910,9 @@ bB2D5   LDA (screenPtrLo2),Y
 bB310   RTS 
 
 ;-------------------------------
-; sB311
+; DrawInvertedWorld2
 ;-------------------------------
-sB311   
+DrawInvertedWorld2   
         LDX #$28
 bB313   LDA SCREEN_RAM + $0027,X
         STA SCREEN_RAM - $01,X
@@ -8089,7 +8177,7 @@ bB53B   DEY
         BNE bB539
         RTS 
 
-bB542   JSR sAF13
+bB542   JSR DrawInvertedWorld
         JSR sAED4
 ;-------------------------------
 ; jB548
@@ -8109,7 +8197,7 @@ bB559   LDA aB488
         STA aB488
         AND #$F0
         BEQ bB537
-        JSR sB311
+        JSR DrawInvertedWorld2
         JSR sB2C1
         JMP jB548
 
@@ -8375,7 +8463,7 @@ sB925
         STA aB95D
         LDA fB954,X
         ORA #$08
-        JSR sAFA2
+        JSR ClearColorRAM
 fB93F   RTS 
 
         .BYTE $04,$05,$06,$03
@@ -9223,12 +9311,16 @@ bC117   TXA
 
 aC135   .BYTE $00
 aC136   .BYTE $00
-pC137   .BYTE $AD,$19
-        BNE bC164
-        ORA (pD0,X)
-        .BYTE $03,$4C ;SLO ($4C,X)
-        SBC (pBF),Y
-        LDY aC136
+;-------------------------------
+; pC137
+;-------------------------------
+pC137
+        LDA $D019    ;VIC Interrupt Request Register (IRR)
+        AND #$01
+        BNE bC141
+        JMP jBFF1
+
+bC141   LDY aC136
         LDA fBFA1,Y
         CLC 
         ADC #$08
@@ -10048,9 +10140,9 @@ jC9C0
         STA aCC88
         STY aFC
 ;-------------------------------
-; jC9C9
+; DisplayHiScoreScreen
 ;-------------------------------
-jC9C9   
+DisplayHiScoreScreen   
         SEI 
         LDA #<pCD4C
         STA $0314    ;IRQ
@@ -10063,7 +10155,7 @@ jC9C9
         JSR sCEB9
         LDA aCC88
         BEQ bC9E8
-        JMP jCA9D
+        JMP ClearScreenDrawHiScoreScreenText
 
 bC9E8   LDY #$07
 bC9EA   LDA (pFE),Y
@@ -10106,7 +10198,7 @@ bCA1E   LDA aFE
         BNE bCA18
         LDA #$00
         STA aCA3B
-        JMP jCA9D
+        JMP ClearScreenDrawHiScoreScreenText
 
 aCA3B   .BYTE $00
 ;-------------------------------
@@ -10176,9 +10268,9 @@ bCA8F   LDA fC803,Y
         LDA aFD
         PHA 
 ;-------------------------------
-; jCA9D
+; ClearScreenDrawHiScoreScreenText
 ;-------------------------------
-jCA9D   
+ClearScreenDrawHiScoreScreenText   
         LDX #$00
 bCA9F   LDA #$20
         STA SCREEN_RAM,X
@@ -10388,8 +10480,8 @@ bCC2E   JSR sCE95
         LDA lastKeyPressed
         CMP #$3C
         BNE bCC2E
-        JSR sCC96
-        JMP jC9C9
+        JSR SetupHiScoreScreen
+        JMP DisplayHiScoreScreen
 
 bCC43   STA aFA
         AND #$01
@@ -10438,9 +10530,9 @@ bCC8C   LDA $DC00    ;CIA1: Data Port Register A
         JMP MainControlLoop
 
 ;-------------------------------
-; sCC96
+; SetupHiScoreScreen
 ;-------------------------------
-sCC96   
+SetupHiScoreScreen   
         LDX aCC87
         LDA #<pC81B
         STA aFC
@@ -10489,11 +10581,13 @@ bCCE0   LDA fCCED,X
         DEX 
         BPL bCCE0
         BMI bCD15
+
 fCCED   .BYTE $47,$41,$4D,$45,$20,$43,$4F,$4D
         .BYTE $50,$4C,$45,$54,$49,$4F,$4E,$20
         .BYTE $43,$48,$41,$52,$54,$20,$46,$4F
         .BYTE $52,$20,$5A,$41,$52,$44,$2C,$20
         .BYTE $54,$48,$45,$20,$48,$45,$52,$4F
+
 bCD15   LDY #$07
         LDX #$00
 bCD19   LDA (pFC),Y
@@ -10590,26 +10684,10 @@ fCDD2   .BYTE $0B,$0B,$0B,$0B,$0C,$0C,$0C,$0C
         .BYTE $0F,$0F,$0F,$0F,$01,$01,$01,$01
 fCDE2   .BYTE $02,$02,$08,$08,$08,$07,$07,$07
         .BYTE $05,$05,$05,$0E,$0E,$0E,$07,$07
-fCDF2   .BYTE $59,$41,$4B,$27,$53,$20,$47,$52
-        .BYTE $45,$41,$54,$20,$47,$49,$4C,$42
-        .BYTE $49,$45,$53,$20,$4F,$46,$20,$4F
-        .BYTE $55,$52,$20,$54,$49,$4D,$45,$2E
-        .BYTE $2E,$2E,$2E,$2E,$20,$25,$20,$25
-fCE1A   .BYTE $4C,$45,$46,$54,$20,$41,$4E,$44
-        .BYTE $20,$52,$49,$47,$48,$54,$20,$54
-        .BYTE $4F,$20,$53,$45,$4C,$45,$43,$54
-        .BYTE $2C,$20,$46,$49,$52,$45,$20,$54
-        .BYTE $4F,$20,$45,$4E,$54,$45,$52,$2E
-fCE42   .BYTE $55,$50,$20,$41,$4E,$44,$20,$44
-        .BYTE $4F,$57,$4E,$2C,$20,$53,$50,$41
-        .BYTE $43,$45,$20,$46,$4F,$52,$20,$52
-        .BYTE $45,$43,$4F,$52,$44,$2C,$20,$46
-        .BYTE $49,$52,$45,$20,$51,$55,$49,$54
-fCE6A   .BYTE $54,$48,$45,$20,$53,$43,$4F,$52
-        .BYTE $45,$20,$46,$4F,$52,$20,$54,$48
-        .BYTE $45,$20,$4C,$41,$53,$54,$20,$42
-        .BYTE $4C,$41,$53,$54,$20,$57,$41,$53
-        .BYTE $20,$30,$30,$30,$30,$30,$30,$30
+fCDF2   .TEXT "YAK'S GREAT GILBIES OF OUR TIME..... % %"
+fCE1A   .TEXT "LEFT AND RIGHT TO SELECT, FIRE TO ENTER."
+fCE42   .TEXT "UP AND DOWN, SPACE FOR RECORD, FIRE QUIT"
+fCE6A   .TEXT "THE SCORE FOR THE LAST BLAST WAS 0000000"
 
 aCE92   .BYTE $00
 aCE93   .BYTE $00
