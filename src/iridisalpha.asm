@@ -979,7 +979,7 @@ b4096   LDA #$08
         BNE b4096
         LDX #$06
 b40A0   LDA #$30
-        STA fAAC1,X
+        STA currentBonusBountyPtr,X
         DEX 
         BPL b40A0
         JSR CopyInSpriteData
@@ -3636,7 +3636,7 @@ b6148   LDA f616D,X
         DEX 
         BPL b6148
         LDX #$06
-b615A   LDA fAAC1,X
+b615A   LDA currentBonusBountyPtr,X
         STA SCREEN_RAM + $0319,X
         DEX 
         BNE b615A
@@ -4074,9 +4074,9 @@ DisplayBonus
         LDA #$00
         STA bonusAwarded
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        LDA #<p65D0
+        LDA #<BonusBountyGilbyAnimation
         STA $0314    ;IRQ
-        LDA #>p65D0
+        LDA #>BonusBountyGilbyAnimation
         STA $0315    ;IRQ
         JSR ClearScreen3
         LDA $D011    ;VIC Control Register 1
@@ -4094,6 +4094,7 @@ DisplayBonus
         STA $D01C    ;Sprites Multi-Color Mode Select
         LDX #$07
 
+        ; Display the animated gilbies
 b6595   LDA #$C1
         STA Sprite0Ptr,X
         LDA f65EC,X
@@ -4110,13 +4111,14 @@ b65A5   LDA txtBonus10000,X
         DEX 
         BPL b65A5
 
+        ; Increment the total bonus bounty by 10000
         LDX #$03
-b65B7   INC fAAC0,X
-        LDA fAAC0,X
+b65B7   INC currentBonusBounty,X
+        LDA currentBonusBounty,X
         CMP #$3A
         BNE b65C9
         LDA #$30
-        STA fAAC0,X
+        STA currentBonusBounty,X
         DEX 
         BNE b65B7
 
@@ -4126,9 +4128,9 @@ b65C9   LDA lastKeyPressed
         RTS 
 
 ;-------------------------------
-; p65D0
+; BonusBountyGilbyAnimation
 ;-------------------------------
-p65D0
+BonusBountyGilbyAnimation
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE b65F4
@@ -6556,6 +6558,10 @@ b7899   CMP #$3C ; Space pressed
         INC progressDisplaySelected
         RTS 
 
+        ; We can award ourselves a bonus bounty by 
+        ; pressing Y at any time, as long as '1C' is the
+        ; first character in the hiscore table. Not sure
+        ; what this hack is for, testing?
 b78A1   CMP #$19 ; Y Pressed
         BNE b7898
         LDA canAwardBonus
@@ -7231,8 +7237,8 @@ b7F01   LDA a7EE3
 .include "padding.asm"
 
 *=$AAC0
-fAAC0   .BYTE $F0
-fAAC1   .BYTE $30,$30,$30,$30,$30,$30,$30,$00
+currentBonusBounty   .BYTE $F0
+currentBonusBountyPtr   .BYTE $30,$30,$30,$30,$30,$30,$30,$00
         .BYTE $00,$00,$00,$00,$00,$C8,$18
 aAAD0   .BYTE $00
 aAAD1   .BYTE $00

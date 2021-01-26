@@ -2056,7 +2056,7 @@ bC07E   LDA fBFAA,X
         DEY 
         BPL bC07C
         LDX #$06
-bC0B5   LDA fAAC1,X
+bC0B5   LDA currentBonusBountyPtr,X
         STA SCREEN_RAM + $02E6,X
         DEX 
         BPL bC0B5
@@ -2275,7 +2275,7 @@ bC27A   DEY
 bC285   LDA #$28
         LDX #$06
 bC289   LDA SCREEN_RAM + $02E6,X
-        STA fAAC1,X
+        STA currentBonusBountyPtr,X
         DEX 
         BPL bC289
         RTS 
