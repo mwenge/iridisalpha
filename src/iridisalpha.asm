@@ -113,8 +113,15 @@ Sprite7Ptr = $07FF
 ;
 e00FD = $00FD
 
-        * = $0801
-        .BYTE $0C,$08,$0A,$00,$9E,$31,$36,$33,$38,$34,$00
+
+* = $0801
+;------------------------------------------------------------------
+; SYS 16384 ($4000)
+; This launches the program from address $4000, i.e. MainControlLoop.
+;------------------------------------------------------------------
+; $9E = SYS
+; $31,$36,$33,$38,$34,$00 = 16384 ($4000 in hex)
+.BYTE $0C,$08,$0A,$00,$9E,$31,$36,$33,$38,$34,$00
 
 ;-------------------------------
 ; LaunchCurrentProgram
@@ -140,7 +147,7 @@ b082F   LDX #$F8
         LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
         JSR InitializeSpritesAndInterruptsForTitleScreen
-        JMP IA_TitleScreenLoop
+        JMP EnterTitleScreenLoop
 
         .BYTE $00,$06,$02,$04,$05,$03,$07,$01
         .BYTE $01,$07,$03,$05,$04,$02,$06
@@ -148,6 +155,7 @@ f0853   .BYTE $00
 f0854   .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
         .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
 f7PressedOrTimedOutToAttractMode   .BYTE $02
+
 ;-------------------------------
 ; InitializeSpritesAndInterruptsForTitleScreen
 ;-------------------------------
@@ -188,9 +196,9 @@ InitializeSpritesAndInterruptsForTitleScreen
         RTS 
 
 ;-------------------------------
-; IA_TitleScreenLoop
+; EnterTitleScreenLoop
 ;-------------------------------
-IA_TitleScreenLoop   
+EnterTitleScreenLoop   
         LDA #$0B
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
@@ -200,7 +208,8 @@ IA_TitleScreenLoop
         JSR IA_DrawTitleScreen
 
         ; Loop waiting for input
-b08CB   JSR IA_TitleCheckInput
+TitleScreenLoop
+        JSR TitleScreenCheckInput
         LDA f7PressedOrTimedOutToAttractMode
         CMP #$04
         BEQ ExitTitleLoop
@@ -208,14 +217,17 @@ b08CB   JSR IA_TitleCheckInput
         ; Has user pressed fire?
         LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
-        BNE b08CB
+        BNE TitleScreenLoop
 
         ; User has pressed fire, launch game.
+
+        ;Turn off attract mode
         LDA #$00
         STA attractModeSelected
         RTS 
 
 ExitTitleLoop
+        ;Turn on attract mode
         LDA #$FF
         STA attractModeSelected
 
@@ -278,7 +290,7 @@ b091E   LDA f0990,Y
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        JSR s0AC6
+        JSR UpdateGilbysInTitleAnimation
         JSR UpdateGilbyColorsInTitleScreenAnimation
         JSR s0BC1
         JSR PlayTitleScreenMusic
@@ -412,12 +424,13 @@ b0AB7   LDA f0853,X
         RTS 
 
 ;-------------------------------
-; s0AC6
+; UpdateGilbysInTitleAnimation
 ;-------------------------------
-s0AC6   
+UpdateGilbysInTitleAnimation   
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$80
         STA $D010    ;Sprites 0-7 MSB of X coordinate
+
         LDX #$06
 b0AD0   LDA f0B25,X
         STA SCREEN_RAM + $03F7,X
@@ -433,6 +446,7 @@ b0AD0   LDA f0B25,X
         STA $CFFF,Y
         DEX 
         BNE b0AD0
+
         LDA #$3F
         STA $D01C    ;Sprites Multi-Color Mode Select
         STA $D01D    ;Sprites Expand 2x Horizontal (X)
@@ -555,6 +569,7 @@ b0BE1   INC f0BB3,X
 b0BF0   INX 
         CPX #$07
         BNE b0BC3
+
         DEC a1650
         BNE b0C0E
         LDA #$04
@@ -807,9 +822,9 @@ a164E   .BYTE $01
 a164F   .BYTE $01
 a1650   .BYTE $04
 ;-------------------------------
-; IA_TitleCheckInput
+; TitleScreenCheckInput
 ;-------------------------------
-IA_TitleCheckInput   
+TitleScreenCheckInput   
         LDA lastKeyPressed
         CMP #$40
         BNE b1658
@@ -878,13 +893,14 @@ s16A4
 difficultySelected   =*+$01
 ;-------------------------------
 ; MainControlLoop
+; Execution starts here
 ;-------------------------------
 MainControlLoop   
         LDA #$00
         SEI 
-p4003   LDA #<p6B3E
+p4003   LDA #<MainControlLoopInterruptHandler
         STA $0318    ;NMI
-        LDA #>p6B3E
+        LDA #>MainControlLoopInterruptHandler
         STA $0319    ;NMI
         LDA #$80
         STA $0291
@@ -899,7 +915,11 @@ p4003   LDA #<p6B3E
         LDA #$00
         STA mifDNAPauseModeActive
         STA a6D51
+
+        ; Display the title screen. We'll stay in here, until the
+        ; player presses fire or we time out and go into attract mode.
         JSR EnterMainTitleScreen
+
         JSR DetectGameOrAttractMode
         LDA #$36
         STA a01
@@ -911,7 +931,7 @@ p4003   LDA #<p6B3E
         LDA #$00
         STA a654F
         STA a10
-        STA a6929
+        STA bonusAwarded
         STA a14
         STA a18
         STA a1C
@@ -932,7 +952,7 @@ p4003   LDA #<p6B3E
         LDA #>p0F8C
         STA $D418    ;Select Filter Mode and Volume
         JSR ZeroiseScreen
-        JMP PrepareToLaunchIA
+        JMP PrepareToLaunchIridisAlpha
 
 ;-------------------------------
 ; ZeroiseScreen
@@ -949,9 +969,9 @@ b4084   STA f2200,X
         RTS 
 
 ;-------------------------------
-; PrepareToLaunchIA
+; PrepareToLaunchIridisAlpha
 ;-------------------------------
-PrepareToLaunchIA   
+PrepareToLaunchIridisAlpha   
         LDX #$05
 b4096   LDA #$08
         STA f5EF0,X
@@ -2784,7 +2804,7 @@ b575C   CMP f49C6,X
         BNE b5767
         DEX 
         BPL b575C
-        INC a6929
+        INC bonusAwarded
 b5767   LDA a654F
         BNE b5751
         LDX a78B1
@@ -4023,10 +4043,10 @@ b64F7   LDA txtReasonGilbyDied,X
         RTS 
 
 ;-------------------------------
-; s650B
+; JumpDisplayBonus
 ;-------------------------------
-s650B   
-        JMP j6554
+JumpDisplayBonus   
+        JMP DisplayBonus
 
 f650E   .BYTE $40,$46,$4C,$52,$58,$5E,$63,$68
         .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
@@ -4043,16 +4063,16 @@ a6551   .BYTE $00
 a6552   .BYTE $00
 a6553   .BYTE $00
 ;-------------------------------
-; j6554
+; DisplayBonus
 ;-------------------------------
-j6554   
+DisplayBonus   
         SEI 
         INC a654F
         LDA a654F
         AND #$07
         STA a654F
         LDA #$00
-        STA a6929
+        STA bonusAwarded
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         LDA #<p65D0
         STA $0314    ;IRQ
@@ -4068,24 +4088,28 @@ j6554
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         CLI 
+
         LDA #$FF
         STA $D015    ;Sprite display Enable
         STA $D01C    ;Sprites Multi-Color Mode Select
         LDX #$07
+
 b6595   LDA #$C1
         STA Sprite0Ptr,X
         LDA f65EC,X
         STA $D027,X  ;Sprite 0 Color
         DEX 
         BPL b6595
+
         LDX #$0A
-b65A5   LDA f6789,X
+b65A5   LDA txtBonus10000,X
         AND #$3F
         STA SCREEN_RAM + $019F,X
         LDA #$07
         STA COLOR_RAM + $019F,X
         DEX 
         BPL b65A5
+
         LDX #$03
 b65B7   INC fAAC0,X
         LDA fAAC0,X
@@ -4095,8 +4119,9 @@ b65B7   INC fAAC0,X
         STA fAAC0,X
         DEX 
         BNE b65B7
+
 b65C9   LDA lastKeyPressed
-        CMP #$3C
+        CMP #$3C ; Space pressed
         BNE b65C9
         RTS 
 
@@ -4321,14 +4346,13 @@ j6774
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS 
 
-f6789   .BYTE $42,$4F,$4E,$55,$53,$20,$31,$30
-        .BYTE $30,$30,$30
+txtBonus10000   .TEXT "BONUS 10000"
 a6794   .BYTE $BC
 f6795   .BYTE $00,$06,$02,$04,$05,$03,$07,$01
         .BYTE $01,$07,$03,$05,$04,$02,$06,$00
 f67A5   .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
         .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
-f67B5   .BYTE $00,$01,$02,$03,$04,$05,$06,$07
+backgroundColorsForWorlds   .BYTE $00,$01,$02,$03,$04,$05,$06,$07
         .BYTE $08,$09,$0A,$0B,$0C,$0D,$0E,$0F
 a67C5   .BYTE $04
 a67C6   .BYTE $05
@@ -4367,8 +4391,8 @@ f6804   .BYTE $CA
 f6805   .BYTE $CA,$CA,$CA,$CA,$CA
 a680A   .BYTE $09
 a680B   .BYTE $0E
-a680C   .BYTE $09
-a680D   .BYTE $0E
+currentWorldBackgroundColor1   .BYTE $09
+currentWorldBackgroundColor2   .BYTE $0E
 ;-------------------------------
 ; PrepareSpriteData
 ;-------------------------------
@@ -4448,12 +4472,12 @@ SetupSpritesAndSound
         STA $D412    ;Voice 3: Control Register
         LDA #$B0
         STA $D000    ;Sprite 0 X Pos
-        JSR s71C2
-        JSR s78FC
+        JSR DrawWorlds
+        JSR SetUpWorlds
         SEI 
-        LDA #<CheckSpriteBackgroundCollision
+        LDA #<MainGameInterruptHandler
         STA $0314    ;IRQ
-        LDA #>CheckSpriteBackgroundCollision
+        LDA #>MainGameInterruptHandler
         STA $0315    ;IRQ
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
@@ -4467,12 +4491,14 @@ SetupSpritesAndSound
         LDX #$28
         LDA inGameMode
         BNE b68DF
+
 b68D2   LDA #$00
         STA SCREEN_RAM + $01B7,X
         LDA #$04
         STA COLOR_RAM + $01B7,X
         DEX 
         BNE b68D2
+
 b68DF   RTS 
 
 ;-------------------------------
@@ -4493,7 +4519,7 @@ InitializeSprites
         AND #$FE
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         JSR SetUpGilbySprite
-p6904   JMP j692A
+p6904   JMP PrepareToRunGame
 
 ;-------------------------------
 ; SetUpGilbySprite
@@ -4514,11 +4540,11 @@ SetUpGilbySprite
         STA a7140
         RTS 
 
-a6929   .BYTE $00
+bonusAwarded   .BYTE $00
 ;-------------------------------
-; j692A
+; PrepareToRunGame
 ;-------------------------------
-j692A   
+PrepareToRunGame   
         LDA inAttractMode
         BEQ b6932
         JSR GetSomeGameModeData
@@ -4539,11 +4565,15 @@ BeginRunningGame
         NOP 
         NOP 
         NOP 
-        LDA inAttractMode
-        BEQ StartAttractMode
 
+        ; Start the game if in attract mode or
+        ; normal mode, otherwise show hiscore
+        ; screen.
+        LDA inAttractMode
+        BEQ StartTheGame
         CMP #$01
-        BNE StartAttractMode
+        BNE StartTheGame
+
         LDA #$01
         STA aCC88
         LDA $D016    ;VIC Control Register 2
@@ -4559,10 +4589,10 @@ BeginRunningGame
         STA aF1
         JMP DrawHiScoreScreen
 
-StartAttractMode
-        LDA a6929
+StartTheGame
+        LDA bonusAwarded
         BEQ b6982
-        JSR s650B
+        JSR JumpDisplayBonus
         JSR StoreStatusBarDetail
         JSR InitializeBonusPhaseVars
         JMP ResumeGame
@@ -4724,14 +4754,14 @@ b6AB3   LDA f7E49,X
 
 a6AC5   .BYTE $D3
 ;-------------------------------
-; s6AC6
+; UpdateAttackShipsPosition
 ;-------------------------------
-s6AC6   
+UpdateAttackShipsPosition   
         LDX #$0C
         LDY #$06
 b6ACA   LDA f67C7,Y
         STA $D000,X  ;Sprite 0 X Pos
-        LDA p6B3E,Y
+        LDA MainControlLoopInterruptHandler,Y
         AND $D010    ;Sprites 0-7 MSB of X coordinate
         STA a20
         LDA f67E1,Y
@@ -4742,7 +4772,7 @@ b6ACA   LDA f67C7,Y
         STA $D001,X  ;Sprite 0 Y Pos
         STX a42
         LDX f67EF,Y
-        LDA f67B5,X
+        LDA backgroundColorsForWorlds,X
         STA $D027,Y  ;Sprite 0 Color
         LDA f67D5,Y
         STA Sprite0Ptr,Y
@@ -4754,14 +4784,14 @@ b6ACA   LDA f67C7,Y
         RTS 
 
 ;-------------------------------
-; s6B02
+; UpdateAttackShipsPosition2
 ;-------------------------------
-s6B02   
+UpdateAttackShipsPosition2   
         LDX #$0C
         LDY #$06
 b6B06   LDA f67CF,Y
         STA $D000,X  ;Sprite 0 X Pos
-        LDA p6B3E,Y
+        LDA MainControlLoopInterruptHandler,Y
         AND $D010    ;Sprites 0-7 MSB of X coordinate
         STA a20
         LDA f67E9,Y
@@ -4772,7 +4802,7 @@ b6B06   LDA f67CF,Y
         STA $D001,X  ;Sprite 0 Y Pos
         STX a42
         LDX f67F5,Y
-        LDA f67B5,X
+        LDA backgroundColorsForWorlds,X
         STA $D027,Y  ;Sprite 0 Color
         LDA f67DB,Y
         STA Sprite0Ptr,Y
@@ -4783,7 +4813,8 @@ b6B06   LDA f67CF,Y
         BNE b6B06
         RTS 
 
-p6B3E   RTI 
+MainControlLoopInterruptHandler
+        RTI 
 
         .BYTE $FD,$FB,$F7,$EF,$DF
 f6B44   .BYTE $BF
@@ -4793,9 +4824,9 @@ f6B46   .BYTE $04,$08,$10,$20,$40,$02,$04,$08
 difficultySetting   .BYTE $00
 
 ;-------------------------------
-; CheckSpriteBackgroundCollision
+; MainGameInterruptHandler
 ;-------------------------------
-CheckSpriteBackgroundCollision
+MainGameInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE SpriteBackgroundCollisionDetected; Collision detected
@@ -4888,6 +4919,7 @@ b6BDA   LDA #$00
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         BNE b6C26
+
 ;-------------------------------
 ; s6BF8
 ;-------------------------------
@@ -4912,10 +4944,10 @@ b6C24   RTS
 
 a6C25   .BYTE $D3
 b6C26   LDX a680A
-        LDA f67B5,X
+        LDA backgroundColorsForWorlds,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDX a680B
-        LDA f67B5,X
+        LDA backgroundColorsForWorlds,X
         STA $D023    ;Background Color 2, Multi-Color Register 1
         LDA $D01F    ;Sprite to Background Collision Detect
         STA a6D51
@@ -4932,7 +4964,7 @@ b6C26   LDX a680A
         JSR s6BF8
         JSR s7C97
         JSR s778C
-        JSR s6AC6
+        JSR UpdateAttackShipsPosition
         JSR s5284
         JMP $EA31
 
@@ -4987,7 +5019,7 @@ b6CC5   DEX
 
 b6CD3   JMP j6D41
 
-b6CD6   JSR s6B02
+b6CD6   JSR UpdateAttackShipsPosition2
         LDA #$07
         SEC 
         SBC a6E11
@@ -5008,11 +5040,11 @@ b6CD6   JSR s6B02
         CLC 
         ADC #$13
         STA Sprite0Ptr
-b6D07   LDX a680C
-        LDA f67B5,X
+b6D07   LDX currentWorldBackgroundColor1
+        LDA backgroundColorsForWorlds,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
-        LDX a680D
-        LDA f67B5,X
+        LDX currentWorldBackgroundColor2
+        LDA backgroundColorsForWorlds,X
         STA $D023    ;Background Color 2, Multi-Color Register 1
         LDA a40D2
         BNE j6D36
@@ -5552,9 +5584,9 @@ b71A4   LDA a7176
         DEC a760C
         BNE b719D
 ;-------------------------------
-; s71C2
+; DrawWorlds
 ;-------------------------------
-s71C2   
+DrawWorlds   
         LDY #$00
         LDA inGameMode
         BEQ b71E6
@@ -5690,7 +5722,7 @@ b72AD   CLC
         LDA #$80
         JMP j7263
 
-b72BD   JMP s71C2
+b72BD   JMP DrawWorlds
 
 ;-------------------------------
 ; j72C0
@@ -5759,9 +5791,9 @@ GetSomeSequenceData
         RTS 
 
 ;-------------------------------
-; s731D
+; UpdateTopWorldSurfaceColor
 ;-------------------------------
-s731D   
+UpdateTopWorldSurfaceColor   
         LDX #$28
 b731F   STA COLOR_RAM + $0117,X
         STA COLOR_RAM + $013F,X
@@ -5772,9 +5804,9 @@ b731F   STA COLOR_RAM + $0117,X
         RTS 
 
 ;-------------------------------
-; s732F
+; UpdateBottomWorldSurfaceColor
 ;-------------------------------
-s732F   
+UpdateBottomWorldSurfaceColor   
         LDX #$28
 b7331   STA COLOR_RAM + $01DF,X
         STA COLOR_RAM + $0207,X
@@ -6526,10 +6558,10 @@ b7899   CMP #$3C ; Space pressed
 
 b78A1   CMP #$19 ; Y Pressed
         BNE b7898
-        LDA aC822
+        LDA canAwardBonus
         CMP #$1C
         BNE b7898
-        INC a6929
+        INC bonusAwarded
         RTS 
 
 currentTopWorldProgress   .BYTE $00
@@ -6537,9 +6569,9 @@ a78B1   .BYTE $00
 currentBottomWorldProgress   .BYTE $00
 a78B3   .BYTE $00
 a78B4   .BYTE $00
-f78B5   .BYTE $09,$0B,$07,$0E,$0D
-f78BA   .BYTE $0E,$10,$01,$07,$10
-f78BF   .BYTE $0D,$09,$0A,$0C,$0A,$01,$01
+backgroundColor1ForWorlds   .BYTE $09,$0B,$07,$0E,$0D
+backgroundColor2ForWorlds   .BYTE $0E,$10,$01,$07,$10
+surfaceColorsForWorlds   .BYTE $0D,$09,$0A,$0C,$0A,$01,$01
 a78C6   .BYTE $A5
 a78C7   .BYTE $01
 ;-------------------------------
@@ -6569,23 +6601,28 @@ b78CE   LDX a78C6
         LDA #$00
         STA a78C7
 ;-------------------------------
-; s78FC
+; SetUpWorlds
 ;-------------------------------
-s78FC   
+SetUpWorlds   
         LDX currentTopWorldProgress
-        LDA f78B5,X
+        LDA backgroundColor1ForWorlds,X
         STA a680A
-        LDA f78BA,X
+        LDA backgroundColor2ForWorlds,X
         STA a680B
-        LDA f78BF,X
-        JSR s731D
+
+        LDA surfaceColorsForWorlds,X
+        JSR UpdateTopWorldSurfaceColor
+
         LDX currentBottomWorldProgress
-        LDA f78B5,X
-        STA a680C
-        LDA f78BA,X
-        STA a680D
-        LDA f78BF,X
-        JSR s732F
+        LDA backgroundColor1ForWorlds,X
+        STA currentWorldBackgroundColor1
+
+        LDA backgroundColor2ForWorlds,X
+        STA currentWorldBackgroundColor2
+
+        LDA surfaceColorsForWorlds,X
+        JSR UpdateBottomWorldSurfaceColor
+
         LDA #$01
         STA a6D85
         LDA #$0F
@@ -6613,12 +6650,12 @@ b7939   STA f67D5,X
         LDA inGameMode
         BEQ b797C
         LDX currentTopWorldProgress
-        LDA f78B5,X
-        STA a680C
-        LDA f78BA,X
-        STA a680D
-        LDA f78BF,X
-        JSR s732F
+        LDA backgroundColor1ForWorlds,X
+        STA currentWorldBackgroundColor1
+        LDA backgroundColor2ForWorlds,X
+        STA currentWorldBackgroundColor2
+        LDA surfaceColorsForWorlds,X
+        JSR UpdateBottomWorldSurfaceColor
 b797C   RTS 
 
 inGameMode   .BYTE $01
@@ -7228,7 +7265,7 @@ aC81A   =*+$02
 sC818   JMP s60F0
 
 hiScoreTablePtr   .TEXT "0068000"
-aC822   .TEXT "YAK "
+canAwardBonus   .TEXT "YAK "
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
         .TEXT  "0065535RATT"
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
