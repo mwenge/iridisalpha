@@ -236,3 +236,4 @@ IRIDIS ALPHA being brought to you by YAK the hairy, with the support of the Coca
 
 Assembled on a C128 using a partially-finished JCL assembler and the horrible, slow Commodore disk drives. Next time I'm gonna use a 6502 X-ASM running in 2.5 Megabytes of RAM on me trusty ST...
 
+Sourced from https://codetapper.com/c64/diary-of-a-game/iridis-alpha/
