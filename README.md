@@ -27,11 +27,11 @@ Labelling the game logic is still in progress.
 [vice]: http://vice-emu.sourceforge.net/
 [https://gridrunner.xyz]: https://mwenge.github.io/gridrunner.xyz
 [commented source code]:https://github.com/mwenge/gridrunner/blob/master/src/iridisalpha.asm
-[DNA]:https://github.com/mwenge/iridisalpha/blob/master/dna
-[Torus]:https://github.com/mwenge/iridisalpha/blob/master/torus
-[Torus2]:https://github.com/mwenge/iridisalpha/blob/master/torus2
-[Iridis Spaceship]:https://github.com/mwenge/iridisalpha/blob/master/iridis_spaceship
-[Made in France]:https://github.com/mwenge/iridisalpha/blob/master/mif
+[DNA]:https://github.com/mwenge/iridisalpha/blob/master/demos/dna
+[Torus]:https://github.com/mwenge/iridisalpha/blob/master/demos/torus
+[Torus2]:https://github.com/mwenge/iridisalpha/blob/master/demos/torus2
+[Iridis Spaceship]:https://github.com/mwenge/iridisalpha/blob/master/demos/iridis_spaceship
+[Made in France]:https://github.com/mwenge/iridisalpha/blob/master/demos/mif
 [Exomizer]:https://bitbucket.org/magli143/exomizer/wiki/Home
 
 To compile and run it do:
