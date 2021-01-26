@@ -48,13 +48,6 @@ $ make iridisalpha.prg
 ```
 
 # Original Game Manual
-![image](https://user-images.githubusercontent.com/58846/105919145-ffb7df80-602c-11eb-9e34-452a2e894be1.png)
-
-## LOADING THE TAPE
-Plug in your joystick and press the Shift and Run/Stop keys simultaneously.
-Make sure the Shift Lock key is not depressed.
-Insert the rewound tape into your cassette player and press play.
-The game will turbo-load in about three minutes.
 
 ## SCREEN DISPLAY
 After the initial screens your Gilby Robot Fighter warps into the first of five upper planets displayed in the top third of your screen. The middle third of the screen initially shows the design of the Warp Gate on the planet, the design of the Core Area and the design of the non-Core Area. This section of the screen is replaced by a display of a lower, mirror-image planet when you have destroyed three or more waves on the upper planet. The control panel occupies the lowest section of the screen (see illustration below).
