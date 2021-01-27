@@ -1,5 +1,5 @@
 # Iridis Alpha by Jeff Minter
-<img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" height=300><img src="https://user-images.githubusercontent.com/58846/106012659-857e6e00-60b3-11eb-98fd-c54f5289e3a3.gif" height=300>
+<img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" height=300><img src="https://user-images.githubusercontent.com/58846/106015821-c330c600-60b6-11eb-9e5c-321c1320b7b3.gif" height=300>
 
 
 This is the disassembled and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. 
