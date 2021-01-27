@@ -26,7 +26,7 @@ Labelling the game logic is still in progress.
 [64tass]: http://tass64.sourceforge.net/
 [vice]: http://vice-emu.sourceforge.net/
 [https://gridrunner.xyz]: https://mwenge.github.io/gridrunner.xyz
-[commented source code]:https://github.com/mwenge/gridrunner/blob/master/src/iridisalpha.asm
+[commented source code]:https://github.com/mwenge/iridisalpha/blob/master/src/
 [DNA]:https://github.com/mwenge/iridisalpha/blob/master/demos/dna
 [Torus]:https://github.com/mwenge/iridisalpha/blob/master/demos/torus
 [Torus2]:https://github.com/mwenge/iridisalpha/blob/master/demos/torus2
