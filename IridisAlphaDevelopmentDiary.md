@@ -77,99 +77,99 @@ Got up, read The Beano went to ZZAP! offices to hassle them for a cup of tea but
 ## 12 March 1986
 Getting stuff ready for taking to France. Will take 128. Probably won't have much chance to work on Iridis Alpha until I get there, now. Another session on the big Space rig tonight with some Clocktower regulars.
 
-Tue 18 March 1986 — in France
+## Tue 18 March 1986 — in France
 Settled in here now. Found an ace black run today, you can go for a whole side of Genesis down it without stopping, but on the second time down I hit a tree stump protruding through the snow, and did an un intentional flying-Yak bit, and landed on a part of my anatomy I'd rather not have landed on. Fired up the 128, finished the Mushroom planet and designed one more, then did a nice fade between planets routine.
 
-Wed 19 March 1986
+## Wed 19 March 1986
 Cloudy weather — makes skiing hard coz you can't see the bumps. Wrote sonix driver and started to phase in some of the FX for walking, jumping etc.
 
-Thur 20 March 1986
+## Thur 20 March 1986
 Still cloudy. Some snow. Had to buy crappy, French headphones to replace my excellent Sony pair that I knackered when I got them tangled up in a chairlift, dammit! Extended the sonix driver and did a few more FX. Sonix take ages, lots of messing around to do before you get it just right.
 
-Fri 21 March 1986
+## Fri 21 March 1986
 Piste all day, back for more SFX, had to rearrange the interrupt sequence to get it all to fit in the frametime.
 
-Sat 22 March 1986
+## Sat 22 March 1986
 Excellent day — bright sun, good snow, didn't start work till late coz I went on skiing so long. Wrote module to link 8 sprites reserved for 'enemy ships' to planetary motion, and also give them each independent velocities. Did a little work on the Pause mode when I got back from the bar.
 
-Sun 23 March 1986
+## Sun 23 March 1986
 Really bad weather, horrible snow that's nearer rain and so sticky you need to be standing on a near-vertical incline before you even start moving. Hit the bar early, then back for mega Guardian session, then a little more work on the pause mode.
 
-Mon 24 March 1986
+## Mon 24 March 1986
 REALLY crappy weather. Got soaked skiing, thawed out in the bar. Retired to room to think about the alien control system while listening to 'The Wall'. Planned it out on paper ready to code later. Got a neat idea for Phase II of the game, thinking along the lines of Batalyx Subgame 1 crossed with a sort of overhead view vertically-scrolling Marble Madness track. Finished off the Pause mode after evening bar. (This'll be the only Pause mode that's been written TOTALLY under the influence of very expensive Guinness).
 
 Iridis Alpha pic 1
-Tue 25 March 1986
+## Tue 25 March 1986
 New snow, much better skiing all round. Linked completed Pause mode to rest of game. Started on alien control system. Went down bar and got absolutely smashed and had amazing discussion on Life, the Universe and Everything. Listened to 'Wish You Were Here' at half-3, in the morning... ace!
 
-Wed 26 March 1986
+## Wed 26 March 1986
 Skiing OK, came back after full day's pistebashing to do some AC System hacking. Hit a terrible awful bug, ran through the code a million times but not got it yet, so down bar to drown sorrows in copious amounts of Guinness.
 
-Thu 27 March 1986
+## Thu 27 March 1986
 Skiing all day then back for the last day's coding in France, I go home tomorrow. Wrestled with the same bug for three hours, was despairing, then noticed a single missing comma in a massive data table that the assembler had neglected, in its infinite wisdom, to flag as an error during assembly, choosing instead to trash the whole data table. Inserted comma; end of bug. Guinness.
 
-Fri 28/Sat 29 March 1986
+## Fri 28/Sat 29 March 1986
 Trains, trains, trains and Frenchmen, ferry, more train, London, underground, train, bus, Tadley, tea, crash.
 
-Sun 30/Mon 31 March
+## Sun 30/Mon 31 March
 Lazy. Didn't do anything, couldn't because me 128 is in France and I need to buy another one, and it's Easter holidays.
 
-Tue 1 April 1986
+## Tue 1 April 1986
 Went into Reading to get a 128D, got it, intended to return and dutifully do some work, but instead met some of the Incentive mob, went to pub (fatal mistake for programmers), all ended back in Tadley for mega-Colourspace session, so fat chance of getting any work done there...
 
-Wed 2 April 1986
+## Wed 2 April 1986
 Set up new 128D, machine is fine but has a noisy fan and sounds like a small but enthusiastic Hoover. Did a little more work on the ACM, not much mind you.
 
-Thu 3 April 1986
+## Thu 3 April 1986
 Went up to London to see Ariola mob and copped some Amiga stuff off them — EA stuff but not Marble Madness yet — they seem quite keen on Iridis Alpha, especially my ideas for phase 2.
 
 Iridis Alpha pic 2
-Fri 4 April 1986
+## Fri 4 April 1986
 Decided for a break to do a little work on Phase 2 and give Phase 1 a rest. Started at 11 am, finished at 7 am next morning, with a LOT of work done.
 
-Sat 5 April 1986
+## Sat 5 April 1986
 Lots more work done today, I now have a tidy little demo of Phase 2, including complete control system and scrolling background in four different colourschemes, and all inertia routines working. Not bad for a couple days' hacking — got to bed early tonite, 6am!
 
-Sun 6 April 1986
+## Sun 6 April 1986
 Started to get a little sidetracked now, coz I have to get my newsletter done before I go to Lanzarote on Thursday. HAD A MEGA COLOURSPACE SESSION that finished about half-3 then up writing newsletter till 6. One day maybe I get some sleep.
 
-Mon 7 April 1986
+## Mon 7 April 1986
 Did a little more tweaking to phase 2, removing the odd bug I'd found. Then finished newsletter overnight.
 
-Tue 8 April 1986
+## Tue 8 April 1986
 All day working on lightshow for performance at Clocktower this evening. Went good. Got big cheer for 'Stairway to Heaven', and free beer all night.
 
-Wed 9 April 1986
+## Wed 9 April 1986
 Preparing to go away tomorrow. It's a hard life having to keep trekking around to the snow and the beaches, you never seem to get a decent stretch of work done... (hehehe)
 
-Thu 10/Thu 17 April 1986
+## Thu 10/Thu 17 April 1986
 Sun, sea, sand and CAMELS.
 
-Fri 18 April 1986
+## Fri 18 April 1986
 Prepared demos to send off to ZZAP! Couldn't get much serious done because I have to cart all my gear up to London tomorrow for CES Show at Olympia, goes on till Thursday! Then, thank goodness, I get a clear run till the Commodore show, I will at last be able to settle down to some decent coding. Holidays and shows are fine but tend to disrupt you something chronic!!!
 
 
-Too Much
+## Too Much
 I've decided to drop the individual daily notes for this particular section. I looked at it and there was just too much stuff that was the same on consecutive days, y'know, stuff like May 3: Worked on ACONT. May 4: More work on ACONT. May 5: did stuff for ACONT, etc... etc... What I'll do is try and tell you exactly what's been developed within the game and why it's there.
 
-ACONT
+## ACONT
 This is the bit that I knew would take me ages to write and get glitch free, and the bit that is absolutely necessary to the functioning of the game. The module ACONT is essentially an interpreter for my own 'wave language', allowing me to describe, exactly, an attack wave in about 50 bytes of data. The waves for the first part of IRIDIS are in good rollicking shoot-'em-up style, and there have to be plenty of them. There are five planets and each planet is to have twenty levels associated with it. It's impractical to write separate bits of code for each wave; even with 64K you can run outta memory pretty fast that way, and it's not really necessary coz a lot of stuff would be duplicated. Hence ACONT.
 
 You pass the interpreter data, that describes exactly stuff like: what each alien looks like, how many frames of animation it uses, speed of that animation, colour, velocities in X— and Y— directions, accelerations in X and Y, whether the alien should 'home in' on a target, and if so, what to home in on; whether an alien is subject to gravity, and if so, how strong is the gravity; what the alien should do if it hits top of screen, the ground, one of your bullets, or you; whether the alien can fire bullets, and if so, how frequently, and what types; how many points you get if you shoot it, and how much damage it does if it hits you; and a whole bunch more stuff like that. As you can imagine it was a fairly heavy routine to write and get debugged, but that's done now; took me about three weeks in all I'd say.
 
-GENESYS
+## GENESYS
 With ACONT running I had to implement the GENESYS routine, which actually oversees passing data to ACONT, finding out what aliens to unleash depending on what wave we're on and what planet, arranging for shot aliens to be cleaned up and new ones sent out to replace them. I had ACONT running with a limited, one-wave only version of GENESYS at the Commodore show, where a demo of IRIDIS was running non-stop on our stand. I stayed up till three, the morning of the show, preparing a neato title screen with one of my sprite starfields, the game's title and an animated demo, but hardly anyone saw the demo anyway coz they were all playing the game.
 
 I was surprised at the response, after all the thing was only a demo, the scoring was erratic, there was only one wave and you couldn't get killed, but still it was heavily played at the show. People seemed to get into it, enjoying the raw blasting of the thing. One lad even begged to buy my development demo off me, he was just getting off on the blasting and wanted to carry on at home!
 
 Iridis Alpha pic 1
-CBM
+## CBM
 The Commodore show was fun, as ever: I met a lot of good people there, and did some serious partying... I don't think Mat or Psy or Wulf are going to forget THAT night for a while. Everything they say about programmers is TRUE. Make of that what you will.
 
-Fatigue
+## Fatigue
 After CBM was over, I spruced up GENESYS and got it to the point where I could actually start doing the attack waves. That's more or less what I've been doing up till now: designing sprite sequences, flight paths, puzzles in some levels, testing 'em to make sure they are not too difficult for mere mortals. After doing about 40 waves and realising that there's still another 60 to go, 'Attack Wave Fatigue' starts to show up, but you just gotta plug on and get 'em done. At the time of writing this I've done 66 of them. I also did a lot of tweaking to the flight mechanics, and designed the display panel and got its various gauges and meters running.
 
-The Core
+## The Core
 IRIDIS is unusual in offering two scores, one for each ship. Each ship also has an individual energy bank. As you collide with stuff, you lose energy, naturally. If you lose it all, you DIE. So you shoot some stuff, and as you kill, so energy gets added to your ship's bank. You gotta watch it, though, coz if you collect up too MUCH energy, guess what happens? Yup — you DIE.
 
 Thus, gameplay on IRIDIS involves frequent deliberate collisions, as well as shooting, in order to keep the energy balance cool. There is another way, too: fill up both ships with energy, and then land on the platform (which in the game is known as the CORE). The CORE accepts your excess energy, leaving you with comfortably half-full tanks. Also, if you're copping really heavy flak from a particularly vindictive attack sequence, you can nip along to the CORE and reclaim any energy you might have stashed there during easier times. (Author's note: this new Sabbath album is AWESOME).
@@ -178,7 +178,7 @@ Filling up the CORE entirely will grant you a bonus and allow access to Phase II
 
 Once I finish the attack waves, I gotta tie up all of Phase One before going in to finish Phase II. A rather mean thing is going to be the scoring system — the faster you fly, the more points you get for each killing. Standing still and blasting will earn you no points at all. Flying about at mach III like an F-111 pilot over Libya will net the most points.
 
-Distractions
+## Distractions
 IRIDIS ALPHA being brought to you despite the following distractions:
 
 Ronnie James Dio in concert (twice)
