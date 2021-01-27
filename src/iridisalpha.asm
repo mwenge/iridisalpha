@@ -615,7 +615,7 @@ b0CE8   LDA a0C1D,X
         STA COLOR_RAM + $022F,X
         STA COLOR_RAM + $027F,X
         STA COLOR_RAM + $02CF,X
-        STA $DB1F,X
+        STA COLOR_RAM + $031F,X
         DEX 
         BNE b0CE8
         LDX #$06
@@ -929,7 +929,7 @@ p4003   LDA #<MainControlLoopInterruptHandler
         STA a4E19
         STA a4E1A
         LDA #$00
-        STA a654F
+        STA bonusBountiesEarned
         STA a10
         STA bonusAwarded
         STA a14
@@ -1516,8 +1516,8 @@ b4D1C   STA a4F57
         LDA #$00
         STA a7C8A
         LDA #$08
-        STA a5E76
-        STA a5E77
+        STA upperPlanetEntropyStatus
+        STA lowerPlanetEntropyStatus
         LDA #$05
         STA a6D85
         LDA #$04
@@ -1989,12 +1989,12 @@ b506C   STX a43
 j5079   
         INX 
         CPX #$06
-        BEQ b5085
+        BEQ controlPanelData
         CPX #$0E
-        BEQ b5085
+        BEQ controlPanelData
         JMP j5041
 
-b5085   RTS 
+controlPanelData   RTS 
 
         .BYTE $88,$8A,$20,$90,$92,$91,$93,$20
         .BYTE $20,$AE,$B0,$AF,$B1,$30,$30,$30
@@ -2016,7 +2016,7 @@ b5085   RTS
         .BYTE $30,$30,$30,$30,$20,$20,$B2,$B4
         .BYTE $30,$30,$20,$9B,$9D,$20,$99,$20
         .BYTE $20,$20,$20,$20,$20,$20,$20
-f5125   .BYTE $20,$09,$09,$00,$01,$01,$01,$01
+controlPanelColors   .BYTE $20,$09,$09,$00,$01,$01,$01,$01
         .BYTE $00,$00,$01,$01,$01,$01,$01,$01
         .BYTE $01,$01,$01,$01,$01,$00,$00,$01
         .BYTE $01,$01,$01,$00,$07,$07,$00,$01
@@ -2039,9 +2039,9 @@ f5125   .BYTE $20,$09,$09,$00,$01,$01,$01,$01
         .BYTE $01
 f51C6   .BYTE $92,$90,$94,$96,$98
 ;-------------------------------
-; s51CB
+; UpdateWorldProgress
 ;-------------------------------
-s51CB   
+UpdateWorldProgress   
         LDX currentTopWorldProgress
         LDA f51C6,X
         STA a73AD
@@ -2056,8 +2056,8 @@ s51CB
         LDA a5279
         BNE b51F7
         LDA #$08
-        STA a5E76
-        STA a5E77
+        STA upperPlanetEntropyStatus
+        STA lowerPlanetEntropyStatus
 b51F7   LDA currentTopWorldProgress
         STA a78B1
         LDA currentBottomWorldProgress
@@ -2114,7 +2114,7 @@ f5270   .BYTE $01,$00,$00,$01,$01,$00,$04,$20
 a5279   .BYTE $00,$08,$08
 a527C   .BYTE $00
 a527D   .BYTE $00
-a527E   .BYTE $01
+controlPanelIsGrey   .BYTE $01
 f527F   .BYTE $01,$03,$05,$07,$09
 ;-------------------------------
 ; s5284
@@ -2127,41 +2127,46 @@ s5284
         STA a52CD
 b5290   RTS 
 
-b5291   LDA a527E
+RestoreControlPanelColors
+        LDA controlPanelIsGrey
         BEQ b5290
+
         LDX #$A0
-b5298   LDA f5125,X
-        STA $DB47,X
+b5298   LDA controlPanelColors,X
+        STA COLOR_RAM + $0347,X
         DEX 
         BNE b5298
+
         LDA #$00
-        STA a527E
+        STA controlPanelIsGrey
 b52A6   RTS 
 
-b52A7   LDA a527E
+b52A7   LDA controlPanelIsGrey
         BNE b52A6
         LDA #$02
         STA a52CD
         RTS 
 
-b52B2   LDX #$A0
-        LDA #$0B
-b52B6   STA $DB47,X
+ResetControlPanelToGrey
+        LDX #$A0
+        LDA #$0B ; Gray
+b52B6   STA COLOR_RAM + $0347,X
         DEX 
         BNE b52B6
         LDA #$01
-        STA a527E
+        STA controlPanelIsGrey
         RTS 
 
 ;-------------------------------
-; s52C2
+; UpdateControlPanelColor
 ;-------------------------------
-s52C2   
+UpdateControlPanelColor   
         LDY #$00
         STY a52CD
         CMP #$01
-        BEQ b5291
-        BNE b52B2
+        BEQ RestoreControlPanelColors
+        BNE ResetControlPanelToGrey
+
 a52CD   .BYTE $00
 ;-------------------------------
 ; InitializeSomeGameStorage
@@ -2304,15 +2309,19 @@ UpdateEnergyStorage
         BNE b53B3
         LDA #$04
         STA a543D
+
         LDA a53B7
         BEQ b53FB
+
+        ;Color the 'Energy' label.
         DEC a53B7
         LDX a53B7
-        LDA f542C,X
+        LDA energyLabelColors,X
         LDY #$04
-b53D3   STA $DB4A,Y
+b53D3   STA COLOR_RAM + $034A,Y
         DEY 
         BNE b53D3
+
         LDX currEnergyTop
         INC SCREEN_RAM + $0373,X
         LDA SCREEN_RAM + $0373,X
@@ -2324,17 +2333,18 @@ b53D3   STA $DB4A,Y
         STX currEnergyTop
         CPX #$FF
         BNE b53FB
+
 b53F3   LDA #$00
-        STA reasonGilbyDied
+        STA reasonGilbyDied ; Energy Depleted
         JMP GilbyDied
 
 b53FB   LDA a53B8
         BEQ b542B
         DEC a53B8
         LDX a53B8
-        LDA f542C,X
+        LDA energyLabelColors,X
         LDY #$04
-b540B   STA $DBC2,Y
+b540B   STA COLOR_RAM + $03C2,Y
         DEY 
         BNE b540B
         LDX currEnergyBottom
@@ -2350,7 +2360,7 @@ b540B   STA $DBC2,Y
         BEQ b53F3
 b542B   RTS 
 
-f542C   .BYTE $01,$06,$02,$04,$05,$03,$07,$01
+energyLabelColors   .BYTE $01,$06,$02,$04,$05,$03,$07,$01
         .BYTE $00,$06,$02,$04,$05,$03,$07,$01
         .BYTE $06
 a543D   .BYTE $01
@@ -2392,7 +2402,7 @@ b547B   LDX a5529
         RTS 
 
 b547F   LDA #$01
-        STA reasonGilbyDied
+        STA reasonGilbyDied ; Overload (too much energy)
         JMP GilbyDied
 
 ;-------------------------------
@@ -2805,7 +2815,7 @@ b575C   CMP f49C6,X
         DEX 
         BPL b575C
         INC bonusAwarded
-b5767   LDA a654F
+b5767   LDA bonusBountiesEarned
         BNE b5751
         LDX a78B1
         LDY a4E19
@@ -2868,7 +2878,7 @@ b57CB   LDA a4E1A
 ;-------------------------------
 s57DE   
         STY a57EC
-        LDY a654F
+        LDY bonusBountiesEarned
         CLC 
         ADC f57ED,Y
         LDY a57EC
@@ -2887,6 +2897,7 @@ GilbyDied
         BNE b5833
         LDA inAttractMode
         BNE b5833
+
         LDX #$00
 b5807   LDA #<pFC
         STA a583F
@@ -2896,6 +2907,7 @@ b5807   LDA #<pFC
         INX 
         CPX #$03
         BNE b5807
+
         LDA #$01
         STA a6D85
         LDA #$03
@@ -2910,7 +2922,7 @@ b5807   LDA #<pFC
 
 b5833   RTS 
 
-f5834   .BYTE $01,$07,$03,$05,$04
+mapPlaneEntropyToColor   .BYTE $01,$07,$03,$05,$04
 f5839   .BYTE $02,$06,$00
 f583C   .BYTE $50
 a583D   .BYTE $A0
@@ -2939,7 +2951,7 @@ b5860   LDA a583F
         STA f67D6,X
         STA f67DC,X
         LDY a5840
-        LDA f5834,Y
+        LDA mapPlaneEntropyToColor,Y
         STA f67F0,X
         STA f67F6,X
         LDA a760C
@@ -3033,7 +3045,7 @@ b596E   LDA #$C0
         STA currentTopWorldProgress
         LDA a78B3
         STA currentBottomWorldProgress
-        JSR s51CB
+        JSR UpdateWorldProgress
         LDA #$01
         STA a78C7
         STA a78C6
@@ -3243,7 +3255,7 @@ b5CCB   LDA a760C
         CLC 
         ADC #$08
         STA f6804,X
-        LDA a6C25
+        LDA currentGilbySprite
         STA f67D6,X
         CLC 
         ADC #$13
@@ -3306,31 +3318,31 @@ p5DB0   .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
         .BYTE $00,$00,$00,$80,$12,$00,$00,$00
         .BYTE $0F,$18,$00,$00,$80,$CA,$7B,$00
 ;-------------------------------
-; s5E00
+; UpdateDisplayedScoringRate
 ;-------------------------------
-s5E00   
+UpdateDisplayedScoringRate   
         LDA #$23
         STA SCREEN_RAM + $0387
         LDA #$01
-        STA $DB87
+        STA COLOR_RAM + $0387
         LDA a6E12
         BPL b5E14
         EOR #$FF
         CLC 
         ADC #$01
 b5E14   TAX 
-        LDA f5E2C,X
+        LDA scoreToScoringRateMap,X
         TAY 
         LDA f5E4A,Y
         CLC 
         ADC #$30
         STA SCREEN_RAM + $0388
         LDA f5E4F,Y
-        STA $DB88
+        STA COLOR_RAM + $0388
         STY a5E54
         RTS 
 
-f5E2C   .BYTE $00,$00,$01,$01,$01,$01,$02,$02
+scoreToScoringRateMap   .BYTE $00,$00,$01,$01,$01,$01,$02,$02
         .BYTE $02,$02,$02,$02,$02,$02,$03,$03
         .BYTE $04,$04,$03,$02,$02,$01,$01,$01
         .BYTE $01,$01,$01,$01,$01,$01
@@ -3338,9 +3350,9 @@ f5E4A   .BYTE $00,$01,$02,$04,$08
 f5E4F   .BYTE $06,$04,$05,$07,$01
 a5E54   .BYTE $01
 ;-------------------------------
-; s5E55
+; UpdatePlanetEntropyStatus
 ;-------------------------------
-s5E55   
+UpdatePlanetEntropyStatus   
         LDA inGameMode
         BEQ b5E5D
         JMP j5EF6
@@ -3348,17 +3360,19 @@ s5E55
 b5E5D   LDA a4F57
         BEQ b5E69
         LDA #$08
-        STA a5E77
+        STA lowerPlanetEntropyStatus
         BNE b5E6E
 b5E69   LDA #$08
-        STA a5E76
+        STA upperPlanetEntropyStatus
 b5E6E   DEC a5E75
         BEQ b5E79
         BNE b5EB8
+
 a5E75   .BYTE $A3
-a5E76   .BYTE $08
-a5E77   .BYTE $08
+upperPlanetEntropyStatus   .BYTE $08
+lowerPlanetEntropyStatus   .BYTE $08
 a5E78   .BYTE $23
+
 b5E79   DEC a5E78
         BNE b5EB8
         LDA #$10
@@ -3367,55 +3381,53 @@ b5E79   DEC a5E78
         STA a7C8A
         LDA a4F57
         BEQ b5EA6
-        DEC a5E76
+        DEC upperPlanetEntropyStatus
         BNE b5E95
         INC a7C8A
-b5E95   LDA a5E76
+b5E95   LDA upperPlanetEntropyStatus
         CMP #$FF
         BNE b5EB8
-;-------------------------------
-; j5E9C
-;-------------------------------
-j5E9C   
+
+EntropyKillsGilby   
         LDA #$02
-        STA reasonGilbyDied
+        STA reasonGilbyDied ; Entropy
         JMP GilbyDied
 
         BNE b5EB8
-b5EA6   DEC a5E77
+b5EA6   DEC lowerPlanetEntropyStatus
         BNE b5EAE
         INC a7C8A
-b5EAE   LDA a5E77
+b5EAE   LDA lowerPlanetEntropyStatus
         CMP #$FF
         BNE b5EB8
-        JMP j5E9C
+        JMP EntropyKillsGilby
 
+        ; This is the planet entropy status for the upper and
+        ; lower plants, on the bottom left hand side of the screen.
 b5EB8   LDA #$08
         SEC 
-        SBC a5E76
+        SBC upperPlanetEntropyStatus
         TAY 
-        LDA f5834,Y
-        STA $DB48
-        STA $DB49
-        STA $DB70
-        STA $DB71
+        LDA mapPlaneEntropyToColor,Y
+        STA COLOR_RAM + $0348
+        STA COLOR_RAM + $0349
+        STA COLOR_RAM + $0370
+        STA COLOR_RAM + $0371
         LDA #$08
         SEC 
-        SBC a5E77
+        SBC lowerPlanetEntropyStatus
         TAY 
-        LDA f5834,Y
-        STA $DB98
-        STA $DB99
-        STA $DBC0
-        STA $DBC1
+        LDA mapPlaneEntropyToColor,Y
+        STA COLOR_RAM + $0398
+        STA COLOR_RAM + $0399
+        STA COLOR_RAM + $03C0
+        STA COLOR_RAM + $03C1
         JMP j5EF6
 
         .BYTE $C0,$C0,$C0,$C0,$C0,$00,$00,$00
         .BYTE $00
 f5EF0   .BYTE $00,$08,$08,$08,$08,$08
-;-------------------------------
-; j5EF6
-;-------------------------------
+
 j5EF6   
         RTS 
 
@@ -3425,15 +3437,16 @@ a5EFD   .BYTE $00
 a5EFE   .BYTE $30
 a5EFF   .BYTE $30
 ;-------------------------------
-; s5F00
+; UpdateEnemiesLeft
 ;-------------------------------
-s5F00   
+UpdateEnemiesLeft   
         LDA #$30
         STA a5EFE
         STA a5EFF
         LDA a5EFC
         BEQ b5F21
-b5F0D   JSR s5F67
+
+b5F0D   JSR UpdateEnemiesLeftStorage
         DEC a5EFC
         BNE b5F0D
         LDA a5EFE
@@ -3442,12 +3455,13 @@ b5F0D   JSR s5F67
         STA SCREEN_RAM + $0350
 b5F21   LDA a6E12
         BNE b5F28
+
         LDA #$01
 b5F28   PHA 
         TAY 
         LDA f67A5,Y
-        STA $DB4F
-        STA $DB50
+        STA COLOR_RAM + $034F
+        STA COLOR_RAM + $0350
         LDA inGameMode
         BEQ b5F3A
         PLA 
@@ -3458,7 +3472,7 @@ b5F3A   LDA #$30
         STA a5EFF
         LDA a5EFD
         BEQ b5F5B
-b5F47   JSR s5F67
+b5F47   JSR UpdateEnemiesLeftStorage
         DEC a5EFD
         BNE b5F47
         LDA a5EFE
@@ -3468,14 +3482,14 @@ b5F47   JSR s5F67
 b5F5B   PLA 
         TAY 
         LDA f67A5,Y
-        STA $DBC7
-        STA $DBC8
+        STA COLOR_RAM + $03C7
+        STA COLOR_RAM + $03C8
         RTS 
 
 ;-------------------------------
-; s5F67
+; UpdateEnemiesLeftStorage
 ;-------------------------------
-s5F67   
+UpdateEnemiesLeftStorage   
         INC a5EFF
         LDA a5EFF
         CMP #$3A
@@ -3585,27 +3599,33 @@ f60C6   .BYTE $02    ;JAM
         .TEXT "  WARP GATE       GILBY   CORE  NOT-CORE"
 progressDisplaySelected   .BYTE $00
 ;-------------------------------
-; s60F0
+; DrawProgressDisplayScreen
 ;-------------------------------
-s60F0   
+DrawProgressDisplayScreen   
         JSR ClearScreen3
-        LDX a654F
+
+        LDX bonusBountiesEarned
         BEQ b6105
+
+        ;Display bonus bounties
 b60F8   LDA #$1C
         STA SCREEN_RAM - $01,X
         LDA #$07
         STA $D7FF,X
         DEX 
         BNE b60F8
+
 b6105   LDY #$00
         STY $D020    ;Border Color
         STY $D021    ;Background Color 0
+
+        ; Draw the progress map
 b610D   LDX #$0A
-b610F   LDA f61C3,X
+b610F   LDA progressMapScreenPtrArrayHi,X
         STA aFF
-        LDA f61CD,X
+        LDA progressMapScreenPtrArrayLo,X
         STA aFE
-        LDA #$2D
+        LDA #$2D ; Progress chart tick
         STA (pFE),Y
         LDA aFF
         CLC 
@@ -3618,6 +3638,7 @@ b610F   LDA f61C3,X
         INY 
         CPY #$14
         BNE b610D
+
         LDX #$00
 b6132   LDY f49C6,X
         JSR s6196
@@ -3626,15 +3647,18 @@ b6132   LDY f49C6,X
         INX 
         CPX #$05
         BNE b6132
-        JSR s6247
+
+        JSR DrawPlanetIconsOnProgressDisplay
+
         LDX #$27
-b6148   LDA f616D,X
+b6148   LDA txtGilbiesLeftBonusBounty,X
         AND #$3F
         STA SCREEN_RAM + $02F8,X
         LDA #$07
         STA COLOR_RAM + $02F8,X
         DEX 
         BPL b6148
+
         LDX #$06
 b615A   LDA currentBonusBountyPtr,X
         STA SCREEN_RAM + $0319,X
@@ -3646,7 +3670,7 @@ b615A   LDA currentBonusBountyPtr,X
         STA SCREEN_RAM + $0305
         RTS 
 
-f616D   .TEXT "GILBIES LEFT 0: BONUS BOUNTY NOW 0000000"
+txtGilbiesLeftBonusBounty   .TEXT "GILBIES LEFT 0: BONUS BOUNTY NOW 0000000"
 b6195   RTS 
 
 ;-------------------------------
@@ -3682,36 +3706,41 @@ s61B4
         STA aFF
         LDA f61D3,X
         STA aFE
-f61C3   =*+$02
         JMP j61A3
 
-f61C4   .BYTE $04,$04,$04,$04,$04
-f61C9   .BYTE $05,$05,$05,$05
-f61CD   .BYTE $05
-f61CE   .BYTE $F0,$CB,$A6,$81,$5C
-f61D3   .BYTE $18,$43,$6E,$99,$C4
-f61D8   .BYTE $04,$04 ;NOP $04
-        .BYTE $04,$04,$04,$05,$05,$05,$05,$05
-f61E2   .BYTE $A0,$7B,$56,$31,$0C,$40,$6B,$96
-        .BYTE $C1,$EC
+; This is an array of pointers to the screen. For example the
+; first one is $04F0. It is used to draw the progress map in the
+; progress display screen.
+progressMapScreenPtrArrayHi   =*-$01
+f61C4                       .BYTE $04,$04,$04,$04,$04
+f61C9                       .BYTE $05,$05,$05,$05
+progressMapScreenPtrArrayLo .BYTE $05
+f61CE                       .BYTE $F0,$CB,$A6,$81,$5C
+f61D3                       .BYTE $18,$43,$6E,$99,$C4
+f61D8                       .BYTE $04,$04 ;NOP $04
+                            .BYTE $04,$04,$04,$05,$05,$05,$05,$05
+f61E2                       .BYTE $A0,$7B,$56,$31,$0C,$40,$6B,$96
+                            .BYTE $C1,$EC
 ;-------------------------------
-; s61EC
+; ShowProgressScreen
 ;-------------------------------
-s61EC   
+ShowProgressScreen   
         LDA #$00
         STA $D015    ;Sprite display Enable
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         STA lastKeyPressed
-        JSR s60F0
+        JSR DrawProgressDisplayScreen
+
         LDX #$28
-b61FE   LDA f62E4,X
+b61FE   LDA txtProgressStatusLine1,X
         AND #$3F
         STA SCREEN_RAM + $0257,X
         LDA #$01
         STA COLOR_RAM + $0257,X
         DEX 
         BNE b61FE
+
         CLI 
         LDA #$05
         STA aFF
@@ -3723,28 +3752,32 @@ b6217   DEY
         BNE b6217
         DEC aFF
         BNE b6217
+
         LDX #$28
-b6223   LDA f630C,X
+b6223   LDA txtProgressStatusLine2,X
         AND #$3F
         STA SCREEN_RAM + $02A7,X
         LDA #$07
         STA COLOR_RAM + $02A7,X
         DEX 
         BNE b6223
+
 b6233   LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BEQ b6233
+
 b623A   LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BNE b623A
+
         LDA #$00
         STA progressDisplaySelected
         RTS 
 
 ;-------------------------------
-; s6247
+; DrawPlanetIconsOnProgressDisplay
 ;-------------------------------
-s6247   
+DrawPlanetIconsOnProgressDisplay   
         LDX #$00
 b6249   LDA f61E2,X
         STA aFE
@@ -3754,9 +3787,13 @@ b6249   LDA f61E2,X
         STA aFD
         TXA 
         PHA 
+
+        ; The array is seeded with the 4 characters for the first
+        ; planet icon, simply incrementing from there gives the values
+        ; for the characters for the subsequent icons.
         LDX #$00
 b625C   LDY f62AF,X
-        LDA f62B3,X
+        LDA progressDisplayPlanetIconSeedArray,X
         CLC 
         ADC aFD
         STA (pFE),Y
@@ -3781,9 +3818,7 @@ b625C   LDY f62AF,X
 b6287   LDY a4E19
         DEY 
         CPY aFD
-;-------------------------------
-; j628D
-;-------------------------------
+
 j628D   
         BMI b6291
         LDX #$01
@@ -3807,7 +3842,7 @@ b629D   LDY f62AF,X
         RTS 
 
 f62AF   .BYTE $00,$01,$28,$29
-f62B3   .BYTE $9A,$9C,$9B,$9D,$9A,$9C,$9B,$9D
+progressDisplayPlanetIconSeedArray   .BYTE $9A,$9C,$9B,$9D,$9A,$9C,$9B,$9D
 f62BB   .BYTE $00,$04,$08,$0C,$10,$00,$04,$08
         .BYTE $0C,$10
 ;-------------------------------
@@ -3830,12 +3865,12 @@ b62D2   JSR s79B0
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         LDA #$20
         STA $D012    ;Raster Position
-f62E4   =*+$02
         JMP $EA31
 
-        .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
-f630C   .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READ"
-        .TEXT "Y"
+txtProgressStatusLine1   =*-$01
+                       .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
+txtProgressStatusLine2 .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READY"
+
 p6335   .BYTE $00
         BRK #$20
         .BYTE $04,$00,$00,$00,$03,$02,$00,$00
@@ -3911,9 +3946,9 @@ DisplayGameOver
         LDA #$00
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
-        JSR s60F0
+        JSR DrawProgressDisplayScreen
         LDA #$00
-        STA a654F
+        STA bonusBountiesEarned
         STA a4E19
         STA a4E1A
         LDX #$0A
@@ -3959,9 +3994,9 @@ j6446
         JSR s6480
         LDY #$C6
         LDX #$49
-        LDA #<s60F0
+        LDA #<DrawProgressDisplayScreen
         STA aC819
-        LDA #>s60F0
+        LDA #>DrawProgressDisplayScreen
         STA aC81A
         LDA #<f49C6
         STA aF0
@@ -4043,10 +4078,10 @@ b64F7   LDA txtReasonGilbyDied,X
         RTS 
 
 ;-------------------------------
-; JumpDisplayBonus
+; JumpDisplayNewBonus
 ;-------------------------------
-JumpDisplayBonus   
-        JMP DisplayBonus
+JumpDisplayNewBonus   
+        JMP DisplayNewBonus
 
 f650E   .BYTE $40,$46,$4C,$52,$58,$5E,$63,$68
         .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
@@ -4057,26 +4092,26 @@ f650E   .BYTE $40,$46,$4C,$52,$58,$5E,$63,$68
         .BYTE $00,$00,$01,$02,$04,$07,$0A,$0E
         .BYTE $12,$17,$1C,$21,$27,$2D,$33,$39
         .BYTE $FF
-a654F   .BYTE $00
+bonusBountiesEarned   .BYTE $00
 a6550   .BYTE $00
 a6551   .BYTE $00
 a6552   .BYTE $00
 a6553   .BYTE $00
 ;-------------------------------
-; DisplayBonus
+; DisplayNewBonus
 ;-------------------------------
-DisplayBonus   
+DisplayNewBonus   
         SEI 
-        INC a654F
-        LDA a654F
+        INC bonusBountiesEarned
+        LDA bonusBountiesEarned
         AND #$07
-        STA a654F
+        STA bonusBountiesEarned
         LDA #$00
         STA bonusAwarded
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        LDA #<BonusBountyGilbyAnimation
+        LDA #<NewBonusGilbyAnimation
         STA $0314    ;IRQ
-        LDA #>BonusBountyGilbyAnimation
+        LDA #>NewBonusGilbyAnimation
         STA $0315    ;IRQ
         JSR ClearScreen3
         LDA $D011    ;VIC Control Register 1
@@ -4097,7 +4132,7 @@ DisplayBonus
         ; Display the animated gilbies
 b6595   LDA #$C1
         STA Sprite0Ptr,X
-        LDA f65EC,X
+        LDA NewBonusGilbyColors,X
         STA $D027,X  ;Sprite 0 Color
         DEX 
         BPL b6595
@@ -4128,12 +4163,12 @@ b65C9   LDA lastKeyPressed
         RTS 
 
 ;-------------------------------
-; BonusBountyGilbyAnimation
+; NewBonusGilbyAnimation
 ;-------------------------------
-BonusBountyGilbyAnimation
+NewBonusGilbyAnimation
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
-        BNE b65F4
+        BNE AnimateGilbiesForNewBonus
         PLA 
         TAY 
         PLA 
@@ -4156,8 +4191,10 @@ a65E8   .BYTE $01
 a65E9   .BYTE $01
 a65EA   .BYTE $00
 a65EB   .BYTE $00
-f65EC   .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
-b65F4   LDY #$00
+NewBonusGilbyColors   .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
+
+AnimateGilbiesForNewBonus
+        LDY #$00
         LDA #$F0
         STA $D012    ;Raster Position
         DEC a65DD
@@ -4214,7 +4251,7 @@ b6651   LDA a65E2
         TAX 
         LDA f650E,X
         STA a6553
-        JSR s6717
+        JSR BonusBountyPerformAnimation
         LDA a65EB
         CLC 
         ADC #$08
@@ -4282,26 +4319,24 @@ b6709   LDA #$01
         JMP $EA31
 
 ;-------------------------------
-; s6717
+; BonusBountyPerformAnimation
 ;-------------------------------
-s6717   
+BonusBountyPerformAnimation   
         LDA a6550
         LDX a65E8
         BEQ b6725
-        JSR s675F
+        JSR BonusBountyAnimateGilby
         JMP j672B
 
 b6725   CLC 
         ADC #$70
         STA $D000,Y  ;Sprite 0 X Pos
-;-------------------------------
-; j672B
-;-------------------------------
+
 j672B   
         LDA a6551
         LDX a65E9
         BEQ b6736
-        JMP j6774
+        JMP BonusBountyAnimateGilby2
 
 b6736   CLC 
         ADC #$40
@@ -4315,9 +4350,9 @@ f673F   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
 f674F   .BYTE $08,$07,$06,$05,$04,$03,$02,$01
         .BYTE $01,$01,$01,$01,$01,$01,$01,$01
 ;-------------------------------
-; s675F
+; BonusBountyAnimateGilby
 ;-------------------------------
-s675F   
+BonusBountyAnimateGilby   
         LDA a6550
         CLC 
         ROR 
@@ -4332,9 +4367,9 @@ s675F
         RTS 
 
 ;-------------------------------
-; j6774
+; BonusBountyAnimateGilby2
 ;-------------------------------
-j6774   
+BonusBountyAnimateGilby2   
         LDA a6551
         CLC 
         ROR 
@@ -4391,8 +4426,8 @@ f6802   .BYTE $00
 f6803   .BYTE $00
 f6804   .BYTE $CA
 f6805   .BYTE $CA,$CA,$CA,$CA,$CA
-a680A   .BYTE $09
-a680B   .BYTE $0E
+currentPlanetBackgroundClr1   .BYTE $09
+currentPlanetBackgroundClr2   .BYTE $0E
 currentWorldBackgroundColor1   .BYTE $09
 currentWorldBackgroundColor2   .BYTE $0E
 ;-------------------------------
@@ -4437,7 +4472,7 @@ PrepareScreen
         JSR ClearGameViewPort
         LDA #$18
         STA $D018    ;VIC Memory Control Register
-        JSR s784E
+        JSR DrawControlPanel
         JSR DrawEnergyBars
         LDA $D016    ;VIC Control Register 2
         AND #$F7
@@ -4528,7 +4563,7 @@ p6904   JMP PrepareToRunGame
 ;-------------------------------
 SetUpGilbySprite   
         LDA #$D3
-        STA a6C25
+        STA currentGilbySprite
         STA Sprite0Ptr
         LDA #$02
         STA a7178
@@ -4551,7 +4586,7 @@ PrepareToRunGame
         BEQ b6932
         JSR GetSomeGameModeData
 b6932   LDA #$00
-        JSR s51CB
+        JSR UpdateWorldProgress
         LDA #$01
         STA a78C7
         STA a78C6
@@ -4594,7 +4629,7 @@ BeginRunningGame
 StartTheGame
         LDA bonusAwarded
         BEQ b6982
-        JSR JumpDisplayBonus
+        JSR JumpDisplayNewBonus
         JSR StoreStatusBarDetail
         JSR InitializeBonusPhaseVars
         JMP ResumeGame
@@ -4611,7 +4646,7 @@ b698A   LDA progressDisplaySelected
         ORA #$08
         STA $D016    ;VIC Control Register 2
         JSR StoreStatusBarDetail
-        JSR s61EC
+        JSR ShowProgressScreen
         INC a5279
         JMP SetUpGameScreen
 
@@ -4662,9 +4697,9 @@ b69F0   LDA #$00
         STA $D011    ;VIC Control Register 1
         JMP SetUpGameScreen
 
-b6A02   JSR s5F00
-        JSR s5E55
-        JSR s5E00
+b6A02   JSR UpdateEnemiesLeft
+        JSR UpdatePlanetEntropyStatus
+        JSR UpdateDisplayedScoringRate
         LDA a59B9
         BEQ b6A1C
 
@@ -4679,7 +4714,7 @@ EnterMainControlLoop
 
 b6A1C   LDA a52CD
         BEQ b6A24
-        JSR s52C2
+        JSR UpdateControlPanelColor
 b6A24   LDA a78B4
         BEQ b6A31
         LDA #$00
@@ -4735,7 +4770,7 @@ SetUpGameScreen
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
-        LDA a6AC5
+        LDA previousGilbySprite
         STA Sprite0Ptr
         JSR ClearScreen3
         JSR SetupSpritesAndSound
@@ -4743,7 +4778,7 @@ SetUpGameScreen
         STA currentTopWorldProgress
         LDA a78B3
         STA currentBottomWorldProgress
-        JSR s51CB
+        JSR UpdateWorldProgress
         JSR DrawStatusBarDetail
         LDX #$03
 b6AB3   LDA f7E49,X
@@ -4754,7 +4789,7 @@ b6AB3   LDA f7E49,X
         BNE b6AB3
         JMP BeginRunningGame
 
-a6AC5   .BYTE $D3
+previousGilbySprite   .BYTE $D3
 ;-------------------------------
 ; UpdateAttackShipsPosition
 ;-------------------------------
@@ -4858,9 +4893,9 @@ b6B63   STA SCREEN_RAM,X
         RTS 
 
 ;-------------------------------
-; s6B73
+; FlashBorderAndBackground
 ;-------------------------------
-s6B73   
+FlashBorderAndBackground   
         LDA a7C8A
         BEQ b6BA3
         LDA a7C89
@@ -4922,15 +4957,12 @@ b6BDA   LDA #$00
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         BNE b6C26
 
-;-------------------------------
-; s6BF8
-;-------------------------------
-s6BF8   
+UpdateGilbyPositionAndColor   
         LDA a40D2
         BNE b6C24
-        LDA a6C25
+        LDA currentGilbySprite
         STA Sprite0Ptr
-        STA a6AC5
+        STA previousGilbySprite
         LDA a760C
         STA $D001    ;Sprite 0 Y Pos
         LDX currEnergyTop
@@ -4944,15 +4976,17 @@ b6C1A   LDY a4F57
 b6C21   STA $D027    ;Sprite 0 Color
 b6C24   RTS 
 
-a6C25   .BYTE $D3
-b6C26   LDX a680A
+currentGilbySprite   .BYTE $D3
+b6C26   LDX currentPlanetBackgroundClr1
         LDA backgroundColorsForWorlds,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
-        LDX a680B
+        LDX currentPlanetBackgroundClr2
         LDA backgroundColorsForWorlds,X
         STA $D023    ;Background Color 2, Multi-Color Register 1
+
         LDA $D01F    ;Sprite to Background Collision Detect
         STA a6D51
+
         JSR CheckKeyboardInGame
         JSR s6DC1
         JSR s75A8
@@ -4962,8 +4996,8 @@ b6C26   LDX a680A
         JSR s7179
         JSR s78C8
         JSR s79B0
-        JSR s6B73
-        JSR s6BF8
+        JSR FlashBorderAndBackground
+        JSR UpdateGilbyPositionAndColor
         JSR s7C97
         JSR s778C
         JSR UpdateAttackShipsPosition
@@ -5038,7 +5072,7 @@ b6CD6   JSR UpdateAttackShipsPosition2
         ADC #$07
         STA $D001    ;Sprite 0 Y Pos
         STA a760D
-        LDA a6C25
+        LDA currentGilbySprite
         CLC 
         ADC #$13
         STA Sprite0Ptr
@@ -5133,9 +5167,7 @@ b6DF4   CLC
         LDA f6D70,X
         ADC a21
         STA f6D70,X
-;-------------------------------
-; j6E03
-;-------------------------------
+
 j6E03   
         LDA f6D70,X
         AND #$01
@@ -5155,11 +5187,12 @@ a6E2C   .BYTE $01
 ; s6E2D
 ;-------------------------------
 s6E2D   
+        ; Find reasons for gilby not to die because he hit something.
         LDA a6D51
         BEQ b6E88
         AND #$01
         BEQ b6E88
-        LDA a527E
+        LDA controlPanelIsGrey
         BNE b6E88
         LDA a78C7
         BNE b6E88
@@ -5169,6 +5202,8 @@ s6E2D
         BNE b6E88
         LDA inAttractMode
         BNE b6E88
+
+        ; Not sure what planet features these are.
         LDA SCREEN_RAM + $01A4
         CMP #$77
         BEQ b6E67
@@ -5176,11 +5211,12 @@ s6E2D
         BEQ b6E67
         LDA difficultySetting
         BEQ b6E88
+        ;He hit something, and is dead.
         LDA #$03
-        STA reasonGilbyDied
+        STA reasonGilbyDied ; Hit something
         JMP GilbyDied
 
-b6E67   JSR s51CB
+b6E67   JSR UpdateWorldProgress
         LDA #$01
         STA a78C6
         STA a78C7
@@ -5193,6 +5229,7 @@ b6E67   JSR s51CB
         BPL b6E85
         LDY #$EC
 b6E85   STY a6E12
+
 b6E88   DEC a6E2B
         BEQ b6E8E
 b6E8D   RTS 
@@ -5440,7 +5477,7 @@ b707E   CMP #$03
 
 b7099   JSR s70AF
         LDA #$D1
-        STA a6C25
+        STA currentGilbySprite
 ;-------------------------------
 ; s70A1
 ;-------------------------------
@@ -5450,7 +5487,7 @@ s70A1
         RTS 
 
 b70A7   LDA #$D3
-        STA a6C25
+        STA currentGilbySprite
         JSR s70A1
 ;-------------------------------
 ; s70AF
@@ -5464,7 +5501,7 @@ b70B5   JSR s7671
         LDA a7176
         AND #$04
         BNE b70FC
-        LDA a6C25
+        LDA currentGilbySprite
         CMP #$D3
         BNE b70E0
         LDA #$01
@@ -5492,7 +5529,7 @@ b70F9   JMP j7173
 b70FC   LDA a7176
         AND #$08
         BNE b7142
-        LDA a6C25
+        LDA currentGilbySprite
         CMP #$D1
         BNE b7124
         LDA #$01
@@ -5537,7 +5574,7 @@ b715A   LDA a7176
         LDA #$01
         STA a7140
         LDA #$CF
-        STA a6C25
+        STA currentGilbySprite
         JMP j705E
 
 ;-------------------------------
@@ -5585,6 +5622,8 @@ b71A4   LDA a7176
         DEC a760C
         DEC a760C
         BNE b719D
+        ;Fall through?
+
 ;-------------------------------
 ; DrawWorlds
 ;-------------------------------
@@ -6202,7 +6241,7 @@ b75E3   LDA a75A4
         STA a79AD
 b7601   LDX a75A7
         LDA f757F,X
-        STA a6C25
+        STA currentGilbySprite
         RTS 
 
 a760B   .BYTE $01
@@ -6330,7 +6369,7 @@ b76F8   LDA a760C
         STA f67C8,X
         LDA #$EC
         STA f67D6,X
-        LDA a6C25
+        LDA currentGilbySprite
         CMP #$D1
         BNE b7718
         LDA #$F5
@@ -6508,14 +6547,14 @@ b7845   STA f67EA,X
         RTS 
 
 ;-------------------------------
-; s784E
+; DrawControlPanel
 ;-------------------------------
-s784E   
+DrawControlPanel   
         LDX #$A0
-b7850   LDA b5085,X
+b7850   LDA controlPanelData,X
         STA SCREEN_RAM + $0347,X
-        LDA f5125,X
-        STA $DB47,X
+        LDA controlPanelColors,X
+        STA COLOR_RAM + $0347,X
         DEX 
         BNE b7850
         RTS 
@@ -6612,9 +6651,9 @@ b78CE   LDX a78C6
 SetUpWorlds   
         LDX currentTopWorldProgress
         LDA backgroundColor1ForWorlds,X
-        STA a680A
+        STA currentPlanetBackgroundClr1
         LDA backgroundColor2ForWorlds,X
-        STA a680B
+        STA currentPlanetBackgroundClr2
 
         LDA surfaceColorsForWorlds,X
         JSR UpdateTopWorldSurfaceColor
@@ -7268,7 +7307,7 @@ fC80E   .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 ;-------------------------------
 aC819   =*+$01
 aC81A   =*+$02
-sC818   JMP s60F0
+sC818   JMP DrawProgressDisplayScreen
 
 hiScoreTablePtr   .TEXT "0068000"
 canAwardBonus   .TEXT "YAK "
