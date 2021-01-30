@@ -23,21 +23,21 @@ LaunchMIF
 
         ; Init_ScreenPointerArray
         LDA #>SCREEN_RAM
-        STA screenPtrHi
+        STA planetPtrHi
         LDA #<SCREEN_RAM
-        STA screenPtrLo
+        STA planetPtrLo
         LDX #$00
-b4109   LDA screenPtrLo
+b4109   LDA planetPtrLo
         STA SCREEN_PTR_LO,X
-        LDA screenPtrHi
+        LDA planetPtrHi
         STA SCREEN_PTR_HI,X
-        LDA screenPtrLo
+        LDA planetPtrLo
         CLC 
         ADC #$28
-        STA screenPtrLo
-        LDA screenPtrHi
+        STA planetPtrLo
+        LDA planetPtrHi
         ADC #$00
-        STA screenPtrHi
+        STA planetPtrHi
         INX 
         CPX #$1A
         BNE b4109
@@ -69,8 +69,8 @@ MIF_s4149
         .BYTE $03,$85 ;SLO ($85,X)
         .BYTE $02    ;JAM 
         LDA SCREEN_PTR_HI,X
-        STA screenPtrHi
-        LDA (screenPtrLo),Y
+        STA planetPtrHi
+        LDA (planetPtrLo),Y
         RTS 
 
 ;-------------------------------
@@ -79,16 +79,16 @@ MIF_s4149
 MIF_s415C   
         JSR MIF_s4149
         LDA a413E
-        STA (screenPtrLo),Y
-        LDA screenPtrHi
+        STA (planetPtrLo),Y
+        LDA planetPtrHi
         PHA 
         CLC 
         ADC #$D4
-        STA screenPtrHi
+        STA planetPtrHi
         LDA a413B
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         PLA 
-        STA screenPtrHi
+        STA planetPtrHi
 f4174   RTS 
 
 f4175   .BYTE $0A,$09,$08,$07,$06,$05
@@ -292,7 +292,7 @@ MIF_s42CC
         CMP #$A0
         BNE b42BC
         LDA #$20
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
 b42D7   RTS 
 
 a42D8   RTI 
@@ -349,7 +349,7 @@ MIF_s432A
         CMP #$4D
         BNE b434F
         LDA #$4E
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         LDA a4209
         PHA 
         LDA a420A
@@ -371,7 +371,7 @@ j4347
 b434F   CMP #$4E
         BNE b4379
         LDA #$4D
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         LDA a4209
         EOR #$FF
         CLC 
@@ -395,7 +395,7 @@ b4379   CMP #$51
         LDA #$20
         STA a4739
         LDA #$20
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         LDA #$01
         STA a44A9
         INC a439C

@@ -454,12 +454,12 @@ BonusPhaseDrawToScreen1
         LDX aAEBD
         LDY bonusPhaseMapOffset,X
         LDA bonusPhaseMapPtrLo,Y
-        STA screenPtrLo2
+        STA planetPtrLo2
         LDA bonusPhaseMapPtrHi,Y
-        STA screenPtrHi2
+        STA planetPtrHi2
         LDY #$00
         LDX #$00
-bAEE8   LDA (screenPtrLo2),Y
+bAEE8   LDA (planetPtrLo2),Y
         STY a37
         ASL 
         CLC 
@@ -663,12 +663,12 @@ BonusPhaseDrawToScreen2
         LDX aAEBE
         LDY bonusPhaseMapOffset,X
         LDA bonusPhaseMapPtrLo,Y
-        STA screenPtrLo2
+        STA planetPtrLo2
         LDA bonusPhaseMapPtrHi,Y
-        STA screenPtrHi2
+        STA planetPtrHi2
         LDY #$00
         LDX #$00
-bB2D5   LDA (screenPtrLo2),Y
+bB2D5   LDA (planetPtrLo2),Y
         STY a37
         ASL 
         CLC 
@@ -1113,22 +1113,22 @@ bB641   RTS
 ;-------------------------------
 BonusPhaseSetUpScrollingMap   
         LDA #<BonusPhaseMapData
-        STA screenPtrLo2
+        STA planetPtrLo2
         LDA #>BonusPhaseMapData
-        STA screenPtrHi2
+        STA planetPtrHi2
 
         LDX #$00
-bB64C   LDA screenPtrLo2
+bB64C   LDA planetPtrLo2
         STA bonusPhaseMapPtrLo,X
-        LDA screenPtrHi2
+        LDA planetPtrHi2
         STA bonusPhaseMapPtrHi,X
-        LDA screenPtrLo2
+        LDA planetPtrLo2
         CLC 
         ADC #$14
-        STA screenPtrLo2
-        LDA screenPtrHi2
+        STA planetPtrLo2
+        LDA planetPtrHi2
         ADC #$00
-        STA screenPtrHi2
+        STA planetPtrHi2
         INX 
         CPX #$C8
         BNE bB64C
@@ -1315,21 +1315,21 @@ bB9A9   CMP #$A0
 ;-------------------------------
 BP_Init_ScreenPointerArray
         LDA #>SCREEN_RAM
-        STA screenPtrHi2
+        STA planetPtrHi2
         LDA #<SCREEN_RAM
-        STA screenPtrLo2
+        STA planetPtrLo2
         TAX 
-bB9C2   LDA screenPtrLo2
+bB9C2   LDA planetPtrLo2
         STA SCREEN_PTR_LO,X
-        LDA screenPtrHi2
+        LDA planetPtrHi2
         STA SCREEN_PTR_HI,X
-        LDA screenPtrLo2
+        LDA planetPtrLo2
         CLC 
         ADC #$28
-        STA screenPtrLo2
-        LDA screenPtrHi2
+        STA planetPtrLo2
+        LDA planetPtrHi2
         ADC #$00
-        STA screenPtrHi2
+        STA planetPtrHi2
         INX 
         CPX #$1E
         BNE bB9C2

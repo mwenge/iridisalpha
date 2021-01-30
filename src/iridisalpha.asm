@@ -2,33 +2,33 @@
 ; **** ZP ABSOLUTE ADRESSES **** 
 ;
 a01 = $01
-screenPtrLo = $02
-screenPtrHi = $03
+planetPtrLo = $02
+planetPtrHi = $03
 a06 = $06
-a10 = $10
-a11 = $11
-a12 = $12
-a13 = $13
-a14 = $14
-a15 = $15
-a16 = $16
-a17 = $17
+planetTextureTopLayerPtr = $10
+planetTextureTopLayerPtrHi = $11
+planetTextureSecondFromTopLayerPtr = $12
+planetTextureSecondFromTopLayerPtrHi = $13
+planetTextureSecondFromBottomLayerPtr = $14
+planetTextureSecondFromBottomLayerPtrHi = $15
+planetTextureBottomLayerPtr = $16
+planetTextureBottomLayerPtrHi = $17
 a18 = $18
 a1C = $1C
 a1F = $1F
 a20 = $20
 a21 = $21
-a22 = $22
-a23 = $23
-a24 = $24
-a25 = $25
+planetSurfaceDataPtrLo = $22
+planetSurfaceDataPtrHi = $23
+charSetDataPtrLo = $24
+charSetDataPtrHi = $25
 a26 = $26
 a29 = $29
 a2A = $2A
 a30 = $30
 a31 = $31
-screenPtrLo2 = $35
-screenPtrHi2 = $36
+planetPtrLo2 = $35
+planetPtrHi2 = $36
 a37 = $37
 a3A = $3A
 a3B = $3B
@@ -38,9 +38,9 @@ a41 = $41
 a42 = $42
 a43 = $43
 a44 = $44
-a45 = $45
-a46 = $46
-a47 = $47
+tmpPtrLo = $45
+tmpPtrHi = $46
+tmpPtrZp47 = $47
 a4A = $4A
 a4E = $4E
 a4F = $4F
@@ -64,17 +64,10 @@ aFF = $FF
 ;
 ; **** ZP POINTERS **** 
 ;
-p10 = $10
-p12 = $12
-p14 = $14
-p16 = $16
-p22 = $22
 p30 = $30
 p3A = $3A
 p40 = $40
 p43 = $43
-p45 = $45
-p46 = $46
 p4E = $4E
 p78 = $78
 pAD = $AD
@@ -204,8 +197,8 @@ EnterTitleScreenLoop
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$FE
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        JSR IA_UpdateScreenColors
-        JSR IA_DrawTitleScreen
+        JSR DrawStripesBehindTitle
+        JSR DrawTitleScreenText
 
         ; Loop waiting for input
 TitleScreenLoop
@@ -277,12 +270,12 @@ TitleScreenAnimation
         LDY a09EC
         CPY #$0C
         BNE b091E
-        JSR s0B5A
+        JSR TitleScreenPaintSprites
         LDY #$10
         STY a09EC
 b091E   LDA f0990,Y
         BNE b0947
-        JSR s0A4A
+        JSR TitleScreenGenerateMusic
         LDA #$00
         STA a09EC
         LDA #$10
@@ -292,7 +285,7 @@ b091E   LDA f0990,Y
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JSR UpdateGilbysInTitleAnimation
         JSR UpdateGilbyColorsInTitleScreenAnimation
-        JSR s0BC1
+        JSR TitleScreenUpdateSpritePositions
         JSR PlayTitleScreenMusic
         JMP $EA31
 
@@ -362,9 +355,9 @@ f0A40   .BYTE $05,$0E,$00,$02
 a0A44   .BYTE $08
 a0A45   .BYTE $04,$01,$0F,$0C,$0B
 ;-------------------------------
-; s0A4A
+; TitleScreenGenerateMusic
 ;-------------------------------
-s0A4A   
+TitleScreenGenerateMusic   
         LDX #$1E
         LDA #$00
         STA a21
@@ -384,9 +377,9 @@ b0A6D   DEX
         RTS 
 
 ;-------------------------------
-; IA_UpdateScreenColors
+; DrawStripesBehindTitle
 ;-------------------------------
-IA_UpdateScreenColors   
+DrawStripesBehindTitle   
         LDX #$28
         LDA #$00
         STA a0B2C
@@ -404,7 +397,7 @@ b0A78   LDA #$02
         STA COLOR_RAM + $013F,X
         LDA #$06
         STA COLOR_RAM + $0167,X
-        LDA #$00
+        LDA #$00; Stripe character
         STA SCREEN_RAM + $0077,X
         STA SCREEN_RAM + $009F,X
         STA SCREEN_RAM + $00C7,X
@@ -497,9 +490,9 @@ b0B44   LDA f0A40,X
         RTS 
 
 ;-------------------------------
-; s0B5A
+; TitleScreenPaintSprites
 ;-------------------------------
-s0B5A   
+TitleScreenPaintSprites   
         LDA #$02
         STA $D025    ;Sprite Multi-Color Register 0
         LDA #$01
@@ -525,9 +518,7 @@ b0B73   TXA
 b0B8B   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND f0C16,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-;-------------------------------
-; j0B94
-;-------------------------------
+
 j0B94   
         LDA f0BAC,X
         STA $D001,Y  ;Sprite 0 Y Pos
@@ -544,9 +535,9 @@ f0BAC   .BYTE $B2,$B6,$BB,$C1,$D0,$C8,$C1
 f0BB3   .BYTE $54,$58,$5C,$60,$64,$68,$6C
 f0BBA   .BYTE $FC,$FB,$FA,$F9,$08,$07,$06
 ;-------------------------------
-; s0BC1
+; TitleScreenUpdateSpritePositions
 ;-------------------------------
-s0BC1   
+TitleScreenUpdateSpritePositions   
         LDX #$00
 b0BC3   LDA f0BAC,X
         SEC 
@@ -591,9 +582,9 @@ f0C95   .TEXT "ECREATED BY JEFF MINTER...SPACE EASY/HAR"
 f0CBD   .TEXT "DLAST GILBY HIT 0000000; MODE IS NOW EAS"
         .TEXT "Y"
 ;-------------------------------
-; IA_DrawTitleScreen
+; DrawTitleScreenText
 ;-------------------------------
-IA_DrawTitleScreen   
+DrawTitleScreenText   
         LDX #$28
 b0CE8   LDA a0C1D,X
         AND #$3F
@@ -793,7 +784,7 @@ f15E0   .BYTE $00,$03,$06,$08,$00,$0C,$04,$08
 ; UpdateMusicCounters
 ;-------------------------------
 UpdateMusicCounters   
-        JSR s16A4
+        JSR GetRandomDataFrom9A00Onwards
         AND #$0F
         BEQ b1630
         TAX 
@@ -810,7 +801,7 @@ b1633   LDA f15E0,Y
         INX 
         CPX #$04
         BNE b1633
-        JSR s16A4
+        JSR GetRandomDataFrom9A00Onwards
         AND #$03
         CLC 
         ADC #$01
@@ -877,9 +868,9 @@ txtEasy   .TEXT "EASY"
 txtHard   .TEXT "UGH!"
 a16A5   =*+$01
 ;-------------------------------
-; s16A4
+; GetRandomDataFrom9A00Onwards
 ;-------------------------------
-s16A4   
+GetRandomDataFrom9A00Onwards   
         LDA a9A00
         INC a16A5
         RTS 
@@ -907,7 +898,7 @@ p4003   LDA #<MainControlLoopInterruptHandler
         LDX #$F8
         TXS 
         LDA #$01
-        STA inGameMode
+        STA lowerPlanetActivated
         LDA #$02
         STA gilbiesLeft
         LDA #$7F
@@ -930,9 +921,9 @@ p4003   LDA #<MainControlLoopInterruptHandler
         STA a4E1A
         LDA #$00
         STA bonusBountiesEarned
-        STA a10
+        STA planetTextureTopLayerPtr
         STA bonusAwarded
-        STA a14
+        STA planetTextureSecondFromBottomLayerPtr
         STA a18
         STA a1C
         STA a53B7
@@ -941,15 +932,20 @@ p4003   LDA #<MainControlLoopInterruptHandler
         STA a5509
         STA aAAD0
         STA a4F57
+
+        ; Point at the planet data for the first planet.
+        ; The planet data starts at $8000. Each planet
+        ; has 4 lines or layers.
         LDA #$80
-        STA a11
+        STA planetTextureTopLayerPtrHi
         LDA #$84
-        STA a13
+        STA planetTextureSecondFromTopLayerPtrHi
         LDA #$88
-        STA a15
-        LDA #<p0F8C
-        STA a17
-        LDA #>p0F8C
+        STA planetTextureSecondFromBottomLayerPtrHi
+        LDA #$8C
+        STA planetTextureBottomLayerPtrHi
+
+        LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
         JSR ZeroiseScreen
         JMP PrepareToLaunchIridisAlpha
@@ -982,7 +978,7 @@ b40A0   LDA #$30
         STA currentBonusBountyPtr,X
         DEX 
         BPL b40A0
-        JSR CopyInSpriteData
+        JSR GeneratePlanetSurface
         JSR PrepareSpriteData
         LDA #$00
         STA a78B1
@@ -1287,7 +1283,7 @@ b4B1C   LDY a48D5
         TAX 
         LDA f6B45,X
         STA f67E2,Y
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$7F
         CLC 
         ADC #$20
@@ -1295,12 +1291,12 @@ b4B1C   LDY a48D5
         TYA 
         AND #$08
         BNE b4B5A
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$3F
         CLC 
         ADC #$40
         STA f67FC,Y
-        STY a45
+        STY tmpPtrLo
         LDY #$06
         LDA (p40),Y
         BNE b4B59
@@ -1308,16 +1304,16 @@ b4B1C   LDY a48D5
         LDA (p40),Y
         BEQ b4B59
         LDA #$6C
-        LDY a45
+        LDY tmpPtrLo
         STA f67FC,Y
 b4B59   RTS 
 
-b4B5A   JSR GetSomeSequenceData
+b4B5A   JSR PutRandomByteInAccumulatorRegister
         AND #$3F
         CLC 
         ADC #$98
         STA f67FC,Y
-        STY a45
+        STY tmpPtrLo
         LDY #$06
         LDA (p40),Y
         BNE b4B7A
@@ -1325,7 +1321,7 @@ b4B5A   JSR GetSomeSequenceData
         LDA (p40),Y
         BEQ b4B7A
         LDA #$90
-        LDY a45
+        LDY tmpPtrLo
         STA f67FC,Y
 b4B7A   RTS 
 
@@ -1495,7 +1491,7 @@ b4CE2   LDY #$24
 b4CEB   LDA a7176
         AND #$10
         BEQ b4CDC
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BNE b4CDC
         LDA a4F57
         BNE b4D0D
@@ -2173,13 +2169,13 @@ a52CD   .BYTE $00
 ;-------------------------------
 InitializeSomeGameStorage   
         LDA #$07
-        STA a47
+        STA tmpPtrZp47
         LDA #$63
-        STA a46
+        STA tmpPtrHi
         LDX currentTopWorldProgress
         JSR InitSomeGameStorage
         LDA #$B3
-        STA a46
+        STA tmpPtrHi
         LDX currentBottomWorldProgress
 ;-------------------------------
 ; InitSomeGameStorage
@@ -2191,32 +2187,32 @@ InitSomeGameStorage
         CLC 
         ADC #$9A
         LDY #$00
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         LDY #$28
         CLC 
         ADC #$01
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         LDY #$01
         CLC 
         ADC #$01
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         LDY #$29
         CLC 
         ADC #$01
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         LDA #$DB
-        STA a47
+        STA tmpPtrZp47
         LDA f531C,X
         LDY #$00
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         INY 
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         LDY #$28
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         INY 
-        STA (p46),Y
+        STA (tmpPtrHi),Y
         LDA #$07
-        STA a47
+        STA tmpPtrZp47
         RTS 
 
 f531C   .BYTE $07,$04,$0E,$08,$0A
@@ -2472,7 +2468,7 @@ j54F3
         STX currCoreEnergyLevel
         RTS 
 
-b54FC   LDA inGameMode
+b54FC   LDA lowerPlanetActivated
         BEQ b5505
         DEX 
         JMP j54F3
@@ -2840,7 +2836,7 @@ b5791   LDA a4E19
         INC a4E19
         INC progressDisplaySelected
         LDA #$00
-        STA inGameMode
+        STA lowerPlanetActivated
         JMP j57AB
 
 f57A6   .BYTE $03,$06,$09,$0C,$0F
@@ -2870,7 +2866,7 @@ b57CB   LDA a4E1A
         INC a4E1A
         INC progressDisplaySelected
         LDA #$00
-        STA inGameMode
+        STA lowerPlanetActivated
         RTS 
 
 ;-------------------------------
@@ -3118,27 +3114,33 @@ PlayerKilled
         BEQ b5A1E
         JMP DisplayGameOver
 
-b5A1E   JSR GetSomeSequenceData
-        AND #$07
+        ; Get a random number between 0 and 7
+b5A1E   JSR PutRandomByteInAccumulatorRegister
+        AND #$07 ; Make it a number between 0 and 7
         TAY 
         JSR DrawRestartLevelText
+
+        ;Draw the gilbies left text
         LDX #$14
 b5A29   LDA txtGilbiesLeft,X
         AND #$3F
         STA SCREEN_RAM + $00F8,X
         DEX 
         BNE b5A29
+
         JSR DrawReasonGilbyDied
 
-        ; Show remanining gilbies
+        ; Show remaining gilbies
         LDA gilbiesLeft
         CLC 
         ADC #$31
         STA SCREEN_RAM + $0109
-        JSR GetSomeSequenceData
-        AND #$07
+
+        ; Get a random number between 0 and 7
+        JSR PutRandomByteInAccumulatorRegister
+        AND #$07 ; Make it a number between 0 and 7
         CLC 
-        ADC #$08
+        ADC #$08; Selects the 'encouragement text' in the second half of txtRestartLevelMsg
         TAY 
         ;Fall through
 
@@ -3147,47 +3149,54 @@ b5A29   LDA txtGilbiesLeft,X
 ;-------------------------------
 DrawRestartLevelText   
         LDA #<txtRestartLevelMsg
-        STA a45
+        STA tmpPtrLo
         LDA #>txtRestartLevelMsg
-        STA a46
-        STY a47
+        STA tmpPtrHi
+        STY tmpPtrZp47 ; Random byte picked by PutRandomByteInAccumulatorRegister
         CPY #$00
         BEQ b5A67
-b5A57   LDA a45
+
+        ; With a random number between 0 and 7 in tmpPtrZp47, switch
+        ; the pointers to one of the 8 messages in txtRestartLevelMsg.
+b5A57   LDA tmpPtrLo
         CLC 
-        ADC #$14
-        STA a45
-        LDA a46
+        ADC #$14 ; Each message is 20 bytes long
+        STA tmpPtrLo
+        LDA tmpPtrHi
         ADC #$00
-        STA a46
+        STA tmpPtrHi
         DEY 
         BNE b5A57
-b5A67   LDA a47
+
+b5A67   LDA tmpPtrZp47 ; Random byte picked by PutRandomByteInAccumulatorRegister
         AND #$08
         BNE b5A7A
-b5A6D   LDA (p45),Y
+
+b5A6D   LDA (tmpPtrLo),Y
         AND #$3F
         STA SCREEN_RAM + $00A9,Y
         INY 
         CPY #$14
         BNE b5A6D
-        RTS 
+        RTS  ; Returns early
 
-b5A7A   LDA (p45),Y
+b5A7A   LDA (tmpPtrLo),Y
         AND #$3F
         STA SCREEN_RAM + $0149,Y
         INY 
         CPY #$14
         BNE b5A7A
+
         LDA #$30
-        STA a45
+        STA tmpPtrLo
 b5A8A   LDX #$40
 b5A8C   DEY 
         BNE b5A8C
         DEX 
         BNE b5A8C
-        DEC a45
+        DEC tmpPtrLo
         BNE b5A8A
+        ;Fall through
 
 ;-------------------------------
 ; ClearScreen3
@@ -3208,7 +3217,7 @@ b5A98   LDA #$20
         BNE b5A98
         RTS 
 
-txtGilbiesLeft   .TEXT $00, "  GILBIES LEFT: 0.. "
+txtGilbiesLeft     .TEXT $00, "  GILBIES LEFT: 0.. "
 txtRestartLevelMsg .TEXT "TAKE OUT THAT BRIDGE% % I BET THAT HURT!"
                    .TEXT "GOT YOU, SPACE CADET%% SUPPERS READY! %%"
                    .TEXT "ZAPPED AGAIN........ONE DESTRUCTED DROID"
@@ -3353,7 +3362,7 @@ a5E54   .BYTE $01
 ; UpdatePlanetEntropyStatus
 ;-------------------------------
 UpdatePlanetEntropyStatus   
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b5E5D
         JMP j5EF6
 
@@ -3462,7 +3471,7 @@ b5F28   PHA
         LDA f67A5,Y
         STA COLOR_RAM + $034F
         STA COLOR_RAM + $0350
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b5F3A
         PLA 
         RTS 
@@ -3558,7 +3567,7 @@ b6047   RTS
 ; DrawGameStatusBars
 ;-------------------------------
 DrawGameStatusBars   
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b6047
         LDX #$28
 b604F   LDA f60C6,X
@@ -4282,7 +4291,7 @@ b6651   LDA a65E2
         STA a65E2
         DEC a65E1
         BNE b6709
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$07
         CLC 
         ADC #$04
@@ -4291,7 +4300,7 @@ b6651   LDA a65E2
         STA a65DE
         LDA f674F,X
         STA a673D
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$07
         CLC 
         ADC #$04
@@ -4300,13 +4309,13 @@ b6651   LDA a65E2
         STA a65DF
         LDA f674F,X
         STA a673E
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$07
         CLC 
         ADC #$01
         STA a65E4
         STA a65E5
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$07
         CLC 
         ADC #$01
@@ -4509,7 +4518,7 @@ SetupSpritesAndSound
         STA $D412    ;Voice 3: Control Register
         LDA #$B0
         STA $D000    ;Sprite 0 X Pos
-        JSR DrawWorlds
+        JSR DrawPlanetSurfaces
         JSR SetUpWorlds
         SEI 
         LDA #<MainGameInterruptHandler
@@ -4526,7 +4535,7 @@ SetupSpritesAndSound
         STA $D012    ;Raster Position
         JSR DrawGameStatusBars
         LDX #$28
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BNE b68DF
 
 b68D2   LDA #$00
@@ -5002,7 +5011,7 @@ b6C26   LDX currentPlanetBackgroundClr1
         JSR s778C
         JSR UpdateAttackShipsPosition
         JSR s5284
-        JMP $EA31
+        JMP $EA31; jump into KERNAL's standard interrupt service routine to handle keyboard scan, cursor display etc.
 
 ;-------------------------------
 ; j6C6E
@@ -5041,7 +5050,7 @@ b6C91   SEC
         BNE b6CD3
 b6CB5   CPY #$06
         BNE b6CD3
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b6CD6
         LDA #$90
         STA $D001    ;Sprite 0 Y Pos
@@ -5174,7 +5183,7 @@ j6E03
         STA f6D70,X
 b6E0B   DEX 
         BNE b6DD0
-        JMP j7217
+        JMP ScrollPlanets
 
 a6E11   .BYTE $02
 a6E12   .BYTE $EA
@@ -5247,9 +5256,9 @@ b6EA4   JSR s7EE4
         LDA inAttractMode
         BEQ b6EAF
         DEC inAttractMode
-b6EAF   LDA #<screenPtrLo
+b6EAF   LDA #<planetPtrLo
         STA a6E2B
-        LDA #>screenPtrLo
+        LDA #>planetPtrLo
         STA a6E2C
         LDA SCREEN_RAM + $01A4
         CMP #$41
@@ -5515,7 +5524,7 @@ b70B5   JSR s7671
         LDA #$1F
         STA a75A3
 b70E0   INC a6E12
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b70EF
         LDA a6E12
         CMP #$0C
@@ -5543,7 +5552,7 @@ b70FC   LDA a7176
         LDA #$24
         STA a75A3
 b7124   DEC a6E12
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b7133
         LDA a6E12
         CMP #$F4
@@ -5625,20 +5634,22 @@ b71A4   LDA a7176
         ;Fall through?
 
 ;-------------------------------
-; DrawWorlds
+; DrawPlanetSurfaces
 ;-------------------------------
-DrawWorlds   
+DrawPlanetSurfaces   
         LDY #$00
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b71E6
+
+        ; Only need to draw the upper planet
         LDX #$27
-b71CB   LDA (p10),Y
+b71CB   LDA (planetTextureTopLayerPtr),Y
         STA SCREEN_RAM + $0118,Y
-        LDA (p12),Y
+        LDA (planetTextureSecondFromTopLayerPtr),Y
         STA SCREEN_RAM + $0140,Y
-        LDA (p14),Y
+        LDA (planetTextureSecondFromBottomLayerPtr),Y
         STA SCREEN_RAM + $0168,Y
-        LDA (p16),Y
+        LDA (planetTextureBottomLayerPtr),Y
         STA SCREEN_RAM + $0190,Y
         INY 
         DEX 
@@ -5646,20 +5657,22 @@ b71CB   LDA (p10),Y
         BNE b71CB
         RTS 
 
+        ;Draw the upper and lower planets. The lower
+        ; planet is a mirror image of the top.
 b71E6   LDX #$27
-b71E8   LDA (p10),Y
+b71E8   LDA (planetTextureTopLayerPtr),Y
         STA SCREEN_RAM + $0118,Y
         ORA #$C0
         STA SCREEN_RAM + $0258,X
-        LDA (p12),Y
+        LDA (planetTextureSecondFromTopLayerPtr),Y
         STA SCREEN_RAM + $0140,Y
         ORA #$C0
         STA SCREEN_RAM + $0230,X
-        LDA (p14),Y
+        LDA (planetTextureSecondFromBottomLayerPtr),Y
         STA SCREEN_RAM + $0168,Y
         ORA #$C0
         STA SCREEN_RAM + $0208,X
-        LDA (p16),Y
+        LDA (planetTextureBottomLayerPtr),Y
         STA SCREEN_RAM + $0190,Y
         ORA #$C0
         STA SCREEN_RAM + $01E0,X
@@ -5670,9 +5683,9 @@ b71E8   LDA (p10),Y
         RTS 
 
 ;-------------------------------
-; j7217
+; ScrollPlanets
 ;-------------------------------
-j7217   
+ScrollPlanets   
         INC a6794
         LDA a6794
         AND #$0F
@@ -5683,7 +5696,7 @@ j7217
         STA a67C6
         LDA a6E12
         BMI b7234
-        JMP j72C0
+        JMP ScrollPlanetLeft
 
 b7234   LDA a6E11
         CLC 
@@ -5702,48 +5715,55 @@ b7243   LDA a6E11
         ROR 
         STA aFD
         INC aFD
-        LDA a10
+        LDA planetTextureTopLayerPtr
         CLC 
         ADC aFD
-        STA a10
-        STA a12
-        STA a14
-        STA a16
-        LDA a11
+        STA planetTextureTopLayerPtr
+        STA planetTextureSecondFromTopLayerPtr
+        STA planetTextureSecondFromBottomLayerPtr
+        STA planetTextureBottomLayerPtr
+        LDA planetTextureTopLayerPtrHi
         ADC #$00
 ;-------------------------------
-; j7263
+; DrawPlanetScroll
 ;-------------------------------
-j7263   
-        STA a11
+DrawPlanetScroll   
+        ; Adjust the layer pointers to the approriate
+        ; positions for this planet
+        STA planetTextureTopLayerPtrHi
         CLC 
         ADC #$04
-        STA a13
+        STA planetTextureSecondFromTopLayerPtrHi
         CLC 
         ADC #$04
-        STA a15
+        STA planetTextureSecondFromBottomLayerPtrHi
         CLC 
         ADC #$04
-        STA a17
+        STA planetTextureBottomLayerPtrHi
+
         LDA a6E11
         AND #$07
         STA a6E11
-        LDA a11
+        LDA planetTextureTopLayerPtrHi
         CMP #$7F
         BNE b7294
-        LDA a10
+        
+        ; Planet needs to wrap around from the left.
+        LDA planetTextureTopLayerPtr
         SEC 
         SBC #$28
-        STA a10
-        STA a12
-        STA a14
-        STA a16
+        STA planetTextureTopLayerPtr
+        STA planetTextureSecondFromTopLayerPtr
+        STA planetTextureSecondFromBottomLayerPtr
+        STA planetTextureBottomLayerPtr
         LDA #$83
-        JMP j7263
+        JMP DrawPlanetScroll
 
 b7294   CMP #$83
         BNE b72BD
-        LDA a10
+
+        ; Planet data for the top layer ends at $83DB
+        LDA planetTextureTopLayerPtr
         CMP #$D8
         BEQ b72AD
         CMP #$D9
@@ -5752,23 +5772,25 @@ b7294   CMP #$83
         BEQ b72AD
         CMP #$DB
         BEQ b72AD
+        ;Planet doesn't need to wrap around
         JMP b72BD
 
+        ; Planet needs to wrap around from the right.
 b72AD   CLC 
         ADC #$28
-        STA a10
-        STA a12
-        STA a14
-        STA a16
+        STA planetTextureTopLayerPtr
+        STA planetTextureSecondFromTopLayerPtr
+        STA planetTextureSecondFromBottomLayerPtr
+        STA planetTextureBottomLayerPtr
         LDA #$80
-        JMP j7263
+        JMP DrawPlanetScroll
 
-b72BD   JMP DrawWorlds
+b72BD   JMP DrawPlanetSurfaces
 
 ;-------------------------------
-; j72C0
+; ScrollPlanetLeft
 ;-------------------------------
-j72C0   
+ScrollPlanetLeft   
         LDA a6E11
         CLC 
         ADC a6E12
@@ -5782,51 +5804,54 @@ b72CF   CLC
         ROR 
         ROR 
         STA aFD
-        LDA a10
+
+        LDA planetTextureTopLayerPtr
         SEC 
         SBC aFD
-        STA a10
-        STA a12
-        STA a14
-        STA a16
-        LDA a11
+
+        STA planetTextureTopLayerPtr
+        STA planetTextureSecondFromTopLayerPtr
+        STA planetTextureSecondFromBottomLayerPtr
+        STA planetTextureBottomLayerPtr
+
+        LDA planetTextureTopLayerPtrHi
         SBC #$00
-        JMP j7263
+        JMP DrawPlanetScroll
 
 ;-------------------------------
-; s72E9
+; StoreRandomPositionInPlanetInPlanetPtr
 ;-------------------------------
-s72E9   
+StoreRandomPositionInPlanetInPlanetPtr   
         LDA #<p8C00
-        STA screenPtrLo
+        STA planetPtrLo
         LDA #>p8C00
-        STA screenPtrHi
-        LDA a24
+        STA planetPtrHi
+        LDA charSetDataPtrLo
         BEQ b72F9
-        INC screenPtrHi
-        INC screenPtrHi
-b72F9   LDA screenPtrLo
+        INC planetPtrHi
+        INC planetPtrHi
+b72F9   LDA planetPtrLo
         CLC 
-        ADC a25
-        STA screenPtrLo
-        LDA screenPtrHi
+        ADC charSetDataPtrHi
+        STA planetPtrLo
+        LDA planetPtrHi
         ADC #$00
-        STA screenPtrHi
-        LDA screenPtrLo
+        STA planetPtrHi
+        LDA planetPtrLo
         CLC 
-        ADC a25
-        STA screenPtrLo
-        LDA screenPtrHi
+        ADC charSetDataPtrHi
+        STA planetPtrLo
+        LDA planetPtrHi
         ADC #$00
-        STA screenPtrHi
+        STA planetPtrHi
         LDY #$00
         RTS 
 
 a7317   =*+$01
 ;-------------------------------
-; GetSomeSequenceData
+; PutRandomByteInAccumulatorRegister
 ;-------------------------------
-GetSomeSequenceData   
+PutRandomByteInAccumulatorRegister   
         LDA a9ABB
         INC a7317
         RTS 
@@ -5862,13 +5887,13 @@ b7331   STA COLOR_RAM + $01DF,X
 ;-------------------------------
 s7341   
         LDA a73AE
-        STA a22
+        STA planetSurfaceDataPtrLo
         LDA a73AF
-        STA a23
+        STA planetSurfaceDataPtrHi
         JSR s735E
         LDA a26
         STA f2600,X
-        INC a23
+        INC planetSurfaceDataPtrHi
         JSR s735E
         LDA a26
         STA f2700,X
@@ -5878,7 +5903,7 @@ s7341
 ; s735E
 ;-------------------------------
 s735E   
-        LDA (p22),Y
+        LDA (planetSurfaceDataPtrLo),Y
         PHA 
         AND #$03
         TAX 
@@ -5901,7 +5926,7 @@ s735E
         LDA f73B8,X
         ORA a26
         STA a26
-        LDA (p22),Y
+        LDA (planetSurfaceDataPtrLo),Y
         ROL 
         ROL 
         ROL 
@@ -5915,10 +5940,10 @@ s735E
         PLA 
         PHA 
         AND #$F8
-        STA a24
+        STA charSetDataPtrLo
         LDA f73A4,Y
         CLC 
-        ADC a24
+        ADC charSetDataPtrLo
         TAX 
         PLA 
         TAY 
@@ -5932,224 +5957,278 @@ a73AF   .BYTE $92
 f73B0   .BYTE $00,$40,$80,$C0
 f73B4   .BYTE $00,$10,$20,$30
 f73B8   .BYTE $00,$04,$08,$0C
-;-------------------------------
-; CopyInSpriteData
-;-------------------------------
-CopyInSpriteData   
-        LDA #<p8000
-        STA a22
-        LDA #>p8000
-        STA a23
 
+;-------------------------------
+; GeneratePlanetSurface
+;
+; This is the routine Minter called 'GenPlan'.
+;
+; From Jeff Minter's development diary:
+; 17 February 1986
+; Redid the graphics completely, came up with some really nice looking 
+; metallic planet structures that I'll probably stick with. Started to 
+; write the GenPlan routine that'll generate random planets at will. 
+; Good to have a C64 that can generate planets in its spare time. 
+; Wrote pulsation routines for the colours; looks well good with some 
+; of the planet structures. The metallic look seems to be 'in' at the 
+; moment so this first planet will go down well. There will be five 
+; planet surface types in all, I reckon, probably do one with grass 
+; and sea a bit like 'Sheep in Space', cos I did like that one. It'll
+; be nice to have completely different planet surfaces in top and bottom
+; of the screen. The neat thing is that all the surfaces have the same
+; basic structures, all I do is fit different graphics around each one. 
+;-------------------------------
+
+GeneratePlanetSurface   
+        LDA #<planetSurfaceData
+        STA planetSurfaceDataPtrLo
+        LDA #>planetSurfaceData
+        STA planetSurfaceDataPtrHi
+
+        ; Clear down the planet surface data from $8000 to $8FFF
         LDY #$00
 b73C6   LDA #$60
-b73C8   STA (p22),Y
+b73C8   STA (planetSurfaceDataPtrLo),Y
         DEY 
         BNE b73C8
-        INC a23
-        LDA a23
+        INC planetSurfaceDataPtrHi
+        LDA planetSurfaceDataPtrHi
         CMP #$90
         BNE b73C6
 
+        ; Fill $8C00 to $8CFF with a $40,$42 pattern. These are the
+        ; character values that represent 'sea' on the planet.
         LDA #$8C
-        STA a23
+        STA planetSurfaceDataPtrHi
 b73D9   LDA #$40
-        STA (p22),Y
+        STA (planetSurfaceDataPtrLo),Y
         LDA #$42
         INY 
-        STA (p22),Y
+        STA (planetSurfaceDataPtrLo),Y
         DEY 
-        LDA a22
+        ; Move the pointers forward by 2 bytes
+        LDA planetSurfaceDataPtrLo
         CLC 
         ADC #$02
-        STA a22
-        LDA a23
+        STA planetSurfaceDataPtrLo
+        LDA planetSurfaceDataPtrHi
         ADC #$00
-        STA a23
+        STA planetSurfaceDataPtrHi
+        ; Loop until $8FFF
         CMP #$90
         BNE b73D9
 
-        JSR GetSomeSequenceData
+        ; Pick a random point between $8C00 and $8FFF for 
+        ; the start of the land section.
+        JSR PutRandomByteInAccumulatorRegister
         AND #$7F
         CLC 
         ADC #$7F
-        STA a25
+        STA charSetDataPtrHi
         LDA #$00
-        STA a24
-        JSR s72E9
-        JSR GetSomeSequenceData
+        STA charSetDataPtrLo
+        ; Use the two pointers above to pick a random position
+        ; in the planet between $8C00 and $8FFF and store it in
+        ; planetPtrLo/planetPtrHi
+        JSR StoreRandomPositionInPlanetInPlanetPtr
+
+        ; Randomly generate the length of the land section, but
+        ; make it at least 32 bytes.
+        JSR PutRandomByteInAccumulatorRegister
         AND #$7F
         CLC 
         ADC #$20
-        STA a22
+        STA planetSurfaceDataPtrLo
+
+        ; Store $5C,$5E in the randomly chosen position. This is the
+        ; left shore of the land.
         LDY #$00
         LDA #$5C
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         LDA #$5E
         INY 
-        STA (screenPtrLo),Y
-b741A   INC a25
+        STA (planetPtrLo),Y
+
+        ; Draw the land from the randomly chosen position for up to
+        ; 256 bytes, depending on the randomly chosen length of the land
+        ; chosen above and storedin planetSurfaceDataPtrLo. 
+b741A   INC charSetDataPtrHi
         BNE b7420
-        INC a24
-b7420   JSR s72E9
+
+        INC charSetDataPtrLo
+b7420   JSR StoreRandomPositionInPlanetInPlanetPtr
         LDY #$00
         LDA #$41
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         LDA #$43
         INY 
-        STA (screenPtrLo),Y
-        DEC a22
+        STA (planetPtrLo),Y
+        DEC planetSurfaceDataPtrLo
         BNE b741A
+
+        ; Draw the right short of the land, represented by the chars in
+        ; $5D/$5F.
         INY 
         LDA #$5D
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         LDA #$5F
         INY 
-        STA (screenPtrLo),Y
-        JSR s7519
+        STA (planetPtrLo),Y
+
+        JSR GeneratePlanetStructures
+
         RTS 
 
-f7440   .BYTE $65,$67,$69,$6B,$FF,$64,$66,$68
-        .BYTE $6A,$FE
-f744A   .BYTE $41,$43,$51,$53,$41,$43,$FF,$60
-        .BYTE $60,$50,$52,$60,$60,$FF,$49,$4B
-        .BYTE $4D,$4F,$6D,$6F,$FF,$48,$4A,$4C
-        .BYTE $4E,$6C,$6E,$FE
-f7466   .BYTE $59,$5B,$FF,$58,$5A,$FF,$55,$57
-        .BYTE $FF,$54,$56,$FE
-f7472   .BYTE $75,$77,$7D,$7F,$FF,$74,$76,$7C
-        .BYTE $7E,$FF,$71,$73,$79,$7B,$FF,$70
-        .BYTE $72,$78,$7A,$FE,$A2,$00
+mediumStructureData  .BYTE $65,$67,$69,$6B,$FF
+                     .BYTE $64,$66,$68,$6A,$FE
+largestStructureData .BYTE $41,$43,$51,$53,$41,$43,$FF
+                     .BYTE $60,$60,$50,$52,$60,$60,$FF
+                     .BYTE $49,$4B,$4D,$4F,$6D,$6F,$FF
+                     .BYTE $48,$4A,$4C,$4E,$6C,$6E,$FE
+nextLargestStructure .BYTE $59,$5B,$FF,$58,$5A,$FF
+                     .BYTE $55,$57,$FF
+                     .BYTE $54,$56,$FE
+warpGateData         .BYTE $75,$77,$7D,$7F,$FF
+                     .BYTE $74,$76,$7C,$7E,$FF
+                     .BYTE $71,$73,$79,$7B,$FF
+                     .BYTE $70,$72,$78,$7A,$FE
+
 ;-------------------------------
-; j7488
+; DrawLittleStructure ($7486)
 ;-------------------------------
+DrawLittleStructure
+        LDX #$00
 j7488   
-        LDA f74A0,X
+        LDA littleStructureData,X
         CMP #$FF
         BNE b7495
-        JSR s74A6
+        JSR SwitchToNextLayerInPlanet
         JMP j7488
 
 b7495   CMP #$FE
         BEQ b74B0
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         INY 
         INX 
         JMP j7488
 
-f74A0   .TEXT "EG", $FF, "DF", $FE
+littleStructureData .BYTE $45,$47,$FF
+                    .BYTE $44,$46,$FE
+
 ;-------------------------------
-; s74A6
+; SwitchToNextLayerInPlanet
 ;-------------------------------
-s74A6   
-        LDA screenPtrHi
+SwitchToNextLayerInPlanet   
+        LDA planetPtrHi
         SEC 
         SBC #$04
-        STA screenPtrHi
+        STA planetPtrHi
         LDY #$00
         INX 
 b74B0   RTS 
 
+;-------------------------------
+; DrawMediumStructure ($74B1) 
+;-------------------------------
+DrawMediumStructure
         LDX #$00
-;-------------------------------
-; j74B3
-;-------------------------------
+
 j74B3   
-        LDA f7440,X
+        LDA mediumStructureData,X
         CMP #$FF
         BNE b74C0
-        JSR s74A6
+        JSR SwitchToNextLayerInPlanet
         JMP j74B3
 
 b74C0   CMP #$FE
-        BEQ b74B0
-        STA (screenPtrLo),Y
+        BEQ b74B0 ; Return
+        STA (planetPtrLo),Y
         INY 
         INX 
         JMP j74B3
 
+;-------------------------------
+; DrawLargestStructure ($74CB) 
+;-------------------------------
+DrawLargestStructure
         LDX #$00
-;-------------------------------
-; j74CD
-;-------------------------------
+
 j74CD   
-        LDA f744A,X
+        LDA largestStructureData,X
         CMP #$FF
         BNE b74DA
-        JSR s74A6
+        JSR SwitchToNextLayerInPlanet
         JMP j74CD
 
 b74DA   CMP #$FE
-        BEQ b74B0
-        STA (screenPtrLo),Y
+        BEQ b74B0 ; Return
+        STA (planetPtrLo),Y
         INY 
         INX 
         JMP j74CD
 
+;-------------------------------
+; DrawNextLargestStructure ($74E5) 
+;-------------------------------
+DrawNextLargestStructure
         LDX #$00
-;-------------------------------
-; j74E7
-;-------------------------------
 j74E7   
-        LDA f7466,X
+        LDA nextLargestStructure,X
         CMP #$FF
         BNE b74F4
-        JSR s74A6
+        JSR SwitchToNextLayerInPlanet
         JMP j74E7
 
 b74F4   CMP #$FE
-        BEQ b74B0
-        STA (screenPtrLo),Y
+        BEQ b74B0 ; Return
+        STA (planetPtrLo),Y
         INY 
         INX 
         JMP j74E7
 
 ;-------------------------------
-; s74FF
+; DrawWarpGate
 ;-------------------------------
-s74FF   
+DrawWarpGate   
         LDX #$00
-;-------------------------------
-; j7501
-;-------------------------------
 j7501   
-        LDA f7472,X
+        LDA warpGateData,X
         CMP #$FF
         BNE b750E
-        JSR s74A6
+        JSR SwitchToNextLayerInPlanet
         JMP j7501
 
 b750E   CMP #$FE
         BEQ b74B0
-        STA (screenPtrLo),Y
+        STA (planetPtrLo),Y
         INY 
         INX 
         JMP j7501
 
 ;-------------------------------
-; s7519
+; GeneratePlanetStructures
 ;-------------------------------
-s7519   
-        LDA #<p2000
-        STA a24
-        LDA #>p2000
-        STA a25
-;-------------------------------
-; j7521
-;-------------------------------
+GeneratePlanetStructures   
+        LDA #<characterSetData
+        STA charSetDataPtrLo
+        LDA #>characterSetData
+        STA charSetDataPtrHi
+
+        ; Draw randomly chosen structures across the surface
+        ; of the planet.
 j7521   
-        JSR s7561
-        JSR GetSomeSequenceData
+        JSR DrawRandomlyChosenStructure
+        JSR PutRandomByteInAccumulatorRegister
         AND #$0F
         CLC 
         ADC #$0C
         CLC 
-        ADC a25
-        STA a25
-        LDA a24
+        ADC charSetDataPtrHi
+        STA charSetDataPtrHi
+        LDA charSetDataPtrLo
         ADC #$00
-        STA a24
-        LDA a25
+        STA charSetDataPtrLo
+        LDA charSetDataPtrHi
         AND #$F0
         CMP #$C0
         BEQ b7546
@@ -6157,35 +6236,43 @@ j7521
         BEQ b7546
         JMP j7521
 
-b7546   LDA a24
+        ; Draw the two warp gates
+b7546   LDA charSetDataPtrLo
         BEQ j7521
         LDA #$F1
-        STA a25
-        JSR s72E9
-        JSR s74FF
-        DEC a24
+        STA charSetDataPtrHi
+        JSR StoreRandomPositionInPlanetInPlanetPtr
+        JSR DrawWarpGate
+        DEC charSetDataPtrLo
         LDA #$05
-        STA a25
-        JSR s72E9
-        JSR s74FF
+        STA charSetDataPtrHi
+        JSR StoreRandomPositionInPlanetInPlanetPtr
+        JSR DrawWarpGate
         RTS 
 
 ;-------------------------------
-; s7561
+; DrawRandomlyChosenStructure
 ;-------------------------------
-s7561   
-        JSR s72E9
-        JSR GetSomeSequenceData
+DrawRandomlyChosenStructure   
+        ; Pick a random positio to draw the structure
+        JSR StoreRandomPositionInPlanetInPlanetPtr
+        ;Pick a random number between 1 and 4
+        JSR PutRandomByteInAccumulatorRegister
         AND #$03
         TAX 
+
+        ; Run the randomly chose subroutine, one of:
+        ; $7486, $74B1, $74CB, $74E5
         LDA f7577,X
         STA a2A
         LDA f757B,X
         STA a29
         JMP (p0029)
 
+;Jump table
 f7577   .BYTE $74,$74,$74,$74
 f757B   .BYTE $86,$B1,$CB,$E5
+
 f757F   .BYTE $C1,$C2,$C3,$C4,$C5,$C6,$C7,$C6
         .BYTE $C5,$C4,$C3,$C2,$C1,$C8,$C9,$CA
         .BYTE $CB,$CB,$CC,$CD,$CE,$CF,$CE,$CD
@@ -6630,13 +6717,13 @@ b78CD   RTS
 b78CE   LDX a78C6
         LDY a9A00,X
         LDA a73AC
-        STA a22
+        STA planetSurfaceDataPtrLo
         LDA a73AD
-        STA a23
-        LDA (p22),Y
+        STA planetSurfaceDataPtrHi
+        LDA (planetSurfaceDataPtrLo),Y
         STA f2200,Y
-        INC a23
-        LDA (p22),Y
+        INC planetSurfaceDataPtrHi
+        LDA (planetSurfaceDataPtrLo),Y
         STA f2300,Y
         JSR s7341
         INC a78C6
@@ -6645,6 +6732,7 @@ b78CE   LDX a78C6
         BNE b78CD
         LDA #$00
         STA a78C7
+
 ;-------------------------------
 ; SetUpWorlds
 ;-------------------------------
@@ -6692,7 +6780,7 @@ b7939   STA f67D5,X
         STA a79AF
         LDA #$30
         STA a48D7
-        LDA inGameMode
+        LDA lowerPlanetActivated
         BEQ b797C
         LDX currentTopWorldProgress
         LDA backgroundColor1ForWorlds,X
@@ -6703,7 +6791,7 @@ b7939   STA f67D5,X
         JSR UpdateBottomWorldSurfaceColor
 b797C   RTS 
 
-inGameMode   .BYTE $01
+lowerPlanetActivated   .BYTE $01
 f797E   .BYTE $00,$94,$00,$00,$11,$0F,$00,$00
         .BYTE $03,$00,$00,$21,$0F,$00,$08,$03
         .BYTE $00,$00,$21,$0F,$00,$00,$00,$00
@@ -7219,13 +7307,13 @@ DetectGameOrAttractMode
         LDA attractModeSelected
         BNE b7EB8
         LDA #$01
-        STA inGameMode
+        STA lowerPlanetActivated
         LDA #$00
         STA inAttractMode
         RTS 
 
 b7EB8   LDA #$00
-        STA inGameMode
+        STA lowerPlanetActivated
         LDA #$FF
         STA inAttractMode
         RTS 
@@ -7235,16 +7323,16 @@ b7EB8   LDA #$00
 ;-------------------------------
 GetSomeGameModeData   
         LDX #$09
-b7EC5   JSR GetSomeSequenceData
+b7EC5   JSR PutRandomByteInAccumulatorRegister
         AND #$0F
         STA f49C6,X
         DEX 
         BPL b7EC5
 
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$03
         STA currentTopWorldProgress
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$03
         STA currentBottomWorldProgress
         RTS 
@@ -7262,7 +7350,7 @@ s7EE4
 
 b7EEA   DEC a7EE2
         BNE b7F01
-        JSR GetSomeSequenceData
+        JSR PutRandomByteInAccumulatorRegister
         AND #$1F
         ORA #$01
         STA a7EE2
@@ -7273,7 +7361,7 @@ b7F01   LDA a7EE3
         STA a7176
         RTS 
 
-.include "padding.asm"
+.include "planet_data.asm"
 
 *=$AAC0
 currentBonusBounty   .BYTE $F0

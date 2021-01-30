@@ -1,5 +1,5 @@
 
-p2000
+characterSetData
         .BYTE $FF,$00,$FF,$00,$00,$FF,$00,$FF   ;.BYTE $FF,$00,$FF,$00,$00,$FF,$00,$FF
                                                 ; CHARACTER $00
                                                 ; 11111111   ********
