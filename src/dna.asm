@@ -495,7 +495,7 @@ DNA_UpdateSpritePointers
         LDX #$00
 b1176   STX a11C9
         LDA #$C0
-        STA Sprite7Ptr
+        STA Sprite7PtrStarField
         STA Sprite6Ptr
 b1181   DEC a1158
         BNE b11C7

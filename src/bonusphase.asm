@@ -308,14 +308,14 @@ bAD83   LDA $E200,X
 ;-------------------------------
 InitializeBonusPhase   
         NOP 
-        LDA aAAD0
+        LDA bonusPhaseCounter
         BNE bADC1
         LDA #$00
         STA aAED0
-bADC1   INC aAAD0
+bADC1   INC bonusPhaseCounter
         LDA #$00
         STA $D020    ;Border Color
-        STA aAAD1
+        STA incrementLives
         STA aAED2
         STA aAED3
         STA aC707
@@ -2015,7 +2015,7 @@ DisplayBonusBountyScreen
         LDA #$00
         STA aC136
         INC aAED0
-        INC aAAD1
+        INC incrementLives
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         LDA $D011    ;VIC Control Register 1
         AND #$F8
@@ -2027,7 +2027,7 @@ DisplayBonusBountyScreen
         STA $D01B    ;Sprite to Background Display Priority
         LDA #$F0
         STA Sprite6Ptr
-        STA Sprite7Ptr
+        STA Sprite7PtrStarField
         JSR ClearScreen
         LDY #$27
 bC07C   LDX #$06
