@@ -994,7 +994,7 @@ b40A0   LDA #$30
         DEX 
         BPL b40A0
         JSR GeneratePlanetSurface
-        JSR PrepareSpriteData
+        JSR InitializeStarfieldSprite
         LDA #$00
         STA oldTopPlanetIndex
         LDA #$00
@@ -4505,9 +4505,9 @@ currentPlanetBackgroundClr2            .BYTE $0E
 currentPlanetBackgroundColor1           .BYTE $09
 currentPlanetBackgroundColor2           .BYTE $0E
 ;-------------------------------
-; PrepareSpriteData
+; InitializeStarfieldSprite
 ;-------------------------------
-PrepareSpriteData   
+InitializeStarfieldSprite   
         LDA #$00
         LDY #$40
 b6812   STA f2FFF,Y
@@ -4515,16 +4515,16 @@ b6812   STA f2FFF,Y
         BNE b6812
 
 ;-------------------------------
-; FixUpSpriteData
+; ManipulateStarfieldSprite
 ;-------------------------------
-FixUpSpriteData   
+ManipulateStarfieldSprite   
         LDX a6E12
         BPL b6822
         TXA 
         EOR #$FF
         TAX 
         INX 
-b6822   LDA f6E13,X
+b6822   LDA starfieldSpriteAnimationData,X
         STA a3000
         STA a3003
         STA a3012
@@ -4792,11 +4792,12 @@ EnterMainControlLoop
 b6A1C   LDA controlPanelColorDoesntNeedUpdating
         BEQ b6A24
         JSR UpdateControlPanelColor
-b6A24   LDA a78B4
+b6A24   LDA qPressedToQuitGame
         BEQ b6A31
 
+        ; Player has pressed Q to quit game.
         LDA #$00
-        STA a78B4
+        STA qPressedToQuitGame
         JMP MainControlLoop
 
 b6A31   JSR UpdateScores
@@ -5295,7 +5296,7 @@ b6E0B   DEX
 
 a6E11   .BYTE $02
 a6E12   .BYTE $EA
-f6E13   .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
+starfieldSpriteAnimationData   .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
         .BYTE $F0,$F0,$F0,$F0,$F8,$F8,$F8,$F8
         .BYTE $FC,$FC,$FC,$FC,$FE,$FE,$FE,$FF
 a6E2B   .BYTE $01
@@ -5708,7 +5709,7 @@ b715A   LDA joystickInput
         JMP j705E
 
 j7173   
-        JMP FixUpSpriteData
+        JMP ManipulateStarfieldSprite
         ; Returns
 
 joystickInput .BYTE $09
@@ -6792,9 +6793,12 @@ b787C   LDY a59B9
         BNE b786C
         LDY gilbyHasJustDied
         BNE b786C
-        CMP #$3E
+
+        CMP #$3E ; Q pressed, to quit game
         BNE b788E
-        INC a78B4
+
+        ; Q was pressed, get ready to quit game.
+        INC qPressedToQuitGame
         RTS 
 
 b788E   CMP #$04 ; F1 Pressed
@@ -6820,14 +6824,14 @@ b78A1   CMP #$19 ; Y Pressed
         INC bonusAwarded
         RTS 
 
-currentTopPlanetIndex    .BYTE $00
-oldTopPlanetIndex                      .BYTE $00
-currentBottomPlanetIndex .BYTE $00
-oldBottomPlanetIndex                      .BYTE $00
-a78B4                      .BYTE $00
-backgroundColor1ForPlanets  .BYTE $09,$0B,$07,$0E,$0D
-backgroundColor2ForPlanets  .BYTE $0E,$10,$01,$07,$10
-surfaceColorsForPlanets     .BYTE $0D,$09,$0A,$0C,$0A,$01,$01
+currentTopPlanetIndex      .BYTE $00
+oldTopPlanetIndex          .BYTE $00
+currentBottomPlanetIndex   .BYTE $00
+oldBottomPlanetIndex       .BYTE $00
+qPressedToQuitGame         .BYTE $00
+backgroundColor1ForPlanets .BYTE $09,$0B,$07,$0E,$0D
+backgroundColor2ForPlanets .BYTE $0E,$10,$01,$07,$10
+surfaceColorsForPlanets    .BYTE $0D,$09,$0A,$0C,$0A,$01,$01
 entryLevelSequenceCounter  .BYTE $A5
 levelEntrySequenceActive   .BYTE $01
 
@@ -7743,9 +7747,9 @@ bCAD5   LDA lastBlastScore,X
         LDA #>hiScoreTablePtr
         STA aFF
         LDY #$00
-bCAE8   LDA fCB30,Y
+bCAE8   LDA hiScoreTableCursorPosLoPtr,Y
         STA aFC
-        LDA fCB44,Y
+        LDA hiScoreTableCursorPosHiPtr,Y
         STA aFD
         TYA 
         PHA 
@@ -7783,10 +7787,11 @@ bCB0E   LDA (pFE),Y
         BNE bCAE8
         JMP ClearScreenDrawHiScoreTextContinued
 
-fCB30   .BYTE $A1,$C9,$F1,$19,$41,$69,$91,$B9
+; A jump table
+hiScoreTableCursorPosLoPtr   .BYTE $A1,$C9,$F1,$19,$41,$69,$91,$B9
         .BYTE $E1,$09,$B5,$DD,$05,$2D,$55,$7D
         .BYTE $A5,$CD,$F5,$1D
-fCB44   .BYTE $04,$04,$04,$05,$05,$05,$05,$05
+hiScoreTableCursorPosHiPtr   .BYTE $04,$04,$04,$05,$05,$05,$05,$05
         .BYTE $05,$06,$04,$04,$05,$05,$05,$05
         .BYTE $05,$05,$05,$06
 ;-------------------------------
@@ -7811,24 +7816,24 @@ bCB68   LDA txtHiScorLine2,X
         SEC 
         SBC aFB
         TAX 
-        LDA fCB30,X
+        LDA hiScoreTableCursorPosLoPtr,X
         STA aFE
-        LDA fCB44,X
+        LDA hiScoreTableCursorPosHiPtr,X
         STA aFF
         LDY #$0A
-fCB86   =*+$01
 bCB85   JSR HiScore_sCB94
         INY 
         CPY #$0E
         BNE bCB85
         JMP DisplayHiScoreScreen
 
-        .BYTE $59,$41,$4B,$20
+hiScoreTableInputName   =*-$0A
+        .TEXT "YAK "
 ;-------------------------------
 ; HiScore_sCB94
 ;-------------------------------
 HiScore_sCB94   
-        LDA fCB86,Y
+        LDA hiScoreTableInputName,Y
         AND #$3F
         STA (pFE),Y
         STA aF8
@@ -7845,25 +7850,25 @@ HiScore_sCB94
         STA aFA
         AND #$04
         BNE bCBC4
-        LDA fCB86,Y
+        LDA hiScoreTableInputName,Y
         SEC 
         SBC #$01
         CMP #$FF
         BNE bCBBC
-bCBBC   STA fCB86,Y
+bCBBC   STA hiScoreTableInputName,Y
         LDA #$3F
         JMP jCBD9
 
 bCBC4   LDA aFA
         AND #$08
         BNE bCBE9
-        LDA fCB86,Y
+        LDA hiScoreTableInputName,Y
         CLC 
         ADC #$01
         CMP #$40
         BNE bCBD6
         LDA #$00
-bCBD6   STA fCB86,Y
+bCBD6   STA hiScoreTableInputName,Y
 
 jCBD9   
         LDA #$50
@@ -7907,9 +7912,9 @@ bCC10   LDA txtHiScorLine3,X
 
 jCC1B   
         LDX aCC87
-        LDA fCB30,X
+        LDA hiScoreTableCursorPosLoPtr,X
         STA aFE
-        LDA fCB44,X
+        LDA hiScoreTableCursorPosHiPtr,X
         STA aFF
         LDY #$10
         LDA #$25
