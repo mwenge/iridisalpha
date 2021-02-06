@@ -1,6 +1,8 @@
 # Iridis Alpha: Introduction to the Source Code
 
-Iridis Alpha consists of a number of sub-games in addition to the main game.
+This is not a byte-for-byte identical disassembly of the binary it was disassembled from. This is because `iridisalpha.prg` uses a compressor/decompressor to load itself into memory. So it is only possible to derive the original source from a snapshot of the game while it is running. I did this using Vice and reverse-engineered the source code from a Vice snapshot. The hard part of doing it this way is figuring out the correct entry point to launch the game from, which in this case turned out to be address `$4000`.
+
+Before diving into the code, let's take a quick look at how I've broken out the source.
 
 ## What Each File Contains
 ### [`iridisalpha.asm`]
