@@ -2,9 +2,9 @@
 <img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" height=300><img src="https://user-images.githubusercontent.com/58846/106015821-c330c600-60b6-11eb-9e5c-321c1320b7b3.gif" height=300>
 
 
-This is the disassembled and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. 
+This is the disassembled and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. This means you can build and run Iridis Alpha from scratch yourself on a Linux or Windows desktop.
 
-You can play Iridis Alpha in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.)
+If you just want to play the game, you can do so in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.)
 
 ## Current Status
 The game compiles and plays. Character set and sprite data has been separated out and commented. Because there is so much character and sprite data, and because Iridis Alpha contains two sub games, it was necessary to use a compressor ([Exomizer]) to produce the final binary. 
