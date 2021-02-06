@@ -6,6 +6,12 @@ Iridis Alpha consists of a number of sub-games in addition to the main game.
 ### [`iridisalpha.asm`]
 This file contains the source for the main game. 
 
+
+### [`bonusphase.asm`]
+This file contains the source for the game's 'Bonus Phase', which is in fact a complete mini-game in it's own right. 
+
+<img src="https://www.c64-wiki.com/images/d/dc/Iridisalphabonus2.gif" width="300">
+
 ### [`charset.asm`]
 This file contains the character sets used in the game, including most of the characters used to construct the planet surfaces
 
@@ -164,3 +170,4 @@ It uses the data in [`planet_data.asm`](https://github.com/mwenge/iridisalpha/bl
 [`charset.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/charset.asm
 [`sprites.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/sprites.asm
 [`charsetandspritedata.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/charsetandspritedata.asm
+[`bonusphase.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase.asm
