@@ -8,7 +8,7 @@ Before diving into the code, let's take a quick look at how I've broken out the 
 
 ## What Each File Contains
 ### [`iridisalpha.asm`]
-This file contains the source for the main game. 
+This file contains the source for the main game. All of the other `asm` files in this directory are included from this file, with the exception of `characterandspritedata.asm` which is compiled separately and compressed into the final `prg` file.
 
 
 ### [`bonusphase.asm`]
@@ -165,7 +165,128 @@ b73D9   LDA #$40
         LDA planetSurfaceDataPtrLo
 ```
 
-It uses the data in [`planet_data.asm`](https://github.com/mwenge/iridisalpha/blob/master/src/planet_data.asm) to paint the construct the surface of the upper and lower planets from character set data in `charset.asm`.
+There are five different planets in the game, each with their own unique set of textures, surfaces and structures. However the algorithm for generating the planets is the same: the difference lies solely in the character set data used to construct them.
+
+The generated planet data gets written to positions $8C00 to $8FFF in memory. The first step is to fill this with 'sea':
+
+```asm
+        ; Fill $8C00 to $8CFF with a $40,$42 pattern. These are the
+        ; character values that represent 'sea' on the planet.
+        LDA #$8C
+        STA planetSurfaceDataPtrHi
+b73D9   LDA #$40
+        STA (planetSurfaceDataPtrLo),Y
+        LDA #$42
+        INY 
+        STA (planetSurfaceDataPtrLo),Y
+        DEY 
+        ; Move the pointers forward by 2 bytes
+        LDA planetSurfaceDataPtrLo
+        CLC 
+        ADC #$02
+        STA planetSurfaceDataPtrLo
+        LDA planetSurfaceDataPtrHi
+        ADC #$00
+        STA planetSurfaceDataPtrHi
+        ; Loop until $8FFF
+        CMP #$90
+        BNE b73D9
+```
+
+The values $40 and $42 here refer to the character set bytes $40 and $42 in the current location of the character set, which for Iridis Alphas starts at $2000. When the first level starts, the values at this position are as follows (from `charset.asm`):
+```asm
+f2200
+        .BYTE $00,$00,$20,$00,$8A,$AA,$00,$AA   ;.BYTE $00,$00,$20,$00,$8A,$AA,$00,$AA
+                                                ; CHARACTER $40
+                                                ; 00000000           
+                                                ; 00000000           
+                                                ; 00100000     *     
+                                                ; 00000000           
+                                                ; 10001010   *   * * 
+                                                ; 10101010   * * * * 
+                                                ; 00000000           
+                                                ; 10101010   * * * * 
+        .BYTE $00,$00,$00,$00,$8A,$AA,$AA,$00   ;.BYTE $00,$00,$00,$00,$8A,$AA,$AA,$00
+                                                ; CHARACTER $42
+                                                ; 00000000           
+                                                ; 00000000           
+                                                ; 00000000           
+                                                ; 00000000           
+                                                ; 10001010   *   * * 
+                                                ; 10101010   * * * * 
+                                                ; 10101010   * * * * 
+                                                ; 00000000           
+```
+
+Together these create the 'sea' effect that forms the basis of most of the planet's surface.
+
+The next step is to pick a random location on the surface for the 'land':
+
+```asm
+        ; Pick a random point between $8C00 and $8FFF for 
+        ; the start of the land section.
+        JSR PutRandomByteInAccumulatorRegister
+        AND #$7F
+        CLC 
+        ADC #$7F
+        STA charSetDataPtrHi
+        LDA #$00
+        STA charSetDataPtrLo
+        ; Use the two pointers above to pick a random position
+        ; in the planet between $8C00 and $8FFF and store it in
+        ; planetPtrLo/planetPtrHi
+        JSR StoreRandomPositionInPlanetInPlanetPtr
+
+        ; Randomly generate the length of the land section, but
+        ; make it at least 32 bytes.
+        JSR PutRandomByteInAccumulatorRegister
+        AND #$7F
+        CLC 
+        ADC #$20
+        STA planetSurfaceDataPtrLo
+```
+
+Now, draw the land from the randomly chosen position for up to 256 bytes:
+
+```asm
+        ; Store $5C,$5E in the randomly chosen position. This is the
+        ; left shore of the land.
+        LDY #$00
+        LDA #$5C
+        STA (planetPtrLo),Y
+        LDA #$5E
+        INY 
+        STA (planetPtrLo),Y
+
+        ; Draw the land from the randomly chosen position for up to
+        ; 256 bytes, depending on the randomly chosen length of the land
+        ; chosen above and storedin planetSurfaceDataPtrLo. 
+b741A   INC charSetDataPtrHi
+        BNE b7420
+
+        INC charSetDataPtrLo
+b7420   JSR StoreRandomPositionInPlanetInPlanetPtr
+        LDY #$00
+        LDA #$41
+        STA (planetPtrLo),Y
+        LDA #$43
+        INY 
+        STA (planetPtrLo),Y
+        DEC planetSurfaceDataPtrLo
+        BNE b741A
+
+        ; Draw the right short of the land, represented by the chars in
+        ; $5D/$5F.
+        INY 
+        LDA #$5D
+        STA (planetPtrLo),Y
+        LDA #$5F
+        INY 
+        STA (planetPtrLo),Y
+
+```
+
+
 
 
 [`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm
