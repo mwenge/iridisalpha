@@ -3,27 +3,27 @@
 Iridis Alpha consists of a number of sub-games in addition to the main game.
 
 ## What Each File Contains
-### `iridisalpha.asm`
+### [`iridisalpha.asm`]
 This file contains the source for the main game. 
 
-### `charset.asm`
+### [`charset.asm`]
 This file contains the character sets used in the game.
 
-### `charsetandspritedata.asm`
-### `sprites.asm`
+### [`charsetandspritedata.asm`]
+### [`sprites.asm`]
 These files contain the game's sprites and some additional character set data. As `charsetandspritedata.asm` needs to end up at adress $E000, and since it is not possible to load data directly to that address when loading a C64 binary from tape or image, our build process uses a tool called Exomizer to compress the data in `charsetandspritedata.asm` in `iridisalpha.prg` and then decompress it to $E000 when the program is loading.
 
-### `madeinfrance.asm`
+### [`madeinfrance.asm`]
 This is the self-contained pause-mode game, called 'Made in France' or 'MIF' for short. You can access it during game play by pressing 'F1'. This little game was originally released by Minter on Compunet, the source code for that release is available at https://github.com/mwenge/iridisalpha/tree/master/demos/mif.
 
 <img src="https://user-images.githubusercontent.com/58846/103455890-eac78500-4ce8-11eb-9d92-867c0c3ea825.gif" width=300>
 
-### `dna.asm`
+### [`dna.asm`]
 This is a game within the pause-mode game. Originally released on Compunet, you can access it from with 'Made in France' by pressing '\*'. You exit it by pressing '\*' again. his little game was also originally released by Minter on Compunet, the source code for that release is available at https://github.com/mwenge/iridisalpha/tree/master/demos/dna.
 
 <img src="https://user-images.githubusercontent.com/58846/103443219-cfab3580-4c54-11eb-8046-0f5f3bac9c79.gif" width=300>
 
-# A Closer Look At `iridisalpha.asm`
+# A Closer Look At [`iridisalpha.asm`]
 While disassembly is still in progress, this section is a collection of random notes. 
 
 ## [GenPlan](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098): The algorithm for generating the planet surfaces
@@ -85,3 +85,11 @@ b73D9   LDA #$40
 ```
 
 It uses the data in [`planet_data.asm`](https://github.com/mwenge/iridisalpha/blob/master/src/planet_data.asm) to paint the construct the surface of the upper and lower planets from character set data in `charset.asm`.
+
+
+[`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm
+[`mif.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/mif.asm
+[`dna.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/dna.asm
+[`charset.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/charset.asm
+[`sprites.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/sprites.asm
+[`charsetandspritedata.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/charsetandspritedata.asm
