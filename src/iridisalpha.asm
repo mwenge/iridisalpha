@@ -1,3 +1,21 @@
+; This is the reverse-engineered source code for the game 'Iridis Alpha'
+; written by Jeff Minter in 1986.
+;
+; The code in this file was created by disassembling a binary of the game released into
+; the public domain by Jeff Minter in 2019.
+;
+; The original code from which this source is derived is the copyright of Jeff Minter.
+;
+; The original home of this file is at: https://github.com/mwenge/psychedelia
+;
+; To the extent to which any copyright may apply to the act of disassembling and reconstructing
+; the code from its binary, the author disclaims copyright to this source code.  In place of
+; a legal notice, here is a blessing:
+;
+;    May you do good and not evil.
+;    May you find forgiveness for yourself and forgive others.
+;    May you share freely, never taking more than you give.
+
 ;
 ; **** ZP ABSOLUTE ADRESSES **** 
 ;
@@ -1047,10 +1065,12 @@ f4851   .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
         .BYTE $10,$10,$10,$10,$10,$10,$10,$14
 f4861   .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
         .BYTE $F0,$F0,$F0,$F0,$F0,$F0
+
 f486F   .BYTE $F0,$EC,$78,$78,$78,$78,$00,$00
         .BYTE $78,$78
 f4879   .BYTE $50,$50,$A0,$A0,$A0,$A0,$00,$00
         .BYTE $A0,$A0
+
 f4883   .BYTE $A0,$A0,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00
 f488D   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -1142,7 +1162,9 @@ ProcessSomeGameSequenceData
         BNE b49F5
         LDA gilbyHasJustDied
         BEQ b49E1
-        JMP j5841
+
+        JMP ProcessGilbyExplosion
+        ;Returns
 
 b49E1   JSR TrackProgressInGame
         JSR s4F5B
@@ -1198,9 +1220,9 @@ s4A42
         STA f48C9,X
         STY a48D5
 ;-------------------------------
-; s4A57
+; PopulateAttractModeData
 ;-------------------------------
-s4A57   
+PopulateAttractModeData   
         LDY #$00
         LDA (p40),Y
         STA f67F0,X
@@ -1217,7 +1239,7 @@ s4A57
         STA f4897,X
         LDY #$01
         LDA (p40),Y
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
         TXA 
         TAY 
         LDX f4B7B,Y
@@ -1245,7 +1267,7 @@ s4A57
         LDA f4B87,X
         TAY 
         LDA f7E49,X
-        STA f67D6,Y
+        STA attackShip1SpriteValue,Y
 b4AB9   LDY #$12
         LDA (p40),Y
         CMP #$80
@@ -1306,7 +1328,7 @@ b4B1C   LDY a48D5
         AND #$7F
         CLC 
         ADC #$20
-        STA f67C8,Y
+        STA attackShip1XPos,Y
         TYA 
         AND #$08
         BNE b4B5A
@@ -1426,13 +1448,13 @@ b4C0B   LDA #$00
         STA currentTopPlanetIndex
 b4C42   LDY #$22
         LDA (p40),Y
-        JSR s5735
+        JSR CalculatePointsForByte2
         CLC 
-        ADC pointsEarnedTopPlanet2
-        STA pointsEarnedTopPlanet2
-        LDA pointsEarnedTopPlanet1
-        ADC a5752
-        STA pointsEarnedTopPlanet1
+        ADC pointsEarnedTopPlanetByte1
+        STA pointsEarnedTopPlanetByte1
+        LDA pointsEarnedTopPlanetByte2
+        ADC pointsToAddToPointsEarnedByte2
+        STA pointsEarnedTopPlanetByte2
         JMP j4C8D
 
 b4C5C   LDA levelEntrySequenceActive
@@ -1447,13 +1469,13 @@ b4C5C   LDA levelEntrySequenceActive
         STA currentBottomPlanetIndex
 b4C76   LDY #$22
         LDA (p40),Y
-        JSR s5735
+        JSR CalculatePointsForByte2
         CLC 
-        ADC pointsEarnedBottomPlanet2
-        STA pointsEarnedBottomPlanet2
-        LDA pointsEarnedBottomPlanet1
-        ADC a5752
-        STA pointsEarnedBottomPlanet1
+        ADC pointsEarnedBottomPlanetByte1
+        STA pointsEarnedBottomPlanetByte1
+        LDA pointsEarnedBottomPlanetByte2
+        ADC pointsToAddToPointsEarnedByte2
+        STA pointsEarnedBottomPlanetByte2
 
 j4C8D   
         JSR DrawPlanetProgressPointers
@@ -1532,7 +1554,7 @@ b4D1C   STA a4F57
         STA upperPlanetEntropyStatus
         STA lowerPlanetEntropyStatus
         LDA #$05
-        STA a6D85
+        STA gilbyExploding
         LDA #$04
         STA a6D86
 
@@ -1546,7 +1568,7 @@ j4D36
         STA soundDataAD
         JSR Resetf79A2
         LDA #$0E
-        STA a6D85
+        STA gilbyExploding
         LDA #$02
         STA a6D86
         LDA a6E12
@@ -1634,13 +1656,13 @@ j4DDD
 j4DF0   
         LDA #$FF
         STA a4E18
-        JSR s4A57
+        JSR PopulateAttractModeData
         LDA #$00
         STA a4E18
         RTS 
 
 b4DFE   LDA #$F0
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
         PHA 
         LDA #$00
         STA f4879,X
@@ -1756,7 +1778,7 @@ b4EC7   LDY #$16
         LDA f67E2,X
         BEQ b4EE9
         SEC 
-b4EE9   LDA f67C8,X
+b4EE9   LDA attackShip1XPos,X
         ROR 
         PHA 
         LDA f4BA3,X
@@ -1779,7 +1801,7 @@ b4F05   LDY #$06
         TXA 
         PHA 
         LDY f4B8F,X
-        LDA f67C8,Y
+        LDA attackShip1XPos,Y
         PHA 
         LDA f67E2,Y
         PHA 
@@ -1799,7 +1821,7 @@ b4F2D   JSR b499D
         LDA f6B45,X
 b4F3F   STA f67E2,Y
         PLA 
-        STA f67C8,Y
+        STA attackShip1XPos,Y
         PLA 
         LDY #$07
         JMP j4DDD
@@ -1835,7 +1857,7 @@ b4F65   LDA f67E2,Y
         CLC 
         BEQ b4F74
         SEC 
-b4F74   LDA f67C8,Y
+b4F74   LDA attackShip1XPos,Y
         ROR 
         STA a4F58
         LDA f67FC,Y
@@ -1848,7 +1870,7 @@ b4F89   LDA f67E3,Y
         CLC 
         BEQ b4F92
         SEC 
-b4F92   LDA f67C9,Y
+b4F92   LDA attackShip2XPos,Y
         ROR 
         STA a4F58
         LDA f67FD,Y
@@ -1863,9 +1885,7 @@ s4FA4
         TAX 
         INX 
         INX 
-;-------------------------------
-; j4FA8
-;-------------------------------
+
 j4FA8   
         STX a43
         LDA f4BB1,X
@@ -1879,7 +1899,7 @@ b4FB6   LDX a43
         LDA f67E2,X
         BEQ b4FBF
         SEC 
-b4FBF   LDA f67C8,X
+b4FBF   LDA attackShip1XPos,X
         ROR 
         SEC 
         SBC a4F58
@@ -1929,9 +1949,6 @@ b5013   LDA #$FF
         TAY 
         RTS 
 
-;-------------------------------
-; j501B
-;-------------------------------
 j501B   
         LDX a43
         INX 
@@ -1958,15 +1975,13 @@ s502A
 b503C   LDX a4F57
         INX 
         INX 
-;-------------------------------
-; j5041
-;-------------------------------
+
 j5041   
         CLC 
         LDA f67E2,X
         BEQ b5048
         SEC 
-b5048   LDA f67C8,X
+b5048   LDA attackShip1XPos,X
         ROR 
         SEC 
         SBC #$58
@@ -1991,9 +2006,7 @@ b506C   STX a43
         LDA #$FF
         STA f48C9,X
         LDX a43
-;-------------------------------
-; j5079
-;-------------------------------
+
 j5079   
         INX 
         CPX #$06
@@ -2132,6 +2145,7 @@ unusedVariable1   .BYTE $00
 unusedVariable3   .BYTE $00
 controlPanelIsGrey   .BYTE $01
 planetProgressPointersOffsets   .BYTE $01,$03,$05,$07,$09
+
 ;-------------------------------
 ; UpdateControlPanelColors
 ;-------------------------------
@@ -2243,17 +2257,17 @@ InitSomeGameStorage
         RTS 
 
 somethingStorageForPlanets   .BYTE $07,$04,$0E,$08,$0A
-pointsEarnedTopPlanet2   .BYTE $00
-pointsEarnedTopPlanet1   .BYTE $00
-pointsEarnedBottomPlanet2   .BYTE $00
-pointsEarnedBottomPlanet1   .BYTE $00
+pointsEarnedTopPlanetByte1   .BYTE $00
+pointsEarnedTopPlanetByte2   .BYTE $00
+pointsEarnedBottomPlanetByte1   .BYTE $00
+pointsEarnedBottomPlanetByte2   .BYTE $00
 ;-------------------------------
 ; UpdateScores
 ;-------------------------------
 UpdateScores   
-        LDA pointsEarnedTopPlanet1
+        LDA pointsEarnedTopPlanetByte2
         BNE b532F
-        LDA pointsEarnedTopPlanet2
+        LDA pointsEarnedTopPlanetByte1
         BEQ b5350
 
         ; Update the top planet score
@@ -2267,15 +2281,15 @@ b5331   INC SCREEN_RAM + $0354,X
         DEX 
         BNE b5331
 
-b5343   DEC pointsEarnedTopPlanet2
-        LDA pointsEarnedTopPlanet2
+b5343   DEC pointsEarnedTopPlanetByte1
+        LDA pointsEarnedTopPlanetByte1
         CMP #$FF
         BNE b5350
-        DEC pointsEarnedTopPlanet1
+        DEC pointsEarnedTopPlanetByte2
 
-b5350   LDA pointsEarnedBottomPlanet1
+b5350   LDA pointsEarnedBottomPlanetByte2
         BNE b535A
-        LDA pointsEarnedBottomPlanet2
+        LDA pointsEarnedBottomPlanetByte1
         BEQ b537B
 
         ; Update the bottom planet score.
@@ -2288,11 +2302,11 @@ b535C   INC SCREEN_RAM + $03CC,X
         STA SCREEN_RAM + $03CC,X
         DEX 
         BNE b535C
-b536E   DEC pointsEarnedBottomPlanet2
-        LDA pointsEarnedBottomPlanet2
+b536E   DEC pointsEarnedBottomPlanetByte1
+        LDA pointsEarnedBottomPlanetByte1
         CMP #$FF
         BNE b537B
-        DEC pointsEarnedBottomPlanet1
+        DEC pointsEarnedBottomPlanetByte2
 b537B   RTS 
 
 ;-------------------------------
@@ -2748,7 +2762,7 @@ b568C   LDA enemiesKilledTopPlanetsSinceLastUpdate,X
         BNE b569E
         DEC currentLevelInTopPlanets,X
 b569E   LDA #$04
-        STA a6D85
+        STA gilbyExploding
         LDA #$03
         STA a6D86
         LDA currentLevelInTopPlanets,X
@@ -2779,7 +2793,7 @@ b56D1   LDA enemiesKilledBottomsPlanetsSinceLastUpdate,X
         BNE b56E3
         DEC currentLevelInBottomPlanets,X
 b56E3   LDA #$04
-        STA a6D85
+        STA gilbyExploding
         LDA #$03
         STA a6D86
         LDA currentLevelInBottomPlanets,X
@@ -2821,9 +2835,9 @@ MapPlanetProgressToLevelText
         JMP UpdateLevelText
 
 ;-------------------------------
-; s5735
+; CalculatePointsForByte2
 ;-------------------------------
-s5735   
+CalculatePointsForByte2   
         LDX a5E54
         BNE b573C
         TXA 
@@ -2834,6 +2848,7 @@ b573C   CPX #$01
         ASL 
         DEX 
         BNE b573C
+
 b5744   CLC 
         ASL 
         PHA 
@@ -2841,11 +2856,11 @@ b5744   CLC
         LDA #$00
         PLP 
         ADC #$00
-        STA a5752
+        STA pointsToAddToPointsEarnedByte2
         PLA 
 b5751   RTS 
 
-a5752   .BYTE $00
+pointsToAddToPointsEarnedByte2   .BYTE $00
 ;-------------------------------
 ; RunAttractModeGamePlay
 ;-------------------------------
@@ -2953,7 +2968,7 @@ b5807   LDA #$FC
         BNE b5807
 
         LDA #$01
-        STA a6D85
+        STA gilbyExploding
         LDA #$03
         STA a6D86
         LDA #<p58EA
@@ -2974,10 +2989,10 @@ a583E   .BYTE $40
 a583F   .BYTE $FE
 a5840   .BYTE $08
 ;-------------------------------
-; j5841
+; ProcessGilbyExplosion
 ;-------------------------------
-j5841   
-        LDA a6D85
+ProcessGilbyExplosion   
+        LDA gilbyExploding
         BEQ b5847
         RTS 
 
@@ -2993,7 +3008,7 @@ b5847   LDA #$F0
 
         LDX #$00
 b5860   LDA a583F
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
         STA f67DC,X
         LDY a5840
         LDA mapPlaneEntropyToColor,Y
@@ -3013,8 +3028,8 @@ b5860   LDA a583F
         LDA #$B0
         CLC 
         ADC f583C,X
-        STA f67C8,X
-        STA f67D0,X
+        STA attackShip1XPos,X
+        STA lowerPlanetAttackShip2XPos,X
         BCC b58A6
         LDA f6B45,X
         STA f67E2,X
@@ -3024,8 +3039,8 @@ b58A6   JMP j58B5
 b58A9   LDA #$B0
         SEC 
         SBC f5839,X
-        STA f67C8,X
-        STA f67D0,X
+        STA attackShip1XPos,X
+        STA lowerPlanetAttackShip2XPos,X
 
 j58B5   
         INX 
@@ -3043,7 +3058,7 @@ b58C9   DEC a58E9
         STA a58E9
         INC a5840
         LDA a5840
-        STA a6D85
+        STA gilbyExploding
         LDY #$02
         STY a6D86
         CMP #$08
@@ -3074,7 +3089,7 @@ p58EA   .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
 j596C   
         LDX #$00
 b596E   LDA #$C0
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
         STA f67DC,X
         INX 
         CPX #$06
@@ -3315,7 +3330,7 @@ b5CCB   LDA gilbyVerticalPosition
         ADC #$08
         STA f6804,X
         LDA currentGilbySprite
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
         CLC 
         ADC #$13
         STA f67DC,X
@@ -3326,21 +3341,21 @@ b5CCB   LDA gilbyVerticalPosition
         BMI b5D0B
 
         LDA f5D27,X
-        STA f67C8,X
+        STA attackShip1XPos,X
         LDA #$00
         STA f67E2,X
         LDA f5D2D,X
-        STA f67D0,X
+        STA lowerPlanetAttackShip2XPos,X
         LDA #$00
         STA f67EA,X
         BEQ b5D21
 
 b5D0B   LDA f5D2D,X
-        STA f67C8,X
+        STA attackShip1XPos,X
         LDA #$00
         STA f67E2,X
         LDA f5D27,X
-        STA f67D0,X
+        STA lowerPlanetAttackShip2XPos,X
         LDA #$00
         STA f67EA,X
 b5D21   INX 
@@ -4452,31 +4467,31 @@ BonusBountyAnimateGilbyYPos
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS 
 
-txtBonus10000                          .TEXT "BONUS 10000"
-a6794                                  .BYTE $BC
-f6795                                  .BYTE $00,$06,$02,$04,$05,$03,$07,$01
-                                       .BYTE $01,$07,$03,$05,$04,$02,$06,$00
-f67A5                                  .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
-                                       .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
-backgroundColorsForPlanets              .BYTE $00,$01,$02,$03,$04,$05,$06,$07
-                                       .BYTE $08,$09,$0A,$0B,$0C,$0D,$0E,$0F
-a67C5                                  .BYTE $04
-a67C6                                  .BYTE $05
+txtBonus10000                   .TEXT "BONUS 10000"
+a6794                           .BYTE $BC
+f6795                           .BYTE $00,$06,$02,$04,$05,$03,$07,$01
+                                .BYTE $01,$07,$03,$05,$04,$02,$06,$00
+f67A5                           .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
+                                .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
+backgroundColorsForPlanets      .BYTE $00,$01,$02,$03,$04,$05,$06,$07
+                                .BYTE $08,$09,$0A,$0B,$0C,$0D,$0E,$0F
+a67C5                           .BYTE $04
+a67C6                           .BYTE $05
 
-attackShipsXPosArray                   .BYTE $00
-f67C8                                  .BYTE $A8
-f67C9                                  .BYTE $A0,$98,$90,$88,$80
+attackShipsXPosArray            .BYTE $00
+attackShip1XPos                 .BYTE $A8
+attackShip2XPos                 .BYTE $A0,$98,$90,$88,$80
 
-f67CE                                  .BYTE $00
-lowerPlanetAttackShipsXPosArray        .BYTE $00
-f67D0                                  .BYTE $B8
-f67D1                                  .BYTE $C0,$C8,$D0,$D8
+lowerPlanetAttackShipsXPosArray .BYTE $00
+lowerPlanetAttackShip1XPos      .BYTE $00
+lowerPlanetAttackShip2XPos      .BYTE $B8
+lowerPlanetAttackShip3XPos      .BYTE $C0,$C8,$D0,$D8
 
-attackShipsSpriteValueArray            .BYTE $E0
-f67D6                                  .BYTE $D3
-f67D7                                  .BYTE $D3
-f67D8                                  .BYTE $D3,$D3,$D3
-lowerPlanetAttackShipsSpriteValueArray .BYTE $D3
+attackShipsSpriteValueArray               .BYTE $E0
+attackShip1SpriteValue                    .BYTE $D3
+attackShip2SpriteValue                    .BYTE $D3
+attackShip3SpriteValue                    .BYTE $D3,$D3,$D3
+lowerPlanetAttackShipsSpriteValueMinusOne .BYTE $D3
 
 f67DC                                  .BYTE $E6
 f67DD                                  .BYTE $E6
@@ -4863,7 +4878,7 @@ SetUpGameScreen
         JSR DrawStatusBarDetail
         LDX #$03
 b6AB3   LDA f7E49,X
-        STA f67D8,X
+        STA attackShip3SpriteValue,X
         LDA f7E4D,X
         STA f67DE,X
         DEX 
@@ -4913,7 +4928,7 @@ b6ACA   LDA attackShipsXPosArray,Y
 DrawLowerPlanetAttackShips   
         LDX #$0C
         LDY #$06
-b6B06   LDA lowerPlanetAttackShipsXPosArray,Y
+b6B06   LDA lowerPlanetAttackShip1XPos,Y
         STA $D000,X  ;Sprite 0 X Pos
 
         LDA MainControlLoopInterruptHandler,Y
@@ -4936,7 +4951,7 @@ b6B06   LDA lowerPlanetAttackShipsXPosArray,Y
         LDA backgroundColorsForPlanets,X
         STA $D027,Y  ;Sprite 0 Color
 
-        LDA lowerPlanetAttackShipsSpriteValueArray,Y
+        LDA lowerPlanetAttackShipsSpriteValueMinusOne,Y
         STA Sprite0Ptr,Y
         LDX a42
 
@@ -5017,14 +5032,14 @@ b6B90   DEC a7C89
         STA a7C88
         RTS 
 
-b6BA3   LDA a6D85
+b6BA3   LDA gilbyExploding
         BEQ b6BBE
         STA $D021    ;Background Color 0
         STA $D020    ;Border Color
         DEC a6D86
         BNE b6BBE
         LDA #$00
-        STA a6D85
+        STA gilbyExploding
         STA $D021    ;Background Color 0
         STA $D020    ;Border Color
 b6BBE   RTS 
@@ -5237,7 +5252,7 @@ starFieldXPosMSBArray .BYTE $01,$00,$01,$00,$01,$01,$00,$01
                       .BYTE $00,$00,$00,$01,$00,$01,$00,$00
                       .BYTE $01,$01,$00
 a6D84                 .BYTE $00
-a6D85                 .BYTE $00
+gilbyExploding                 .BYTE $00
 a6D86                 .BYTE $00
 f6D87                 .BYTE $02,$03,$04,$03,$02,$03,$04,$03
                       .BYTE $02,$03,$04,$03,$02,$02,$03,$04
@@ -5340,7 +5355,7 @@ b6E67   JSR UpdatePlanetProgress
         STA entryLevelSequenceCounter
         STA levelEntrySequenceActive
         LDA #$06
-        STA a6D85
+        STA gilbyExploding
         LDA #$04
         STA a6D86
         LDY #$14
@@ -6541,7 +6556,7 @@ b76A0   LDX #$07
         RTS 
 
 b76A8   LDA #$B5
-        STA f67C8,X
+        STA attackShip1XPos,X
         LDA #$00
         STA f67E2,X
         LDA gilbyVerticalPosition
@@ -6549,7 +6564,7 @@ b76A8   LDA #$B5
         ADC #$04
         STA f67FC,X
         LDA #$E7
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
         LDA a6E12
         EOR #$FF
         STA f7668,X
@@ -6572,14 +6587,16 @@ b76DF   LDA a7177
         STA soundDataAE
         LDA #>p7C24
         STA soundDataAF
+
 b76F8   LDA gilbyVerticalPosition
         CLC 
         ADC #$06
         STA f67FC,X
         LDA #$B1
-        STA f67C8,X
+        STA attackShip1XPos,X
         LDA #$EC
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
+
         LDA currentGilbySprite
         CMP #$D1
         BNE b7718
@@ -6617,10 +6634,10 @@ b7736   LDA f7668,X
 b7741   LDA f67E2,X
         BEQ b7748
         INC a20
-b7748   LDA f67C8,X
+b7748   LDA attackShip1XPos,X
         CLC 
         ADC f7668,X
-        STA f67C8,X
+        STA attackShip1XPos,X
         LDA a20
         ADC a1F
         STA a20
@@ -6630,13 +6647,13 @@ b7748   LDA f67C8,X
         LDA f6B45,X
 b7761   STA f67E2,X
         BEQ b7770
-        LDA f67C8,X
+        LDA attackShip1XPos,X
         AND #$F0
         CMP #$30
         BEQ b7777
 b776F   RTS 
 
-b7770   LDA f67C8,X
+b7770   LDA attackShip1XPos,X
         AND #$F0
         BNE b776F
 b7777   LDA #$FF
@@ -6666,7 +6683,7 @@ b7794   LDA levelEntrySequenceActive
         JMP j77AE
 
 b77A9   LDA #$F0
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
 ;-------------------------------
 ; j77AE
 ;-------------------------------
@@ -6686,7 +6703,7 @@ f77BF   .BYTE $03,$03,$03,$03,$03,$03,$03,$03
 ; s77C7
 ;-------------------------------
 s77C7   
-        LDA f67D6,X
+        LDA attackShip1SpriteValue,X
         CMP #$EC
         BEQ b780E
         LDA f67FC,X
@@ -6716,9 +6733,9 @@ b77F2   LDA #$FF
 ;-------------------------------
 j77FF   
         LDA #$F0
-        STA f67D6,X
+        STA attackShip1SpriteValue,X
         LDA #$FF
-        STA f67C8,X
+        STA attackShip1XPos,X
         LDA #$00
         STA f67FC,X
 b780E   RTS 
@@ -6733,7 +6750,7 @@ b7811   LDA #$FF
         SBC f6802,X
         ADC #$17
         STA f6804,X
-        LDA f67CE,X
+        LDA lowerPlanetAttackShipsXPosArray,X
         EOR #$FF
         STA a1F
         LDA f67E8,X
@@ -6745,7 +6762,7 @@ b782A   EOR #$FF
         LDA #$6F
         CLC 
         ADC a1F
-        STA f67D0,X
+        STA lowerPlanetAttackShip2XPos,X
         LDA a20
         ADC #$00
         AND #$01
@@ -6890,7 +6907,7 @@ SetUpPlanets
         JSR UpdateBottomPlanetSurfaceColor
 
         LDA #$01
-        STA a6D85
+        STA gilbyExploding
         LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
         LDA #$03
@@ -6898,7 +6915,7 @@ SetUpPlanets
         LDX #$06
         LDA #$EC
 b7939   STA attackShipsSpriteValueArray,X
-        STA lowerPlanetAttackShipsSpriteValueArray,X
+        STA lowerPlanetAttackShipsSpriteValueMinusOne,X
         DEX 
         BNE b7939
         LDA #$FF
@@ -7197,12 +7214,12 @@ UpdateSomeMoreData
         BNE b7C96
 b7CA3   LDA f67E3,X
         BMI b7CC2
-        LDA f67C9,X
+        LDA attackShip2XPos,X
         LDY a6E12
         BMI b7CF0
         CLC 
         ADC a6E12
-        STA f67C9,X
+        STA attackShip2XPos,X
         BCC b7CC2
 
 j7CB9   
@@ -7211,12 +7228,12 @@ j7CB9
         STA f67E3,X
 b7CC2   LDA f67EB,X
         BMI b7CE1
-        LDA f67D1,X
+        LDA lowerPlanetAttackShip3XPos,X
         LDY a6E12
         BMI b7D07
         SEC 
         SBC a6E12
-        STA f67D1,X
+        STA lowerPlanetAttackShip3XPos,X
         BCS b7CE1
 
 j7CD8   
@@ -7239,7 +7256,7 @@ b7CF0   PHA
         PLA 
         SEC 
         SBC a7D1E
-        STA f67C9,X
+        STA attackShip2XPos,X
         BCS b7CC2
         JMP j7CB9
 
@@ -7251,7 +7268,7 @@ b7D07   PHA
         PLA 
         CLC 
         ADC a7D1E
-        STA f67D1,X
+        STA lowerPlanetAttackShip3XPos,X
         BCC b7CE1
         JMP j7CD8
 
@@ -7326,8 +7343,8 @@ b7DB4   DEC f7D26,X
         LDA f7E38,X
         BMI b7DD9
         CLC 
-        ADC f67C9,X
-        STA f67C9,X
+        ADC attackShip2XPos,X
+        STA attackShip2XPos,X
         BCC b7DF6
         LDA f67E3,X
         EOR f6B46,X
@@ -7337,10 +7354,10 @@ b7DB4   DEC f7D26,X
 b7DD9   EOR #$FF
         STA a7D1E
         INC a7D1E
-        LDA f67C9,X
+        LDA attackShip2XPos,X
         SEC 
         SBC a7D1E
-        STA f67C9,X
+        STA attackShip2XPos,X
         BCS b7DF6
         LDA f67E3,X
         EOR f6B46,X
@@ -7352,8 +7369,8 @@ b7DF6   DEC f7D2A,X
         LDA f7E3C,X
         BMI b7E1B
         CLC 
-        ADC f67D1,X
-        STA f67D1,X
+        ADC lowerPlanetAttackShip3XPos,X
+        STA lowerPlanetAttackShip3XPos,X
         BCC f7E38
         LDA f67EB,X
         EOR f6B46,X
@@ -7363,10 +7380,10 @@ b7DF6   DEC f7D2A,X
 b7E1B   EOR #$FF
         STA a7D1E
         INC a7D1E
-        LDA f67D1,X
+        LDA lowerPlanetAttackShip3XPos,X
         SEC 
         SBC a7D1E
-        STA f67D1,X
+        STA lowerPlanetAttackShip3XPos,X
         BCS f7E38
         LDA f67EB,X
         EOR f6B46,X
@@ -7403,12 +7420,12 @@ b7E6F   DEC f7E58,X
         BNE b7E8B
         LDA f7E60,X
         STA f7E58,X
-        INC f67D7,X
-        LDA f67D7,X
+        INC attackShip2SpriteValue,X
+        LDA attackShip2SpriteValue,X
         CMP f7E50,X
         BNE b7E8B
         LDA f7E48,X
-        STA f67D7,X
+        STA attackShip2SpriteValue,X
 b7E8B   DEC f7E5C,X
         BNE b7EA7
         LDA f7E64,X
