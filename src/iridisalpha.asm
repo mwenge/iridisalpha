@@ -6,7 +6,7 @@
 ;
 ; The original code from which this source is derived is the copyright of Jeff Minter.
 ;
-; The original home of this file is at: https://github.com/mwenge/psychedelia
+; The original home of this file is at: https://github.com/mwenge/iridisalpha
 ;
 ; To the extent to which any copyright may apply to the act of disassembling and reconstructing
 ; the code from its binary, the author disclaims copyright to this source code.  In place of
@@ -15,6 +15,8 @@
 ;    May you do good and not evil.
 ;    May you find forgiveness for yourself and forgive others.
 ;    May you share freely, never taking more than you give.
+;
+; (Note: I ripped this part off from the SQLite licence! :) )
 
 ;
 ; **** ZP ABSOLUTE ADRESSES **** 
