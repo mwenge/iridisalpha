@@ -159,7 +159,7 @@ It uses the data in [`planet_data.asm`](https://github.com/mwenge/iridisalpha/bl
 
 
 [`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm
-[`madeinfrace.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/madeinfrance.asm
+[`madeinfrance.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/madeinfrance.asm
 [`dna.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/dna.asm
 [`charset.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/charset.asm
 [`sprites.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/sprites.asm
