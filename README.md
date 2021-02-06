@@ -1,4 +1,4 @@
-# Iridis Alpha by Jeff Minter
+# Iridis Alpha (1986) by Jeff Minter
 <img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" height=300><img src="https://user-images.githubusercontent.com/58846/106015821-c330c600-60b6-11eb-9e5c-321c1320b7b3.gif" height=300>
 
 
