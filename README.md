@@ -2,7 +2,7 @@
 <img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" height=300><img src="https://user-images.githubusercontent.com/58846/106015821-c330c600-60b6-11eb-9e5c-321c1320b7b3.gif" height=300>
 
 
-This is the disassembled and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. This means you can build and run Iridis Alpha from scratch yourself on a Linux or Windows desktop.
+This is the reverse-engineered and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. Following the build instructions below you can compile and run Iridis Alpha from scratch yourself on a Linux or Windows desktop. Iridis Alpha was written in 6502 assembler so might be a challenge to read and understand, even for someone who is already familiar with low-level languages such as C. The objective of providing the commented code here is to allow an interested reader to understand the techniques Minter used when coding the game and gain some insight into the methods and techniques used to create a then state-of-the-art Commodore 64 game.
 
 If you just want to play the game, you can do so in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.)
 
