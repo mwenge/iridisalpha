@@ -359,7 +359,7 @@ canAwardBonus             .TEXT $1C,"AK "
 
 Here's the hack in action, we can press Y at any time to give ourselves a bonus of 10000:
 
-<img src="https://user-images.githubusercontent.com/58846/107145337-a909aa00-6938-11eb-9f5e-08438dcba5a0.gif" width="300">
+<img src="https://user-images.githubusercontent.com/58846/107145337-a909aa00-6938-11eb-9f5e-08438dcba5a0.gif" width="500">
 
 I'm guessing this was used for testing the animation routine and left in as an Easter egg.
 

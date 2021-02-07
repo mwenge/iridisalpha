@@ -2325,9 +2325,9 @@ bC35E   LDA aC356
 bC367   INC aC356
         JSR GetNextValueInSequence
         STA aC353
-        LDA #>p40
+        LDA #>backingDataLoPtr
         STA aC355
-        LDA #<p40
+        LDA #<backingDataLoPtr
         STA aC354
         JSR sC380
         JMP jC397

@@ -53,8 +53,8 @@ a37 = $37
 a3A = $3A
 a3B = $3B
 a3E = $3E
-a40 = $40
-a41 = $41
+backingDataLoPtr = $40
+backingDataHiPtr = $41
 a42 = $42
 a43 = $43
 a44 = $44
@@ -86,7 +86,6 @@ aFF = $FF
 ;
 p30 = $30
 p3A = $3A
-p40 = $40
 p43 = $43
 p78 = $78
 pAD = $AD
@@ -1214,9 +1213,9 @@ b4A1F   LDX #$08
 ;-------------------------------
 s4A42   
         LDA f486F,X
-        STA a40
+        STA backingDataLoPtr
         LDA f4879,X
-        STA a41
+        STA backingDataHiPtr
         LDA #$00
         STA a4E18
         STA f48C9,X
@@ -1226,43 +1225,43 @@ s4A42
 ;-------------------------------
 PopulateAttractModeData   
         LDY #$00
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f67F0,X
         LDY #$06
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f48A1,X
         LDY #$0B
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f488D,X
         LDA #$00
         STA f4883,X
         LDY #$0F
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f4897,X
         LDY #$01
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA attackShip1SpriteValue,X
         TXA 
         TAY 
         LDX f4B7B,Y
         LDY #$01
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f7E49,X
         LDY #$02
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f7E51,X
         LDY #$03
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f7E59,X
         STA f7E61,X
         TXA 
         AND #$04
         BEQ b4AB9
         INY 
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f7E49,X
         INY 
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f7E51,X
         TXA 
         TAY 
@@ -1271,32 +1270,32 @@ PopulateAttractModeData
         LDA f7E49,X
         STA attackShip1SpriteValue,Y
 b4AB9   LDY #$12
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         CMP #$80
         BEQ b4AC4
         STA f7E39,X
 b4AC4   INY 
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         CMP #$80
         BEQ b4AFA
         AND #$F0
         CMP #$20
         BEQ b4AD6
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         JMP j4AF7
 
 b4AD6   TXA 
         STX a5529
         AND #$04
         BNE b4AEC
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         AND #$0F
         TAX 
         LDA f4861,X
         LDX a5529
         JMP j4AF7
 
-b4AEC   LDA (p40),Y
+b4AEC   LDA (backingDataLoPtr),Y
         AND #$0F
         TAX 
         LDA f4851,X
@@ -1305,13 +1304,13 @@ b4AEC   LDA (p40),Y
 j4AF7   
         STA f7E41,X
 b4AFA   INY 
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         CMP #$80
         BEQ b4B07
         STA f7D1F,X
         STA f7D27,X
 b4B07   INY 
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         CMP #$80
         BEQ b4B14
         STA f7D2F,X
@@ -1341,10 +1340,10 @@ b4B1C   LDY a48D5
         STA f67FC,Y
         STY tmpPtrLo
         LDY #$06
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BNE b4B59
         LDY #$08
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4B59
         LDA #$6C
         LDY tmpPtrLo
@@ -1358,10 +1357,10 @@ b4B5A   JSR PutRandomByteInAccumulatorRegister
         STA f67FC,Y
         STY tmpPtrLo
         LDY #$06
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BNE b4B7A
         LDY #$08
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4B7A
         LDA #$90
         LDY tmpPtrLo
@@ -1409,15 +1408,15 @@ b4BEB   RTS
 ; UpdateScoresAndPlanetProgress
 ;-------------------------------
 UpdateScoresAndPlanetProgress   
-        STA a41
+        STA backingDataHiPtr
         LDA f486F,X
-        STA a40
+        STA backingDataLoPtr
         LDA a4850
         BEQ b4C03
-        LDA #$18
-        STA a41
-        LDA #$C8
-        STA a40
+        LDA #>backingData
+        STA backingDataHiPtr
+        LDA #<backingData
+        STA backingDataLoPtr
         JMP j4DF0
 
 b4C03   LDA f48BF,X
@@ -1449,7 +1448,7 @@ b4C0B   LDA #$00
         LDA #$00
         STA currentTopPlanetIndex
 b4C42   LDY #$22
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         JSR CalculatePointsForByte2
         CLC 
         ADC pointsEarnedTopPlanetByte1
@@ -1470,7 +1469,7 @@ b4C5C   LDA levelEntrySequenceActive
         LDA #$00
         STA currentBottomPlanetIndex
 b4C76   LDY #$22
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         JSR CalculatePointsForByte2
         CLC 
         ADC pointsEarnedBottomPlanetByte1
@@ -1484,7 +1483,7 @@ j4C8D
         PLA 
         TAX 
         LDY #$22
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4CB1
         LDA inAttractMode
         BNE b4CB1
@@ -1499,7 +1498,7 @@ b4CAB   JSR UpdateBottomPlanetProgressData
         JSR DecreaseEnergyBottomOnly
 
 b4CB1   LDY #$1D
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ j4CBB
         DEY 
         JMP j4DDD
@@ -1510,10 +1509,10 @@ j4CBB
         LDA #$00
         STA f48C9,X
         LDY #$1F
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4CDC
         LDY #$0E
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4CE2
         TXA 
         AND #$08
@@ -1525,7 +1524,7 @@ b4CDC   JMP SetUpAttractMode
 
 b4CDF   DEC a49D3
 b4CE2   LDY #$24
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BNE b4CEB
         JMP j4D36
 
@@ -1562,7 +1561,7 @@ b4D1C   STA a4F57
 
 j4D36   
         LDY #$23
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4D7F
         LDA #<p4961
         STA soundDataAC
@@ -1582,13 +1581,13 @@ j4D36
         BEQ b4D72
         LDA energyLabelColorIndexBottomPlanet
         BNE b4D7F
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexBottomPlanet
         BNE b4D7F
 b4D72   LDA energyLabelColorIndexTopPlanet
         BNE b4D7F
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexTopPlanet
 b4D7F   LDY #$1E
@@ -1603,7 +1602,7 @@ SetUpAttractMode
         LDA #$00
         STA f48AB,X
         LDY #$19
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4D98
         DEY 
         JMP j4DDD
@@ -1613,7 +1612,7 @@ b4D98   LDA f48B5,X
         LDA #$00
         STA f48B5,X
         LDY #$1B
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4DAC
         DEY 
         JMP j4DDD
@@ -1622,7 +1621,7 @@ b4DAC   LDA joystickInput
         AND #$10
         BNE b4DBD
         LDY #$21
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4DBD
         DEY 
         JMP j4DDD
@@ -1632,7 +1631,7 @@ b4DBD   LDA f4897,X
         DEC f4897,X
         BNE b4E1B
         LDY #$0E
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4DDB
         TXA 
         AND #$08
@@ -1644,15 +1643,15 @@ b4DD8   DEC a49D3
 b4DDB   LDY #$10
 
 j4DDD   
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         PHA 
         INY 
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4DFE
         STA f4879,X
-        STA a41
+        STA backingDataHiPtr
         PLA 
-        STA a40
+        STA backingDataLoPtr
         STA f486F,X
 
 j4DF0   
@@ -1682,16 +1681,16 @@ a4E19   .BYTE $01
 a4E1A   .BYTE $01
 
 b4E1B   LDY #$0A
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4E73
         DEC f488D,X
         BNE b4E73
         STA a44
         DEY 
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA a43
         LDY #$0B
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f488D,X
         LDY f4883,X
         LDA f4B7B,X
@@ -1725,7 +1724,7 @@ b4E6A   LDY #$0C
         JMP j4DDD
 
 b4E73   LDY #$17
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4EC7
         CLC 
         ADC gilbyVerticalPosition
@@ -1735,7 +1734,7 @@ b4E73   LDY #$17
         LDA f7D37,X
         CMP #$01
         BNE b4EC3
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         CMP #$23
         BNE b4E96
         LDA #$77
@@ -1764,7 +1763,7 @@ b4EC0   INC f7E41,X
 b4EC3   LDA f4B87,X
         TAX 
 b4EC7   LDY #$16
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4F05
         CLC 
         ADC #$58
@@ -1794,11 +1793,11 @@ b4EFE   INC f7E39,X
 b4F01   LDA f4B87,X
         TAX 
 b4F05   LDY #$06
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b4F55
         DEC f48A1,X
         BNE b4F55
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         STA f48A1,X
         TXA 
         PHA 
@@ -1923,12 +1922,12 @@ b4FDD   CMP #$10
 b4FE4   LDA f4BB1,X
         TAX 
         LDA f486F,X
-        STA a40
+        STA backingDataLoPtr
         LDA f4879,X
-        STA a41
+        STA backingDataHiPtr
         STY a42
         LDY #$1D
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         LDY a42
         CMP #$00
         BEQ j501B
@@ -2585,7 +2584,7 @@ b555C   JSR UpdateCoreEnergyLevel
 ;-------------------------------
 DecreaseEnergyTopOnly   
         LDY #$23
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b5572
         STA a4A
 b556A   JSR DecreaseEnergyTop
@@ -2601,7 +2600,7 @@ b5572   JMP DecreaseEnergyTop
 ;-------------------------------
 DecreaseEnergyBottomOnly   
         LDY #$23
-        LDA (p40),Y
+        LDA (backingDataLoPtr),Y
         BEQ b5585
         STA a4A
 b557D   JSR DecreaseEnergyBottom
@@ -7543,7 +7542,7 @@ aC81A   =*+$02
 JumpToDrawProgressDisplayScreen   JMP DrawProgressDisplayScreen
 
 hiScoreTablePtr           .TEXT "0068000"
-canAwardBonus             .TEXT $1C,"AK "
+canAwardBonus             .TEXT "YAK "
                           .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
                           .TEXT  "0065535RATT"
                           .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00

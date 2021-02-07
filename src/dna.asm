@@ -137,7 +137,7 @@ DNA_MainAnimationRoutine
         LDX a0E07
         LDY a0F6D
         TYA 
-        STA a40
+        STA backingDataLoPtr
         CLC 
         ASL 
         TAY 
@@ -151,7 +151,7 @@ DNA_MainAnimationRoutine
         INC f1127,X
         LDA f1127,X
         STA $D00C    ;Sprite 6 X Pos
-        LDA a41
+        LDA backingDataHiPtr
         AND #$01
         BEQ b0E3B
         INC f113F,X
@@ -171,7 +171,7 @@ b0E4E   TAX
         PLA 
         TAX 
         LDY a0F6D
-        STX a40
+        STX backingDataLoPtr
         LDX a0F6C
 a0E60   =*+$01
 a0E61   =*+$02
@@ -198,7 +198,7 @@ a0E7E   =*+$02
         BNE b0E85
         LDX #$00
 b0E85   STX a0F6B
-        LDX a40
+        LDX backingDataLoPtr
         INX 
         INY 
         CPY #$04
@@ -213,7 +213,7 @@ b0E92   STY a0F6D
         STX a0E07
         JSR DNA_UpdateAnimationData
         JSR DNA_CheckKeyBoardInput
-        DEC a41
+        DEC backingDataHiPtr
         JSR DNA_UpdateSpritePointers
         LDA #$01
         STA a0F6D

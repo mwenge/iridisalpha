@@ -68,7 +68,8 @@
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD
 
-p18C8   .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
+*=$18C8
+backingData   .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
