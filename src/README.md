@@ -363,6 +363,54 @@ Here's the hack in action, we can press Y at any time to give ourselves a bonus 
 
 I'm guessing this was used for testing the animation routine and left in as an Easter egg.
 
+## Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level
+
+After a minute or two in the title screen, the game enters 'Attract Mode' and plays a random level on autopilot for a few seconds. If you press F1 during this play you enter the 'Made in France' pause-mode mini game. If you press F1 again you can now start playing the level 'Attract Mode' selected at random.
+
+This is because the `CheckKeyboardInGame` routine doesn't try to prevent you from entering 'Pause Mode' while Attract Mode is running:
+
+```asm
+f1WasPressed   .BYTE $00
+;-------------------------------
+; CheckKeyboardInGame
+;-------------------------------
+CheckKeyboardInGame   
+        LDA lastKeyPressed
+        CMP #$40
+        BNE b786D
+        LDA #$00
+        STA f1WasPressed
+b786C   RTS 
+
+b786D   LDY f1WasPressed
+        BNE b786C
+        LDY inAttractMode
+        BEQ b787C
+        LDY #$02
+        STY inAttractMode
+b787C   LDY levelRestartInProgress
+        BNE b786C
+        LDY gilbyHasJustDied
+        BNE b786C
+
+        CMP #$3E ; Q pressed, to quit game
+        BNE b788E
+
+        ; Q was pressed, get ready to quit game.
+        INC qPressedToQuitGame
+        RTS 
+
+b788E   CMP #$04 ; F1 Pressed
+        BNE b7899
+        INC f1WasPressed
+        INC pauseModeSelected
+b7898   RTS 
+```
+
+Here's the cheat in action:
+
+<img src="https://user-images.githubusercontent.com/58846/107146381-c2fabb00-693f-11eb-8e0d-e3a4856b5964.gif" width="500">
+
 [`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm
 [`madeinfrance.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/madeinfrance.asm
 [`dna.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/dna.asm

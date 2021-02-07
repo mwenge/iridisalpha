@@ -2953,7 +2953,7 @@ f57ED   .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
 GilbyDied   
         LDA #$01
         STA gilbyHasJustDied
-        LDA a59B9
+        LDA levelRestartInProgress
         BNE b5833
         LDA inAttractMode
         BNE b5833
@@ -3097,7 +3097,7 @@ b596E   LDA #$C0
         BNE b596E
 
         LDA #$01
-        STA a59B9
+        STA levelRestartInProgress
         JSR SetUpGilbySprite
         LDA oldTopPlanetIndex
         STA currentTopPlanetIndex
@@ -3120,7 +3120,7 @@ b596E   LDA #$C0
         JSR Resetf79A2
         JMP Reseta79A4
 
-a59B9   .BYTE $00
+levelRestartInProgress   .BYTE $00
 gilbiesLeft   .BYTE $02
 
 ;-------------------------------
@@ -4587,7 +4587,7 @@ SetupSpritesAndSound
         STA $D017    ;Sprites Expand 2x Vertical (Y)
         STA $D01D    ;Sprites Expand 2x Horizontal (X)
         STA gilbyHasJustDied
-        STA a59B9
+        STA levelRestartInProgress
         LDA oldTopPlanetIndex
         STA currentTopPlanetIndex
         LDA oldBottomPlanetIndex
@@ -4724,7 +4724,7 @@ StartTheGame
         JSR InitializePlanetProgressArrays
         JMP ResumeGame
 
-b6982   LDA a59B9
+b6982   LDA levelRestartInProgress
         BEQ b698A
         JMP EnterMainControlLoop
 
@@ -4793,7 +4793,7 @@ b69F0   LDA #$00
 b6A02   JSR UpdateEnemiesLeft
         JSR UpdatePlanetEntropyStatus
         JSR UpdateDisplayedScoringRate
-        LDA a59B9
+        LDA levelRestartInProgress
         BEQ b6A1C
 
 ;-------------------------------
@@ -5047,7 +5047,7 @@ b6BBE   RTS
 
 SpriteBackgroundCollisionDetected
         LDY a6D84
-        LDA a59B9
+        LDA levelRestartInProgress
         BEQ b6BCA
         JMP FlashBackgroundAndBorder
 
@@ -5331,7 +5331,7 @@ ProcessJoystickInput
         BNE b6E88
         LDA levelEntrySequenceActive
         BNE b6E88
-        LDA a59B9
+        LDA levelRestartInProgress
         BNE b6E88
         LDA gilbyHasJustDied
         BNE b6E88
@@ -6789,7 +6789,7 @@ b7850   LDA controlPanelData,X
         BNE b7850
         RTS 
 
-a7860   .BYTE $00
+f1WasPressed   .BYTE $00
 ;-------------------------------
 ; CheckKeyboardInGame
 ;-------------------------------
@@ -6798,16 +6798,16 @@ CheckKeyboardInGame
         CMP #$40
         BNE b786D
         LDA #$00
-        STA a7860
+        STA f1WasPressed
 b786C   RTS 
 
-b786D   LDY a7860
+b786D   LDY f1WasPressed
         BNE b786C
         LDY inAttractMode
         BEQ b787C
         LDY #$02
         STY inAttractMode
-b787C   LDY a59B9
+b787C   LDY levelRestartInProgress
         BNE b786C
         LDY gilbyHasJustDied
         BNE b786C
@@ -6821,7 +6821,7 @@ b787C   LDY a59B9
 
 b788E   CMP #$04 ; F1 Pressed
         BNE b7899
-        INC a7860
+        INC f1WasPressed
         INC pauseModeSelected
 b7898   RTS 
 
