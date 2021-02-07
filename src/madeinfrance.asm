@@ -28,9 +28,9 @@ LaunchMIF
         STA planetPtrLo
         LDX #$00
 b4109   LDA planetPtrLo
-        STA SCREEN_PTR_LO,X
+        STA screenLinePtrLo,X
         LDA planetPtrHi
-        STA SCREEN_PTR_HI,X
+        STA screenLinePtrHi,X
         LDA planetPtrLo
         CLC 
         ADC #$28
@@ -68,7 +68,7 @@ MIF_s4149
         .BYTE $AE,$3D,$41,$AC,$3C,$41,$BD,$40
         .BYTE $03,$85 ;SLO ($85,X)
         .BYTE $02    ;JAM 
-        LDA SCREEN_PTR_HI,X
+        LDA screenLinePtrHi,X
         STA planetPtrHi
         LDA (planetPtrLo),Y
         RTS 

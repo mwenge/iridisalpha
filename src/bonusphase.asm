@@ -763,7 +763,7 @@ bB3A1   STA bonusPhaseMapOffset,X
         DEX 
         BNE bB3A1
         LDA #$19
-        STA aFF
+        STA tempHiPtr
 bB3AB   JSR GetNextValueInSequence
         AND #$07
         PHA 
@@ -777,20 +777,20 @@ bB3AB   JSR GetNextValueInSequence
 bB3BF   PLA 
         TAY 
         LDA #<pBD40
-        STA aFD
+        STA tempHiPtr1
         LDA #>pBD40
-        STA aFE
+        STA tempLoPtr
         TXA 
         PHA 
         CPY #$00
         BEQ bB3DF
-bB3CF   LDA aFD
+bB3CF   LDA tempHiPtr1
         CLC 
         ADC #$0A
-        STA aFD
-        LDA aFE
+        STA tempHiPtr1
+        LDA tempLoPtr
         ADC #$00
-        STA aFE
+        STA tempLoPtr
         DEY 
         BNE bB3CF
 bB3DF   LDY #$00
@@ -801,13 +801,13 @@ bB3DF   LDY #$00
         AND #$03
         BEQ bB400
         TAX 
-bB3F0   LDA aFD
+bB3F0   LDA tempHiPtr1
         CLC 
         ADC #$50
-        STA aFD
-        LDA aFE
+        STA tempHiPtr1
+        LDA tempLoPtr
         ADC #$00
-        STA aFE
+        STA tempLoPtr
         DEX 
         BNE bB3F0
 bB400   PLA 
@@ -818,7 +818,7 @@ bB402   LDA (pFD),Y
         INX 
         CPY #$0A
         BNE bB402
-        DEC aFF
+        DEC tempHiPtr
         BNE bB3AB
         LDX #$09
         LDA #$00
@@ -1320,9 +1320,9 @@ BP_Init_ScreenPointerArray
         STA planetPtrLo2
         TAX 
 bB9C2   LDA planetPtrLo2
-        STA SCREEN_PTR_LO,X
+        STA screenLinePtrLo,X
         LDA planetPtrHi2
-        STA SCREEN_PTR_HI,X
+        STA screenLinePtrHi,X
         LDA planetPtrLo2
         CLC 
         ADC #$28
@@ -1359,9 +1359,9 @@ BP_sB9E1
         CLC 
         ROR 
         TAX 
-        LDA SCREEN_PTR_LO,X
+        LDA screenLinePtrLo,X
         STA a3A
-        LDA SCREEN_PTR_HI,X
+        LDA screenLinePtrHi,X
         STA a3B
         LDA (p3A),Y
 bBA05   RTS 
@@ -1904,16 +1904,16 @@ bBF41   LDA fAEC8,X
         LDY #$27
 bBF4F   LDX #$06
 bBF51   LDA fBFAA,X
-        STA aFD
+        STA tempHiPtr1
         LDA fBFB1,X
-        STA aFE
+        STA tempLoPtr
         LDA fC019,Y
         AND #$3F
         STA (pFD),Y
-        LDA aFE
+        LDA tempLoPtr
         CLC 
         ADC #$D4
-        STA aFE
+        STA tempLoPtr
         LDA fAEC1,X
         STA (pFD),Y
         DEX 
@@ -1926,7 +1926,7 @@ bBF51   LDA fBFAA,X
         STA $D412    ;Voice 3: Control Register
         CLI 
         LDX #$10
-        STX aFF
+        STX tempHiPtr
         LDY #$00
 bBF86   LDX #$30
 bBF88   LDA MainControlLoop,X
@@ -1937,7 +1937,7 @@ bBF88   LDA MainControlLoop,X
         BNE bBF88
         DEX 
         BNE bBF88
-        DEC aFF
+        DEC tempHiPtr
         BNE bBF86
         JMP SwapCharsetSpriteData
 
@@ -2032,16 +2032,16 @@ DisplayBonusBountyScreen
         LDY #$27
 bC07C   LDX #$06
 bC07E   LDA fBFAA,X
-        STA aFD
+        STA tempHiPtr1
         LDA fBFB1,X
-        STA aFE
+        STA tempLoPtr
         LDA txtCongoatulations,Y
         AND #$3F
         STA (pFD),Y
-        LDA aFE
+        LDA tempLoPtr
         CLC 
         ADC #$D4
-        STA aFE
+        STA tempLoPtr
         LDA fB489,X
         STA (pFD),Y
         DEX 
@@ -2064,19 +2064,19 @@ bC0B5   LDA currentBonusBountyPtr,X
         JSR BonusRoundDrawTimerBonus
         JSR BonusRoundDrawIBallBonus
         LDA #$10
-        STA aFF
+        STA tempHiPtr
         LDA #$15
         STA $D407    ;Voice 2: Frequency Control - Low-Byte
 bC0CE   LDX #$60
 bC0D0   DEX 
         STY $D40E    ;Voice 3: Frequency Control - Low-Byte
-        LDA aFF
+        LDA tempHiPtr
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
         TXA 
         BNE bC0D0
         DEY 
         BNE bC0CE
-        DEC aFF
+        DEC tempHiPtr
         BNE bC0CE
         JMP SwapCharsetSpriteData
 
