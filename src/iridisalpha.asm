@@ -818,7 +818,7 @@ titleMusicSeedArray .BYTE $00,$03,$06,$08,$00,$0C,$04,$08
 ; UpdateMusicCounters
 ;-------------------------------
 UpdateMusicCounters   
-        JSR GetRandomDataFrom9A00Onwards
+        JSR PutRandomByteInAccumulator
         AND #$0F
         BEQ b1630
         TAX 
@@ -835,7 +835,7 @@ b1633   LDA titleMusicSeedArray,Y
         INX 
         CPX #$04
         BNE b1633
-        JSR GetRandomDataFrom9A00Onwards
+        JSR PutRandomByteInAccumulator
         AND #$03
         CLC 
         ADC #$01
@@ -901,9 +901,9 @@ b168F   CMP #$03
 txtEasy   .TEXT "EASY"
 txtHard   .TEXT "UGH!"
 ;-------------------------------
-; GetRandomDataFrom9A00Onwards
+; PutRandomByteInAccumulator
 ;-------------------------------
-GetRandomDataFrom9A00Onwards   
+PutRandomByteInAccumulator   
 a16A5   =*+$01
         LDA a9A00
         INC a16A5
