@@ -7536,14 +7536,14 @@ lastBlastScore .TEXT "0000000...."
 fC80E          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
 ;-------------------------------
-; sC818
+; JumpToDrawProgressDisplayScreen
 ;-------------------------------
 aC819   =*+$01
 aC81A   =*+$02
-sC818   JMP DrawProgressDisplayScreen
+JumpToDrawProgressDisplayScreen   JMP DrawProgressDisplayScreen
 
 hiScoreTablePtr           .TEXT "0068000"
-canAwardBonus             .TEXT "YAK "
+canAwardBonus             .TEXT $1C,"AK "
                           .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
                           .TEXT  "0065535RATT"
                           .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
@@ -8036,7 +8036,7 @@ bCCB7   LDA (pFC),Y
         LDA aFD
         PHA 
         DEC aCD4B
-        JSR sC818
+        JSR JumpToDrawProgressDisplayScreen
         PLA 
         STA aFD
         PLA 

@@ -286,8 +286,82 @@ b7420   JSR StoreRandomPositionInPlanetInPlanetPtr
 
 ```
 
+## A Cheat for Awarding Yourself 10000 Bonus Points
 
+In the CheckKeyboardInGame Routine, we find the following:
+```asm
 
+        ; We can award ourselves a bonus bounty by 
+        ; pressing Y at any time, as long as '1C' is the
+        ; first character in the hiscore table. Not sure
+        ; what this hack is for, testing?
+b78A1   CMP #$19 ; Y Pressed
+        BNE b7898
+        LDA canAwardBonus
+        CMP #$1C
+        BNE b7898
+        INC bonusAwarded
+        RTS 
+```
+
+In the above the `canAwardBonus` byte is the first letter in the name of the player with the top score in the Hi-Score table. By default this is 'YAK':
+```asm
+hiScoreTablePtr           .TEXT "0068000"
+canAwardBonus             .TEXT "YAK "
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT  "0065535RATT"
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT  "00491"
+                          .TEXT "52WULF"
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT "0032768INCA"
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT "003"
+                          .TEXT "0000MAT "
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT "0025000PSY "
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT "0"
+                          .TEXT "020000TAK "
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT "0016384GOAT"
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT $00
+                          .TEXT "0010000PINK"
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .TEXT "0009000FLYD"
+                          .BYTE $00,$00,$00,$00,$00,$00,$00
+                          .TEXT $00,$00,$00
+```
+
+But if we change 'Y' to $1C like so, we can activate the hack:
+
+```asm
+hiScoreTablePtr           .TEXT "0068000"
+canAwardBonus             .TEXT $1C,"AK "
+```
+
+(Note that $1C is charset code for a bull's head symbol in Iridis Alpha, so it is also possible to enter this as the initial of a high scorer name if we get a score that puts us to the top of the table:
+
+```asm
+        .BYTE $66,$C3,$7E,$5A,$7E,$7E,$3C,$00   ;.BYTE $66,$C3,$7E,$5A,$7E,$7E,$3C,$00
+                                                ; CHARACTER $1c
+                                                ; 01100110    **  ** 
+                                                ; 11000011   **    **
+                                                ; 01111110    ****** 
+                                                ; 01011010    * ** * 
+                                                ; 01111110    ****** 
+                                                ; 01111110    ****** 
+                                                ; 00111100     ****  
+                                                ; 00000000           
+```
+)
+
+Here's the hack in action, we can press Y at any time to give ourselves a bonus of 10000:
+
+<img src="https://user-images.githubusercontent.com/58846/107145337-a909aa00-6938-11eb-9f5e-08438dcba5a0.gif" width="300">
+
+I'm guessing this was used for testing the animation routine and left in as an Easter egg.
 
 [`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm
 [`madeinfrance.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/madeinfrance.asm
