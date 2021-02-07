@@ -1139,21 +1139,21 @@ b49B2   LDA #$00
 b49B5   LDA #$FF
 b49B7   RTS 
 
-a49B8   .BYTE $A0
-a49B9   .BYTE $A0
-a49BA   .BYTE $58
-a49BB   .BYTE $1E
-enemiesKilledTopPlanetsSinceLastUpdate   .BYTE $28,$00,$00,$00
-enemiesKilledTopPlanetsSinceLastUpdatePtr   .BYTE $00
-enemiesKilledBottomsPlanetsSinceLastUpdate   .BYTE $18,$00,$00,$00
-enemiesKilledBottomsPlanetsSinceLastUpdatePtr   .BYTE $00
-currentLevelInTopPlanets   .BYTE $06,$02,$06,$0A
-currentLevelInTopPlanetsPtr   .BYTE $08
-currentLevelInBottomPlanets   .BYTE $09,$0E,$0A,$0B,$01
-a49D0   .BYTE $04
-a49D1   .BYTE $04
-a49D2   .BYTE $00
-a49D3   .BYTE $00
+a49B8                                         .BYTE $A0
+a49B9                                         .BYTE $A0
+a49BA                                         .BYTE $58
+a49BB                                         .BYTE $1E
+enemiesKilledTopPlanetsSinceLastUpdate        .BYTE $28,$00,$00,$00
+enemiesKilledTopPlanetsSinceLastUpdatePtr     .BYTE $00
+enemiesKilledBottomsPlanetsSinceLastUpdate    .BYTE $18,$00,$00,$00
+enemiesKilledBottomsPlanetsSinceLastUpdatePtr .BYTE $00
+currentLevelInTopPlanets                      .BYTE $06,$02,$06,$0A
+currentLevelInTopPlanetsPtr                   .BYTE $08
+currentLevelInBottomPlanets                   .BYTE $09,$0E,$0A,$0B,$01
+a49D0                                         .BYTE $04
+a49D1                                         .BYTE $04
+a49D2                                         .BYTE $00
+a49D3                                         .BYTE $00
 
 ;-------------------------------
 ; ProcessSomeGameSequenceData
@@ -1168,8 +1168,8 @@ ProcessSomeGameSequenceData
         ;Returns
 
 b49E1   JSR TrackProgressInGame
-        JSR s4F5B
-        JSR s502A
+        JSR DoSomethingElseWithTheAttackShips
+        JSR DoSomethingWithTheAttackShips
         JSR UpdateEnergyStorage
         JSR UpdateCoreEnergyValues
         DEC a49F6
@@ -1226,7 +1226,7 @@ s4A42
 PopulateAttractModeData   
         LDY #$00
         LDA (backingDataLoPtr),Y
-        STA f67F0,X
+        STA upperPlanetGilbyBulletColor,X
         LDY #$06
         LDA (backingDataLoPtr),Y
         STA f48A1,X
@@ -1240,7 +1240,7 @@ PopulateAttractModeData
         STA f4897,X
         LDY #$01
         LDA (backingDataLoPtr),Y
-        STA attackShip1SpriteValue,X
+        STA upperPlanetGilbyBulletSpriteValue,X
         TXA 
         TAY 
         LDX f4B7B,Y
@@ -1268,7 +1268,7 @@ PopulateAttractModeData
         LDA f4B87,X
         TAY 
         LDA f7E49,X
-        STA attackShip1SpriteValue,Y
+        STA upperPlanetGilbyBulletSpriteValue,Y
 b4AB9   LDY #$12
         LDA (backingDataLoPtr),Y
         CMP #$80
@@ -1323,13 +1323,13 @@ b4B14   LDA #$01
 b4B1C   LDY a48D5
         LDA f4B87,X
         TAX 
-        LDA f6B45,X
-        STA f67E2,Y
+        LDA gilbyBulletMSBXPosOffset,X
+        STA upperPlanetGilbyBulletMSBXPosArray,Y
         JSR PutRandomByteInAccumulatorRegister
         AND #$7F
         CLC 
         ADC #$20
-        STA attackShip1XPos,Y
+        STA upperPlanetGilbyBulletXPos,Y
         TYA 
         AND #$08
         BNE b4B5A
@@ -1337,7 +1337,7 @@ b4B1C   LDY a48D5
         AND #$3F
         CLC 
         ADC #$40
-        STA f67FC,Y
+        STA upperPlanetGilbyBulletYPos,Y
         STY tmpPtrLo
         LDY #$06
         LDA (backingDataLoPtr),Y
@@ -1347,14 +1347,14 @@ b4B1C   LDY a48D5
         BEQ b4B59
         LDA #$6C
         LDY tmpPtrLo
-        STA f67FC,Y
+        STA upperPlanetGilbyBulletYPos,Y
 b4B59   RTS 
 
 b4B5A   JSR PutRandomByteInAccumulatorRegister
         AND #$3F
         CLC 
         ADC #$98
-        STA f67FC,Y
+        STA upperPlanetGilbyBulletYPos,Y
         STY tmpPtrLo
         LDY #$06
         LDA (backingDataLoPtr),Y
@@ -1364,7 +1364,7 @@ b4B5A   JSR PutRandomByteInAccumulatorRegister
         BEQ b4B7A
         LDA #$90
         LDY tmpPtrLo
-        STA f67FC,Y
+        STA upperPlanetGilbyBulletYPos,Y
 b4B7A   RTS 
 
 f4B7B   .BYTE $00,$00,$00,$01,$02,$03,$00,$00
@@ -1663,7 +1663,7 @@ j4DF0
         RTS 
 
 b4DFE   LDA #$F0
-        STA attackShip1SpriteValue,X
+        STA upperPlanetGilbyBulletSpriteValue,X
         PHA 
         LDA #$00
         STA f4879,X
@@ -1749,7 +1749,7 @@ b4E96   TXA
         STA a4E17
 b4EA6   LDA f4B9B,X
         TAX 
-        LDA f67FC,X
+        LDA upperPlanetGilbyBulletYPos,X
         PHA 
         LDA f4BA3,X
         TAX 
@@ -1776,10 +1776,10 @@ b4EC7   LDY #$16
         LDA f4B9B,X
         TAX 
         CLC 
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         BEQ b4EE9
         SEC 
-b4EE9   LDA attackShip1XPos,X
+b4EE9   LDA upperPlanetGilbyBulletXPos,X
         ROR 
         PHA 
         LDA f4BA3,X
@@ -1802,11 +1802,11 @@ b4F05   LDY #$06
         TXA 
         PHA 
         LDY f4B8F,X
-        LDA attackShip1XPos,Y
+        LDA upperPlanetGilbyBulletXPos,Y
         PHA 
-        LDA f67E2,Y
+        LDA upperPlanetGilbyBulletMSBXPosArray,Y
         PHA 
-        LDA f67FC,Y
+        LDA upperPlanetGilbyBulletYPos,Y
         PHA 
         TXA 
         AND #$08
@@ -1816,13 +1816,13 @@ b4F2D   JSR b499D
         BEQ b4F50
         LDY f4B8F,X
         PLA 
-        STA f67FC,Y
+        STA upperPlanetGilbyBulletYPos,Y
         PLA 
         BEQ b4F3F
-        LDA f6B45,X
-b4F3F   STA f67E2,Y
+        LDA gilbyBulletMSBXPosOffset,X
+b4F3F   STA upperPlanetGilbyBulletMSBXPosArray,Y
         PLA 
-        STA attackShip1XPos,Y
+        STA upperPlanetGilbyBulletXPos,Y
         PLA 
         LDY #$07
         JMP j4DDD
@@ -1842,42 +1842,43 @@ a4F57   .BYTE $00
 a4F58   .BYTE $00
 a4F59   .BYTE $00,$00
 ;-------------------------------
-; s4F5B
+; DoSomethingElseWithTheAttackShips
 ;-------------------------------
-s4F5B   
+DoSomethingElseWithTheAttackShips   
         LDA a4F57
         TAY 
         AND #$08
         BEQ b4F65
         DEY 
         DEY 
-b4F65   LDA f67E2,Y
+b4F65   LDA upperPlanetGilbyBulletMSBXPosArray,Y
         BMI b4F89
         LDY a4F57
-        LDA f67E2,Y
+        LDA upperPlanetGilbyBulletMSBXPosArray,Y
         CLC 
         BEQ b4F74
         SEC 
-b4F74   LDA attackShip1XPos,Y
+b4F74   LDA upperPlanetGilbyBulletXPos,Y
         ROR 
         STA a4F58
-        LDA f67FC,Y
+        LDA upperPlanetGilbyBulletYPos,Y
         STA a4F59
         LDA #$00
         STA a48D6
         JSR s4FA4
-b4F89   LDA f67E3,Y
+b4F89   LDA upperPlanetAttackShip2MSBXPosValue,Y
         BMI b4F56
         CLC 
         BEQ b4F92
         SEC 
-b4F92   LDA attackShip2XPos,Y
+b4F92   LDA upperPlanetAttackShip2XPos,Y
         ROR 
         STA a4F58
-        LDA f67FD,Y
+        LDA upperPlanetAttackShip2YPos,Y
         STA a4F59
         LDA #$01
         STA a48D6
+
 ;-------------------------------
 ; s4FA4
 ;-------------------------------
@@ -1897,10 +1898,10 @@ j4FA8
 
 b4FB6   LDX a43
         CLC 
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         BEQ b4FBF
         SEC 
-b4FBF   LDA attackShip1XPos,X
+b4FBF   LDA upperPlanetGilbyBulletXPos,X
         ROR 
         SEC 
         SBC a4F58
@@ -1910,7 +1911,7 @@ b4FCB   CMP #$08
         BMI b4FD2
         JMP j501B
 
-b4FD2   LDA f67FC,X
+b4FD2   LDA upperPlanetGilbyBulletYPos,X
         SEC 
         SBC a4F59
         BPL b4FDD
@@ -1945,7 +1946,7 @@ b4FE4   LDA f4BB1,X
         DEY 
         DEY 
 b5013   LDA #$FF
-        STA f67E2,Y
+        STA upperPlanetGilbyBulletMSBXPosArray,Y
         PLA 
         TAY 
         RTS 
@@ -1962,9 +1963,9 @@ j501B
 b5029   RTS 
 
 ;-------------------------------
-; s502A
+; DoSomethingWithTheAttackShips
 ;-------------------------------
-s502A   
+DoSomethingWithTheAttackShips   
         LDY #$00
         LDA levelEntrySequenceActive
         BNE b5029
@@ -1979,10 +1980,10 @@ b503C   LDX a4F57
 
 j5041   
         CLC 
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         BEQ b5048
         SEC 
-b5048   LDA attackShip1XPos,X
+b5048   LDA upperPlanetGilbyBulletXPos,X
         ROR 
         SEC 
         SBC #$58
@@ -1992,7 +1993,7 @@ b5053   CMP #$08
         BMI b505A
         JMP j5079
 
-b505A   LDA f67FC,X
+b505A   LDA upperPlanetGilbyBulletYPos,X
         SEC 
         SBC gilbyVerticalPosition,Y
         BPL b5065
@@ -2349,10 +2350,10 @@ energyLabelColorIndexBottomPlanet   .BYTE $00
 ; UpdateEnergyStorage
 ;-------------------------------
 UpdateEnergyStorage   
-        DEC a543D
+        DEC updateEnergyStorageInterval
         BNE b53B3
         LDA #$04
-        STA a543D
+        STA updateEnergyStorageInterval
 
         LDA energyLabelColorIndexTopPlanet
         BEQ b53FB
@@ -2407,10 +2408,11 @@ b540B   STA COLOR_RAM + $03C2,Y
         BEQ b53F3
 b542B   RTS 
 
-energyLabelColors   .BYTE $01,$06,$02,$04,$05,$03,$07,$01
-        .BYTE $00,$06,$02,$04,$05,$03,$07,$01
-        .BYTE $06
-a543D   .BYTE $01
+energyLabelColors           .BYTE $01,$06,$02,$04,$05,$03,$07,$01
+                            .BYTE $00,$06,$02,$04,$05,$03,$07,$01
+                            .BYTE $06
+updateEnergyStorageInterval .BYTE $01
+
 ;-------------------------------
 ; IncreaseEnergyTop
 ;-------------------------------
@@ -3009,38 +3011,38 @@ b5847   LDA #$F0
 
         LDX #$00
 b5860   LDA a583F
-        STA attackShip1SpriteValue,X
-        STA f67DC,X
+        STA upperPlanetGilbyBulletSpriteValue,X
+        STA lowerPlanetGilbyBulletSpriteValue,X
         LDY a5840
         LDA mapPlaneEntropyToColor,Y
-        STA f67F0,X
-        STA f67F6,X
+        STA upperPlanetGilbyBulletColor,X
+        STA lowerPlanetGilbyBulletColor,X
         LDA gilbyVerticalPosition
-        STA f67FC,X
+        STA upperPlanetGilbyBulletYPos,X
         EOR #$FF
         CLC 
         ADC #$0C
-        STA f6804,X
+        STA lowerPlanetGilbyBulletYPos,X
         LDA #$00
-        STA f67E2,X
-        STA f67EA,X
+        STA upperPlanetGilbyBulletMSBXPosArray,X
+        STA lowerPlanetAttackShip2MSBXPosValue,X
         CPX #$03
         BPL b58A9
         LDA #$B0
         CLC 
         ADC f583C,X
-        STA attackShip1XPos,X
+        STA upperPlanetGilbyBulletXPos,X
         STA lowerPlanetAttackShip2XPos,X
         BCC b58A6
-        LDA f6B45,X
-        STA f67E2,X
-        STA f67EA,X
+        LDA gilbyBulletMSBXPosOffset,X
+        STA upperPlanetGilbyBulletMSBXPosArray,X
+        STA lowerPlanetAttackShip2MSBXPosValue,X
 b58A6   JMP j58B5
 
 b58A9   LDA #$B0
         SEC 
         SBC f5839,X
-        STA attackShip1XPos,X
+        STA upperPlanetGilbyBulletXPos,X
         STA lowerPlanetAttackShip2XPos,X
 
 j58B5   
@@ -3090,8 +3092,8 @@ p58EA   .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
 j596C   
         LDX #$00
 b596E   LDA #$C0
-        STA attackShip1SpriteValue,X
-        STA f67DC,X
+        STA upperPlanetGilbyBulletSpriteValue,X
+        STA lowerPlanetGilbyBulletSpriteValue,X
         INX 
         CPX #$06
         BNE b596E
@@ -3325,40 +3327,40 @@ a5CC7   .BYTE $02,$00
 j5CC9   
         LDX #$00
 b5CCB   LDA gilbyVerticalPosition
-        STA f67FC,X
+        STA upperPlanetGilbyBulletYPos,X
         EOR #$FF
         CLC 
         ADC #$08
-        STA f6804,X
+        STA lowerPlanetGilbyBulletYPos,X
         LDA currentGilbySprite
-        STA attackShip1SpriteValue,X
+        STA upperPlanetGilbyBulletSpriteValue,X
         CLC 
         ADC #$13
-        STA f67DC,X
+        STA lowerPlanetGilbyBulletSpriteValue,X
         LDA f67A5,X
-        STA f67F0,X
-        STA f67F6,X
+        STA upperPlanetGilbyBulletColor,X
+        STA lowerPlanetGilbyBulletColor,X
         LDA a6E12
         BMI b5D0B
 
         LDA f5D27,X
-        STA attackShip1XPos,X
+        STA upperPlanetGilbyBulletXPos,X
         LDA #$00
-        STA f67E2,X
+        STA upperPlanetGilbyBulletMSBXPosArray,X
         LDA f5D2D,X
         STA lowerPlanetAttackShip2XPos,X
         LDA #$00
-        STA f67EA,X
+        STA lowerPlanetAttackShip2MSBXPosValue,X
         BEQ b5D21
 
 b5D0B   LDA f5D2D,X
-        STA attackShip1XPos,X
+        STA upperPlanetGilbyBulletXPos,X
         LDA #$00
-        STA f67E2,X
+        STA upperPlanetGilbyBulletMSBXPosArray,X
         LDA f5D27,X
         STA lowerPlanetAttackShip2XPos,X
         LDA #$00
-        STA f67EA,X
+        STA lowerPlanetAttackShip2MSBXPosValue,X
 b5D21   INX 
         CPX #$06
         BNE b5CCB
@@ -4468,58 +4470,64 @@ BonusBountyAnimateGilbyYPos
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS 
 
-txtBonus10000                   .TEXT "BONUS 10000"
-a6794                           .BYTE $BC
-f6795                           .BYTE $00,$06,$02,$04,$05,$03,$07,$01
-                                .BYTE $01,$07,$03,$05,$04,$02,$06,$00
-f67A5                           .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
-                                .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
-backgroundColorsForPlanets      .BYTE $00,$01,$02,$03,$04,$05,$06,$07
-                                .BYTE $08,$09,$0A,$0B,$0C,$0D,$0E,$0F
-a67C5                           .BYTE $04
-a67C6                           .BYTE $05
+txtBonus10000                      .TEXT "BONUS 10000"
+a6794                              .BYTE $BC
+f6795                              .BYTE $00,$06,$02,$04,$05,$03,$07,$01
+                                   .BYTE $01,$07,$03,$05,$04,$02,$06,$00
+f67A5                              .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
+                                   .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
+backgroundColorsForPlanets         .BYTE $00,$01,$02,$03,$04,$05,$06,$07
+                                   .BYTE $08,$09,$0A,$0B,$0C,$0D,$0E,$0F
+a67C5                              .BYTE $04
+a67C6                              .BYTE $05,$00
 
-attackShipsXPosArray            .BYTE $00
-attackShip1XPos                 .BYTE $A8
-attackShip2XPos                 .BYTE $A0,$98,$90,$88,$80
+upperPlanetttackShipsXPosArray =*-$01
+upperPlanetGilbyBulletXPos         .BYTE $A8
+upperPlanetAttackShip2XPos         .BYTE $A0,$98,$90,$88,$80,$00
 
-lowerPlanetAttackShipsXPosArray .BYTE $00
-lowerPlanetAttackShip1XPos      .BYTE $00
-lowerPlanetAttackShip2XPos      .BYTE $B8
-lowerPlanetAttackShip3XPos      .BYTE $C0,$C8,$D0,$D8
+lowerPlanetAttackShipsXPosArray =*-$01
+lowerPlanetAttackShip1XPos         .BYTE $00
+lowerPlanetAttackShip2XPos         .BYTE $B8
+lowerPlanetAttackShip3XPos         .BYTE $C0,$C8,$D0,$D8,$E0
 
-attackShipsSpriteValueArray               .BYTE $E0
-attackShip1SpriteValue                    .BYTE $D3
-attackShip2SpriteValue                    .BYTE $D3
-attackShip3SpriteValue                    .BYTE $D3,$D3,$D3
-lowerPlanetAttackShipsSpriteValueMinusOne .BYTE $D3
+upperPlanetAttackShipsSpriteValueArray  =*-$01
+upperPlanetGilbyBulletSpriteValue  .BYTE $D3
+upperPlanetAttackShip2SpriteValue  .BYTE $D3
+upperPlanetAttackShip3SpriteValue  .BYTE $D3,$D3,$D3,$D3
 
-f67DC                                  .BYTE $E6
-f67DD                                  .BYTE $E6
-f67DE                                  .BYTE $E6,$E6,$E6
-f67E1                                  .BYTE $E6
-f67E2                                  .BYTE $00
-f67E3                                  .BYTE $00,$00,$00,$00,$00
-f67E8                                  .BYTE $FF
-f67E9                                  .BYTE $FF
-f67EA                                  .BYTE $00
-f67EB                                  .BYTE $00,$00,$00,$00
-attackShipsColorArray                  .BYTE $00
-f67F0                                  .BYTE $02,$08,$07,$05,$0E
-lowerPlanetAttackShipsColorArray       .BYTE $04
-f67F6                                  .BYTE $02,$08,$07,$05,$0E
-attackShipsYPosArray                   .BYTE $04
-f67FC                                  .BYTE $3D
-f67FD                                  .BYTE $3D,$3D,$3D,$3D,$3D
-f6802                                  .BYTE $00
-lowerPlanetAttackShipsYPosArray        .BYTE $00
-f6804                                  .BYTE $CA
-f6805                                  .BYTE $CA,$CA,$CA,$CA,$CA
+lowerPlanetAttackShipsSpriteValueArray =*-$01
+lowerPlanetGilbyBulletSpriteValue  .BYTE $E6
+lowerPlanetAttackShip2SpriteValue  .BYTE $E6
+lowerPlanetAttackShip3SpriteValue  .BYTE $E6,$E6,$E6,$E6
 
-currentPlanetBackgroundClr1            .BYTE $09
-currentPlanetBackgroundClr2            .BYTE $0E
-currentPlanetBackgroundColor1           .BYTE $09
-currentPlanetBackgroundColor2           .BYTE $0E
+upperPlanetAttackShipsMSBXPosArray=*-$01
+upperPlanetGilbyBulletMSBXPosArray .BYTE $00
+upperPlanetAttackShip2MSBXPosValue .BYTE $00,$00,$00,$00,$00
+
+                                   .BYTE $FF
+lowerPlanetAttackShipsMSBXPosArray=*-$01
+lowerPlanetGilbyBulletMSBXPosValue .BYTE $FF
+lowerPlanetAttackShip2MSBXPosValue .BYTE $00
+lowerPlanetAttackSHip3MSBXPosValue .BYTE $00,$00,$00,$00
+
+upperPlanetAttackShipsColorArray   .BYTE $00
+upperPlanetGilbyBulletColor        .BYTE $02,$08,$07,$05,$0E
+lowerPlanetAttackShipsColorArray   .BYTE $04
+lowerPlanetGilbyBulletColor        .BYTE $02,$08,$07,$05,$0E
+                                   .BYTE $04
+upperPlanetAttackShipsYPosArray=*-$01
+upperPlanetGilbyBulletYPos         .BYTE $3D
+upperPlanetAttackShip2YPos         .BYTE $3D,$3D,$3D,$3D,$3D
+upperPlanetAttackShip3YPos         .BYTE $00,$00
+
+lowerPlanetAttackShipsYPosArray=*-$01
+lowerPlanetGilbyBulletYPos         .BYTE $CA
+lowerPlanetAttackShip2YPos         .BYTE $CA,$CA,$CA,$CA,$CA
+
+currentPlanetBackgroundClr1        .BYTE $09
+currentPlanetBackgroundClr2        .BYTE $0E
+currentPlanetBackgroundColor1      .BYTE $09
+currentPlanetBackgroundColor2      .BYTE $0E
 ;-------------------------------
 ; InitializeStarfieldSprite
 ;-------------------------------
@@ -4879,9 +4887,9 @@ SetUpGameScreen
         JSR DrawStatusBarDetail
         LDX #$03
 b6AB3   LDA f7E49,X
-        STA attackShip3SpriteValue,X
+        STA upperPlanetAttackShip3SpriteValue,X
         LDA f7E4D,X
-        STA f67DE,X
+        STA lowerPlanetAttackShip3SpriteValue,X
         DEX 
         BNE b6AB3
         JMP BeginRunningGame
@@ -4893,27 +4901,27 @@ previousGilbySprite   .BYTE $D3
 DrawUpperPlanetAttackShips   
         LDX #$0C
         LDY #$06
-b6ACA   LDA attackShipsXPosArray,Y
+b6ACA   LDA upperPlanetttackShipsXPosArray,Y
         STA $D000,X  ;Sprite 0 X Pos
 
         LDA MainControlLoopInterruptHandler,Y
         AND $D010    ;Sprites 0-7 MSB of X coordinate
         STA a20
 
-        LDA f67E1,Y
-        AND f6B44,Y
+        LDA upperPlanetAttackShipsMSBXPosArray,Y
+        AND attackShipsMSBXPosOffsetArray,Y
         ORA a20
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 
-        LDA attackShipsYPosArray,Y
+        LDA upperPlanetAttackShipsYPosArray,Y
         STA $D001,X  ;Sprite 0 Y Pos
         STX a42
 
-        LDX attackShipsColorArray,Y
+        LDX upperPlanetAttackShipsColorArray,Y
         LDA backgroundColorsForPlanets,X
         STA $D027,Y  ;Sprite 0 Color
 
-        LDA attackShipsSpriteValueArray,Y
+        LDA upperPlanetAttackShipsSpriteValueArray,Y
         STA Sprite0Ptr,Y
         LDX a42
 
@@ -4939,8 +4947,8 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
         ; The X-Pos of sprites is fiddly. The MSB manages
         ; which side of the 512 possible x positions they
         ; are on.
-        LDA f67E9,Y
-        AND f6B44,Y
+        LDA lowerPlanetGilbyBulletMSBXPosValue,Y
+        AND attackShipsMSBXPosOffsetArray,Y
         ORA a20
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 
@@ -4952,7 +4960,7 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
         LDA backgroundColorsForPlanets,X
         STA $D027,Y  ;Sprite 0 Color
 
-        LDA lowerPlanetAttackShipsSpriteValueMinusOne,Y
+        LDA lowerPlanetAttackShipsSpriteValueArray,Y
         STA Sprite0Ptr,Y
         LDX a42
 
@@ -4968,10 +4976,11 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
 MainControlLoopInterruptHandler
         RTI 
 
-        .BYTE $FD,$FB,$F7,$EF,$DF
-f6B44   .BYTE $BF
-f6B45   .BYTE $02
-f6B46   .BYTE $04,$08,$10,$20,$40,$02,$04,$08
+        .BYTE $FD,$FB,$F7,$EF,$DF,$BF
+
+attackShipsMSBXPosOffsetArray=*-$01
+gilbyBulletMSBXPosOffset   .BYTE $02
+attackShip2MSBXPosOffsetArray   .BYTE $04,$08,$10,$20,$40,$02,$04,$08
         .BYTE $10,$20,$40
 difficultySetting   .BYTE $00
 
@@ -5116,8 +5125,8 @@ b6C26   LDX currentPlanetBackgroundClr1
         JSR PlaySoundEffects
         JSR FlashBorderAndBackground
         JSR UpdateGilbyPositionAndColor
-        JSR UpdateSomeMoreData
-        JSR UpdateSomeData
+        JSR UpdateAndAnimateAttackShips
+        JSR UpdateBulletPositions
         JSR DrawUpperPlanetAttackShips
         JSR UpdateControlPanelColors
         JMP $EA31; jump into KERNAL's standard interrupt service routine to handle keyboard scan, cursor display etc.
@@ -6538,49 +6547,55 @@ b767D   RTS
 
         ;Fire has been pressed
 b767E   LDX #$00
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         BMI b76A8
         LDX #$06
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         BMI b76A8
         LDX #$01
         DEC a7670
         BNE b767D
         LDA #$06
         STA a7670
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         BPL b76A0
         JSR b76A8
 b76A0   LDX #$07
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         BMI b76A8
         RTS 
 
+        ; X is always zero in here?
 b76A8   LDA #$B5
-        STA attackShip1XPos,X
+        STA upperPlanetGilbyBulletXPos,X
         LDA #$00
-        STA f67E2,X
+        STA upperPlanetGilbyBulletMSBXPosArray,X
         LDA gilbyVerticalPosition
         CLC 
         ADC #$04
-        STA f67FC,X
-        LDA #$E7
-        STA attackShip1SpriteValue,X
+        STA upperPlanetGilbyBulletYPos,X
+        LDA #$E7 ; Gilby's ground based bullet
+        STA upperPlanetGilbyBulletSpriteValue,X
         LDA a6E12
         EOR #$FF
         STA f7668,X
         INC f7668,X
         LDA #$FA
         STA f7784,X
+
         LDA a48D7
         BNE b76DF
+
         LDA #<p7BD4
         STA soundDataAE
         LDA #>p7BD4
         STA soundDataAF
+
 b76DF   LDA a7177
         CMP #$04
         BNE b7717
+
+        ; The gilby is in the air
         LDA a48D7
         BNE b76F8
         JSR Reseta79A4
@@ -6592,34 +6607,39 @@ b76DF   LDA a7177
 b76F8   LDA gilbyVerticalPosition
         CLC 
         ADC #$06
-        STA f67FC,X
+        STA upperPlanetGilbyBulletYPos,X
         LDA #$B1
-        STA attackShip1XPos,X
-        LDA #$EC
-        STA attackShip1SpriteValue,X
+        STA upperPlanetGilbyBulletXPos,X
+        LDA #$EC ; Gilby's in-flight bullet
+        STA upperPlanetGilbyBulletSpriteValue,X
 
         LDA currentGilbySprite
-        CMP #$D1
+        CMP #$D1 ; Left-facing in-flight gilby
         BNE b7718
+
+        ; Gilby is left-facing.
         LDA #$F5
         STA f7668,X
 b7717   RTS 
 
-b7718   CMP #$D3
+b7718   CMP #$D3 ; Right-facing gilby
         BNE b7722
+        
+        ; Gilby is right-facing.
         LDA #$0B
         STA f7668,X
         RTS 
 
+        ; Gilby is ground-based?
 b7722   LDA #$FF
-        STA f67E2,X
-        JMP j77FF
+        STA upperPlanetGilbyBulletMSBXPosArray,X
+        JMP ResetUpperPlanetBullet
         ;Returns
 
 ;-------------------------------
-; s772A
+; CheckBulletPositions
 ;-------------------------------
-s772A   
+CheckBulletPositions   
         LDA #$00
         STA a20
         STA a1F
@@ -6632,43 +6652,43 @@ b7736   LDA f7668,X
         BPL b7741
         LDA #$FF
         STA a1F
-b7741   LDA f67E2,X
+b7741   LDA upperPlanetGilbyBulletMSBXPosArray,X
         BEQ b7748
         INC a20
-b7748   LDA attackShip1XPos,X
+b7748   LDA upperPlanetGilbyBulletXPos,X
         CLC 
         ADC f7668,X
-        STA attackShip1XPos,X
+        STA upperPlanetGilbyBulletXPos,X
         LDA a20
         ADC a1F
         STA a20
         LDA a20
         AND #$01
         BEQ b7761
-        LDA f6B45,X
-b7761   STA f67E2,X
+        LDA gilbyBulletMSBXPosOffset,X
+b7761   STA upperPlanetGilbyBulletMSBXPosArray,X
         BEQ b7770
-        LDA attackShip1XPos,X
+        LDA upperPlanetGilbyBulletXPos,X
         AND #$F0
         CMP #$30
         BEQ b7777
 b776F   RTS 
 
-b7770   LDA attackShip1XPos,X
+b7770   LDA upperPlanetGilbyBulletXPos,X
         AND #$F0
         BNE b776F
 b7777   LDA #$FF
-        STA f67E2,X
+        STA upperPlanetGilbyBulletMSBXPosArray,X
         PLA 
         PLA 
-        JSR j77FF
+        JSR ResetUpperPlanetBullet
         JMP j77AE
 
 f7784   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 ;-------------------------------
-; UpdateSomeData
+; UpdateBulletPositions
 ;-------------------------------
-UpdateSomeData   
+UpdateBulletPositions   
         LDX #$00
         LDA gilbyHasJustDied
         BEQ b7794
@@ -6676,15 +6696,15 @@ b7793   RTS
 
 b7794   LDA levelEntrySequenceActive
         BNE b7793
-        LDA f67E2,X
+        LDA upperPlanetGilbyBulletMSBXPosArray,X
         CMP #$FF
         BEQ b77A9
-        JSR s77C7
-        JSR s772A
+        JSR UpdateUpperPlanetBulletPosition
+        JSR CheckBulletPositions
         JMP j77AE
 
 b77A9   LDA #$F0
-        STA attackShip1SpriteValue,X
+        STA upperPlanetGilbyBulletSpriteValue,X
 ;-------------------------------
 ; j77AE
 ;-------------------------------
@@ -6701,44 +6721,44 @@ b77BC   JMP j780F
 
 f77BF   .BYTE $03,$03,$03,$03,$03,$03,$03,$03
 ;-------------------------------
-; s77C7
+; UpdateUpperPlanetBulletPosition
 ;-------------------------------
-s77C7   
-        LDA attackShip1SpriteValue,X
+UpdateUpperPlanetBulletPosition   
+        LDA upperPlanetGilbyBulletSpriteValue,X
         CMP #$EC
         BEQ b780E
-        LDA f67FC,X
+        LDA upperPlanetGilbyBulletYPos,X
         CLC 
         ADC f7784,X
-        STA f67FC,X
+        STA upperPlanetGilbyBulletYPos,X
         DEC f77BF,X
         BNE b77E5
         LDA #$03
         STA f77BF,X
         INC f7784,X
-b77E5   LDA f67FC,X
+b77E5   LDA upperPlanetGilbyBulletYPos,X
         AND #$F8
         CMP #$78
         BEQ b77F2
         CMP #$88
         BNE b780E
 b77F2   LDA #$FF
-        STA f67E2,X
-        JSR j77FF
+        STA upperPlanetGilbyBulletMSBXPosArray,X
+        JSR ResetUpperPlanetBullet
         PLA 
         PLA 
         JMP j77AE
 
 ;-------------------------------
-; j77FF
+; ResetUpperPlanetBullet
 ;-------------------------------
-j77FF   
+ResetUpperPlanetBullet   
         LDA #$F0
-        STA attackShip1SpriteValue,X
+        STA upperPlanetGilbyBulletSpriteValue,X
         LDA #$FF
-        STA attackShip1XPos,X
+        STA upperPlanetGilbyBulletXPos,X
         LDA #$00
-        STA f67FC,X
+        STA upperPlanetGilbyBulletYPos,X
 b780E   RTS 
 
 ;-------------------------------
@@ -6748,13 +6768,13 @@ j780F
         LDX #$00
 b7811   LDA #$FF
         SEC 
-        SBC f6802,X
+        SBC upperPlanetAttackShip3YPos,X
         ADC #$17
-        STA f6804,X
+        STA lowerPlanetGilbyBulletYPos,X
         LDA lowerPlanetAttackShipsXPosArray,X
         EOR #$FF
         STA a1F
-        LDA f67E8,X
+        LDA lowerPlanetAttackShipsMSBXPosArray,X
         BEQ b782A
         LDA #$01
 b782A   EOR #$FF
@@ -6769,8 +6789,8 @@ b782A   EOR #$FF
         AND #$01
         STA a20
         BEQ b7845
-        LDA f6B45,X
-b7845   STA f67EA,X
+        LDA gilbyBulletMSBXPosOffset,X
+b7845   STA lowerPlanetAttackShip2MSBXPosValue,X
         INX 
         CPX #$02
         BNE b7811
@@ -6915,15 +6935,15 @@ SetUpPlanets
         STA a6D86
         LDX #$06
         LDA #$EC
-b7939   STA attackShipsSpriteValueArray,X
-        STA lowerPlanetAttackShipsSpriteValueMinusOne,X
+b7939   STA upperPlanetAttackShipsSpriteValueArray,X
+        STA lowerPlanetAttackShipsSpriteValueArray,X
         DEX 
         BNE b7939
         LDA #$FF
-        STA f67E2
-        STA f67E3
-        STA f67E8
-        STA f67E9
+        STA upperPlanetGilbyBulletMSBXPosArray
+        STA upperPlanetAttackShip2MSBXPosValue
+        STA lowerPlanetAttackShipsMSBXPosArray
+        STA lowerPlanetGilbyBulletMSBXPosValue
         JSR Reseta79A4
         LDA #<p5DB0
         STA soundDataAE
@@ -7205,29 +7225,29 @@ Reseta79A4
 b7C96   RTS 
 
 ;-------------------------------
-; UpdateSomeMoreData
+; UpdateAndAnimateAttackShips
 ;-------------------------------
-UpdateSomeMoreData   
+UpdateAndAnimateAttackShips   
         LDX #$04
         LDA gilbyHasJustDied
         BNE b7C96
         LDA levelEntrySequenceActive
         BNE b7C96
-b7CA3   LDA f67E3,X
+b7CA3   LDA upperPlanetAttackShip2MSBXPosValue,X
         BMI b7CC2
-        LDA attackShip2XPos,X
+        LDA upperPlanetAttackShip2XPos,X
         LDY a6E12
         BMI b7CF0
         CLC 
         ADC a6E12
-        STA attackShip2XPos,X
+        STA upperPlanetAttackShip2XPos,X
         BCC b7CC2
 
 j7CB9   
-        LDA f67E3,X
-        EOR f6B46,X
-        STA f67E3,X
-b7CC2   LDA f67EB,X
+        LDA upperPlanetAttackShip2MSBXPosValue,X
+        EOR attackShip2MSBXPosOffsetArray,X
+        STA upperPlanetAttackShip2MSBXPosValue,X
+b7CC2   LDA lowerPlanetAttackSHip3MSBXPosValue,X
         BMI b7CE1
         LDA lowerPlanetAttackShip3XPos,X
         LDY a6E12
@@ -7238,13 +7258,13 @@ b7CC2   LDA f67EB,X
         BCS b7CE1
 
 j7CD8   
-        LDA f67EB,X
-        EOR f6B46,X
-        STA f67EB,X
+        LDA lowerPlanetAttackSHip3MSBXPosValue,X
+        EOR attackShip2MSBXPosOffsetArray,X
+        STA lowerPlanetAttackSHip3MSBXPosValue,X
 b7CE1   LDA pauseModeSelected
         BNE b7CE9
-        JSR s7D3F
-b7CE9   JSR s7E69
+        JSR UpdateAttackShipsXAndYPositions
+b7CE9   JSR UpdateAttackShipSPrites
         DEX 
         BNE b7CA3
         RTS 
@@ -7257,7 +7277,7 @@ b7CF0   PHA
         PLA 
         SEC 
         SBC a7D1E
-        STA attackShip2XPos,X
+        STA upperPlanetAttackShip2XPos,X
         BCS b7CC2
         JMP j7CB9
 
@@ -7286,29 +7306,29 @@ f7D36   .BYTE $01
 f7D37   .BYTE $01,$01,$01
 f7D3A   .BYTE $01,$01,$01,$01,$01
 ;-------------------------------
-; s7D3F
+; UpdateAttackShipsXAndYPositions
 ;-------------------------------
-s7D3F   
+UpdateAttackShipsXAndYPositions   
         DEC f7D36,X
         BNE b7D79
         LDA f7D2E,X
         STA f7D36,X
         LDA f7E40,X
         CLC 
-        ADC f67FD,X
-        STA f67FD,X
+        ADC upperPlanetAttackShip2YPos,X
+        STA upperPlanetAttackShip2YPos,X
         AND #$F0
         CMP #$70
         BEQ b7D6A
         CMP #$00
         BNE b7D79
         LDA #$10
-        STA f67FD,X
+        STA upperPlanetAttackShip2YPos,X
         LDA #$01
         STA f48AC,X
         BNE b7D74
 b7D6A   LDA #$6D
-        STA f67FD,X
+        STA upperPlanetAttackShip2YPos,X
         LDA #$01
         STA f48B6,X
 b7D74   LDA #$00
@@ -7319,20 +7339,20 @@ b7D79   DEC f7D3A,X
         STA f7D3A,X
         LDA f7E44,X
         CLC 
-        ADC f6805,X
-        STA f6805,X
+        ADC lowerPlanetAttackShip2YPos,X
+        STA lowerPlanetAttackShip2YPos,X
         AND #$F0
         BEQ b7DA5
-        LDA f6805,X
+        LDA lowerPlanetAttackShip2YPos,X
         CMP #$99
         BPL b7DB4
         LDA #$99
-        STA f6805,X
+        STA lowerPlanetAttackShip2YPos,X
         LDA #$01
         STA f48BC,X
         BNE b7DAF
 b7DA5   LDA #$FF
-        STA f6805,X
+        STA lowerPlanetAttackShip2YPos,X
         LDA #$01
         STA f48B2,X
 b7DAF   LDA #$00
@@ -7344,25 +7364,25 @@ b7DB4   DEC f7D26,X
         LDA f7E38,X
         BMI b7DD9
         CLC 
-        ADC attackShip2XPos,X
-        STA attackShip2XPos,X
+        ADC upperPlanetAttackShip2XPos,X
+        STA upperPlanetAttackShip2XPos,X
         BCC b7DF6
-        LDA f67E3,X
-        EOR f6B46,X
-        STA f67E3,X
+        LDA upperPlanetAttackShip2MSBXPosValue,X
+        EOR attackShip2MSBXPosOffsetArray,X
+        STA upperPlanetAttackShip2MSBXPosValue,X
         JMP b7DF6
 
 b7DD9   EOR #$FF
         STA a7D1E
         INC a7D1E
-        LDA attackShip2XPos,X
+        LDA upperPlanetAttackShip2XPos,X
         SEC 
         SBC a7D1E
-        STA attackShip2XPos,X
+        STA upperPlanetAttackShip2XPos,X
         BCS b7DF6
-        LDA f67E3,X
-        EOR f6B46,X
-        STA f67E3,X
+        LDA upperPlanetAttackShip2MSBXPosValue,X
+        EOR attackShip2MSBXPosOffsetArray,X
+        STA upperPlanetAttackShip2MSBXPosValue,X
 b7DF6   DEC f7D2A,X
         BNE f7E38
         LDA f7D22,X
@@ -7373,9 +7393,9 @@ b7DF6   DEC f7D2A,X
         ADC lowerPlanetAttackShip3XPos,X
         STA lowerPlanetAttackShip3XPos,X
         BCC f7E38
-        LDA f67EB,X
-        EOR f6B46,X
-        STA f67EB,X
+        LDA lowerPlanetAttackSHip3MSBXPosValue,X
+        EOR attackShip2MSBXPosOffsetArray,X
+        STA lowerPlanetAttackSHip3MSBXPosValue,X
         JMP f7E38
 
 b7E1B   EOR #$FF
@@ -7386,9 +7406,9 @@ b7E1B   EOR #$FF
         SBC a7D1E
         STA lowerPlanetAttackShip3XPos,X
         BCS f7E38
-        LDA f67EB,X
-        EOR f6B46,X
-        STA f67EB,X
+        LDA lowerPlanetAttackSHip3MSBXPosValue,X
+        EOR attackShip2MSBXPosOffsetArray,X
+        STA lowerPlanetAttackSHip3MSBXPosValue,X
 f7E38   RTS 
 
 f7E39   .BYTE $06,$06,$06
@@ -7410,9 +7430,9 @@ f7E60   .BYTE $01
 f7E61   .BYTE $03,$03,$03
 f7E64   .BYTE $03,$03,$03,$03,$03
 ;-------------------------------
-; s7E69
+; UpdateAttackShipSPrites
 ;-------------------------------
-s7E69   
+UpdateAttackShipSPrites   
         LDA pauseModeSelected
         BEQ b7E6F
         RTS 
@@ -7421,22 +7441,22 @@ b7E6F   DEC f7E58,X
         BNE b7E8B
         LDA f7E60,X
         STA f7E58,X
-        INC attackShip2SpriteValue,X
-        LDA attackShip2SpriteValue,X
+        INC upperPlanetAttackShip2SpriteValue,X
+        LDA upperPlanetAttackShip2SpriteValue,X
         CMP f7E50,X
         BNE b7E8B
         LDA f7E48,X
-        STA attackShip2SpriteValue,X
+        STA upperPlanetAttackShip2SpriteValue,X
 b7E8B   DEC f7E5C,X
         BNE b7EA7
         LDA f7E64,X
         STA f7E5C,X
-        INC f67DD,X
-        LDA f67DD,X
+        INC lowerPlanetAttackShip2SpriteValue,X
+        LDA lowerPlanetAttackShip2SpriteValue,X
         CMP f7E54,X
         BNE b7EA7
         LDA f7E4C,X
-        STA f67DD,X
+        STA lowerPlanetAttackShip2SpriteValue,X
 b7EA7   RTS 
 
 ;-------------------------------
