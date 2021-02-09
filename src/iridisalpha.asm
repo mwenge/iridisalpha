@@ -88,7 +88,6 @@ pAD = $AD
 pBF = $BF
 pD0 = $D0
 pF0 = $F0
-pFD = $FD
 ;
 ; **** FIELDS **** 
 ;

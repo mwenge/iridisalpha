@@ -1,4 +1,6 @@
-; This charset data is for the landscape textures.
+;-------------------------------
+; This charset data is for the landscape textures for the bonus phase.
+;-------------------------------
 fE000
         .BYTE $AA,$BF,$B5,$B5,$B5,$B5,$B5,$B5   ;.BYTE $AA,$BF,$B5,$B5,$B5,$B5,$B5,$B5
                                                 ; CHARACTER $00
@@ -642,6 +644,9 @@ fE100
                                                 ; 00000100        *  
                                                 ; 00000100        *  
                                                 ; 11111111   ********
+;-------------------------------
+; This is the sprite data for the bonus phase
+;-------------------------------
         ;Start of sprite data
         ; SPRITE $00
         ; $00,$08,$00 000000000000100000000000             *           
@@ -1105,6 +1110,7 @@ fE400
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00
+
 pE800   SEI 
         LDA #>$4000
         STA $0319    ;NMI
@@ -1123,8 +1129,11 @@ pE800   SEI
         CLI 
         JMP $0835
 
+;-------------------------------
+; Extra sprite data for later attack waves
+;-------------------------------
         .BYTE $DC,$A9,$0F,$8D,$18,$D4,$20,$65
-
+pE830
         ;Start of Sprites
         ; SPRITE $00
         ; $00,$A8,$00 000000001010100000000000         * * *           

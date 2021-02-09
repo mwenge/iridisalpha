@@ -1,6 +1,26 @@
-;-------------------------------
+; This is the reverse-engineered source code for the game 'Iridis Alpha'
+; written by Jeff Minter in 1986.
+;
+; The code in this file was created by disassembling a binary of the game released into
+; the public domain by Jeff Minter in 2019.
+;
+; The original code from which this source is derived is the copyright of Jeff Minter.
+;
+; The original home of this file is at: https://github.com/mwenge/iridisalpha
+;
+; To the extent to which any copyright may apply to the act of disassembling and reconstructing
+; the code from its binary, the author disclaims copyright to this source code.  In place of
+; a legal notice, here is a blessing:
+;
+;    May you do good and not evil.
+;    May you find forgiveness for yourself and forgive others.
+;    May you share freely, never taking more than you give.
+;
+; (Note: I ripped this part from the SQLite licence! :) )
+
+;-------------------------------------------------------
 ; DisplayEnterBonusRoundScreen
-;-------------------------------
+;-------------------------------------------------------
 DisplayEnterBonusRoundScreen   
         LDA #$00
         STA $D015    ;Sprite display Enable
@@ -62,14 +82,14 @@ fABA7   .BYTE $01,$01,$01,$01,$02,$02,$02,$02
         .BYTE $03,$03,$03,$03,$04,$04,$04,$04
         .BYTE $05,$05,$05,$05,$06,$06,$06,$06
         .BYTE $07,$07,$07,$07,$07,$07,$00
-fABC6   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+enterBPBackgroundColors   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00
 aABE5   .BYTE $00
-;-------------------------------
+;-------------------------------------------------------
 ; EnterBonusPhaseInterruptHandler   
-;-------------------------------
+;-------------------------------------------------------
 EnterBonusPhaseInterruptHandler   
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
@@ -84,8 +104,9 @@ EnterBonusPhaseInterruptHandler
 bABF3   LDY #$03
 bABF5   DEY 
         BNE bABF5
+
         LDY aABE5
-        LDA fABC6,Y
+        LDA enterBPBackgroundColors,Y
         STA $D021    ;Background Color 0
         LDA fABA7,Y
         BEQ bAC1E
@@ -103,8 +124,8 @@ bABF5   DEY
         PLA 
         RTI 
 
-bAC1E   JSR sAC77
-        JSR sACCC
+bAC1E   JSR InitializeEnterBPData
+        JSR PlayEnterBPSounds
         LDA #$30
         STA $D012    ;Raster Position
         LDA #$00
@@ -128,10 +149,10 @@ fAC5B   .BYTE $02,$08,$07,$05,$0E,$04,$06,$07
         .BYTE $00,$03,$00,$05,$00,$04,$00,$02
         .BYTE $00,$06,$00,$06,$00,$06,$04,$0E
         .BYTE $05,$07,$08,$02
-;-------------------------------
-; sAC77
-;-------------------------------
-sAC77   
+;-------------------------------------------------------
+; InitializeEnterBPData
+;-------------------------------------------------------
+InitializeEnterBPData   
         LDY aAC97
         CPY #$1C
         BNE bAC88
@@ -145,18 +166,19 @@ bAC88   LDA fAC3F,Y
         STA fAC3F,Y
         INC aAC97
         BNE bAC98
-bAC98   =*+$01
-aAC97   BRK #$A2
-bAC9A   =*+$01
-        BRK #$BD
-        .BYTE $3F,$AC,$F0 ;RLA $F0AC,X
-        AND aA8
+
+aAC97   .BYTE $00
+
+bAC98   LDX #$00
+bAC9A   LDA fAC3F,X
+        BEQ bACC4
+        TAY 
         CPX #$1B
         BNE bACAE
         LDA aAD23
         BEQ bACAE
         LDA #$00
-        STA fABC6,Y
+        STA enterBPBackgroundColors,Y
 bACAE   INY 
         CPY #$1E
         BNE bACBA
@@ -164,7 +186,7 @@ bACAE   INY
         STA fAC3F,X
         BEQ bACC4
 bACBA   LDA fAC5B,X
-        STA fABC6,Y
+        STA enterBPBackgroundColors,Y
         TYA 
         STA fAC3F,X
 bACC4   INX 
@@ -174,10 +196,10 @@ bACC4   INX
 
 aACCA   .BYTE $00
 aACCB   .BYTE $40
-;-------------------------------
-; sACCC
-;-------------------------------
-sACCC   
+;-------------------------------------------------------
+; PlayEnterBPSounds
+;-------------------------------------------------------
+PlayEnterBPSounds   
         LDA aAD23
         BEQ bACD2
         RTS 
@@ -220,9 +242,9 @@ bAD0C   LDY aAD23,X
 
 aAD23   .BYTE $00,$00,$07
 fAD26   .BYTE $0E,$00,$06,$0C
-;-------------------------------
+;-------------------------------------------------------
 ; EnterBonusPhase
-;-------------------------------
+;-------------------------------------------------------
 EnterBonusPhase   
         LDA #$03
         STA aAD77
@@ -249,10 +271,12 @@ bAD50   STA SCREEN_RAM + $0167,X
         BNE bAD50
 
         SEI 
+
+        ; It's necessary to set this bit to allow access to the
+        ; memory at $E000
         LDA #$34
         STA a01
-
-        ; Copy Charset and Sprties
+        ; Copy in the charset for landscape. This is in charsetandspritedata.asm.
         LDX #$00
 bAD5D   LDA $E000,X
         STA f2200,X
@@ -260,23 +284,28 @@ bAD5D   LDA $E000,X
         STA f2300,X
         DEX 
         BNE bAD5D
-
         LDA #$36
         STA a01
-        JSR SwapCharsetSpriteData
+
+        ; Copy in the sprite data.
+        JSR SwapSpriteData
         CLI 
 
         JMP InitializeBonusPhase
 
 aAD77   .BYTE $00
 fAD78   .BYTE $00,$0B,$0C,$0F
-;-------------------------------
-; SwapCharsetSpriteData
-;-------------------------------
-SwapCharsetSpriteData   
+;-------------------------------------------------------
+; SwapSpriteData
+;-------------------------------------------------------
+SwapSpriteData   
         SEI 
+
+        ; It's necessary to set this bit to allow access to the
+        ; memory at $E000
         LDA #$34
         STA a01
+
         LDX #$00
 bAD83   LDA $E200,X
         PHA 
@@ -298,37 +327,43 @@ bAD83   LDA $E200,X
         STA f3200,X
         DEX 
         BNE bAD83
+
         LDA #$36
         STA a01
         CLI 
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; InitializeBonusPhase
-;-------------------------------
+;-------------------------------------------------------
 InitializeBonusPhase   
         NOP 
+
         LDA bonusPhaseCounter
         BNE bADC1
         LDA #$00
         STA aAED0
+
 bADC1   INC bonusPhaseCounter
+
         LDA #$00
         STA $D020    ;Border Color
         STA incrementLives
-        STA aAED2
+        STA bpGilbyXPosMSB
         STA aAED3
         STA aC707
         STA $D021    ;Background Color 0
+
         LDX #$02
 bADDA   STA fBB1E,X
         DEX 
         BPL bADDA
+
         JSR sC358
         LDA aAED0
         STA aAEB6
         LDA #$A0
-        STA aAED1
+        STA bpGilbyXPos
         LDA #$C0
         STA aB682
         LDA #$01
@@ -340,7 +375,7 @@ bADDA   STA fBB1E,X
         LDA #$F6
         STA aAEBE
         LDA #$FF
-        STA aB571
+        STA bpJoystickInput
         LDA #$07
         STA aBED3
         TAX 
@@ -355,9 +390,9 @@ bAE15   STA fBCB6,X
         JSR ClearScreen
         JMP BonusPhaseSetUpScreen
 
-;-------------------------------
+;-------------------------------------------------------
 ; ClearScreen
-;-------------------------------
+;-------------------------------------------------------
 ClearScreen   
         LDX #$00
         LDA #$20
@@ -369,11 +404,11 @@ bAE2F   STA SCREEN_RAM,X
         BNE bAE2F
         RTS 
 
-;------------------------------------------------
+;------------------------------------------------------------------------
 ; BonusPhaseSetUpScreen   
-;------------------------------------------------
+;------------------------------------------------------------------------
 BonusPhaseSetUpScreen   
-        JSR BP_Init_ScreenPointerArray
+        JSR BP_Init_ScreenLinePointerArray
         LDA #$7F
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
         LDA #$FF
@@ -392,6 +427,7 @@ BonusPhaseSetUpScreen
         STA $D018    ;VIC Memory Control Register
         LDA #$80
         STA $D001    ;Sprite 0 Y Pos
+
         LDX #$07
 bAE71   LDA #$F0
         STA Sprite0Ptr,X
@@ -402,10 +438,12 @@ bAE71   LDA #$F0
         STA $D405    ;Voice 1: Attack / Decay Cycle Control
         STA $D40C    ;Voice 2: Attack / Decay Cycle Control
         STA $D413    ;Voice 3: Attack / Decay Cycle Control
+
         LDA #$EE
         STA Sprite1Ptr
         STA Sprite2Ptr
         STA Sprite3Ptr
+
         LDA $D016    ;VIC Control Register 2
         AND #$EF
         ORA #$10
@@ -417,9 +455,9 @@ bAE71   LDA #$F0
         JSR BonusPhaseSetUpScrollingMap
         JMP BonusRoundControlLoop
 
-;-------------------------------
+;-------------------------------------------------------
 ; jAEA9
-;-------------------------------
+;-------------------------------------------------------
 jAEA9   
         LDX aBED3
         LDA #$F8
@@ -428,9 +466,9 @@ jAEA9
         RTS 
 
 aAEB6   =*+$01
-;-------------------------------
+;-------------------------------------------------------
 ; GetNextValueInSequence
-;-------------------------------
+;-------------------------------------------------------
 GetNextValueInSequence   
         LDA a9A00
         INC aAEB6
@@ -444,13 +482,13 @@ aAEC0   .BYTE $00
 fAEC1   .BYTE $0B,$0C,$0F,$01,$0F,$0C,$0B
 fAEC8   .BYTE $F6,$F7,$F8,$F7,$F7,$F8,$F7,$F6
 aAED0   .BYTE $00
-aAED1   .BYTE $A0
-aAED2   .BYTE $00
+bpGilbyXPos   .BYTE $A0
+bpGilbyXPosMSB   .BYTE $00
 aAED3   .BYTE $00
-;-------------------------------
-; BonusPhaseDrawToScreen1
-;-------------------------------
-BonusPhaseDrawToScreen1   
+;-------------------------------------------------------
+; BonusPhaseFillTopLineAfterScrollDown
+;-------------------------------------------------------
+BonusPhaseFillTopLineAfterScrollDown   
         LDX aAEBD
         LDY bonusPhaseMapOffset,X
         LDA bonusPhaseMapPtrLo,Y
@@ -475,16 +513,18 @@ bAEE8   LDA (planetPtrLo2),Y
         INY 
         CPY #$14
         BNE bAEE8
+
         LDA aAEBC
         BNE bAF12
+
         INC aAEBD
         INC aAEBE
 bAF12   RTS 
 
-;-------------------------------
-; BonusRoundScroll1
-;-------------------------------
-BonusRoundScroll1   
+;-------------------------------------------------------
+; BonusRoundScrollDown
+;-------------------------------------------------------
+BonusRoundScrollDown   
         LDX #$28
 bAF15   LDA SCREEN_RAM + $02A7,X
         STA SCREEN_RAM + $02CF,X
@@ -526,14 +566,15 @@ bAF15   LDA SCREEN_RAM + $02A7,X
         BNE bAF15
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; BP_UpdateGilbyPosition
-;-------------------------------
+;-------------------------------------------------------
 BP_UpdateGilbyPosition   
-        LDA aAED1
+        LDA bpGilbyXPos
         STA $D000    ;Sprite 0 X Pos
-        LDA aAED2
+        LDA bpGilbyXPosMSB
         BEQ bAF99
+
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         ORA #$01
         STA $D010    ;Sprites 0-7 MSB of X coordinate
@@ -544,15 +585,15 @@ bAF99   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; ChangeColorOfCharacters
-;-------------------------------
+;-------------------------------------------------------
 ChangeColorOfCharacters   
         LDX #$00
 bAFA4   STA COLOR_RAM + $0000,X
         STA COLOR_RAM + $0100,X
         STA COLOR_RAM + $0200,X
-        STA $DB00,X
+        STA COLOR_RAM + $0300,X
         DEX 
         BNE bAFA4
         RTS 
@@ -656,10 +697,10 @@ BonusPhaseMapData   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
         .BYTE $0A,$15,$15,$0A,$0A,$0A,$0A,$0A
         .BYTE $0A,$0A,$0A,$0A,$FF
-;-------------------------------
-; BonusPhaseDrawToScreen2
-;-------------------------------
-BonusPhaseDrawToScreen2   
+;-------------------------------------------------------
+; BonusPhaseFillBottomLineAfterScrollUp
+;-------------------------------------------------------
+BonusPhaseFillBottomLineAfterScrollUp   
         LDX aAEBE
         LDY bonusPhaseMapOffset,X
         LDA bonusPhaseMapPtrLo,Y
@@ -697,10 +738,10 @@ bB2D5   LDA (planetPtrLo2),Y
         STA aAEBD
 bB310   RTS 
 
-;-------------------------------
-; BonusRoundScroll2
-;-------------------------------
-BonusRoundScroll2   
+;-------------------------------------------------------
+; BonusRoundScrollUp
+;-------------------------------------------------------
+BonusRoundScrollUp   
         LDX #$28
 bB313   LDA SCREEN_RAM + $0027,X
         STA SCREEN_RAM - $01,X
@@ -742,9 +783,9 @@ bB313   LDA SCREEN_RAM + $0027,X
         BNE bB313
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; BonusRoundControlLoop
-;-------------------------------
+;-------------------------------------------------------
 BonusRoundControlLoop   
         LDA aAED0
         AND #$07
@@ -812,7 +853,7 @@ bB3F0   LDA tempHiPtr1
         BNE bB3F0
 bB400   PLA 
         TAX 
-bB402   LDA (pFD),Y
+bB402   LDA (tempHiPtr1),Y
         STA bonusPhaseMapOffset,X
         INY 
         INX 
@@ -854,9 +895,9 @@ bB450   LDA aAEC0
         BEQ bB427
         JMP DisplayBonusBountyScreen
 
-;-------------------------------
+;-------------------------------------------------------
 ; BonusPhaseSetUpInterruptHandler
-;-------------------------------
+;-------------------------------------------------------
 BonusPhaseSetUpInterruptHandler   
         SEI 
         LDA #<BonusPhaseInterruptHandler
@@ -874,9 +915,9 @@ BonusPhaseSetUpInterruptHandler
         CLI 
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; BonusPhaseInterruptHandler
-;-------------------------------
+;-------------------------------------------------------
 BonusPhaseInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
@@ -915,14 +956,15 @@ bB4C1   DEY
         LDA #$E0
         STA aBFF7
         JSR BonusPhaseSetupIBallSprites
-        JSR BonusPhase_sB524
-        JSR BonusPhaseCheckInput
+        JSR BonusPhase_HandleScroll
+        JSR BP_CheckInput
         JSR BP_MaybeChangeColorScheme
         JSR BP_UpdateGilbyPosition
-        JSR BP_sB971
+        JSR BP_RecalculateGilbyPosition
         JSR BP_sBA07
         JSR BP_sBA8A
         JSR sC1DE
+
         LDA aB488
         ORA #$10
         STA $D011    ;VIC Control Register 1
@@ -931,6 +973,7 @@ bB4C1   DEY
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         LDA #$B8
         STA $D012    ;Raster Position
+
         LDA aAEBF
         BEQ bB50F
         DEC aC425
@@ -939,7 +982,7 @@ bB4C1   DEY
         JMP jB515
 
 bB50F   JSR sC3C0
-        JSR sBBC8
+        JSR BP_UpdateEnemySprites
 
 jB515   
         JSR sBCF9
@@ -948,10 +991,10 @@ jB515
         JSR sC70E
         JMP $EA31
 
-;-------------------------------
-; BonusPhase_sB524
-;-------------------------------
-BonusPhase_sB524   
+;-------------------------------------------------------
+; BonusPhase_HandleScroll
+;-------------------------------------------------------
+BonusPhase_HandleScroll   
         LDA aB487
         BMI bB559
         LDA aB488
@@ -968,8 +1011,8 @@ bB53B   DEY
         BNE bB539
         RTS 
 
-bB542   JSR BonusRoundScroll1
-        JSR BonusPhaseDrawToScreen1
+bB542   JSR BonusRoundScrollDown
+        JSR BonusPhaseFillTopLineAfterScrollDown
 
 jB548   
         LDA aB488
@@ -986,16 +1029,16 @@ bB559   LDA aB488
         STA aB488
         AND #$F0
         BEQ bB537
-        JSR BonusRoundScroll2
-        JSR BonusPhaseDrawToScreen2
+        JSR BonusRoundScrollUp
+        JSR BonusPhaseFillBottomLineAfterScrollUp
         JMP jB548
 
 aB570   .BYTE $04
-aB571   .BYTE $00
-;-------------------------------
-; BonusPhaseCheckInput
-;-------------------------------
-BonusPhaseCheckInput   
+bpJoystickInput   .BYTE $00
+;-------------------------------------------------------
+; BP_CheckInput
+;-------------------------------------------------------
+BP_CheckInput   
         LDA aBC90
         BEQ bB578
         RTS 
@@ -1005,18 +1048,21 @@ bB578   DEC aB570
         RTS 
 
 bB57E   LDA $DC00    ;CIA1: Data Port Register A
-        STA aB571
+        STA bpJoystickInput
         LDY #$02
         STY aB570
         JSR sBB40
-        LDA aB571
+
+        LDA bpJoystickInput
         AND #$0F
         CMP #$0F
         BEQ bB5AF
+
+        ; No input?
         LDA #$10
         STA aBA06
         LDX #$08
-        LDA aB571
+        LDA bpJoystickInput
         AND #$0F
 bB5A1   CMP fB671,X
         BEQ bB5A9
@@ -1024,9 +1070,12 @@ bB5A1   CMP fB671,X
         BNE bB5A1
 bB5A9   LDA fB679,X
         STA aB682
-bB5AF   LDA aB571
+
+bB5AF   LDA bpJoystickInput
         AND #$01
         BNE bB5CF
+
+        ; Joystick pushed up.
         LDA aB487
         PHA 
         SEC 
@@ -1040,9 +1089,11 @@ bB5C8   PLA
         STA aB487
         JMP jB5F0
 
-bB5CF   LDA aB571
+bB5CF   LDA bpJoystickInput
         AND #$02
         BNE jB5F0
+
+        ; Joystick pushed down.
         LDA aB487
         PHA 
         CLC 
@@ -1057,11 +1108,9 @@ bB5E8   PLA
         JMP jB5F0
 
 bB5EF   PLA 
-;-------------------------------
-; jB5F0
-;-------------------------------
+
 jB5F0   
-        LDA aB571
+        LDA bpJoystickInput
         AND #$04
         BNE bB610
         LDA aAED3
@@ -1077,7 +1126,7 @@ bB609   PLA
         STA aAED3
         JMP jB631
 
-bB610   LDA aB571
+bB610   LDA bpJoystickInput
         AND #$08
         BNE jB631
         LDA aAED3
@@ -1094,11 +1143,11 @@ bB629   PLA
         JMP jB631
 
 bB630   PLA 
-;-------------------------------
+;-------------------------------------------------------
 ; jB631
-;-------------------------------
+;-------------------------------------------------------
 jB631   
-        LDA aB571
+        LDA bpJoystickInput
         LDA #$10
         BNE bB641
         LDA #$00
@@ -1108,9 +1157,9 @@ jB631
 
 bB641   RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; BonusPhaseSetUpScrollingMap
-;-------------------------------
+;-------------------------------------------------------
 BonusPhaseSetUpScrollingMap   
         LDA #<BonusPhaseMapData
         STA planetPtrLo2
@@ -1228,9 +1277,9 @@ bonusPhaseMapOffset .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
 
-;-------------------------------
+;-------------------------------------------------------
 ; BP_MaybeChangeColorScheme
-;-------------------------------
+;-------------------------------------------------------
 BP_MaybeChangeColorScheme   
         LDA lastKeyPressed
         CMP #$40
@@ -1245,9 +1294,9 @@ bB91C   CMP fB93F,X
         BNE bB91C
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; BonusPhaseChangeColorScheme
-;-------------------------------
+;-------------------------------------------------------
 BonusPhaseChangeColorScheme   
         LDA fB944,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
@@ -1272,32 +1321,37 @@ fB95E   BRK #$01
 aB96E   .BYTE $00
 aB96F   .BYTE $00
 aB970   .BYTE $00
-;-------------------------------
-; BP_sB971
-;-------------------------------
-BP_sB971   
-        LDA aAED1
+;-------------------------------------------------------
+; BP_RecalculateGilbyPosition
+;-------------------------------------------------------
+BP_RecalculateGilbyPosition   
+        LDA bpGilbyXPos
         LDY #$00
         STY a3E
         LDY aAED3
         BPL bB981
+
         LDY #$FF
         STY a3E
 bB981   CLC 
         ADC aAED3
-        STA aAED1
-        LDA aAED2
+        STA bpGilbyXPos
+
+        LDA bpGilbyXPosMSB
         ADC a3E
-        STA aAED2
+        STA bpGilbyXPosMSB
+
         ROR 
-        LDA aAED1
+        LDA bpGilbyXPos
         ROR 
         AND #$F0
         BNE bB9A9
+
         LDA #<p20
-        STA aAED1
+        STA bpGilbyXPos
         LDA #>p20
-        STA aAED2
+        STA bpGilbyXPosMSB
+
 bB9A3   LDA #$00
         STA aAED3
 bB9A8   RTS 
@@ -1305,15 +1359,15 @@ bB9A8   RTS
 bB9A9   CMP #$A0
         BNE bB9A8
         LDA #$40
-        STA aAED1
+        STA bpGilbyXPos
         LDA #$01
-        STA aAED2
+        STA bpGilbyXPosMSB
         BNE bB9A3
 
-;-------------------------------
-; BP_Init_ScreenPointerArray
-;-------------------------------
-BP_Init_ScreenPointerArray
+;-------------------------------------------------------
+; BP_Init_ScreenLinePointerArray
+;-------------------------------------------------------
+BP_Init_ScreenLinePointerArray
         LDA #>SCREEN_RAM
         STA planetPtrHi2
         LDA #<SCREEN_RAM
@@ -1335,13 +1389,13 @@ bB9C2   LDA planetPtrLo2
         BNE bB9C2
         RTS 
 
-aB9DF   .BYTE $00
-aB9E0   .BYTE $00
-;-------------------------------
+bpCurrentSpritePositionLoPtr   .BYTE $00
+bpCurrentSpritePositionHiPtr   .BYTE $00
+;-------------------------------------------------------
 ; BP_sB9E1
-;-------------------------------
+;-------------------------------------------------------
 BP_sB9E1   
-        LDA aB9DF
+        LDA bpCurrentSpritePositionLoPtr
         SEC 
         SBC #$06
         CLC 
@@ -1349,7 +1403,8 @@ BP_sB9E1
         CLC 
         ROR 
         TAY 
-        LDA aB9E0
+
+        LDA bpCurrentSpritePositionHiPtr
         SEC 
         SBC #$26
         CLC 
@@ -1359,6 +1414,7 @@ BP_sB9E1
         CLC 
         ROR 
         TAX 
+
         LDA screenLinePtrLo,X
         STA a3A
         LDA screenLinePtrHi,X
@@ -1367,9 +1423,9 @@ BP_sB9E1
 bBA05   RTS 
 
 aBA06   .BYTE $04
-;-------------------------------
+;-------------------------------------------------------
 ; BP_sBA07
-;-------------------------------
+;-------------------------------------------------------
 BP_sBA07   
         LDA aBC90
         BEQ bBA1D
@@ -1411,23 +1467,25 @@ fBA49   .BYTE $00,$00,$00,$00,$00,$00,$00,$0F
         .BYTE $26,$26,$26,$26,$22,$22,$22
         .BYTE $22
 aBA89   .BYTE $04
-;-------------------------------
+;-------------------------------------------------------
 ; BP_sBA8A
-;-------------------------------
+;-------------------------------------------------------
 BP_sBA8A   
         DEC aBA89
         BNE bBA48
+
         LDA #$03
         STA aBA89
         LDA aBC90
         BNE bBA48
+
         LDA #$70
-        STA aB9E0
-        LDA aAED2
+        STA bpCurrentSpritePositionHiPtr
+        LDA bpGilbyXPosMSB
         ROR 
-        LDA aAED1
+        LDA bpGilbyXPos
         ROR 
-        STA aB9DF
+        STA bpCurrentSpritePositionLoPtr
         JSR BP_sB9E1
         CMP #$20
         BNE bBAB3
@@ -1494,9 +1552,9 @@ fBB29   .BYTE $00,$00,$00,$00
 fBB2D   .BYTE $00,$00,$06,$06,$02,$02,$04,$04
         .BYTE $05,$05,$03,$03,$07,$07,$01
 fBB3C   .BYTE $01,$02,$04,$08
-;-------------------------------
+;-------------------------------------------------------
 ; sBB40
-;-------------------------------
+;-------------------------------------------------------
 sBB40   
         AND #$0F
         CMP #$0F
@@ -1517,7 +1575,7 @@ bBB57   LDA fBB1D,X
         BEQ bBB46
 bBB61   LDA #$10
         STA $D404    ;Voice 1: Control Register
-        LDA aAED1
+        LDA bpGilbyXPos
         STA aBB1A,X
         LDA #$40
         STA aBD3F
@@ -1528,40 +1586,40 @@ bBB61   LDA #$10
         STA $D412    ;Voice 3: Control Register
         LDA #$15
         STA $D404    ;Voice 1: Control Register
-        LDA aAED2
+        LDA bpGilbyXPosMSB
         STA fBB23,X
         LDA #$70
         STA fBB1D,X
         LDA #$10
         STA fBB20,X
-        LDA aB571
+        LDA bpJoystickInput
         AND #$01
         BNE bBBA1
         LDA #$FD
         STA fBB29,X
         BNE bBBAD
-bBBA1   LDA aB571
+bBBA1   LDA bpJoystickInput
         AND #$02
         BNE bBBAD
         LDA #$03
         STA fBB29,X
-bBBAD   LDA aB571
+bBBAD   LDA bpJoystickInput
         AND #$04
         BNE bBBBB
         LDA #$FD
         STA fBB26,X
         BNE bBBC7
-bBBBB   LDA aB571
+bBBBB   LDA bpJoystickInput
         AND #$08
         BNE bBBC7
         LDA #$03
         STA fBB26,X
 bBBC7   RTS 
 
-;-------------------------------
-; sBBC8
-;-------------------------------
-sBBC8   
+;-------------------------------------------------------
+; BP_UpdateEnemySprites
+;-------------------------------------------------------
+BP_UpdateEnemySprites   
         LDX #$03
 bBBCA   LDA fBB1D,X
         BNE bBBD7
@@ -1569,28 +1627,26 @@ bBBCA   LDA fBB1D,X
         STA Sprite0Ptr,X
         JMP jBBDF
 
-bBBD7   JSR sBBE3
+bBBD7   JSR BP_UpdateEnemySpritePosition
         LDA #$FC
         STA Sprite0Ptr,X
-;-------------------------------
-; jBBDF
-;-------------------------------
+
 jBBDF   
         DEX 
         BNE bBBCA
         RTS 
 
-;-------------------------------
-; sBBE3
-;-------------------------------
-sBBE3   
+;-------------------------------------------------------
+; BP_UpdateEnemySpritePosition
+;-------------------------------------------------------
+BP_UpdateEnemySpritePosition   
         LDA fBB23,X
         ROR 
         LDA aBB1A,X
         ROR 
-        STA aB9DF
+        STA bpCurrentSpritePositionLoPtr
         LDA fBB1D,X
-        STA aB9E0
+        STA bpCurrentSpritePositionHiPtr
         LDA fBB26,X
         STA aBC8E
         LDA fBB29,X
@@ -1663,9 +1719,7 @@ aBC90   .BYTE $00
 bBC91   LDA fBB3C,X
         ORA $D010    ;Sprites 0-7 MSB of X coordinate
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-;-------------------------------
-; jBC9A
-;-------------------------------
+
 jBC9A   
         LDY fBB20,X
         ASL 
@@ -1683,9 +1737,9 @@ bBCAA   LDA #$00
 
 fBCB6   .BYTE $F6,$F6,$F6,$F6,$F6,$F6,$F6,$F6
 fBCBE   .BYTE $02,$08,$07,$04,$0E,$04,$06,$02
-;-------------------------------
+;-------------------------------------------------------
 ; BonusPhaseSetupIBallSprites
-;-------------------------------
+;-------------------------------------------------------
 BonusPhaseSetupIBallSprites   
         LDA #$FF
         STA $D01C    ;Sprites Multi-Color Mode Select
@@ -1708,19 +1762,19 @@ bBCD0   TXA
         RTS 
 
 fBCF1   .BYTE $50,$68,$80,$98,$B0,$C8,$E0,$F8
-;-------------------------------
+;-------------------------------------------------------
 ; sBCF9
-;-------------------------------
+;-------------------------------------------------------
 sBCF9   
         LDA #$70
         STA $D001    ;Sprite 0 Y Pos
-        LDA aAED1
+        LDA bpGilbyXPos
         STA $D000    ;Sprite 0 X Pos
         LDA aB682
         STA Sprite0Ptr
         LDA #$08
         STA $D027    ;Sprite 0 Color
-        LDA aAED2
+        LDA bpGilbyXPosMSB
         BNE bBD1D
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$FE
@@ -1732,9 +1786,9 @@ bBD1D   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 bBD25   RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; sBD26
-;-------------------------------
+;-------------------------------------------------------
 sBD26   
         LDA aBD3F
         BEQ bBD25
@@ -1790,9 +1844,9 @@ fBDBD   .BYTE $06,$07,$08,$09,$0A,$02,$03,$04
         .BYTE $00,$06,$06,$06,$11,$11,$11,$00
         .BYTE $00,$00,$00,$0F,$0F,$15,$16,$17
         .BYTE $15,$16,$17
-;-------------------------------
+;-------------------------------------------------------
 ; jBE80
-;-------------------------------
+;-------------------------------------------------------
 jBE80   
         CMP #$20
         BNE bBEAC
@@ -1863,9 +1917,9 @@ bBEFF   CMP #$26
         STA aAED3
         LDY #$7A
         LDX #$C7
-;-------------------------------
+;-------------------------------------------------------
 ; sBF0C
-;-------------------------------
+;-------------------------------------------------------
 sBF0C   
         LDA #$01
         STA aC707
@@ -1881,9 +1935,9 @@ bBF17   LDA (p78),Y
         STA $D40B    ;Voice 2: Control Register
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; jBF27
-;-------------------------------
+;-------------------------------------------------------
 jBF27   
         SEI 
         LDA #<pBFB8
@@ -1909,13 +1963,13 @@ bBF51   LDA fBFAA,X
         STA tempLoPtr
         LDA fC019,Y
         AND #$3F
-        STA (pFD),Y
+        STA (tempHiPtr1),Y
         LDA tempLoPtr
         CLC 
         ADC #$D4
         STA tempLoPtr
         LDA fAEC1,X
-        STA (pFD),Y
+        STA (tempHiPtr1),Y
         DEX 
         BPL bBF51
         DEY 
@@ -1939,13 +1993,15 @@ bBF88   LDA MainControlLoop,X
         BNE bBF88
         DEC tempHiPtr
         BNE bBF86
-        JMP SwapCharsetSpriteData
+        JMP SwapSpriteData
 
 fBFA1   .BYTE $30,$4C,$68,$84,$A0,$BC,$D8,$00
 aBFA9   .BYTE $00
 fBFAA   .BYTE $A0,$C8,$F0,$18,$40,$68,$90
 fBFB1   .BYTE $04,$04,$04,$05,$05,$05,$05
-pBFB8   LDA $D019    ;VIC Interrupt Request Register (IRR)
+
+pBFB8
+        LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE bBFC2
         JMP jBFF1
@@ -1968,9 +2024,9 @@ bBFE6   STA $D012    ;Raster Position
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-;-------------------------------
+;-------------------------------------------------------
 ; jBFF1
-;-------------------------------
+;-------------------------------------------------------
 jBFF1   
         PLA 
         TAY 
@@ -1981,9 +2037,9 @@ jBFF1
 
 aBFF7   .BYTE $00
 aBFF8   .BYTE $05
-;-------------------------------
+;-------------------------------------------------------
 ; sBFF9
-;-------------------------------
+;-------------------------------------------------------
 sBFF9   
         DEC aBFF8
         BEQ bBFFF
@@ -2003,14 +2059,14 @@ bC015   DEX
         RTS 
 
 fC019   .TEXT " % % \ \  SORRY!!   NO BONUS!!  \ \ % % "
-;-------------------------------
+;-------------------------------------------------------
 ; DisplayBonusBountyScreen
-;-------------------------------
+;-------------------------------------------------------
 DisplayBonusBountyScreen   
         SEI 
-        LDA #<pC137
+        LDA #<BonusBountyScreenInterruptHandler
         STA $0314    ;IRQ
-        LDA #>pC137
+        LDA #>BonusBountyScreenInterruptHandler
         STA $0315    ;IRQ
         LDA #$00
         STA aC136
@@ -2037,13 +2093,13 @@ bC07E   LDA fBFAA,X
         STA tempLoPtr
         LDA txtCongoatulations,Y
         AND #$3F
-        STA (pFD),Y
+        STA (tempHiPtr1),Y
         LDA tempLoPtr
         CLC 
         ADC #$D4
         STA tempLoPtr
         LDA fB489,X
-        STA (pFD),Y
+        STA (tempHiPtr1),Y
         DEX 
         BPL bC07E
         LDA #$20
@@ -2078,15 +2134,15 @@ bC0D0   DEX
         BNE bC0CE
         DEC tempHiPtr
         BNE bC0CE
-        JMP SwapCharsetSpriteData
+        JMP SwapSpriteData
 
 fC0E6   .BYTE $EF,$CF,$AF,$8F,$6F,$4F
 aC0EC   .BYTE $C8
 txtBonusBounty   .TEXT "CURRENT BONUS BOUNTY: 0000000 % % % % % "
-;-------------------------------
-; sC115
-;-------------------------------
-sC115   
+;-------------------------------------------------------
+; BonusBountyScreenAnimateBlinkingSprites
+;-------------------------------------------------------
+BonusBountyScreenAnimateBlinkingSprites   
         LDX #$05
 bC117   TXA 
         ASL 
@@ -2105,10 +2161,10 @@ bC117   TXA
 
 aC135   .BYTE $00
 aC136   .BYTE $00
-;-------------------------------
-; pC137
-;-------------------------------
-pC137
+;-------------------------------------------------------
+; BonusBountyScreenInterruptHandler
+;-------------------------------------------------------
+BonusBountyScreenInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE bC141
@@ -2119,11 +2175,13 @@ bC141   LDY aC136
         CLC 
         ADC #$08
         STA aC135
-        JSR sC115
+        JSR BonusBountyScreenAnimateBlinkingSprites
+
         INC aC136
         LDY aC136
         LDA fBFA1,Y
         BNE bC167
+
         LDA #$00
         STA aC136
         TAY 
@@ -2143,9 +2201,9 @@ bC167   STA $D012    ;Raster Position
 aC178   .BYTE $01
 aC179   .BYTE $0A
 aC17A   .BYTE $05
-;-------------------------------
+;-------------------------------------------------------
 ; sC17B
-;-------------------------------
+;-------------------------------------------------------
 sC17B   
         DEC aC17A
         BEQ bC181
@@ -2177,9 +2235,9 @@ bC18F   INC aC0EC
 txtCongoatulations   .TEXT "CONGOATULATIONS... STAND BY TO COP BONUS"
 aC1DC   .BYTE $FF
 aC1DD   .BYTE $20
-;-------------------------------
+;-------------------------------------------------------
 ; sC1DE
-;-------------------------------
+;-------------------------------------------------------
 sC1DE   
         DEC aC1DD
         BEQ bC1E4
@@ -2194,9 +2252,9 @@ bC1E4   LDA #$20
         INC aC1DC
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; BonusRoundDrawTimerBonus
-;-------------------------------
+;-------------------------------------------------------
 BonusRoundDrawTimerBonus   
         LDX #$0A
 bC1F9   LDA txtTimeBonus,X
@@ -2212,7 +2270,7 @@ bC209   JSR GetNextValueInSequence
         STA $D412    ;Voice 3: Control Register
         LDY #$01
         LDX #$06
-        JSR sC229
+        JSR BP_IncrementBonusBountyScore
         LDX #$10
 bC21D   DEY 
         BNE bC21D
@@ -2222,10 +2280,10 @@ bC21D   DEY
         BNE bC209
         RTS 
 
-;-------------------------------
-; sC229
-;-------------------------------
-sC229   
+;-------------------------------------------------------
+; BP_IncrementBonusBountyScore
+;-------------------------------------------------------
+BP_IncrementBonusBountyScore   
         TXA 
         PHA 
 bC22B   INC SCREEN_RAM + $02E5,X
@@ -2239,14 +2297,14 @@ bC22B   INC SCREEN_RAM + $02E5,X
 bC23D   PLA 
         TAX 
         DEY 
-        BNE sC229
+        BNE BP_IncrementBonusBountyScore
         RTS 
 
 txtTimeBonus   .TEXT "TIMER BONUS"
 aC24E   .TEXT $10
-;-------------------------------
+;-------------------------------------------------------
 ; BonusRoundDrawIBallBonus
-;-------------------------------
+;-------------------------------------------------------
 BonusRoundDrawIBallBonus   
         LDX #$0A
 bC251   LDA txtIBallBonus,X
@@ -2264,7 +2322,7 @@ bC26B   JSR GetNextValueInSequence
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
         LDX #$06
         LDY #$01
-        JSR sC229
+        JSR BP_IncrementBonusBountyScore
         LDX #$40
 bC27A   DEY 
         BNE bC27A
@@ -2309,9 +2367,9 @@ aC354   .BYTE $00
 aC355   .BYTE $00
 aC356   .BYTE $00
 aC357   .BYTE $01
-;-------------------------------
+;-------------------------------------------------------
 ; sC358
-;-------------------------------
+;-------------------------------------------------------
 sC358   
         DEC aC357
         BEQ bC35E
@@ -2323,18 +2381,20 @@ bC35E   LDA aC356
         RTS 
 
 bC367   INC aC356
+
         JSR GetNextValueInSequence
         STA aC353
         LDA #>backingDataLoPtr
         STA aC355
         LDA #<backingDataLoPtr
         STA aC354
+
         JSR sC380
         JMP jC397
 
-;-------------------------------
+;-------------------------------------------------------
 ; sC380
-;-------------------------------
+;-------------------------------------------------------
 sC380   
         JSR GetNextValueInSequence
         AND #$07
@@ -2348,9 +2408,9 @@ sC380
         STA aC3BE
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; jC397
-;-------------------------------
+;-------------------------------------------------------
 jC397   
         LDX #$3F
 bC399   LDA #$00
@@ -2372,9 +2432,9 @@ bC3BC   RTS
 aC3BD   .BYTE $00
 aC3BE   .BYTE $00
 aC3BF   .BYTE $40
-;-------------------------------
+;-------------------------------------------------------
 ; sC3C0
-;-------------------------------
+;-------------------------------------------------------
 sC3C0   
         JSR sC5FF
         LDA aBC90
@@ -2407,9 +2467,9 @@ bC3D5   LDA aC356
         ADC #$02
         STA aC421
         STA aC422
-;-------------------------------
+;-------------------------------------------------------
 ; sC411
-;-------------------------------
+;-------------------------------------------------------
 sC411   
         JSR GetNextValueInSequence
         AND #$7F
@@ -2483,9 +2543,9 @@ bC48F   EOR #$FF
         STA aC423
         STA aC353
 bC4AF   STA aC355
-;-------------------------------
+;-------------------------------------------------------
 ; jC4B2
-;-------------------------------
+;-------------------------------------------------------
 jC4B2   
         LDA aC354
         CLC 
@@ -2512,9 +2572,9 @@ bC4D4   CMP #$B0
 bC4E8   LDA aC676
         BEQ sC4F0
         JSR sC677
-;-------------------------------
+;-------------------------------------------------------
 ; sC4F0
-;-------------------------------
+;-------------------------------------------------------
 sC4F0   
         LDX aC425
         LDA aC353
@@ -2532,9 +2592,9 @@ sC4F0
         STA aC425
         RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; sC512
-;-------------------------------
+;-------------------------------------------------------
 sC512   
         LDX #$00
 bC514   TXA 
@@ -2544,6 +2604,7 @@ bC514   TXA
         STA $D02B,X  ;Sprite 4 Color
         LDA aC676
         BEQ bC526
+
         LDA #$06
         STA $D02B,X  ;Sprite 4 Color
 bC526   LDA aC578
@@ -2568,9 +2629,7 @@ bC526   LDA aC578
         LDA fC56C,X
         ORA $D010    ;Sprites 0-7 MSB of X coordinate
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-;-------------------------------
-; jC558
-;-------------------------------
+
 jC558   
         INX 
         CPX #$04
@@ -2586,9 +2645,9 @@ fC56C   .BYTE $10,$20,$40,$80
 fC570   .BYTE $EF,$DF,$BF,$7F
 fC574   .BYTE $00,$03,$06,$09
 aC578   .BYTE $C8,$02,$06,$07,$04
-;-------------------------------
+;-------------------------------------------------------
 ; sC57D
-;-------------------------------
+;-------------------------------------------------------
 sC57D   
         LDA #$70
         CMP aC354
@@ -2611,18 +2670,18 @@ bC591   LDA aC3BE
         DEC aC424
 bC5A4   RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; sC5A5
-;-------------------------------
+;-------------------------------------------------------
 sC5A5   
         LDA aC355
         ROR 
         LDA aC353
         ROR 
         STA a77
-        LDA aAED2
+        LDA bpGilbyXPosMSB
         ROR 
-        LDA aAED1
+        LDA bpGilbyXPos
         ROR 
         CMP a77
         BMI bC5C7
@@ -2643,9 +2702,9 @@ bC5C7   LDA aC3BD
 bC5DA   RTS 
 
 aC5DB   .BYTE $05
-;-------------------------------
+;-------------------------------------------------------
 ; jC5DC
-;-------------------------------
+;-------------------------------------------------------
 jC5DC   
         DEC aC5DB
         BNE bC5DA
@@ -2663,9 +2722,9 @@ jC5DC
         RTS 
 
 aC5FE   .BYTE $00
-;-------------------------------
+;-------------------------------------------------------
 ; sC5FF
-;-------------------------------
+;-------------------------------------------------------
 sC5FF   
         LDX #$02
 bC601   LDA fBB1E,X
@@ -2675,9 +2734,9 @@ bC609   DEX
         BPL bC601
 bC60C   RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; sC60D
-;-------------------------------
+;-------------------------------------------------------
 sC60D   
         SEC 
         SBC aC354
@@ -2729,9 +2788,9 @@ bC638   CMP #$10
 bC675   RTS 
 
 aC676   .BYTE $00
-;-------------------------------
+;-------------------------------------------------------
 ; sC677
-;-------------------------------
+;-------------------------------------------------------
 sC677   
         LDA aC423
         EOR #$FF
@@ -2743,9 +2802,9 @@ sC677
         INC aC424
 bC68D   RTS 
 
-;-------------------------------
+;-------------------------------------------------------
 ; sC68E
-;-------------------------------
+;-------------------------------------------------------
 sC68E   
         LDA aC676
         BNE bC68D
@@ -2754,9 +2813,9 @@ sC68E
         LDA aC353
         ROR 
         STA a77
-        LDA aAED2
+        LDA bpGilbyXPosMSB
         ROR 
-        LDA aAED1
+        LDA bpGilbyXPos
         ROR 
         SEC 
         SBC a77
@@ -2810,9 +2869,9 @@ aC70A   .BYTE $00
 aC70B   .BYTE $00
 aC70C   .BYTE $00
 aC70D   .BYTE $00
-;-------------------------------
+;-------------------------------------------------------
 ; sC70E
-;-------------------------------
+;-------------------------------------------------------
 sC70E   
         LDA aC707
         BNE bC719
@@ -2860,9 +2919,9 @@ txtIBallBonus   .TEXT "IBALL BONUS"
         .BYTE $01,$1D,$01,$00,$30,$30,$01,$40
         .BYTE $02,$00
 aC780   .BYTE $05
-;-------------------------------
+;-------------------------------------------------------
 ; sC781
-;-------------------------------
+;-------------------------------------------------------
 sC781   
         DEC aC780
         BNE bC7A3
