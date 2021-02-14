@@ -371,7 +371,7 @@ bADDA   STA fBB1E,X
         LDA #$00
         STA aAEBD
         STA aAEC0
-        STA aC1DC
+        STA bpBonusRoundTimer
         LDA #$F6
         STA aAEBE
         LDA #$FF
@@ -386,7 +386,7 @@ bAE15   STA fBCB6,X
         LDA #$B0
         STA aBC90
         LDA #$01
-        STA aB487
+        STA bpCharactersToScroll
         JSR ClearScreen
         JMP BonusPhaseSetUpScreen
 
@@ -467,9 +467,9 @@ jAEA9
 
 aAEB6   =*+$01
 ;-------------------------------------------------------
-; GetNextValueInSequence
+; BP_PutRandomValueInAccumulator
 ;-------------------------------------------------------
-GetNextValueInSequence   
+BP_PutRandomValueInAccumulator   
         LDA a9A00
         INC aAEB6
         RTS 
@@ -567,9 +567,9 @@ bAF15   LDA SCREEN_RAM + $02A7,X
         RTS 
 
 ;-------------------------------------------------------
-; BP_UpdateGilbyPosition
+; BP_UpdateGilbyXPosition
 ;-------------------------------------------------------
-BP_UpdateGilbyPosition   
+BP_UpdateGilbyXPosition   
         LDA bpGilbyXPos
         STA $D000    ;Sprite 0 X Pos
         LDA bpGilbyXPosMSB
@@ -586,9 +586,9 @@ bAF99   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         RTS 
 
 ;-------------------------------------------------------
-; ChangeColorOfCharacters
+; ChangeColorOfCharactersToAccumulator
 ;-------------------------------------------------------
-ChangeColorOfCharacters   
+ChangeColorOfCharactersToAccumulator   
         LDX #$00
 bAFA4   STA COLOR_RAM + $0000,X
         STA COLOR_RAM + $0100,X
@@ -797,7 +797,7 @@ BonusRoundControlLoop
         LDA fB499,X
         STA aB4A9
         LDA #$01
-        STA aB487
+        STA bpCharactersToScroll
         LDX #$00
         LDA #$10
 bB3A1   STA bonusPhaseMapOffset,X
@@ -805,14 +805,14 @@ bB3A1   STA bonusPhaseMapOffset,X
         BNE bB3A1
         LDA #$19
         STA tempHiPtr
-bB3AB   JSR GetNextValueInSequence
+bB3AB   JSR BP_PutRandomValueInAccumulator
         AND #$07
         PHA 
         LDA aAED0
         AND #$FC
         BEQ bB3BF
         PLA 
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$1F
         PHA 
 bB3BF   PLA 
@@ -883,7 +883,7 @@ bB427   NOP
         EOR #$01
         STA aAEBF
         LDA #$00
-        STA aB487
+        STA bpCharactersToScroll
 bB442   LDA lastKeyPressed
         CMP #$40
         BNE bB442
@@ -929,7 +929,7 @@ BonusPhaseInterruptHandler
         PLA 
         RTI 
 
-aB487   .BYTE $00
+bpCharactersToScroll   .BYTE $00
 aB488   .BYTE $00
 fB489   .BYTE $02,$08,$07,$05,$0E,$04,$06,$00
 fB491   .BYTE $00,$0B,$0C,$0F,$0F,$0C,$0B,$00
@@ -959,50 +959,55 @@ bB4C1   DEY
         JSR BonusPhase_HandleScroll
         JSR BP_CheckInput
         JSR BP_MaybeChangeColorScheme
-        JSR BP_UpdateGilbyPosition
+        JSR BP_UpdateGilbyXPosition
         JSR BP_RecalculateGilbyPosition
         JSR BP_sBA07
-        JSR BP_sBA8A
-        JSR sC1DE
+        JSR BP_CheckCollision
+        JSR BP_UpdateBonusRoundTimer
 
         LDA aB488
         ORA #$10
         STA $D011    ;VIC Control Register 1
+
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
+
         LDA #$B8
         STA $D012    ;Raster Position
 
         LDA aAEBF
         BEQ bB50F
+
         DEC aC425
-        JSR sC512
+        JSR BP_UpdateBulletSprites
         INC aC425
         JMP jB515
 
-bB50F   JSR sC3C0
+bB50F   JSR BP_CalculateMovementOfEnemySprites
         JSR BP_UpdateEnemySprites
 
 jB515   
-        JSR sBCF9
-        JSR sC781
-        JSR sBD26
-        JSR sC70E
+        JSR BP_UpdateGilbyXAndYPosition
+        JSR BP_DoStuffAndUpdateBackgroundColor
+        JSR BP_PlaySound
+        JSR BP_PlaySomeSounds
         JMP $EA31
 
 ;-------------------------------------------------------
 ; BonusPhase_HandleScroll
 ;-------------------------------------------------------
 BonusPhase_HandleScroll   
-        LDA aB487
+        LDA bpCharactersToScroll
         BMI bB559
+
         LDA aB488
         CLC 
-        ADC aB487
+        ADC bpCharactersToScroll
         STA aB488
         AND #$08
         BNE bB542
+
 bB537   LDX #$42
 bB539   LDY #$10
 bB53B   DEY 
@@ -1025,7 +1030,7 @@ jB548
 
 bB559   LDA aB488
         CLC 
-        ADC aB487
+        ADC bpCharactersToScroll
         STA aB488
         AND #$F0
         BEQ bB537
@@ -1051,7 +1056,7 @@ bB57E   LDA $DC00    ;CIA1: Data Port Register A
         STA bpJoystickInput
         LDY #$02
         STY aB570
-        JSR sBB40
+        JSR BP_RecordJoystickInput
 
         LDA bpJoystickInput
         AND #$0F
@@ -1076,17 +1081,17 @@ bB5AF   LDA bpJoystickInput
         BNE bB5CF
 
         ; Joystick pushed up.
-        LDA aB487
+        LDA bpCharactersToScroll
         PHA 
         SEC 
         SBC #$02
-        STA aB487
+        STA bpCharactersToScroll
         CMP #$F8
         BEQ bB5C8
         CMP #$F7
         BNE bB5EF
 bB5C8   PLA 
-        STA aB487
+        STA bpCharactersToScroll
         JMP jB5F0
 
 bB5CF   LDA bpJoystickInput
@@ -1094,17 +1099,17 @@ bB5CF   LDA bpJoystickInput
         BNE jB5F0
 
         ; Joystick pushed down.
-        LDA aB487
+        LDA bpCharactersToScroll
         PHA 
         CLC 
         ADC #$02
-        STA aB487
+        STA bpCharactersToScroll
         CMP #$08
         BEQ bB5E8
         CMP #$09
         BNE bB5EF
 bB5E8   PLA 
-        STA aB487
+        STA bpCharactersToScroll
         JMP jB5F0
 
 bB5EF   PLA 
@@ -1151,7 +1156,7 @@ jB631
         LDA #$10
         BNE bB641
         LDA #$00
-        STA aB487
+        STA bpCharactersToScroll
         STA aAED3
         RTS 
 
@@ -1298,29 +1303,29 @@ bB91C   CMP fB93F,X
 ; BonusPhaseChangeColorScheme
 ;-------------------------------------------------------
 BonusPhaseChangeColorScheme   
-        LDA fB944,X
+        LDA bpBackgroundColorArray1,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
-        STA aB95C
-        LDA fB94C,X
+        STA bpBackgroundColorArrayIndex1
+        LDA bpBackgroundColorArray2,X
         STA $D023    ;Background Color 2, Multi-Color Register 1
-        STA aB95D
-        LDA fB954,X
+        STA bpBackgroundColorArrayIndex2
+        LDA bpCharacterColorArray,X
         ORA #$08
-        JSR ChangeColorOfCharacters
+        JSR ChangeColorOfCharactersToAccumulator
 fB93F   RTS 
 
-        .BYTE $04,$05,$06,$03
-fB944   .BYTE $07,$0B,$00,$05,$11,$08,$03,$00
-fB94C   .BYTE $06,$0C,$10,$0D,$0C,$0A,$0E,$06
-fB954   .BYTE $02,$01,$02,$04,$01,$02,$06,$05
-aB95C   .BYTE $00
-aB95D   .BYTE $00
-fB95E   BRK #$01
-        .BYTE $02,$03,$04,$05,$06,$07,$08,$09
-        .BYTE $0A,$0B,$0C,$0D,$0E,$0F
-aB96E   .BYTE $00
-aB96F   .BYTE $00
-aB970   .BYTE $00
+                             .BYTE $04,$05,$06,$03
+bpBackgroundColorArray1      .BYTE $07,$0B,$00,$05,$11,$08,$03,$00
+bpBackgroundColorArray2      .BYTE $06,$0C,$10,$0D,$0C,$0A,$0E,$06
+bpCharacterColorArray        .BYTE $02,$01,$02,$04,$01,$02,$06,$05
+bpBackgroundColorArrayIndex1 .BYTE $00
+bpBackgroundColorArrayIndex2 .BYTE $00
+bpBackgroundColorArray       .BYTE $00,$01
+                             .BYTE $02,$03,$04,$05,$06,$07,$08,$09
+                             .BYTE $0A,$0B,$0C,$0D,$0E,$0F
+aB96E                        .BYTE $00
+aB96F                        .BYTE $00
+aB970                        .BYTE $00
 ;-------------------------------------------------------
 ; BP_RecalculateGilbyPosition
 ;-------------------------------------------------------
@@ -1392,9 +1397,9 @@ bB9C2   LDA planetPtrLo2
 bpCurrentSpritePositionLoPtr   .BYTE $00
 bpCurrentSpritePositionHiPtr   .BYTE $00
 ;-------------------------------------------------------
-; BP_sB9E1
+; BP_StoreCharacterAtCurrentSpritePositionInAccumulator
 ;-------------------------------------------------------
-BP_sB9E1   
+BP_StoreCharacterAtCurrentSpritePositionInAccumulator   
         LDA bpCurrentSpritePositionLoPtr
         SEC 
         SBC #$06
@@ -1449,12 +1454,12 @@ bBA23   LDA #$03
         DEC aAED3
         DEC aAED3
 bBA35   INC aAED3
-bBA38   LDA aB487
+bBA38   LDA bpCharactersToScroll
         BEQ bBA05
         BMI bBA45
-        DEC aB487
-        DEC aB487
-bBA45   INC aB487
+        DEC bpCharactersToScroll
+        DEC bpCharactersToScroll
+bBA45   INC bpCharactersToScroll
 bBA48   RTS 
 
 fBA49   .BYTE $00,$00,$00,$00,$00,$00,$00,$0F
@@ -1468,9 +1473,9 @@ fBA49   .BYTE $00,$00,$00,$00,$00,$00,$00,$0F
         .BYTE $22
 aBA89   .BYTE $04
 ;-------------------------------------------------------
-; BP_sBA8A
+; BP_CheckCollision
 ;-------------------------------------------------------
-BP_sBA8A   
+BP_CheckCollision   
         DEC aBA89
         BNE bBA48
 
@@ -1486,7 +1491,7 @@ BP_sBA8A
         LDA bpGilbyXPos
         ROR 
         STA bpCurrentSpritePositionLoPtr
-        JSR BP_sB9E1
+        JSR BP_StoreCharacterAtCurrentSpritePositionInAccumulator
         CMP #$20
         BNE bBAB3
         JMP jBE80
@@ -1506,9 +1511,9 @@ bBAC4   PLA
         BEQ bBADB
         AND #$08
         BNE bBAD3
-        INC aB487
-        INC aB487
-bBAD3   DEC aB487
+        INC bpCharactersToScroll
+        INC bpCharactersToScroll
+bBAD3   DEC bpCharactersToScroll
         LDA #$10
         STA aBA06
 bBADB   LDA fBA49,Y
@@ -1521,14 +1526,14 @@ bBADB   LDA fBA49,Y
 bBAEC   DEC aAED3
         LDA #$10
         STA aBA06
-bBAF4   LDA aB487
+bBAF4   LDA bpCharactersToScroll
         CMP #$08
         BNE bBB00
-        DEC aB487
+        DEC bpCharactersToScroll
         BNE bBB07
 bBB00   CMP #$F8
         BNE bBB07
-        INC aB487
+        INC bpCharactersToScroll
 bBB07   LDA aAED3
         CMP #$08
         BNE bBB12
@@ -1553,9 +1558,9 @@ fBB2D   .BYTE $00,$00,$06,$06,$02,$02,$04,$04
         .BYTE $05,$05,$03,$03,$07,$07,$01
 fBB3C   .BYTE $01,$02,$04,$08
 ;-------------------------------------------------------
-; sBB40
+; BP_RecordJoystickInput
 ;-------------------------------------------------------
-sBB40   
+BP_RecordJoystickInput   
         AND #$0F
         CMP #$0F
         BNE bBB4B
@@ -1567,18 +1572,22 @@ bBB4B   DEC aBB1A
         BNE bBB46
         LDA #$04
         STA aBB1A
+
         LDX #$03
 bBB57   LDA fBB1D,X
         BEQ bBB61
         DEX 
         BNE bBB57
         BEQ bBB46
+
 bBB61   LDA #$10
         STA $D404    ;Voice 1: Control Register
+
         LDA bpGilbyXPos
         STA aBB1A,X
+
         LDA #$40
-        STA aBD3F
+        STA bpNoteToPlay
         STA $D401    ;Voice 1: Frequency Control - High-Byte
         LDA #$10
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
@@ -1586,6 +1595,7 @@ bBB61   LDA #$10
         STA $D412    ;Voice 3: Control Register
         LDA #$15
         STA $D404    ;Voice 1: Control Register
+
         LDA bpGilbyXPosMSB
         STA fBB23,X
         LDA #$70
@@ -1653,7 +1663,7 @@ BP_UpdateEnemySpritePosition
         STA aBC8F
         TXA 
         PHA 
-        JSR BP_sB9E1
+        JSR BP_StoreCharacterAtCurrentSpritePositionInAccumulator
         AND #$3F
         TAY 
         PLA 
@@ -1763,9 +1773,9 @@ bBCD0   TXA
 
 fBCF1   .BYTE $50,$68,$80,$98,$B0,$C8,$E0,$F8
 ;-------------------------------------------------------
-; sBCF9
+; BP_UpdateGilbyXAndYPosition
 ;-------------------------------------------------------
-sBCF9   
+BP_UpdateGilbyXAndYPosition   
         LDA #$70
         STA $D001    ;Sprite 0 Y Pos
         LDA bpGilbyXPos
@@ -1787,22 +1797,22 @@ bBD1D   LDA $D010    ;Sprites 0-7 MSB of X coordinate
 bBD25   RTS 
 
 ;-------------------------------------------------------
-; sBD26
+; BP_PlaySound
 ;-------------------------------------------------------
-sBD26   
-        LDA aBD3F
+BP_PlaySound   
+        LDA bpNoteToPlay
         BEQ bBD25
-        LDA aBD3F
+        LDA bpNoteToPlay
         SEC 
         SBC #$04
-        STA aBD3F
+        STA bpNoteToPlay
         STA $D401    ;Voice 1: Frequency Control - High-Byte
         BNE bBD3E
         LDA #$14
         STA $D404    ;Voice 1: Control Register
 bBD3E   RTS 
 
-aBD3F   .BYTE $00
+bpNoteToPlay   .BYTE $00
 pBD40   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$15,$16,$17,$00,$00
         .BYTE $15,$16,$17,$00,$00,$14,$14,$14
@@ -1857,13 +1867,13 @@ jBE80
         BNE bBE91
 bBE8F   LDA #$07
 bBE91   STA aAED3
-        LDA aB487
+        LDA bpCharactersToScroll
         BEQ bBEA1
         BMI bBE9F
         LDA #$F9
         BNE bBEA1
 bBE9F   LDA #$07
-bBEA1   STA aB487
+bBEA1   STA bpCharactersToScroll
         LDY #$6E
         LDX #$C7
         JSR sBF0C
@@ -1876,11 +1886,11 @@ bBEAC   CMP #$21
         CLC 
         ADC #$01
         STA aAED3
-        LDA aB487
+        LDA bpCharactersToScroll
         EOR #$FF
         CLC 
         ADC #$01
-        STA aB487
+        STA bpCharactersToScroll
         LDA #$03
         STA aBA89
         LDY #$74
@@ -1899,12 +1909,12 @@ bBEDD   RTS
 bBEDE   CMP #$23
         BNE bBEE9
         LDA #$07
-        STA aB487
+        STA bpCharactersToScroll
         BNE sBF0C
 bBEE9   CMP #$24
         BNE bBEF4
         LDA #$F9
-        STA aB487
+        STA bpCharactersToScroll
         BNE sBF0C
 bBEF4   CMP #$25
         BNE bBEFF
@@ -2224,38 +2234,39 @@ bC18F   INC aC0EC
         STA aC0EC
         DEC aC178
         BPL bC18E
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$03
         STA aC178
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$3F
         STA aC179
         RTS 
 
 txtCongoatulations   .TEXT "CONGOATULATIONS... STAND BY TO COP BONUS"
-aC1DC   .BYTE $FF
-aC1DD   .BYTE $20
+bpBonusRoundTimer   .BYTE $FF
+bpBonusRoundClock   .BYTE $20
 ;-------------------------------------------------------
-; sC1DE
+; BP_UpdateBonusRoundTimer
 ;-------------------------------------------------------
-sC1DE   
-        DEC aC1DD
+BP_UpdateBonusRoundTimer   
+        DEC bpBonusRoundClock
         BEQ bC1E4
 bC1E3   RTS 
 
 bC1E4   LDA #$20
-        STA aC1DD
-        DEC aC1DC
-        LDA aC1DC
+        STA bpBonusRoundClock
+        DEC bpBonusRoundTimer
+        LDA bpBonusRoundTimer
         CMP #$01
         BNE bC1E3
-        INC aC1DC
+        INC bpBonusRoundTimer
         RTS 
 
 ;-------------------------------------------------------
 ; BonusRoundDrawTimerBonus
 ;-------------------------------------------------------
 BonusRoundDrawTimerBonus   
+
         LDX #$0A
 bC1F9   LDA txtTimeBonus,X
         AND #$3F
@@ -2264,7 +2275,8 @@ bC1F9   LDA txtTimeBonus,X
         STA COLOR_RAM + $023E,X
         DEX 
         BPL bC1F9
-bC209   JSR GetNextValueInSequence
+
+bC209   JSR BP_PutRandomValueInAccumulator
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
         LDA #$11
         STA $D412    ;Voice 3: Control Register
@@ -2272,12 +2284,16 @@ bC209   JSR GetNextValueInSequence
         LDX #$06
         JSR BP_IncrementBonusBountyScore
         LDX #$10
+
 bC21D   DEY 
         BNE bC21D
+
         DEX 
         BNE bC21D
-        DEC aC1DC
+
+        DEC bpBonusRoundTimer
         BNE bC209
+
         RTS 
 
 ;-------------------------------------------------------
@@ -2318,7 +2334,7 @@ bC251   LDA txtIBallBonus,X
         BEQ bC285
         LDA #$21
         STA $D412    ;Voice 3: Control Register
-bC26B   JSR GetNextValueInSequence
+bC26B   JSR BP_PutRandomValueInAccumulator
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
         LDX #$06
         LDY #$01
@@ -2382,7 +2398,7 @@ bC35E   LDA aC356
 
 bC367   INC aC356
 
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         STA aC353
         LDA #>backingDataLoPtr
         STA aC355
@@ -2396,12 +2412,12 @@ bC367   INC aC356
 ; sC380
 ;-------------------------------------------------------
 sC380   
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$07
         CLC 
         ADC #$03
         STA aC3BD
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$07
         CLC 
         ADC #$03
@@ -2433,9 +2449,9 @@ aC3BD   .BYTE $00
 aC3BE   .BYTE $00
 aC3BF   .BYTE $40
 ;-------------------------------------------------------
-; sC3C0
+; BP_CalculateMovementOfEnemySprites
 ;-------------------------------------------------------
-sC3C0   
+BP_CalculateMovementOfEnemySprites   
         JSR sC5FF
         LDA aBC90
         BNE bC3D5
@@ -2457,12 +2473,12 @@ bC3D5   LDA aC356
         STA aC41E
         LDA #$0A
         STA aC425
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$03
         ADC #$02
         STA aC41F
         STA aC420
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$03
         ADC #$02
         STA aC421
@@ -2471,7 +2487,7 @@ bC3D5   LDA aC356
 ; sC411
 ;-------------------------------------------------------
 sC411   
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$7F
         ADC #$10
         STA aC41C
@@ -2487,20 +2503,23 @@ aC422   .BYTE $00
 aC423   .BYTE $00
 aC424   .BYTE $00
 aC425   .BYTE $00
+
 bC426   DEC aC41C
         BNE bC44A
+
         JSR sC380
         JSR sC411
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$07
         SBC #$04
         STA aC424
-        JSR GetNextValueInSequence
+        JSR BP_PutRandomValueInAccumulator
         AND #$08
         SBC #$04
         STA aC423
         LDA #$01
         STA aC5FE
+
 bC44A   LDA aC676
         BEQ bC452
         DEC aC676
@@ -2586,16 +2605,16 @@ sC4F0
         INX 
         TXA 
         PHA 
-        JSR sC512
+        JSR BP_UpdateBulletSprites
         PLA 
         AND #$3F
         STA aC425
         RTS 
 
 ;-------------------------------------------------------
-; sC512
+; BP_UpdateBulletSprites
 ;-------------------------------------------------------
-sC512   
+BP_UpdateBulletSprites   
         LDX #$00
 bC514   TXA 
         ASL 
@@ -2634,6 +2653,7 @@ jC558
         INX 
         CPX #$04
         BNE bC514
+
         JMP jC5DC
 
 bC560   LDA $D010    ;Sprites 0-7 MSB of X coordinate
@@ -2840,10 +2860,10 @@ bC6C0   CMP #$0C
         STA aAED3
         PLA 
         STA aC423
-        LDA aB487
+        LDA bpCharactersToScroll
         PHA 
         LDA aC424
-        STA aB487
+        STA bpCharactersToScroll
         PLA 
         STA aC424
         LDA #$10
@@ -2870,9 +2890,9 @@ aC70B   .BYTE $00
 aC70C   .BYTE $00
 aC70D   .BYTE $00
 ;-------------------------------------------------------
-; sC70E
+; BP_PlaySomeSounds
 ;-------------------------------------------------------
-sC70E   
+BP_PlaySomeSounds   
         LDA aC707
         BNE bC719
         LDA #$20
@@ -2920,11 +2940,12 @@ txtIBallBonus   .TEXT "IBALL BONUS"
         .BYTE $02,$00
 aC780   .BYTE $05
 ;-------------------------------------------------------
-; sC781
+; BP_DoStuffAndUpdateBackgroundColor
 ;-------------------------------------------------------
-sC781   
+BP_DoStuffAndUpdateBackgroundColor   
         DEC aC780
         BNE bC7A3
+
         INC aB970
         LDA aB970
         AND #$07
@@ -2934,13 +2955,15 @@ sC781
         STA aB96E
         LDA fB491,X
         STA aB96F
+
         LDA #$03
         STA aC780
-bC7A3   LDX aB95C
-        LDA fB95E,X
+
+bC7A3   LDX bpBackgroundColorArrayIndex1
+        LDA bpBackgroundColorArray,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
-        LDX aB95D
-        LDA fB95E,X
+        LDX bpBackgroundColorArrayIndex2
+        LDA bpBackgroundColorArray,X
         STA $D023    ;Background Color 2, Multi-Color Register 1
         RTS 
 
