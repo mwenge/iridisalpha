@@ -350,8 +350,8 @@ bADC1   INC bonusPhaseCounter
         STA $D020    ;Border Color
         STA incrementLives
         STA bpGilbyXPosMSB
-        STA aAED3
-        STA aC707
+        STA bpMovementOnXAxis
+        STA bpCollisionSound
         STA $D021    ;Background Color 0
 
         LDX #$02
@@ -377,10 +377,10 @@ bADDA   STA fBB1E,X
         LDA #$FF
         STA bpJoystickInput
         LDA #$07
-        STA aBED3
+        STA bpAllowedCollisionsLeft
         TAX 
         LDA #$F6
-bAE15   STA fBCB6,X
+bAE15   STA bpLickerShipSpriteArray,X
         DEX 
         BPL bAE15
         LDA #$B0
@@ -456,13 +456,13 @@ bAE71   LDA #$F0
         JMP BonusRoundControlLoop
 
 ;-------------------------------------------------------
-; jAEA9
+; RegisterCollisionOnLickerShips
 ;-------------------------------------------------------
-jAEA9   
-        LDX aBED3
+RegisterCollisionOnLickerShips   
+        LDX bpAllowedCollisionsLeft
         LDA #$F8
-        STA fBCB6,X
-        DEC aBED3
+        STA bpLickerShipSpriteArray,X
+        DEC bpAllowedCollisionsLeft
         RTS 
 
 aAEB6   =*+$01
@@ -480,11 +480,11 @@ aAEBE   .BYTE $00
 aAEBF   .BYTE $00
 aAEC0   .BYTE $00
 fAEC1   .BYTE $0B,$0C,$0F,$01,$0F,$0C,$0B
-fAEC8   .BYTE $F6,$F7,$F8,$F7,$F7,$F8,$F7,$F6
+defaultLickerShipSpriteArray   .BYTE $F6,$F7,$F8,$F7,$F7,$F8,$F7,$F6
 aAED0   .BYTE $00
 bpGilbyXPos   .BYTE $A0
 bpGilbyXPosMSB   .BYTE $00
-aAED3   .BYTE $00
+bpMovementOnXAxis   .BYTE $00
 ;-------------------------------------------------------
 ; BonusPhaseFillTopLineAfterScrollDown
 ;-------------------------------------------------------
@@ -871,6 +871,7 @@ bB415   STA bonusPhaseMapOffset,X
         STA aAEBF
         LDA #$40
         STA lastKeyPressed
+
 bB427   NOP 
         NOP 
         NOP 
@@ -884,12 +885,14 @@ bB427   NOP
         STA aAEBF
         LDA #$00
         STA bpCharactersToScroll
+
 bB442   LDA lastKeyPressed
         CMP #$40
         BNE bB442
-bB448   LDA aBED3
+
+bB448   LDA bpAllowedCollisionsLeft
         BPL bB450
-        JMP jBF27
+        JMP BP_CollisionsUsedUp
 
 bB450   LDA aAEC0
         BEQ bB427
@@ -955,13 +958,13 @@ bB4C1   DEY
         BNE bB4B9
         LDA #$E0
         STA aBFF7
-        JSR BonusPhaseSetupIBallSprites
+        JSR BP_Draw8LickerShipSprites
         JSR BonusPhase_HandleScroll
         JSR BP_CheckInput
         JSR BP_MaybeChangeColorScheme
         JSR BP_UpdateGilbyXPosition
         JSR BP_RecalculateGilbyPosition
-        JSR BP_sBA07
+        JSR BP_CalculateAutomaticMovement
         JSR BP_CheckCollision
         JSR BP_UpdateBonusRoundTimer
 
@@ -980,12 +983,12 @@ bB4C1   DEY
         BEQ bB50F
 
         DEC aC425
-        JSR BP_UpdateBulletSprites
+        JSR BP_UpdateEnemyIBallPosition
         INC aC425
         JMP jB515
 
 bB50F   JSR BP_CalculateMovementOfEnemySprites
-        JSR BP_UpdateEnemySprites
+        JSR BP_UpdateBulletSprites
 
 jB515   
         JSR BP_UpdateGilbyXAndYPosition
@@ -1118,46 +1121,48 @@ jB5F0
         LDA bpJoystickInput
         AND #$04
         BNE bB610
-        LDA aAED3
+
+        ;Joystick pushed right
+        LDA bpMovementOnXAxis
         PHA 
         CLC 
         ADC #$02
-        STA aAED3
+        STA bpMovementOnXAxis
         CMP #$08
         BEQ bB609
         CMP #$09
         BNE bB630
 bB609   PLA 
-        STA aAED3
-        JMP jB631
+        STA bpMovementOnXAxis
+        JMP BP_CI_Exit
 
 bB610   LDA bpJoystickInput
         AND #$08
-        BNE jB631
-        LDA aAED3
+        BNE BP_CI_Exit
+        LDA bpMovementOnXAxis
         PHA 
         SEC 
         SBC #$02
-        STA aAED3
+        STA bpMovementOnXAxis
         CMP #$F8
         BEQ bB629
         CMP #$F7
         BNE bB630
 bB629   PLA 
-        STA aAED3
-        JMP jB631
+        STA bpMovementOnXAxis
+        JMP BP_CI_Exit
 
 bB630   PLA 
-;-------------------------------------------------------
-; jB631
-;-------------------------------------------------------
-jB631   
+
+BP_CI_Exit   
         LDA bpJoystickInput
         LDA #$10
+        ; This will always be false!
         BNE bB641
+
         LDA #$00
         STA bpCharactersToScroll
-        STA aAED3
+        STA bpMovementOnXAxis
         RTS 
 
 bB641   RTS 
@@ -1333,13 +1338,13 @@ BP_RecalculateGilbyPosition
         LDA bpGilbyXPos
         LDY #$00
         STY a3E
-        LDY aAED3
+        LDY bpMovementOnXAxis
         BPL bB981
 
         LDY #$FF
         STY a3E
 bB981   CLC 
-        ADC aAED3
+        ADC bpMovementOnXAxis
         STA bpGilbyXPos
 
         LDA bpGilbyXPosMSB
@@ -1358,7 +1363,7 @@ bB981   CLC
         STA bpGilbyXPosMSB
 
 bB9A3   LDA #$00
-        STA aAED3
+        STA bpMovementOnXAxis
 bB9A8   RTS 
 
 bB9A9   CMP #$A0
@@ -1429,9 +1434,9 @@ bBA05   RTS
 
 aBA06   .BYTE $04
 ;-------------------------------------------------------
-; BP_sBA07
+; BP_CalculateAutomaticMovement
 ;-------------------------------------------------------
-BP_sBA07   
+BP_CalculateAutomaticMovement   
         LDA aBC90
         BEQ bBA1D
         DEC aBC90
@@ -1448,12 +1453,12 @@ bBA1D   DEC aBA06
 
 bBA23   LDA #$03
         STA aBA06
-        LDA aAED3
+        LDA bpMovementOnXAxis
         BEQ bBA38
         BMI bBA35
-        DEC aAED3
-        DEC aAED3
-bBA35   INC aAED3
+        DEC bpMovementOnXAxis
+        DEC bpMovementOnXAxis
+bBA35   INC bpMovementOnXAxis
 bBA38   LDA bpCharactersToScroll
         BEQ bBA05
         BMI bBA45
@@ -1494,7 +1499,9 @@ BP_CheckCollision
         JSR BP_StoreCharacterAtCurrentSpritePositionInAccumulator
         CMP #$20
         BNE bBAB3
-        JMP jBE80
+
+        ; Has Collied with Wall
+        JMP BP_ReactToGilbyCollidingWithWall
 
 bBAB3   AND #$3F
         TAY 
@@ -1504,7 +1511,7 @@ bBAB3   AND #$3F
         CMP #$20
         BNE bBAC4
         PLA 
-        JMP jBE80
+        JMP BP_ReactToGilbyCollidingWithWall
 
 bBAC4   PLA 
         AND #$0F
@@ -1521,9 +1528,9 @@ bBADB   LDA fBA49,Y
         BEQ bBAF4
         AND #$80
         BNE bBAEC
-        INC aAED3
-        INC aAED3
-bBAEC   DEC aAED3
+        INC bpMovementOnXAxis
+        INC bpMovementOnXAxis
+bBAEC   DEC bpMovementOnXAxis
         LDA #$10
         STA aBA06
 bBAF4   LDA bpCharactersToScroll
@@ -1534,15 +1541,15 @@ bBAF4   LDA bpCharactersToScroll
 bBB00   CMP #$F8
         BNE bBB07
         INC bpCharactersToScroll
-bBB07   LDA aAED3
+bBB07   LDA bpMovementOnXAxis
         CMP #$08
         BNE bBB12
-        DEC aAED3
+        DEC bpMovementOnXAxis
 bBB11   RTS 
 
 bBB12   CMP #$F8
         BNE bBB11
-        INC aAED3
+        INC bpMovementOnXAxis
         RTS 
 
 aBB1A   .BYTE $04
@@ -1566,7 +1573,7 @@ BP_RecordJoystickInput
         BNE bBB4B
 bBB46   PLA 
         PLA 
-        JMP jB631
+        JMP BP_CI_Exit
 
 bBB4B   DEC aBB1A
         BNE bBB46
@@ -1627,18 +1634,18 @@ bBBBB   LDA bpJoystickInput
 bBBC7   RTS 
 
 ;-------------------------------------------------------
-; BP_UpdateEnemySprites
+; BP_UpdateBulletSprites
 ;-------------------------------------------------------
-BP_UpdateEnemySprites   
+BP_UpdateBulletSprites   
         LDX #$03
 bBBCA   LDA fBB1D,X
         BNE bBBD7
-        LDA #$F0
+        LDA #$F0 ; 'Empty' sprite
         STA Sprite0Ptr,X
         JMP jBBDF
 
-bBBD7   JSR BP_UpdateEnemySpritePosition
-        LDA #$FC
+bBBD7   JSR BP_UpdateBulletSpritePosition
+        LDA #$FC ; The bullet sprite
         STA Sprite0Ptr,X
 
 jBBDF   
@@ -1647,9 +1654,9 @@ jBBDF
         RTS 
 
 ;-------------------------------------------------------
-; BP_UpdateEnemySpritePosition
+; BP_UpdateBulletSpritePosition
 ;-------------------------------------------------------
-BP_UpdateEnemySpritePosition   
+BP_UpdateBulletSpritePosition   
         LDA fBB23,X
         ROR 
         LDA aBB1A,X
@@ -1745,12 +1752,12 @@ bBCAA   LDA #$00
         STA fBB29,X
         RTS 
 
-fBCB6   .BYTE $F6,$F6,$F6,$F6,$F6,$F6,$F6,$F6
+bpLickerShipSpriteArray   .BYTE $F6,$F6,$F6,$F6,$F6,$F6,$F6,$F6
 fBCBE   .BYTE $02,$08,$07,$04,$0E,$04,$06,$02
 ;-------------------------------------------------------
-; BonusPhaseSetupIBallSprites
+; BP_Draw8LickerShipSprites
 ;-------------------------------------------------------
-BonusPhaseSetupIBallSprites   
+BP_Draw8LickerShipSprites   
         LDA #$FF
         STA $D01C    ;Sprites Multi-Color Mode Select
         LDX #$00
@@ -1762,7 +1769,7 @@ bBCD0   TXA
         STA $D001,Y  ;Sprite 0 Y Pos
         LDA fBCF1,X
         STA $D000,Y  ;Sprite 0 X Pos
-        LDA fBCB6,X
+        LDA bpLickerShipSpriteArray,X
         STA Sprite0Ptr,X
         LDA fBCBE,X
         STA $D027,X  ;Sprite 0 Color
@@ -1855,18 +1862,18 @@ fBDBD   .BYTE $06,$07,$08,$09,$0A,$02,$03,$04
         .BYTE $00,$00,$00,$0F,$0F,$15,$16,$17
         .BYTE $15,$16,$17
 ;-------------------------------------------------------
-; jBE80
+; BP_ReactToGilbyCollidingWithWall
 ;-------------------------------------------------------
-jBE80   
+BP_ReactToGilbyCollidingWithWall   
         CMP #$20
         BNE bBEAC
-        LDA aAED3
+        LDA bpMovementOnXAxis
         BEQ bBE91
         BMI bBE8F
         LDA #$F9
         BNE bBE91
 bBE8F   LDA #$07
-bBE91   STA aAED3
+bBE91   STA bpMovementOnXAxis
         LDA bpCharactersToScroll
         BEQ bBEA1
         BMI bBE9F
@@ -1880,12 +1887,12 @@ bBEA1   STA bpCharactersToScroll
         RTS 
 
 bBEAC   CMP #$21
-        BNE bBED4
-        LDA aAED3
+        BNE MatchCollisionResponseToTexture
+        LDA bpMovementOnXAxis
         EOR #$FF
         CLC 
         ADC #$01
-        STA aAED3
+        STA bpMovementOnXAxis
         LDA bpCharactersToScroll
         EOR #$FF
         CLC 
@@ -1899,8 +1906,10 @@ bBEAC   CMP #$21
 
         RTS 
 
-aBED3   .BYTE $07
-bBED4   CMP #$22
+bpAllowedCollisionsLeft   .BYTE $07
+
+MatchCollisionResponseToTexture   
+        CMP #$22
         BNE bBEDE
         LDA #$01
         STA aAEC0
@@ -1911,48 +1920,55 @@ bBEDE   CMP #$23
         LDA #$07
         STA bpCharactersToScroll
         BNE sBF0C
+
 bBEE9   CMP #$24
         BNE bBEF4
         LDA #$F9
         STA bpCharactersToScroll
         BNE sBF0C
+
 bBEF4   CMP #$25
         BNE bBEFF
         LDA #$07
-        STA aAED3
+        STA bpMovementOnXAxis
         BNE sBF0C
+
 bBEFF   CMP #$26
         BNE bBEDD
         LDA #$F9
-        STA aAED3
+        STA bpMovementOnXAxis
         LDY #$7A
         LDX #$C7
+
 ;-------------------------------------------------------
 ; sBF0C
 ;-------------------------------------------------------
 sBF0C   
         LDA #$01
-        STA aC707
+        STA bpCollisionSound
         STY a78
         STX a79
+
         LDY #$00
 bBF17   LDA (p78),Y
         STA fC708,Y
         INY 
         CPY #$06
         BNE bBF17
+
         LDA #$20
         STA $D40B    ;Voice 2: Control Register
+
         RTS 
 
 ;-------------------------------------------------------
-; jBF27
+; BP_CollisionsUsedUp
 ;-------------------------------------------------------
-jBF27   
+BP_CollisionsUsedUp   
         SEI 
-        LDA #<pBFB8
+        LDA #<CollisionsUsedUpInterrupt
         STA $0314    ;IRQ
-        LDA #>pBFB8
+        LDA #>CollisionsUsedUpInterrupt
         STA $0315    ;IRQ
         LDA #$FF
         STA $D01B    ;Sprite to Background Display Priority
@@ -1960,10 +1976,11 @@ jBF27
         AND #$EF
         STA $D016    ;VIC Control Register 2
         LDX #$07
-bBF41   LDA fAEC8,X
-        STA fBCB6,X
+bBF41   LDA defaultLickerShipSpriteArray,X
+        STA bpLickerShipSpriteArray,X
         DEX 
         BPL bBF41
+
         JSR ClearScreen
         LDY #$27
 bBF4F   LDX #$06
@@ -1984,6 +2001,7 @@ bBF51   LDA fBFAA,X
         BPL bBF51
         DEY 
         BPL bBF4F
+
         LDA #$21
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
@@ -2005,28 +2023,31 @@ bBF88   LDA MainControlLoop,X
         BNE bBF86
         JMP SwapSpriteData
 
-fBFA1   .BYTE $30,$4C,$68,$84,$A0,$BC,$D8,$00
+bpBonusBountyIBallYPosArray   .BYTE $30,$4C,$68,$84,$A0,$BC,$D8,$00
 aBFA9   .BYTE $00
 fBFAA   .BYTE $A0,$C8,$F0,$18,$40,$68,$90
 fBFB1   .BYTE $04,$04,$04,$05,$05,$05,$05
 
-pBFB8
+;-------------------------------------------------------------------
+; CollisionsUsedUpInterrupt
+;-------------------------------------------------------------------
+CollisionsUsedUpInterrupt
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE bBFC2
-        JMP jBFF1
+        JMP BP_ReturnFromInterrupt
 
 bBFC2   LDY aBFA9
-        LDA fBFA1,Y
+        LDA bpBonusBountyIBallYPosArray,Y
         CLC 
         ADC #$08
         STA aBFF7
-        JSR BonusPhaseSetupIBallSprites
+        JSR BP_Draw8LickerShipSprites
         INC aBFA9
         LDY aBFA9
-        LDA fBFA1,Y
+        LDA bpBonusBountyIBallYPosArray,Y
         BNE bBFE6
-        JSR sBFF9
+        JSR BP_UpdateLickerShipSpriteArray
         LDA #$00
         STA aBFA9
         LDA #$20
@@ -2034,10 +2055,8 @@ bBFE6   STA $D012    ;Raster Position
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-;-------------------------------------------------------
-; jBFF1
-;-------------------------------------------------------
-jBFF1   
+
+BP_ReturnFromInterrupt   
         PLA 
         TAY 
         PLA 
@@ -2048,9 +2067,9 @@ jBFF1
 aBFF7   .BYTE $00
 aBFF8   .BYTE $05
 ;-------------------------------------------------------
-; sBFF9
+; BP_UpdateLickerShipSpriteArray
 ;-------------------------------------------------------
-sBFF9   
+BP_UpdateLickerShipSpriteArray   
         DEC aBFF8
         BEQ bBFFF
         RTS 
@@ -2058,12 +2077,12 @@ sBFF9
 bBFFF   LDA fA907,X
         PHP 
         STA aBFF8
-bC006   INC fBCB6,X
-        LDA fBCB6,X
+bC006   INC bpLickerShipSpriteArray,X
+        LDA bpLickerShipSpriteArray,X
         CMP #$F9
         BNE bC015
         LDA #$F6
-        STA fBCB6,X
+        STA bpLickerShipSpriteArray,X
 bC015   DEX 
         BPL bC006
         RTS 
@@ -2079,7 +2098,7 @@ DisplayBonusBountyScreen
         LDA #>BonusBountyScreenInterruptHandler
         STA $0315    ;IRQ
         LDA #$00
-        STA aC136
+        STA bpCurrentBonusBountyIBallColumn
         INC aAED0
         INC incrementLives
         STA $D010    ;Sprites 0-7 MSB of X coordinate
@@ -2146,8 +2165,8 @@ bC0D0   DEX
         BNE bC0CE
         JMP SwapSpriteData
 
-fC0E6   .BYTE $EF,$CF,$AF,$8F,$6F,$4F
-aC0EC   .BYTE $C8
+bpBonusBountyIBallSpriteXPosArray   .BYTE $EF,$CF,$AF,$8F,$6F,$4F
+bpBonusBountyCurrentIBallSpriteFrame   .BYTE $C8
 txtBonusBounty   .TEXT "CURRENT BONUS BOUNTY: 0000000 % % % % % "
 ;-------------------------------------------------------
 ; BonusBountyScreenAnimateBlinkingSprites
@@ -2157,20 +2176,20 @@ BonusBountyScreenAnimateBlinkingSprites
 bC117   TXA 
         ASL 
         TAY 
-        LDA aC135
+        LDA bpBonusBountyIBallSpriteYPos
         STA $D001,Y  ;Sprite 0 Y Pos
-        LDA fC0E6,X
+        LDA bpBonusBountyIBallSpriteXPosArray,X
         STA $D000,Y  ;Sprite 0 X Pos
         LDA #$00
         STA $D027,X  ;Sprite 0 Color
-        LDA aC0EC
+        LDA bpBonusBountyCurrentIBallSpriteFrame
         STA Sprite0Ptr,X
         DEX 
         BPL bC117
         RTS 
 
-aC135   .BYTE $00
-aC136   .BYTE $00
+bpBonusBountyIBallSpriteYPos    .BYTE $00
+bpCurrentBonusBountyIBallColumn .BYTE $00
 ;-------------------------------------------------------
 ; BonusBountyScreenInterruptHandler
 ;-------------------------------------------------------
@@ -2178,26 +2197,29 @@ BonusBountyScreenInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE bC141
-        JMP jBFF1
+        JMP BP_ReturnFromInterrupt
 
-bC141   LDY aC136
-        LDA fBFA1,Y
+bC141   LDY bpCurrentBonusBountyIBallColumn
+        LDA bpBonusBountyIBallYPosArray,Y
         CLC 
         ADC #$08
-        STA aC135
+        STA bpBonusBountyIBallSpriteYPos
         JSR BonusBountyScreenAnimateBlinkingSprites
 
-        INC aC136
-        LDY aC136
-        LDA fBFA1,Y
+        INC bpCurrentBonusBountyIBallColumn
+        LDY bpCurrentBonusBountyIBallColumn
+        LDA bpBonusBountyIBallYPosArray,Y
         BNE bC167
 
         LDA #$00
-        STA aC136
+        STA bpCurrentBonusBountyIBallColumn
         TAY 
-        JSR sC17B
-bC164   LDA fBFA1,Y
+        JSR UpdateBonusBountyIBallSpriteFrame
+
+        ; Move the raster to the current column of IBalls
+bC164   LDA bpBonusBountyIBallYPosArray,Y
 bC167   STA $D012    ;Raster Position
+
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
@@ -2212,9 +2234,11 @@ aC178   .BYTE $01
 aC179   .BYTE $0A
 aC17A   .BYTE $05
 ;-------------------------------------------------------
-; sC17B
+; UpdateBonusBountyIBallSpriteFrame
 ;-------------------------------------------------------
-sC17B   
+UpdateBonusBountyIBallSpriteFrame   
+        ; Update counters and return unless they've expired
+        ; This achieves the effect of intervals between blinks
         DEC aC17A
         BEQ bC181
         RTS 
@@ -2226,14 +2250,19 @@ bC181   LDA #$05
         DEC aC179
 bC18E   RTS 
 
-bC18F   INC aC0EC
-        LDA aC0EC
+        ; Increment to the next frame in the IBalls' blink
+bC18F   INC bpBonusBountyCurrentIBallSpriteFrame
+        LDA bpBonusBountyCurrentIBallSpriteFrame
         CMP #$CC
         BNE bC18E
+
+        ; Reset bpBonusBountyCurrentIBallSpriteFrame
         LDA #$C8
-        STA aC0EC
+        STA bpBonusBountyCurrentIBallSpriteFrame
         DEC aC178
         BPL bC18E
+
+        ; Reset the random interval between blinkgs
         JSR BP_PutRandomValueInAccumulator
         AND #$03
         STA aC178
@@ -2459,7 +2488,7 @@ BP_CalculateMovementOfEnemySprites
         BEQ bC3D2
         DEC aC3BF
         BNE bC3D5
-bC3D2   JSR sC68E
+bC3D2   JSR BP_FollowGilbyMovement
 bC3D5   LDA aC356
         BEQ bC3BC
         CMP #$01
@@ -2483,10 +2512,8 @@ bC3D5   LDA aC356
         ADC #$02
         STA aC421
         STA aC422
-;-------------------------------------------------------
-; sC411
-;-------------------------------------------------------
-sC411   
+
+BP_CRME_Exit   
         JSR BP_PutRandomValueInAccumulator
         AND #$7F
         ADC #$10
@@ -2508,7 +2535,7 @@ bC426   DEC aC41C
         BNE bC44A
 
         JSR sC380
-        JSR sC411
+        JSR BP_CRME_Exit
         JSR BP_PutRandomValueInAccumulator
         AND #$07
         SBC #$04
@@ -2522,22 +2549,29 @@ bC426   DEC aC41C
 
 bC44A   LDA aC676
         BEQ bC452
+
         DEC aC676
 bC452   DEC aC420
         BNE bC460
+
         LDA aC41F
         STA aC420
         JSR sC5A5
+
 bC460   DEC aC422
         BNE bC46E
+
         LDA aC421
         STA aC422
         JSR sC57D
+
 bC46E   LDA aC676
         BEQ bC476
         JSR sC677
+
 bC476   LDA aC423
         BMI bC48F
+
         CLC 
         ADC aC353
         STA aC353
@@ -2550,21 +2584,23 @@ bC476   LDA aC423
 bC48F   EOR #$FF
         STA a77
         INC a77
+
         LDA aC353
         SEC 
         SBC a77
         STA aC353
+
         LDA aC355
         SBC #$00
         CMP #$FF
         BNE bC4AF
+
         LDA #$00
         STA aC423
         STA aC353
+
 bC4AF   STA aC355
-;-------------------------------------------------------
-; jC4B2
-;-------------------------------------------------------
+
 jC4B2   
         LDA aC354
         CLC 
@@ -2591,6 +2627,7 @@ bC4D4   CMP #$B0
 bC4E8   LDA aC676
         BEQ sC4F0
         JSR sC677
+
 ;-------------------------------------------------------
 ; sC4F0
 ;-------------------------------------------------------
@@ -2605,16 +2642,16 @@ sC4F0
         INX 
         TXA 
         PHA 
-        JSR BP_UpdateBulletSprites
+        JSR BP_UpdateEnemyIBallPosition
         PLA 
         AND #$3F
         STA aC425
         RTS 
 
 ;-------------------------------------------------------
-; BP_UpdateBulletSprites
+; BP_UpdateEnemyIBallPosition
 ;-------------------------------------------------------
-BP_UpdateBulletSprites   
+BP_UpdateEnemyIBallPosition   
         LDX #$00
 bC514   TXA 
         ASL 
@@ -2626,7 +2663,7 @@ bC514   TXA
 
         LDA #$06
         STA $D02B,X  ;Sprite 4 Color
-bC526   LDA aC578
+bC526   LDA bpCurrentIBallSpriteFrame
         STA Sprite4Ptr,X
         TXA 
         PHA 
@@ -2654,7 +2691,7 @@ jC558
         CPX #$04
         BNE bC514
 
-        JMP jC5DC
+        JMP BP_UpdateCurrentIBallSpriteFrame
 
 bC560   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND fC570,X
@@ -2664,7 +2701,7 @@ bC560   LDA $D010    ;Sprites 0-7 MSB of X coordinate
 fC56C   .BYTE $10,$20,$40,$80
 fC570   .BYTE $EF,$DF,$BF,$7F
 fC574   .BYTE $00,$03,$06,$09
-aC578   .BYTE $C8,$02,$06,$07,$04
+bpCurrentIBallSpriteFrame   .BYTE $C8,$02,$06,$07,$04
 ;-------------------------------------------------------
 ; sC57D
 ;-------------------------------------------------------
@@ -2723,21 +2760,21 @@ bC5DA   RTS
 
 aC5DB   .BYTE $05
 ;-------------------------------------------------------
-; jC5DC
+; BP_UpdateCurrentIBallSpriteFrame
 ;-------------------------------------------------------
-jC5DC   
+BP_UpdateCurrentIBallSpriteFrame   
         DEC aC5DB
         BNE bC5DA
         LDA #$05
         STA aC5DB
         LDA aC5FE
         BEQ bC5DA
-        INC aC578
-        LDA aC578
-        CMP #$CC
+        INC bpCurrentIBallSpriteFrame
+        LDA bpCurrentIBallSpriteFrame
+        CMP #$CC ; Last Iball sprite
         BNE bC5DA
-        LDA #$C8
-        STA aC578
+        LDA #$C8 ; First Iball Sprite
+        STA bpCurrentIBallSpriteFrame
         DEC aC5FE
         RTS 
 
@@ -2790,7 +2827,7 @@ bC638   CMP #$10
         LDA #$04
         STA aC5FE
         LDA #<p6001
-        STA aC707
+        STA bpCollisionSound
         LDA #>p6001
         STA fC708
         STA aC709
@@ -2823,9 +2860,9 @@ sC677
 bC68D   RTS 
 
 ;-------------------------------------------------------
-; sC68E
+; BP_FollowGilbyMovement
 ;-------------------------------------------------------
-sC68E   
+BP_FollowGilbyMovement   
         LDA aC676
         BNE bC68D
         LDA aC355
@@ -2854,10 +2891,11 @@ bC6AF   CMP #$0C
         ADC #$01
 bC6C0   CMP #$0C
         BPL bC68D
-        LDA aAED3
+
+        LDA bpMovementOnXAxis
         PHA 
         LDA aC423
-        STA aAED3
+        STA bpMovementOnXAxis
         PLA 
         STA aC423
         LDA bpCharactersToScroll
@@ -2866,10 +2904,11 @@ bC6C0   CMP #$0C
         STA bpCharactersToScroll
         PLA 
         STA aC424
+
         LDA #$10
         STA aC3BF
         LDA #$01
-        STA aC707
+        STA bpCollisionSound
         LDA #$01
         STA aC70A
         LDA #$10
@@ -2880,9 +2919,9 @@ bC6C0   CMP #$0C
         STA aC70D
         LDA #$FF
         STA aC70C
-        JMP jAEA9
+        JMP RegisterCollisionOnLickerShips
 
-aC707   .BYTE $00
+bpCollisionSound   .BYTE $00
 fC708   .BYTE $00
 aC709   .BYTE $00
 aC70A   .BYTE $00
@@ -2893,7 +2932,7 @@ aC70D   .BYTE $00
 ; BP_PlaySomeSounds
 ;-------------------------------------------------------
 BP_PlaySomeSounds   
-        LDA aC707
+        LDA bpCollisionSound
         BNE bC719
         LDA #$20
         STA $D40B    ;Voice 2: Control Register
@@ -2929,7 +2968,7 @@ bC73B   DEC aC70A
         RTS 
 
 bC758   LDA #$00
-        STA aC707
+        STA bpCollisionSound
         LDA #$20
         STA $D40B    ;Voice 2: Control Register
         RTS 
