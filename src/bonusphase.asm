@@ -276,7 +276,7 @@ bAD50   STA SCREEN_RAM + $0167,X
         ; memory at $E000
         LDA #$34
         STA a01
-        ; Copy in the charset for landscape. This is in charsetandspritedata.asm.
+        ; Copy in the charset for landscape. This is in bonusphase_graphics.asm.
         LDX #$00
 bAD5D   LDA $E000,X
         STA f2200,X

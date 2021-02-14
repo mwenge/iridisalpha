@@ -55,9 +55,9 @@ p2017
                                                 ; 11000110   **   ** 
                                                 ; 01111100    *****  
 ```
-### [`charsetandspritedata.asm`]
+### [`bonusphase_graphics.asm`]
 ### [`sprites.asm`]
-These files contain the game's sprites and some additional character set data. As `charsetandspritedata.asm` needs to end up at adress $E000, and since it is not possible to load data directly to that address when loading a C64 binary from tape or image, our build process uses a tool called Exomizer to compress the data in `charsetandspritedata.asm` in `iridisalpha.prg` and then decompress it to $E000 when the program is loading.
+These files contain the game's sprites and some additional character set data. As `bonusphase_graphics.asm` needs to end up at adress $E000, and since it is not possible to load data directly to that address when loading a C64 binary from tape or image, our build process uses a tool called Exomizer to compress the data in `bonusphase_graphics.asm` in `iridisalpha.prg` and then decompress it to $E000 when the program is loading.
 
 The source includes a pseudo bitmap of the sprites that helps you related the data to what will ultimately be painted on screen. Here's the sprite definition of the gilby flying left from [`sprites.asm`]:
 
@@ -416,5 +416,5 @@ Here's the cheat in action:
 [`dna.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/dna.asm
 [`charset.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/charset.asm
 [`sprites.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/sprites.asm
-[`charsetandspritedata.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/charsetandspritedata.asm
+[`bonusphase_graphics.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase_graphics.asm
 [`bonusphase.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase.asm

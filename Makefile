@@ -8,9 +8,9 @@ C1541 = c1541
 all: clean d64 run
 original: clean d64_orig run_orig
 
-iridisalpha.prg: src/iridisalpha.asm src/charsetandspritedata.asm
+iridisalpha.prg: src/iridisalpha.asm src/bonusphase_graphics.asm
 	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/ia.prg -L bin/list-co1.txt -l bin/labels.txt src/iridisalpha.asm
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/charsetandspritedata.prg src/charsetandspritedata.asm
+	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/charsetandspritedata.prg src/bonusphase_graphics.asm
 	exomizer sfx sys bin/ia.prg bin/charsetandspritedata.prg,0xe000 -n -o bin/iridisalpha.prg
 	md5sum bin/ia.prg bin/ia-bench.prg
 	md5sum bin/charsetandspritedata.prg bin/charsetandspritedata-bench.prg
