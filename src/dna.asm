@@ -1,3 +1,22 @@
+; This is the reverse-engineered source code for the game 'Iridis Alpha'
+; written by Jeff Minter in 1986.
+;
+; The code in this file was created by disassembling a binary of the game released into
+; the public domain by Jeff Minter in 2019.
+;
+; The original code from which this source is derived is the copyright of Jeff Minter.
+;
+; The original home of this file is at: https://github.com/mwenge/iridisalpha
+;
+; To the extent to which any copyright may apply to the act of disassembling and reconstructing
+; the code from its binary, the author disclaims copyright to this source code.  In place of
+; a legal notice, here is a blessing:
+;
+;    May you do good and not evil.
+;    May you find forgiveness for yourself and forgive others.
+;    May you share freely, never taking more than you give.
+;
+; (Note: I ripped this part from the SQLite licence! :) )
 ;-------------------------------
 ; LaunchDNA
 ;-------------------------------
@@ -15,7 +34,7 @@ LaunchDNA
 DNA_CopyInSpriteData   
         SEI 
         LDA #$34
-        STA a01
+        STA RAM_ACCESS_MODE
         LDX #$00
 b0D47   LDA $E400,X
         PHA 
@@ -26,7 +45,7 @@ b0D47   LDA $E400,X
         DEX 
         BNE b0D47
         LDA #$36
-        STA a01
+        STA RAM_ACCESS_MODE
         RTS 
 
 ;-------------------------------
@@ -351,9 +370,7 @@ b1027   CMP #$17
 b1031   CMP #$0A
         BNE b1043
         INC dnaCurrentSpeed
-;-------------------------------
-; j1038
-;-------------------------------
+
 j1038   
         LDA dnaCurrentSpeed
         AND #$0F

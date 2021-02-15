@@ -18,6 +18,7 @@
 ;
 ; (Note: I ripped this part from the SQLite licence! :) )
 
+mapOffsetTemp = $37
 ;-------------------------------------------------------
 ; DisplayEnterBonusRoundScreen
 ;-------------------------------------------------------
@@ -275,17 +276,17 @@ bAD50   STA SCREEN_RAM + $0167,X
         ; It's necessary to set this bit to allow access to the
         ; memory at $E000
         LDA #$34
-        STA a01
+        STA RAM_ACCESS_MODE
         ; Copy in the charset for landscape. This is in bonusphase_graphics.asm.
         LDX #$00
 bAD5D   LDA $E000,X
-        STA f2200,X
+        STA planetTextureCharset1,X
         LDA $E100,X
-        STA f2300,X
+        STA planetTextureCharset2,X
         DEX 
         BNE bAD5D
         LDA #$36
-        STA a01
+        STA RAM_ACCESS_MODE
 
         ; Copy in the sprite data.
         JSR SwapSpriteData
@@ -304,7 +305,7 @@ SwapSpriteData
         ; It's necessary to set this bit to allow access to the
         ; memory at $E000
         LDA #$34
-        STA a01
+        STA RAM_ACCESS_MODE
 
         LDX #$00
 bAD83   LDA $E200,X
@@ -329,7 +330,7 @@ bAD83   LDA $E200,X
         BNE bAD83
 
         LDA #$36
-        STA a01
+        STA RAM_ACCESS_MODE
         CLI 
         RTS 
 
@@ -498,7 +499,7 @@ BonusPhaseFillTopLineAfterScrollDown
         LDY #$00
         LDX #$00
 bAEE8   LDA (planetPtrLo2),Y
-        STY a37
+        STY mapOffsetTemp
         ASL 
         CLC 
         ADC aAEBC
@@ -507,7 +508,7 @@ bAEE8   LDA (planetPtrLo2),Y
         STA SCREEN_RAM,X
         LDA fAFE6,Y
         STA SCREEN_RAM + $0001,X
-        LDY a37
+        LDY mapOffsetTemp
         INX 
         INX 
         INY 
@@ -710,7 +711,7 @@ BonusPhaseFillBottomLineAfterScrollUp
         LDY #$00
         LDX #$00
 bB2D5   LDA (planetPtrLo2),Y
-        STY a37
+        STY mapOffsetTemp
         ASL 
         CLC 
         ADC aAEBC
@@ -719,7 +720,7 @@ bB2D5   LDA (planetPtrLo2),Y
         STA SCREEN_RAM + $02D0,X
         LDA fAFE6,Y
         STA SCREEN_RAM + $02D1,X
-        LDY a37
+        LDY mapOffsetTemp
         INX 
         INX 
         INY 
@@ -732,9 +733,9 @@ bB2D5   LDA (planetPtrLo2),Y
         LDA aAEBE
         CMP #$FF
         BNE bB310
-        LDA #>p0A
+        LDA #$00
         STA aAEBE
-        LDA #<p0A
+        LDA #$0A
         STA aAEBD
 bB310   RTS 
 
@@ -1331,24 +1332,26 @@ bpBackgroundColorArray       .BYTE $00,$01
 aB96E                        .BYTE $00
 aB96F                        .BYTE $00
 aB970                        .BYTE $00
+
+bpXPosMSBOffset = $3E
 ;-------------------------------------------------------
 ; BP_RecalculateGilbyPosition
 ;-------------------------------------------------------
 BP_RecalculateGilbyPosition   
         LDA bpGilbyXPos
         LDY #$00
-        STY a3E
+        STY bpXPosMSBOffset
         LDY bpMovementOnXAxis
         BPL bB981
 
         LDY #$FF
-        STY a3E
+        STY bpXPosMSBOffset
 bB981   CLC 
         ADC bpMovementOnXAxis
         STA bpGilbyXPos
 
         LDA bpGilbyXPosMSB
-        ADC a3E
+        ADC bpXPosMSBOffset
         STA bpGilbyXPosMSB
 
         ROR 
@@ -1357,9 +1360,9 @@ bB981   CLC
         AND #$F0
         BNE bB9A9
 
-        LDA #<p20
+        LDA #$20
         STA bpGilbyXPos
-        LDA #>p20
+        LDA #$00
         STA bpGilbyXPosMSB
 
 bB9A3   LDA #$00
@@ -1426,10 +1429,10 @@ BP_StoreCharacterAtCurrentSpritePositionInAccumulator
         TAX 
 
         LDA screenLinePtrLo,X
-        STA a3A
+        STA screenLintPtrTempLo
         LDA screenLinePtrHi,X
-        STA a3B
-        LDA (p3A),Y
+        STA screenLintPtrTempHi
+        LDA (screenLintPtrTempLo),Y
 bBA05   RTS 
 
 aBA06   .BYTE $04
@@ -1699,17 +1702,17 @@ bBC28   PLA
 bBC3D   DEC aBC8E
         DEC aBC8E
 bBC43   LDA #$00
-        STA a3E
+        STA bpXPosMSBOffset
         LDA aBC8E
         BPL bBC50
         LDA #$FF
-        STA a3E
+        STA bpXPosMSBOffset
 bBC50   LDA aBB1A,X
         CLC 
         ADC aBC8E
         STA aBB1A,X
         LDA fBB23,X
-        ADC a3E
+        ADC bpXPosMSBOffset
         STA fBB23,X
         LDA fBB1D,X
         CLC 
