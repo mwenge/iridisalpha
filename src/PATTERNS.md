@@ -1,5 +1,16 @@
 # Programming Patterns in Iridis Alpha
 
+* [Writing to the Screen](#writing-to-the-screen)
+  * [Clearing the screen](#clearing-the-screen)
+  * [Drawing characters and colors on the screen](#drawing-characters-and-colors-on-the-screen)
+  * [Defining Character Sets](#defining-character-sets)
+  * [Using Line Pointers to Specify X and Y Positions on the Screen](#using-line-pointers-to-specify-x-and-y-positions-on-the-screen)
+* [Using Pointer Tables](#using-pointer-tables)
+  * [Using Pointer Arrays to Jump to Subroutines](#using-pointer-arrays-to-jump-to-subroutines)
+* [Early Returns](#early-returns)
+* [Handling Keyboard Input](#handling-keyboard-input)
+* [Handling Joystick Input](#handling-joystick-input)
+
 Assembly requires the programmer to specify every task in detail. Over the
 course of his time programming the Vic 20 and C64 Minter developed a number of
 patterns for common tasks. Here I try to cover as many of them as I can. I hope
@@ -407,6 +418,8 @@ b74C0   CMP #$FE
         INX 
         JMP j74B3
 ```
+
+For more on the way the planet data is generated, check the [README] in the `src` directory.
 ## Early Returns
 
 ## Handling Keyboard Input
@@ -419,3 +432,4 @@ b74C0   CMP #$FE
 [`sprites.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/sprites.asm
 [`bonusphase_graphics.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase_graphics.asm
 [`bonusphase.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase.asm
+[`README`]: https://github.com/mwenge/iridisalpha/blob/master/src/README.md
