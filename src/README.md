@@ -8,7 +8,7 @@
     * [`sprites.asm`](#spritesasm)
     * [`madeinfrance.asm`](#madeinfranceasm)
     * [`dna.asm`](#dnaasm)
-* [A Closer Look At [`iridisalpha.asm`]](#a-closer-look-at-iridisalphaasm)
+* [A Closer Look At `iridisalpha.asm`](#a-closer-look-at-iridisalphaasm)
   * [GenPlan: The algorithm for generating the planet surfaces](#genplan-the-algorithm-for-generating-the-planet-surfaces)
   * [A Cheat for Awarding Yourself 10000 Bonus Points](#a-cheat-for-awarding-yourself-10000-bonus-points)
   * [Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level](#pressing-f1-during-attract-mode-allows-you-to-resume-the-game-at-a-random-level)
