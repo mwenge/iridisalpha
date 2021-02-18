@@ -1,5 +1,18 @@
 # Iridis Alpha: Introduction to the Source Code
 
+  * [What Each File Contains](#what-each-file-contains)
+    * [[`iridisalpha.asm`]](#iridisalphaasm)
+    * [[`bonusphase.asm`]](#bonusphaseasm)
+    * [[`charset.asm`]](#charsetasm)
+    * [[`bonusphase_graphics.asm`]](#bonusphase_graphicsasm)
+    * [[`sprites.asm`]](#spritesasm)
+    * [[`madeinfrance.asm`]](#madeinfranceasm)
+    * [[`dna.asm`]](#dnaasm)
+* [A Closer Look At [`iridisalpha.asm`]](#a-closer-look-at-iridisalphaasm)
+  * [GenPlan: The algorithm for generating the planet surfaces](#genplan-the-algorithm-for-generating-the-planet-surfaces)
+  * [A Cheat for Awarding Yourself 10000 Bonus Points](#a-cheat-for-awarding-yourself-10000-bonus-points)
+  * [Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level](#pressing-f1-during-attract-mode-allows-you-to-resume-the-game-at-a-random-level)
+
 This source code is derived from [the binary](https://github.com/mwenge/iridisalpha/blob/master/orig/iridisalpha.prg) stored in the `orig` folder. This binary is the one [distributed by Minter in 2019](http://minotaurproject.co.uk/yakimg/Llamasoft_C64.zip) along with the rest of his Vic 20 and C64 games.
 
 It's important to note that this is not a byte-for-byte identical disassembly of the [original binary](https://github.com/mwenge/iridisalpha/blob/master/orig/iridisalpha.prg). This is because `iridisalpha.prg` uses a compressor/decompressor to load itself into memory. So it is only possible to derive the original source from a snapshot of the game while it is running. I reverse-engineered the source code from a Vice snapshot. The hard part of doing it this way is figuring out the correct entry point to launch the game from, which in this case turned out to be address `$4000`. This was also the point at which I figured out I needed to use Exomizer to compress some of the game data myself, so that I could get the game to load and run.
