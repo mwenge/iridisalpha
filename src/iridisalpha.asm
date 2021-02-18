@@ -5012,7 +5012,8 @@ difficultySetting   .BYTE $00
 MainGameInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
-        BNE SpriteBackgroundCollisionDetected; Collision detected
+        BNE RasterPositionMatchesRequestedInterrupt; Collision detected
+
 ;------------------------------------------------------------------
 ; ReturnFromInterrupt
 ;------------------------------------------------------------------
@@ -5076,7 +5077,10 @@ b6BA3   LDA gilbyExploding
         STA $D020    ;Border Color
 b6BBE   RTS 
 
-SpriteBackgroundCollisionDetected
+;---------------------------------------------------------------------------------
+; RasterPositionMatchesRequestedInterrupt 
+;---------------------------------------------------------------------------------
+RasterPositionMatchesRequestedInterrupt 
         LDY a6D84
         LDA levelRestartInProgress
         BEQ b6BCA

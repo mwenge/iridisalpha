@@ -1,4 +1,4 @@
-## Programming Patterns in the Iridis Alpha Source Code
+# Programming Patterns in Iridis Alpha
 
 Assembly requires the programmer to specify every task in detail. Over the
 course of his time programming the Vic 20 and C64 Minter developed a number of
@@ -6,9 +6,9 @@ patterns for common tasks. Here I try to cover as many of them as I can. I hope
 that discussing these patterns will also make it easy for an Assembly-newbie to
 start reading and understanding the code themselves.
 
-### Writing to the Screen
+## Writing to the Screen
 
-#### Clearing the screen
+### Clearing the screen
 The C64 screen consists of 1000 bytes (40 columns by 25 rows) at address
 `$0400`-`$07E7`. A common requirement is to completely clear the screen. You
 achieve this by populating it with spaces ($20). The loop below appears in most
@@ -30,18 +30,19 @@ Note that the technique here is to start X at 00 and keep looping until
 decrementing X reaches 00 again. This makes the loop 256 iterations long,
 covering each of the 4 256-byte segments of the screen RAM.
 
-#### Drawing characters and colors on the screen
-Here's the routine that draws the colorful stripes behind the title in the
-title screen.
+### Drawing characters and colors on the screen
+How do we draw characters (and add color to them). Let's take the stripes behind the title name
+in the title screen of Iridis Alpha. There are seven of them forming a rainbow effect.
 
 ![image](https://lh3.googleusercontent.com/proxy/qDLnfhylHBQ6S9hSQY3hnjAcZq8I_iCUD0nfTuhLfLajwyZr_rSamiEdpGnbgUS5pW6uvqy6ojX-OUoiklxfQF4wgqc-kGTBJidsahIM1WNKemz0u4cOU6xds-62rz6e)
 
-The character being drawn to each position in the screen is
-'$00'. If we look up the character set in charset.asm we see that it is 4
+Here's the routine that draws the colorful stripes behind the title in the
+title screen.  The character being drawn to each position in the screen is
+`$00`. If we look up the character set in charset.asm we see that it is 4
 horizontal stripes. The routine repeats this charaacter across 7 lines. In
 addition it assigns a color to each line by writing the approprite value in the
-corresponding position of the C64's color ram (`$D800` - `$D8E7`). The color values
-are also given below.
+corresponding position of the C64's color ram (`$D800` - `$D8E7`). The color
+values are also given below.
 
 
 ```asm
@@ -101,7 +102,7 @@ b0A78   LDA #$02
         RTS 
 
 ```
-#### Defining Character Sets
+### Defining Character Sets
 This might inspire the question: how do you define a character set? The first
 step is to define the characters themselves and assign them to location in
 memory. The most common location to do this is from $2000 onwards. If you look
@@ -165,7 +166,7 @@ this works:
   +-----------------------------------------------------------------------+
 ```
 
-#### Using Line Pointers to Specify X and Y Positions on the Screen
+### Using Line Pointers to Specify X and Y Positions on the Screen
 
 This is a technique Minter uses a lot, and its both simple and effective.
 The idea is to define an array with each member pointing to the first column
@@ -311,7 +312,7 @@ it (`pointerHi` (`$0004`)) which is `$04`, combining them in a little-endian mod
 then writing the value of A (`$20`) to address `$0400`, i.e. the first column of the first line
 on the screen.
 
-### Using Pointer Tables
+## Using Pointer Tables
 An extension of this technique using arrays of pointers can be found in the construction of the
 high score table display. Since the scores are at various positions in the screen we can create
 an array of positions on the screen for writing each of the high scores to.
@@ -347,11 +348,69 @@ DrawCamelAtPosition
         LDA #$25 ; The camel character
         STA (tempLoPtr),Y
 ```
+### Using Pointer Arrays to Jump to Subroutines
 
-### Early Returns
+If we can use pointer arrays for referencing positions in memory for data, there's no reason why
+we can't also use them to store the addresses of subroutines or functions. This is how Iridis
+Alpha draws random structures on the surface of the game's planets. In `DrawRandomlyChosenStructure`
+we use a random number between 1 and 4 to choose one of 4 routines stored in the
+`structureSubRoutineArrayLoPtr`/`structureSubRoutineArrayHiPtr` arrays:
 
-### Handling Keyboard Input
-### Handling Joystick Input
+```asm
+;------------------------------------------------------------------
+; DrawRandomlyChosenStructure
+;------------------------------------------------------------------
+DrawRandomlyChosenStructure   
+        ; Pick a random positio to draw the structure
+        JSR StoreRandomPositionInPlanetInPlanetPtr
+        ;Pick a random number between 1 and 4
+        JSR PutRandomByteInAccumulatorRegister
+        AND #$03
+        TAX 
+
+        ; Run the randomly chose subroutine, one of:
+        ; $7486, $74B1, $74CB, $74E5 to draw a structure
+        ; on the planet surface
+        LDA structureSubRoutineArrayHiPtr,X
+        STA structureRoutineHiPtr
+        LDA structureSubRoutineArrayLoPtr,X
+        STA structureRoutineLoPtr
+        JMP (randomStructureRoutineAddress)
+
+;Jump table
+structureSubRoutineArrayHiPtr   .BYTE $74,$74,$74,$74
+structureSubRoutineArrayLoPtr   .BYTE $86,$B1,$CB,$E5
+```
+
+Once the item in the array is selected `JMP (randomStructureRoutineAddress)` branches
+execution to the randomly selected routine. For example `DrawMediumStructure` at
+`$74B1`:
+
+```asm
+;------------------------------------------------------------------
+; DrawMediumStructure ($74B1) 
+;------------------------------------------------------------------
+DrawMediumStructure
+        LDX #$00
+
+j74B3   
+        LDA mediumStructureData,X
+        CMP #$FF
+        BNE b74C0
+        JSR SwitchToNextLayerInPlanet
+        JMP j74B3
+
+b74C0   CMP #$FE
+        BEQ b74B0 ; Return
+        STA (planetPtrLo),Y
+        INY 
+        INX 
+        JMP j74B3
+```
+## Early Returns
+
+## Handling Keyboard Input
+## Handling Joystick Input
 
 [`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm
 [`madeinfrance.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/madeinfrance.asm
