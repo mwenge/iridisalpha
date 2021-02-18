@@ -32,7 +32,11 @@ covering each of the 4 256-byte segments of the screen RAM.
 
 #### Drawing characters and colors on the screen
 Here's the routine that draws the colorful stripes behind the title in the
-title screen. The character being drawn to each position in the screen is
+title screen.
+
+![image](https://lh3.googleusercontent.com/proxy/qDLnfhylHBQ6S9hSQY3hnjAcZq8I_iCUD0nfTuhLfLajwyZr_rSamiEdpGnbgUS5pW6uvqy6ojX-OUoiklxfQF4wgqc-kGTBJidsahIM1WNKemz0u4cOU6xds-62rz6e)
+
+The character being drawn to each position in the screen is
 '$00'. If we look up the character set in charset.asm we see that it is 4
 horizontal stripes. The routine repeats this charaacter across 7 lines. In
 addition it assigns a color to each line by writing the approprite value in the
@@ -120,7 +124,7 @@ uses an 8 byte long definition. This is what the character set definition for
 ```
 
 The way we tell the C64 that this is where the character set definitions are
-located is by storing a value in $D018. The value '8' in '$18' below achieves
+located is by storing a value in `$D018`. The value '8' in `$18` below achieves
 this:
 ```asm
         LDA #$18
@@ -303,8 +307,8 @@ position `$0400`, this is what we would do:
 ```
 In the `STA (pointerLo)` instruction the C64 resolves the address to store at by looking
 at the content of `pointerLo` (`$0003`) which is $00, and then the content from the byte after 
-it (`pointerHi` (`$0004`)) which is $04, combining them in a little-endian mode to `$0400` and 
-then writing the value of A ($20) to address `$0400`, i.e. the first column of the first line
+it (`pointerHi` (`$0004`)) which is `$04`, combining them in a little-endian mode to `$0400` and 
+then writing the value of A (`$20`) to address `$0400`, i.e. the first column of the first line
 on the screen.
 
 ### Using Pointer Tables
@@ -321,7 +325,7 @@ hiScoreTableCursorPosHiPtr .BYTE $04,$04,$04,$05,$05,$05,$05,$05
                            .BYTE $05,$05,$05,$06
 ```
 Note that there's an entry in the table for each of the twenty high scores. Each combination
-(e.g. $04A1, $04C9, etc.) refers to the position on the screen for the corresponding high
+(e.g. `$04A1`, `$04C9`, etc.) refers to the position on the screen for the corresponding high
 score:
 
 ![image](https://user-images.githubusercontent.com/58846/108383980-320ac600-7202-11eb-8a3d-5e728a12a50f.png)
