@@ -1,15 +1,21 @@
 # Programming Patterns in Iridis Alpha
 
+
+<!-- vim-markdown-toc GFM -->
+
 * [Writing to the Screen](#writing-to-the-screen)
   * [Clearing the screen](#clearing-the-screen)
   * [Drawing characters and colors on the screen](#drawing-characters-and-colors-on-the-screen)
   * [Defining Character Sets](#defining-character-sets)
   * [Using Line Pointers to Specify X and Y Positions on the Screen](#using-line-pointers-to-specify-x-and-y-positions-on-the-screen)
 * [Using Pointer Tables](#using-pointer-tables)
+  * [Pointer Tables for Writing Structured Data](#pointer-tables-for-writing-structured-data)
   * [Using Pointer Arrays to Jump to Subroutines](#using-pointer-arrays-to-jump-to-subroutines)
 * [Early Returns](#early-returns)
 * [Handling Keyboard Input](#handling-keyboard-input)
 * [Handling Joystick Input](#handling-joystick-input)
+
+<!-- vim-markdown-toc -->
 
 Assembly requires the programmer to specify every task in detail. Over the
 course of his time programming the Vic 20 and C64 Minter developed a number of
@@ -324,6 +330,8 @@ then writing the value of A (`$20`) to address `$0400`, i.e. the first column of
 on the screen.
 
 ## Using Pointer Tables
+
+### Pointer Tables for Writing Structured Data
 An extension of this technique using arrays of pointers can be found in the construction of the
 high score table display. Since the scores are at various positions in the screen we can create
 an array of positions on the screen for writing each of the high scores to.
