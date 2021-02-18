@@ -163,8 +163,10 @@ InitializeSpritesAndInterruptsForTitleScreen
         STA $D021    ;Background Color 0
         STA difficultySelected
         JSR IA_ClearScreen
+
         LDA #$18
         STA $D018    ;VIC Memory Control Register
+
         LDA $D016    ;VIC Control Register 2
         AND #$E7
         ORA #$08
@@ -359,7 +361,7 @@ titleScreenStarfieldAnimationSeedArray .BYTE $06,$01,$03,$02,$01,$01,$01,$01
                                        .BYTE $02,$03,$02,$01,$06,$01,$01,$01
                                        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
                                        .BYTE $01,$01
-f0A3F                                  .BYTE $07
+gilbyColorsArray                                  .BYTE $07
 f0A40                                  .BYTE $05,$0E,$00,$02
 a0A44                                  .BYTE $08
 a0A45                                  .BYTE $04,$01,$0F,$0C,$0B
@@ -416,9 +418,10 @@ b0A78   LDA #$02
         STA SCREEN_RAM + $0167,X
         DEX 
         BNE b0A78
+
         LDX #$06
 b0AB7   LDA titleScreenStarfieldColorsArray,X
-        STA f0A3F,X
+        STA gilbyColorsArray,X
         DEX 
         BNE b0AB7
         LDA #$01
@@ -487,11 +490,11 @@ b0B34   DEC a0B33
         LDA #$04
         STA a0B33
         LDX #$00
-        LDA f0A3F
+        LDA gilbyColorsArray
         PHA 
 b0B44   LDA f0A40,X
         STA $D027,X  ;Sprite 0 Color
-        STA f0A3F,X
+        STA gilbyColorsArray,X
         INX 
         CPX #$06
         BNE b0B44
