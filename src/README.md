@@ -4,6 +4,11 @@ This source code is derived from [the binary](https://github.com/mwenge/iridisal
 
 It's important to note that this is not a byte-for-byte identical disassembly of the [original binary](https://github.com/mwenge/iridisalpha/blob/master/orig/iridisalpha.prg). This is because `iridisalpha.prg` uses a compressor/decompressor to load itself into memory. So it is only possible to derive the original source from a snapshot of the game while it is running. I reverse-engineered the source code from a Vice snapshot. The hard part of doing it this way is figuring out the correct entry point to launch the game from, which in this case turned out to be address `$4000`. This was also the point at which I figured out I needed to use Exomizer to compress some of the game data myself, so that I could get the game to load and run.
 
+If you're new to assembly, you should take a look at the [common patterns] in Iridis Alpha's codebase. These are shared by
+other Minter games too and the discussion tries to shed light on some of the things that would not be obvious to a beginner
+in the way assembly code is written. There are also some notes in there intended to help understand C64 internals, such as
+characters, sprites and interupts.
+
 Before diving into the code, let's take a quick look at how I've broken out the source.
 
 ## What Each File Contains
@@ -418,3 +423,4 @@ Here's the cheat in action:
 [`sprites.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/sprites.asm
 [`bonusphase_graphics.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase_graphics.asm
 [`bonusphase.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase.asm
+[common patterns]: https://github.com/mwenge/iridisalpha/blob/master/src/PATTERNS.md

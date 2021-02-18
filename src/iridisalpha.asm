@@ -7778,6 +7778,7 @@ bCA8F   LDA lastBlastScore,Y
 ; ClearScreenDrawHiScoreScreenText
 ;------------------------------------------------------------------
 ClearScreenDrawHiScoreScreenText   
+
         LDX #$00
 bCA9F   LDA #$20
         STA SCREEN_RAM,X
@@ -7791,6 +7792,7 @@ bCA9F   LDA #$20
         STA COLOR_RAM + $0247,X
         DEX 
         BNE bCA9F
+
         LDX #$27
 bCAC0   LDA txtHiScorLine1,X
         AND #$3F
@@ -7800,15 +7802,18 @@ bCAC0   LDA txtHiScorLine1,X
         STA SCREEN_RAM + $0258,X
         DEX 
         BPL bCAC0
+
         LDX #$06
 bCAD5   LDA lastBlastScore,X
         STA SCREEN_RAM + $0279,X
         DEX 
         BPL bCAD5
+
         LDA #<hiScoreTablePtr
         STA tempLoPtr
         LDA #>hiScoreTablePtr
         STA tempHiPtr
+
         LDY #$00
 bCAE8   LDA hiScoreTableCursorPosLoPtr,Y
         STA tempLoPtr1
@@ -7848,6 +7853,7 @@ bCB0E   LDA (tempLoPtr),Y
         INY 
         CPY #$14
         BNE bCAE8
+
         JMP ClearScreenDrawHiScoreTextContinued
 
 ; A jump table to positions in the screen for writing the scores.
@@ -7973,6 +7979,7 @@ DisplayHiScoreScreen
         STA aCC88
         LDA #$00
         STA aCA3B
+
         LDX #$27
 bCC10   LDA txtHiScorLine3,X
         AND #$3F
@@ -7980,14 +7987,14 @@ bCC10   LDA txtHiScorLine3,X
         DEX 
         BPL bCC10
 
-jCC1B   
-        LDX aCC87
+DrawCamelAtPosition   
+        LDX currentEntryInHiScoreTable
         LDA hiScoreTableCursorPosLoPtr,X
         STA tempLoPtr
         LDA hiScoreTableCursorPosHiPtr,X
         STA tempHiPtr
         LDY #$10
-        LDA #$25
+        LDA #$25 ; The camel character
         STA (tempLoPtr),Y
 
 bCC2E   JSR HiScoreCheckInput
@@ -8004,10 +8011,12 @@ bCC2E   JSR HiScoreCheckInput
 bCC43   STA aFA
         AND #$01
         BNE bCC67
-        DEC aCC87
+
+        DEC currentEntryInHiScoreTable
         BPL bCC53
+
         LDA #$13
-        STA aCC87
+        STA currentEntryInHiScoreTable
 bCC53   LDA #$50
         STA aF9
         LDX #$00
@@ -8015,26 +8024,31 @@ bCC59   DEX
         BNE bCC59
         DEC aF9
         BNE bCC59
+
         LDA #$20
         STA (tempLoPtr),Y
-bCC64   JMP jCC1B
+bCC64   JMP DrawCamelAtPosition
 
 bCC67   LDA aFA
         AND #$02
         BNE bCC7E
-        INC aCC87
-        LDA aCC87
+
+        INC currentEntryInHiScoreTable
+        LDA currentEntryInHiScoreTable
         CMP #$14
         BNE bCC53
+
         LDA #$00
-        STA aCC87
+        STA currentEntryInHiScoreTable
         BEQ bCC53
+
 bCC7E   LDA aFA
         AND #$10
         BNE bCC64
+
         JMP ExitHiScoreScreen
 
-aCC87   .BYTE $00
+currentEntryInHiScoreTable   .BYTE $00
 aCC88   .BYTE $01
 ;------------------------------------------------------------------
 ; ExitHiScoreScreen
@@ -8051,7 +8065,7 @@ bCC8C   LDA $DC00    ;CIA1: Data Port Register A
 ; SetupHiScoreScreen
 ;------------------------------------------------------------------
 SetupHiScoreScreen   
-        LDX aCC87
+        LDX currentEntryInHiScoreTable
         LDA #<hiScoreTablePtr
         STA tempLoPtr1
         LDA #>hiScoreTablePtr
