@@ -518,60 +518,89 @@ it will give you another 'new' random byte, and move its pointer to the next
 position in memory after $9A00 ready for the next caller.
 
 ## Handling Keyboard Input
+The easiest way of reading keyboard input is to check the byte in memory
+location `$00C5`. This stores the value of the most recently pressed key on the
+keyboard.  [This table](https://www.c64-wiki.com/wiki/Keyboard_code) is a
+useful reference providing a mapping from key pressed to the value stored in
+`$00C5`.
+
+The keyboard input routine in the [`dna.asm`] pause mode 'game' is
+representative of how Minter typically codes for this sort of thing. When DNA
+is running the user can manipulate a helix of large blinking eyeballs (!) by
+tuning the speed, frequency and 'phase' of the helix: 
+
+<img src="https://user-images.githubusercontent.com/58846/103443219-cfab3580-4c54-11eb-8046-0f5f3bac9c79.gif" width=700>
+
+The routine that processes this user input I've called `DNA_CheckKeyBoardInput`
+and it is called periodically in DNA during a 'raster interrupt' that runs
+dozens of times every second. (We'll cover 'interrupts' in more detail later.)
+
+Since assembly doesn't contain `if` or `switch` statements the challenge here
+is to find a pattern that delivers both 'early returns' (i.e. exiting the
+function as early as possible) and the ability to check a wide variety of
+possible conditions. The least possible work the routine can do to is establish
+that no key has been pressed and exit immediately. Since the value `$40` in
+`$C005` tells us that no key has been pressed, this can be used to bail early
+if there's no keyboard input to process. 
+
+There's a problem though: we only want to act on changes to `lastKeyPressed`
+(the name we'll give to `$C005`). So we need to be able to detect when it has
+changed rather than acting on the last keypress repeatedly. Even if the user
+presses the key only for a second, this routine will be called dozens of times
+with the value for that key and it only wants to act on the keypress once: not
+dozens of times.
+
+Minter solves this by making the keyboard input routine slightly inefficient.
+The routine will only act on a key the first time it sees it in `$00C5`. This
+means noticing when the content has changed from `$40` to something else. The
+way Minter does this here is to check the current key press when the previous
+one was `$40` (i.e. no key pressed), otherwise return early:
+
+
 ```asm
-f1WasPressed   .BYTE $00
-;------------------------------------------------------------------
-; CheckKeyboardInGame
-;------------------------------------------------------------------
-CheckKeyboardInGame   
+;----------------------------------------------------------------
+; DNA_CheckKeyBoardInput
+;----------------------------------------------------------------
+DNA_CheckKeyBoardInput   
+        LDA dnaLastRecordedKey
+        CMP #$40 ; No key pressed
+        BEQ b1018
+
+        ; No key was pressed. Update last recorded key and return.
         LDA lastKeyPressed
-        CMP #$40
-        BNE b786D
-        LDA #$00
-        STA f1WasPressed
-b786C   RTS 
-
-b786D   LDY f1WasPressed
-        BNE b786C
-        LDY inAttractMode
-        BEQ b787C
-        LDY #$02
-        STY inAttractMode
-b787C   LDY levelRestartInProgress
-        BNE b786C
-        LDY gilbyHasJustDied
-        BNE b786C
-
-        CMP #$3E ; Q pressed, to quit game
-        BNE b788E
-
-        ; Q was pressed, get ready to quit game.
-        INC qPressedToQuitGame
+        STA dnaLastRecordedKey
         RTS 
 
-b788E   CMP #$04 ; F1 Pressed
-        BNE b7899
-        INC f1WasPressed
-        INC pauseModeSelected
-b7898   RTS 
-
-b7899   CMP #$3C ; Space pressed
-        BNE b78A1
-        INC progressDisplaySelected
-        RTS 
-
-        ; We can award ourselves a bonus bounty by 
-        ; pressing Y at any time, as long as '1C' is the
-        ; first character in the hiscore table. Not sure
-        ; what this hack is for, testing?
-b78A1   CMP #$19 ; Y Pressed
-        BNE b7898
-        LDA canAwardBonus
-        CMP #$1C
-        BNE b7898
-        INC bonusAwarded
-        RTS 
+b1018   LDA lastKeyPressed
+        STA dnaLastRecordedKey
+        CMP #$0C ; 'Z'
+        BNE b1027
+        ; Z pressed: decrease wave frequency.
+        DEC dnaWave1Frequency
+        JMP DNA_DrawStuff
+        ; Returns
 ```
+
+This has the inefficient result of checking against every possible valid
+keypress (i.e. Z,X,A etc.) nearly every time the routine is called. This could
+have been avoided with another check as follows:
+
+```asm
+b1018   LDA lastKeyPressed
+        STA dnaLastRecordedKey
+        CMP #$40 ; Additional check for 'no key pressed'
+        BEQ ReturnEarly ; If no key pressed jump to an RTS and return.
+        CMP #$0C ; 'Z'
+        BNE b1027
+        ; Z pressed: decrease wave frequency.
+        DEC dnaWave1Frequency
+        JMP DNA_DrawStuff
+        ; Returns
+```
+The pattern in this paragraph is repeated throughout the routine. If the key value isn't the
+one we're interested in (in this this case `$0C` (which is 'Z')) then move to the next paragraph,
+otherwise act on the input and return.
+
 ## Handling Joystick Input
 
 [`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm

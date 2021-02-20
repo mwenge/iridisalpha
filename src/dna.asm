@@ -157,13 +157,13 @@ ReturnFromDNAInterruptHandler
 DNA_RunMainAnimationRoutine   
         JMP DNA_MainAnimationRoutine
 
-dnaCurrentSpritesYPosArrayIndex   .BYTE $00
+dnaCurrentSpritesXPosArrayIndex   .BYTE $00
 
 ;----------------------------------------------------------------
 ; DNA_MainAnimationRoutine
 ;----------------------------------------------------------------
 DNA_MainAnimationRoutine   
-        LDX dnaCurrentSpritesYPosArrayIndex
+        LDX dnaCurrentSpritesXPosArrayIndex
         LDY currentSpriteIndex
         TYA 
         STA backingDataLoPtr
@@ -171,10 +171,10 @@ DNA_MainAnimationRoutine
         ASL 
         TAY 
 
-        LDA dnaSpritesPreviousYPosArray,X
-        STA $CFFE,Y ; Sprite 'Y' Y Pos
-        LDA dnaSpritesYPositionsArray,X
-        STA $CFFF,Y ; Sprite 'Y' Y Pos
+        LDA dnaSpritesPreviousXPosArray,X
+        STA $CFFE,Y ; Sprite 'Y' X Pos
+        LDA dnaSpritesXPositionsArray,X
+        STA $CFFF,Y ; Sprite 'Y' X Pos
         STA $D005,Y  ;Sprite 2 Y Pos
         STA $D00F    ;Sprite 7 Y Pos
         STA $D00D    ;Sprite 6 Y Pos
@@ -201,14 +201,14 @@ b0E3B   LDA dnaStarfielSprite2Array,X
         SEC 
         SBC #$27
 b0E4E   TAX 
-        LDA dnaSpritesPreviousYPosArray,X
+        LDA dnaSpritesPreviousXPosArray,X
         STA $D004,Y  ;Sprite 2 X Pos
         PLA 
         TAX 
         LDY currentSpriteIndex
         STX backingDataLoPtr
 
-        LDX a0F6C
+        LDX dnaSpriteColor2ArrayIndex
 dnaColorScheme1LoByte   =*+$01
 dnaColorScheme1HiByte   =*+$02
         LDA dnaSpriteColor2Array,X
@@ -221,7 +221,7 @@ dnaColorScheme2HiByte   =*+$02
         BNE b0E6F
 
         LDX #$00
-b0E6F   STX a0F6C
+b0E6F   STX dnaSpriteColor2ArrayIndex
 
         LDX dnaCurrentSpriteColorArrayIndex
 dnaColorScheme3LoByte   =*+$01
@@ -251,8 +251,8 @@ b0E85   STX dnaCurrentSpriteColorArrayIndex
         ; array (end of the array denoted by a sentinel value of $FF).
         LDY #$01
 b0E92   STY currentSpriteIndex
-        STX dnaCurrentSpritesYPosArrayIndex
-        LDA dnaSpritesYPositionsArray,X
+        STX dnaCurrentSpritesXPosArrayIndex
+        LDA dnaSpritesXPositionsArray,X
         CMP #$FF
         BNE b0EC7
 
@@ -260,8 +260,8 @@ b0E92   STY currentSpriteIndex
         ; a full paint of the screen) so do some book-keeping, check for input,
         ; update the sprite pointers (to achieve the blinking animation effect).
         LDX #$00
-        STX dnaCurrentSpritesYPosArrayIndex
-        JSR DNA_UpdateAnimationData
+        STX dnaCurrentSpritesXPosArrayIndex
+        JSR DNA_UpdateHeadOfPreviousXPosData
         JSR DNA_CheckKeyBoardInput
         DEC backingDataHiPtr
         JSR DNA_UpdateSpritePointers
@@ -275,11 +275,11 @@ b0E92   STY currentSpriteIndex
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JMP $EA31
-        LDX dnaCurrentSpritesYPosArrayIndex
+        LDX dnaCurrentSpritesXPosArrayIndex
 
         ; Update the 'Raster Position' to the next position on the screen
         ; that we want to interrupt at.
-b0EC7   LDA dnaSpritesYPositionsArray,X
+b0EC7   LDA dnaSpritesXPositionsArray,X
         SEC 
         SBC #$02
         STA $D012    ;Raster Position
@@ -288,73 +288,73 @@ b0EC7   LDA dnaSpritesYPositionsArray,X
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
 
-f0EDA   =*+$02
         JMP ReturnFromDNAInterruptHandler
 
-dnaSpritesPreviousYPosArray   .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
-        .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
-        .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-dnaSpritesYPositionsArray   .BYTE $30,$38,$40,$48,$50,$58,$60,$68
-        .BYTE $70,$78,$80,$88,$90,$98,$A0,$A8
-        .BYTE $B0,$B8,$C0,$C8,$D0,$D8,$E0,$E8
-        .BYTE $FF
-dnaSpriteColor2Array   .BYTE $02,$08,$07,$05,$04,$06,$FF
-dnaSpriteColorArray   .BYTE $0B,$0C,$0F,$01,$0F,$0C,$FF
-f0F2A   .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
-        .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
-        .BYTE $80,$7F,$7E,$7D,$7B,$78,$75,$71
-        .BYTE $6D,$68,$63,$5E,$58,$52,$4C,$46
-        .BYTE $40,$39,$33,$2D,$27,$21,$1C,$17
-        .BYTE $12,$0E,$0A,$07,$04,$02,$01,$00
-        .BYTE $00,$00,$01,$02,$04,$07,$0A,$0E
-        .BYTE $12,$17,$1C,$21,$27,$2D,$33,$39
-        .BYTE $FF
-dnaCurrentSpriteColorArrayIndex   .BYTE $00
-a0F6C   .BYTE $00
-currentSpriteIndex   .BYTE $01
-dnaCurrentPhase   .BYTE $05
+dnaSpritesPreviousXPosArrayIndexMinusOne   =*-$01
+dnaSpritesPreviousXPosArray     .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
+                                .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
+                                .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
+                                .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+dnaSpritesXPositionsArray       .BYTE $30,$38,$40,$48,$50,$58,$60,$68
+                                .BYTE $70,$78,$80,$88,$90,$98,$A0,$A8
+                                .BYTE $B0,$B8,$C0,$C8,$D0,$D8,$E0,$E8
+                                .BYTE $FF
+dnaSpriteColor2Array            .BYTE $02,$08,$07,$05,$04,$06,$FF
+dnaSpriteColorArray             .BYTE $0B,$0C,$0F,$01,$0F,$0C,$FF
+dnaXPosDataHeadArray            .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
+                                .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
+                                .BYTE $80,$7F,$7E,$7D,$7B,$78,$75,$71
+                                .BYTE $6D,$68,$63,$5E,$58,$52,$4C,$46
+                                .BYTE $40,$39,$33,$2D,$27,$21,$1C,$17
+                                .BYTE $12,$0E,$0A,$07,$04,$02,$01,$00
+                                .BYTE $00,$00,$01,$02,$04,$07,$0A,$0E
+                                .BYTE $12,$17,$1C,$21,$27,$2D,$33,$39
+                                .BYTE $FF
+dnaCurrentSpriteColorArrayIndex .BYTE $00
+dnaSpriteColor2ArrayIndex       .BYTE $00
+currentSpriteIndex              .BYTE $01
+dnaCurrentPhase                 .BYTE $05
+
 ;----------------------------------------------------------------
-; DNA_CopyDataRight
+; DNA_PropagatePreviousXPosToTheRight
 ;----------------------------------------------------------------
-DNA_CopyDataRight   
+DNA_PropagatePreviousXPosToTheRight   
         LDX #$27
-b0F71   LDA f0EDA,X
-        STA dnaSpritesPreviousYPosArray,X
+b0F71   LDA dnaSpritesPreviousXPosArrayIndexMinusOne,X
+        STA dnaSpritesPreviousXPosArray,X
         DEX 
         BNE b0F71
         RTS 
 
 a0F7B   .BYTE $00
 ;----------------------------------------------------------------
-; DNA_UpdateAnimationData
+; DNA_UpdateHeadOfPreviousXPosData
 ;----------------------------------------------------------------
-DNA_UpdateAnimationData   
+DNA_UpdateHeadOfPreviousXPosData   
         DEC actualSpeed
         BNE b0F8A
         LDA dnaCurrentSpeed
         STA actualSpeed
-        JSR DNA_CopyDataRight
+        JSR DNA_PropagatePreviousXPosToTheRight
 
-p0F8C   =*+$02
-b0F8A   JSR DNA_CalcAnimationShift
+b0F8A   JSR DNA_CalculateValueForHeadOfPreviousXPosData
         DEC a0FC5
         BNE b0FC3
         LDA a0FC6
         STA a0FC5
         LDX a0F7B
-        LDA f0F2A,X
+        LDA dnaXPosDataHeadArray,X
         STA a42
         LDY dnaWave2Enabled
         BEQ b0FA9
         CLC 
         ROR 
         STA a42
-b0FA9   LDA a11CE
+b0FA9   LDA newHeadOfXPosData
         CLC 
         ADC a42
-        STA dnaSpritesPreviousYPosArray
+        STA dnaSpritesPreviousXPosArray
         TXA 
         CLC 
         ADC a0FC4
@@ -384,11 +384,16 @@ f0FEB   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
     .BYTE $09,$0A,$0B,$0C,$0D,$0E,$0F,$10
 ;----------------------------------------------------------------
 ; DNA_CheckKeyBoardInput
+; We only act on a keypress the first time we see it. This means
+; we only act on input when the previous key press was `$C0` and
+; the current key press is potentially something else.
 ;----------------------------------------------------------------
 DNA_CheckKeyBoardInput   
         LDA dnaLastRecordedKey
-        CMP #$40
+        CMP #$40 ; No key pressed
         BEQ b1018
+
+        ; No key was pressed. Update last recorded key and return.
         LDA lastKeyPressed
         STA dnaLastRecordedKey
         RTS 
@@ -400,12 +405,14 @@ b1018   LDA lastKeyPressed
         ; Z pressed: decrease wave frequency.
         DEC dnaWave1Frequency
         JMP DNA_DrawStuff
+        ; Returns
 
 b1027   CMP #$17 ; 'X'
         BNE b1031
         ; X pressed: increase wave frequency.
         INC dnaWave1Frequency
         JMP DNA_DrawStuff
+        ; Returns
 
 b1031   CMP #$0A ; 'A'
         BNE b1043
@@ -421,10 +428,12 @@ UpdateSpeedAndDisplayUpdatedSettings
 
 b1043   CMP #$0D ; 'S'
         BNE DNA_ContinueCheckKeyboardInput
+        ; Returns
 
         ; S pressed. Decrease speed.
         DEC dnaCurrentSpeed
         JMP UpdateSpeedAndDisplayUpdatedSettings
+        ; Returns
 
 ;----------------------------------------------------------------
 ; DNA_DrawStuff
@@ -520,7 +529,7 @@ b10D9   TAX
         STA dnaColorScheme2HiByte
         STA dnaColorScheme1HiByte
         LDA #$00
-        STA a0F6C
+        STA dnaSpriteColor2ArrayIndex
         RTS 
 
 b10F2   CMP #$03 ; F7
@@ -626,15 +635,15 @@ a11CA   .BYTE $03
 a11CB   .BYTE $03
 a11CC   .BYTE $01
 dnaWave2Enabled   .BYTE $01
-a11CE   .BYTE $00
+newHeadOfXPosData   .BYTE $00
 ;----------------------------------------------------------------
-; DNA_CalcAnimationShift
+; DNA_CalculateValueForHeadOfPreviousXPosData
 ;----------------------------------------------------------------
-DNA_CalcAnimationShift   
+DNA_CalculateValueForHeadOfPreviousXPosData   
         LDA dnaWave2Enabled
         BNE b11DA
         LDA #$40
-        STA a11CE
+        STA newHeadOfXPosData
 b11D9   RTS 
 
 b11DA   DEC a11CB
@@ -642,12 +651,12 @@ b11DA   DEC a11CB
         LDA a11CA
         STA a11CB
         LDX a11C8
-        LDA f0F2A,X
+        LDA dnaXPosDataHeadArray,X
         CLC 
         ROR 
         CLC 
         ADC #$40
-        STA a11CE
+        STA newHeadOfXPosData
         TXA 
         CLC 
         ADC a11CC
