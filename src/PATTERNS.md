@@ -12,6 +12,8 @@
   * [Pointer Tables for Writing Structured Data](#pointer-tables-for-writing-structured-data)
   * [Using Pointer Arrays to Jump to Subroutines](#using-pointer-arrays-to-jump-to-subroutines)
 * [Early Returns](#early-returns)
+* [Mutating Memory](#mutating-memory)
+  * [A Technique for Getting 'Random' Numbers](#a-technique-for-getting-random-numbers)
 * [Handling Keyboard Input](#handling-keyboard-input)
 * [Handling Joystick Input](#handling-joystick-input)
 
@@ -55,8 +57,8 @@ in the title screen of Iridis Alpha. There are seven of them forming a rainbow e
 
 Here's the routine that draws the colorful stripes behind the title in the
 title screen.  The character being drawn to each position in the screen is
-`$00`. If we look up the character set in charset.asm we see that it is 4
-horizontal stripes. The routine repeats this charaacter across 7 lines. In
+`$00`. If we look up the character set in [`charset.asm`] we see that it is 4
+horizontal stripes. The routine repeats this character across 7 lines. In
 addition it assigns a color to each line by writing the approprite value in the
 corresponding position of the C64's color ram (`$D800` - `$D8E7`). The color
 values are also given below.
@@ -185,7 +187,7 @@ this works:
 
 ### Using Line Pointers to Specify X and Y Positions on the Screen
 
-This is a technique Minter uses a lot, and its both simple and effective.
+This is a technique Minter uses a lot, and it's both simple and effective.
 The idea is to define an array with each member pointing to the first column
 of each line on the screen. The first member of the array points to the start
 of the first line, the second to the start of the second line, and so on. Now,
@@ -215,7 +217,10 @@ screenLinePtrLo = $0340
 screenLinePtrHi = $0360
 SCREEN_RAM      = $0400
 
-        ; Init_ScreenPointerArray
+;---------------------------------------------------------------------------------
+; Init_ScreenPointerArray
+;---------------------------------------------------------------------------------
+Init_ScreenPointerArray
         LDA #>SCREEN_RAM
         STA pointerHi
         LDA #<SCREEN_RAM
@@ -426,11 +431,147 @@ b74C0   CMP #$FE
         INX 
         JMP j74B3
 ```
+An example of a 'medium' structure drawn by the above routine:
 
-For more on the way the planet data is generated, check the [README] in the `src` directory.
+![image](https://user-images.githubusercontent.com/58846/108413472-fa604600-7222-11eb-8c5f-9f3d93a82e78.png)
+
+For more on the way the planet data is generated, check the [`README`] in the `src` directory.
+
+The same 'jump' technique is used to manage launching the subgames in [Batalyx]. 
+
+```asm
+;---------------------------------------------------------------------------------
+; LaunchSubGame
+;---------------------------------------------------------------------------------
+LaunchSubGame
+        SEI 
+        LDA #$00
+        STA currentRasterArrayIndex
+        JSR UpdateRasterPosition
+        LDX selectedSubGame
+        LDA subGameJumpMapLoPtr,X
+        STA a449E
+        LDA subGameJumpMapHiPtr,X
+        STA a449F
+        JSR UpdateGameIconsPanel
+        JMP (a449E)
+
+; $AB00 - LaunchHallucinOBomblets
+; $6000 - LaunchAMCII
+; $4288 - LaunchIridisBase
+; $0810 - LaunchCippyOnTheRun
+; $A000 - LaunchSyncro
+; $7800 - LaunchPsychedelia
+subGameJumpMapLoPtr   .BYTE $00,$00,$88,$10,$00,$00
+subGameJumpMapHiPtr   .BYTE $AB,$60,$42,$08,$A0,$78
+```
+
 ## Early Returns
 
+## Mutating Memory
+### A Technique for Getting 'Random' Numbers
+Given the space constraints and the bare-metal execution model of assembly
+programming in the C64 it's very common to mutate memory in-place to achieve a
+desired effect. What this means in practice is updating a position in RAM so
+that the next time the surrounding code is executed the updated value is used
+instead of the value it replaced.
+
+A simple example is the technique Minter used (which was presumably common) to
+get a pseudo-random number. In this little routine we load whatever is in the
+memory pointed to by label `currentMemoryPointer`. In this instance,
+`currentMemoryPointer` starts out point at `$9A00`. So when the routine is
+first run it will load whatever is in `$9A00` into the accumulator(`A`) and
+return it. The calling function can now treat the content of `A` as a random
+number. The trick the function uses to ensure that it returns a different
+random number the next time it is called is to increment the location pointed
+to by `currentMemoryPointer` by 1 byte from `$9A00` to `$9A01`. It does this by
+directly manipulating that location in memory, in this case by calling `INC
+addressOfCurrentMemoryPointer`. The variable `addressOfCurrentMemoryPointer`
+points to the `00` in the instruction `LDA $9A00'. Incrementing
+'addressOfCurrentMemoryPointer' by 1 changes the instruction from `LDA $9A00'
+to `LDA $9A01'.
+
+```asm
+;------------------------------------------------------------------
+; PutRandomByteInAccumulator
+;------------------------------------------------------------------
+addressOfCurrentMemoryPointer =*+$01
+
+PutRandomByteInAccumulator   
+        LDA currentMemoryPointer
+        INC addressOfCurrentMemoryPointer
+        RTS 
+```
+
+(Strictly speaking it changes the instruction from `LDA $009A` to `LDA $019A`,
+because as you may remember byte pairs are little-endian in the C64, so the
+'second' byte appears before the 'first byte'. The address `$9A00` is stored in
+the order `$009A` in memory. This is also why the definition of
+`addressOfCurrentMemoryPointer` is "*+$01" rather than "=*+$02": it tells the
+compiler to skip ahead 1 byte rather than two to point to the location of
+`currentMemoryPointer'. `LDA`, like all instructions in 6502 assembly is only
+one byte long.)
+
+So with all that in mind, you can see that this little function is treating the
+bytes from `$9A00` onwards as good as random. Every time you call the function
+it will give you another 'new' random byte, and move its pointer to the next
+position in memory after $9A00 ready for the next caller.
+
 ## Handling Keyboard Input
+```asm
+f1WasPressed   .BYTE $00
+;------------------------------------------------------------------
+; CheckKeyboardInGame
+;------------------------------------------------------------------
+CheckKeyboardInGame   
+        LDA lastKeyPressed
+        CMP #$40
+        BNE b786D
+        LDA #$00
+        STA f1WasPressed
+b786C   RTS 
+
+b786D   LDY f1WasPressed
+        BNE b786C
+        LDY inAttractMode
+        BEQ b787C
+        LDY #$02
+        STY inAttractMode
+b787C   LDY levelRestartInProgress
+        BNE b786C
+        LDY gilbyHasJustDied
+        BNE b786C
+
+        CMP #$3E ; Q pressed, to quit game
+        BNE b788E
+
+        ; Q was pressed, get ready to quit game.
+        INC qPressedToQuitGame
+        RTS 
+
+b788E   CMP #$04 ; F1 Pressed
+        BNE b7899
+        INC f1WasPressed
+        INC pauseModeSelected
+b7898   RTS 
+
+b7899   CMP #$3C ; Space pressed
+        BNE b78A1
+        INC progressDisplaySelected
+        RTS 
+
+        ; We can award ourselves a bonus bounty by 
+        ; pressing Y at any time, as long as '1C' is the
+        ; first character in the hiscore table. Not sure
+        ; what this hack is for, testing?
+b78A1   CMP #$19 ; Y Pressed
+        BNE b7898
+        LDA canAwardBonus
+        CMP #$1C
+        BNE b7898
+        INC bonusAwarded
+        RTS 
+```
 ## Handling Joystick Input
 
 [`iridisalpha.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/iridisalpha.asm
@@ -441,3 +582,4 @@ For more on the way the planet data is generated, check the [README] in the `src
 [`bonusphase_graphics.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase_graphics.asm
 [`bonusphase.asm`]: https://github.com/mwenge/iridisalpha/blob/master/src/bonusphase.asm
 [`README`]: https://github.com/mwenge/iridisalpha/blob/master/src/README.md
+[Batalyx]: https://github.com/mwenge/batalyx/blob/master/src

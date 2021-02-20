@@ -684,7 +684,7 @@ titleMusicNote9   .BYTE $02
 titleMusicNoteA   .BYTE $02
 titleMusicNoteC   =*+$01
 titleMusicNoteD   =*+$02
-titleMusicNoteB   ASL a0E07
+titleMusicNoteB   ASL dnaCurrentSpritesYPosArrayIndex
 ;------------------------------------------------------------------
 ; PlayTitleScreenMusic
 ;------------------------------------------------------------------
