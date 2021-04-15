@@ -2077,8 +2077,15 @@ BP_UpdateLickerShipSpriteArray
         BEQ bBFFF
         RTS 
 
-bBFFF   LDA fA907,X
-        PHP 
+; Fix by Hokuto Force for Crash. Replaces the following lines
+; from the original game:
+; bBFFF   LDA fA907,X
+;         PHP 
+; with:
+; bBFFF   LDX #$07
+;         LDA #$08
+bBFFF   LDX #$07
+        LDA #$08
         STA aBFF8
 bC006   INC bpLickerShipSpriteArray,X
         LDA bpLickerShipSpriteArray,X
