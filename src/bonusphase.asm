@@ -310,10 +310,10 @@ SwapSpriteData
         LDX #$00
 bAD83   LDA $E200,X
         PHA 
-        LDA a3000,X
+        LDA starFieldSprite,X
         STA $E200,X
         PLA 
-        STA a3000,X
+        STA starFieldSprite,X
         LDA $E300,X
         PHA 
         LDA f3100,X
