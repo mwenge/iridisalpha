@@ -33,12 +33,12 @@ unusedVariable4                         = $18
 unusedVariable5                         = $1C
 a1F                                     = $1F
 a20                                     = $20
-a21                                     = $21
+starFieldAnimationRate                                     = $21
 planetSurfaceDataPtrLo                  = $22
 planetSurfaceDataPtrHi                  = $23
 charSetDataPtrLo                        = $24
 charSetDataPtrHi                        = $25
-a26                                     = $26
+mutatedCharToDraw                                     = $26
 structureRoutineLoPtr                   = $29
 structureRoutineHiPtr                   = $2A
 soundTmpLoPtr                           = $30
@@ -377,7 +377,7 @@ a0A45                                  .BYTE $04,$01,$0F,$0C,$0B
 TitleScreenMutateStarfieldAnimationData   
         LDX #$1E
         LDA #$00
-        STA a21
+        STA starFieldAnimationRate
 b0A50   DEC titleScreenStarfieldAnimationSeedArray,X
         BNE b0A6D
         LDA titleScreenStarFieldAnimationCounter,X
@@ -1576,7 +1576,7 @@ b4D1C   STA a4F57
         LDA #$05
         STA gilbyExploding
         LDA #$04
-        STA a6D86
+        STA starFieldInitialStateArray - $01
 
 j4D36   
         LDY #$23
@@ -1590,12 +1590,12 @@ j4D36
         LDA #$0E
         STA gilbyExploding
         LDA #$02
-        STA a6D86
-        LDA a6E12
+        STA starFieldInitialStateArray - $01
+        LDA starFieldAnimationOffset
         EOR #$FF
         CLC 
         ADC #$01
-        STA a6E12
+        STA starFieldAnimationOffset
         LDA a4F57
         BEQ b4D72
         LDA energyLabelColorIndexBottomPlanet
@@ -2795,7 +2795,7 @@ b568C   LDA enemiesKilledTopPlanetsSinceLastUpdate,X
 b569E   LDA #$04
         STA gilbyExploding
         LDA #$03
-        STA a6D86
+        STA starFieldInitialStateArray - $01
         LDA currentLevelInTopPlanets,X
         STA currentLevelInCurrentPlanet
         LDA #$00
@@ -2826,7 +2826,7 @@ b56D1   LDA enemiesKilledBottomsPlanetsSinceLastUpdate,X
 b56E3   LDA #$04
         STA gilbyExploding
         LDA #$03
-        STA a6D86
+        STA starFieldInitialStateArray - $01
         LDA currentLevelInBottomPlanets,X
         STA currentLevelInCurrentPlanet
         LDA #$01
@@ -3001,7 +3001,7 @@ b5807   LDA #$FC
         LDA #$01
         STA gilbyExploding
         LDA #$03
-        STA a6D86
+        STA starFieldInitialStateArray - $01
         LDA #<gilbyDiedSoundSequence
         STA soundDataAE
         LDA #>gilbyDiedSoundSequence
@@ -3091,7 +3091,7 @@ b58C9   DEC a58E9
         LDA a5840
         STA gilbyExploding
         LDY #$02
-        STY a6D86
+        STY starFieldInitialStateArray - $01
         CMP #$08
         BNE b58E8
         JMP j596C
@@ -3374,7 +3374,7 @@ b5CCB   LDA gilbyVerticalPosition
         LDA colorSequenceArray,X
         STA upperPlanetGilbyBulletColor,X
         STA lowerPlanetGilbyBulletColor,X
-        LDA a6E12
+        LDA starFieldAnimationOffset
         BMI b5D0B
 
         LDA f5D27,X
@@ -3438,7 +3438,7 @@ UpdateDisplayedScoringRate
         STA SCREEN_RAM + $0387
         LDA #$01
         STA COLOR_RAM + $0387
-        LDA a6E12
+        LDA starFieldAnimationOffset
         BPL b5E14
         EOR #$FF
         CLC 
@@ -3572,7 +3572,7 @@ b5F0D   JSR UpdateEnemiesLeftStorage
         LDA txtEnemiesLeftCol2
         STA SCREEN_RAM + $0350
 
-b5F21   LDA a6E12
+b5F21   LDA starFieldAnimationOffset
         BNE b5F28
 
         LDA #$01
@@ -4591,7 +4591,7 @@ b6812   STA starFieldSprite - $01,Y
 ; ManipulateStarfieldSprite
 ;------------------------------------------------------------------
 ManipulateStarfieldSprite   
-        LDX a6E12
+        LDX starFieldAnimationOffset
         BPL b6822
         TXA 
         EOR #$FF
@@ -4719,7 +4719,7 @@ SetUpGilbySprite
         LDA #$04
         STA a7177
         LDA #$EA
-        STA a6E12
+        STA starFieldAnimationOffset
         LDA #$00
         STA a7140
         RTS 
@@ -5096,7 +5096,7 @@ b6BA3   LDA gilbyExploding
         BEQ b6BBE
         STA $D021    ;Background Color 0
         STA $D020    ;Border Color
-        DEC a6D86
+        DEC starFieldInitialStateArray - $01
         BNE b6BBE
         LDA #$00
         STA gilbyExploding
@@ -5168,7 +5168,7 @@ b6C26   LDX currentPlanetBackgroundClr1
         STA spriteCollidedWithBackground
 
         JSR CheckKeyboardInGame
-        JSR PrepareToScrollPlanets
+        JSR ScrollStarfieldAndThenPlanets
         JSR AnimateGilbySpriteMovement
         JSR ProcessSomeGameSequenceData
         JSR ProcessJoystickInput
@@ -5208,7 +5208,7 @@ AnimateStarField
 b6C91   SEC 
         SBC #$02
         STA $D012    ;Raster Position
-        LDA f6D87,Y
+        LDA starFieldInitialStateArray,Y
         TAX 
         LDA f6DBA,X
         STA $D02E    ;Sprite 7 Color
@@ -5302,83 +5302,82 @@ j6D41
         JMP ReturnFromInterrupt
 
 
-a6D4F                 .BYTE $00,$0D
-spriteCollidedWithBackground                 .BYTE $00
-f6D52                 .BYTE $60
-f6D53                 .BYTE $66,$6C,$72,$78,$7E,$84,$8A,$90
-                      .BYTE $96,$9C,$A2,$A8,$AE,$B4
-f6D61                 .BYTE $00
-starFieldXPosArray    .BYTE $44,$CD,$9F,$F7,$EF,$7F,$79,$2D
-                      .BYTE $9D,$D5,$01,$79,$96,$FB
-f6D70                 .BYTE $C0
-starFieldXPosMSBArray .BYTE $01,$00,$01,$00,$01,$01,$00,$01
-                      .BYTE $00,$00,$00,$01,$00,$01,$00,$00
-                      .BYTE $01,$01,$00
-a6D84                 .BYTE $00
-gilbyExploding                 .BYTE $00
-a6D86                 .BYTE $00
-f6D87                 .BYTE $02,$03,$04,$03,$02,$03,$04,$03
-                      .BYTE $02,$03,$04,$03,$02,$02,$03,$04
-                      .BYTE $03,$02,$03,$04,$03,$02,$01,$02
-                      .BYTE $03
-f6DA0                 .BYTE $04,$02,$03,$04,$03,$02,$03,$04
-                      .BYTE $03,$02,$03,$04,$03,$02,$02,$03
-                      .BYTE $04,$03,$02,$03,$04,$03,$02,$01
-                      .BYTE $02,$03
-f6DBA                 .BYTE $04,$01,$0F,$0C,$0B,$08,$06
+a6D4F                        .BYTE $00,$0D
+spriteCollidedWithBackground .BYTE $00
+f6D52                        .BYTE $60
+f6D53                        .BYTE $66,$6C,$72,$78,$7E,$84,$8A,$90
+                             .BYTE $96,$9C,$A2,$A8,$AE,$B4,$00
+starFieldXPosArray           .BYTE $44,$CD,$9F,$F7,$EF,$7F,$79,$2D
+                             .BYTE $9D,$D5,$01,$79,$96,$FB,$C0
+starFieldXPosMSBArray        .BYTE $01,$00,$01,$00,$01,$01,$00,$01
+                             .BYTE $00,$00,$00,$01,$00,$01,$00,$00
+                             .BYTE $01,$01,$00
+a6D84                        .BYTE $00
+gilbyExploding               .BYTE $00,$00
+starFieldInitialStateArray   .BYTE $02,$03,$04,$03,$02,$03,$04,$03
+                             .BYTE $02,$03,$04,$03,$02,$02,$03,$04
+                             .BYTE $03,$02,$03,$04,$03,$02,$01,$02
+                             .BYTE $03
+starFieldCurrentStateArray   .BYTE $04,$02,$03,$04,$03,$02,$03,$04
+                             .BYTE $03,$02,$03,$04,$03,$02,$02,$03
+                             .BYTE $04,$03,$02,$03,$04,$03,$02,$01
+                             .BYTE $02,$03
+f6DBA                        .BYTE $04,$01,$0F,$0C,$0B,$08,$06
 
 ;------------------------------------------------------------------
-; PrepareToScrollPlanets
+; ScrollStarfieldAndThenPlanets
 ;------------------------------------------------------------------
-PrepareToScrollPlanets   
+ScrollStarfieldAndThenPlanets   
         LDX #$0F
         LDA #$00
-        STA a21
-        LDA a6E12
-        BPL b6DD0
+        STA starFieldAnimationRate
+        LDA starFieldAnimationOffset
+        BPL StarFieldUpdateLoop
 
         LDA #$FF
-        STA a21
+        STA starFieldAnimationRate
 
-b6DD0   DEC f6DA0,X
+StarFieldUpdateLoop   
+        DEC starFieldCurrentStateArray,X
         BNE b6E0B
 
-        LDA a6D86,X
-        STA f6DA0,X
-        LDA f6D61,X
+        LDA starFieldInitialStateArray - $01,X
+        STA starFieldCurrentStateArray,X
+        LDA starFieldXPosArray - $01,X
         CPX #$08
         BMI b6DF4
         SEC 
-        SBC a6E12
-        STA f6D61,X
-        LDA f6D70,X
-        SBC a21
-        STA f6D70,X
+        SBC starFieldAnimationOffset
+        STA starFieldXPosArray - $01,X
+        LDA starFieldXPosMSBArray - $01,X
+        SBC starFieldAnimationRate
+        STA starFieldXPosMSBArray - $01,X
         JMP j6E03
 
 b6DF4   CLC 
-        ADC a6E12
-        STA f6D61,X
-        LDA f6D70,X
-        ADC a21
-        STA f6D70,X
+        ADC starFieldAnimationOffset
+        STA starFieldXPosArray - $01,X
+        LDA starFieldXPosMSBArray - $01,X
+        ADC starFieldAnimationRate
+        STA starFieldXPosMSBArray - $01,X
 
 j6E03   
-        LDA f6D70,X
+        LDA starFieldXPosMSBArray - $01,X
         AND #$01
-        STA f6D70,X
+        STA starFieldXPosMSBArray - $01,X
 
 b6E0B   DEX 
-        BNE b6DD0
+        BNE StarFieldUpdateLoop
+
         JMP ScrollPlanets
 
-a6E11   .BYTE $02
-a6E12   .BYTE $EA
-starfieldSpriteAnimationData   .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
-        .BYTE $F0,$F0,$F0,$F0,$F8,$F8,$F8,$F8
-        .BYTE $FC,$FC,$FC,$FC,$FE,$FE,$FE,$FF
-defaultGilbyColor   .BYTE $01
-gilbyIsAirborne   .BYTE $01
+a6E11                        .BYTE $02
+starFieldAnimationOffset     .BYTE $EA
+starfieldSpriteAnimationData .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
+                             .BYTE $F0,$F0,$F0,$F0,$F8,$F8,$F8,$F8
+                             .BYTE $FC,$FC,$FC,$FC,$FE,$FE,$FE,$FF
+defaultGilbyColor            .BYTE $01
+gilbyIsAirborne              .BYTE $01
 
 ;------------------------------------------------------------------
 ; ProcessJoystickInput
@@ -5420,12 +5419,12 @@ b6E67   JSR UpdatePlanetProgress
         LDA #$06
         STA gilbyExploding
         LDA #$04
-        STA a6D86
+        STA starFieldInitialStateArray - $01
         LDY #$14
-        LDA a6E12
+        LDA starFieldAnimationOffset
         BPL b6E85
         LDY #$EC
-b6E85   STY a6E12
+b6E85   STY starFieldAnimationOffset
 
 b6E88   DEC defaultGilbyColor
         BEQ b6E8E
@@ -5501,7 +5500,7 @@ b6F03   JSR ProcessFireButtonPressed
         LDA #$01
         STA a7177
         LDA #$01
-        STA a6E12
+        STA starFieldAnimationOffset
         LDA #$04
         STA a75A5
         STA a75A6
@@ -5527,7 +5526,7 @@ b6F2E   LDA joystickInput
         LDA #$0D
         STA a75A3
         LDA #$FF
-        STA a6E12
+        STA starFieldAnimationOffset
         LDA #$01
         STA a7177
 
@@ -5577,14 +5576,14 @@ b6FA0   JSR ProcessFireButtonPressed
         BNE b6FEB
 
         ; Joystick Left Pressed 
-        LDA a6E12
+        LDA starFieldAnimationOffset
         BPL b6FDA
         INC a75A5
-        INC a6E12
+        INC starFieldAnimationOffset
         BNE b6FD7
 b6FB7   LDA #$00
         STA a7177
-        STA a6E12
+        STA starFieldAnimationOffset
         STA a7178
         LDA #$06
         STA a75A5
@@ -5596,11 +5595,11 @@ b6FB7   LDA #$00
         STA a75A3
 b6FD7   JMP j700F
 
-b6FDA   INC a6E12
+b6FDA   INC starFieldAnimationOffset
         DEC a75A5
         BNE b6FD7
         INC a75A5
-        DEC a6E12
+        DEC starFieldAnimationOffset
         JMP j700F
 
 b6FEB   LDA joystickInput
@@ -5608,16 +5607,16 @@ b6FEB   LDA joystickInput
         BNE j700F
 
         ; Joystick right pressed
-        LDA a6E12
+        LDA starFieldAnimationOffset
         BMI b7001
         INC a75A5
-        DEC a6E12
+        DEC starFieldAnimationOffset
         BEQ b6FB7
         BNE j700F
-b7001   DEC a6E12
+b7001   DEC starFieldAnimationOffset
         DEC a75A5
         BNE b6FD7
-        INC a6E12
+        INC starFieldAnimationOffset
         INC a75A5
 
 j700F   
@@ -5723,16 +5722,16 @@ b70B5   JSR ProcessFireButtonPressed
         STA gilbySpriteIndex
         LDA #$1F
         STA a75A3
-b70E0   INC a6E12
+b70E0   INC starFieldAnimationOffset
         LDA lowerPlanetActivated
         BEQ b70EF
-        LDA a6E12
+        LDA starFieldAnimationOffset
         CMP #$0C
         BEQ b70F6
-b70EF   LDA a6E12
+b70EF   LDA starFieldAnimationOffset
         CMP #$18
         BNE b70F9
-b70F6   DEC a6E12
+b70F6   DEC starFieldAnimationOffset
 b70F9   JMP j7173
 
 b70FC   LDA joystickInput
@@ -5751,29 +5750,29 @@ b70FC   LDA joystickInput
         STA gilbySpriteIndex
         LDA #$24
         STA a75A3
-b7124   DEC a6E12
+b7124   DEC starFieldAnimationOffset
         LDA lowerPlanetActivated
         BEQ b7133
-        LDA a6E12
+        LDA starFieldAnimationOffset
         CMP #$F4
         BEQ b713A
-b7133   LDA a6E12
+b7133   LDA starFieldAnimationOffset
         CMP #$E6
         BNE j7173
-b713A   INC a6E12
+b713A   INC starFieldAnimationOffset
         JMP j7173
 
 a7140   .BYTE $00
 b7141   RTS 
 
-b7142   LDA a6E12
+b7142   LDA starFieldAnimationOffset
         BEQ b715A
-        LDA a6E12
+        LDA starFieldAnimationOffset
         BMI b7152
-        DEC a6E12
-        DEC a6E12
-b7152   INC a6E12
-        LDA a6E12
+        DEC starFieldAnimationOffset
+        DEC starFieldAnimationOffset
+b7152   INC starFieldAnimationOffset
+        LDA starFieldAnimationOffset
         BNE j7173
 b715A   LDA joystickInput
         AND #$10
@@ -5893,13 +5892,13 @@ ScrollPlanets
         STA a67C5
         LDA colorSequenceArray,X
         STA a67C6
-        LDA a6E12
+        LDA starFieldAnimationOffset
         BMI b7234
         JMP ScrollPlanetLeft
 
 b7234   LDA a6E11
         CLC 
-        ADC a6E12
+        ADC starFieldAnimationOffset
         STA a6E11
         AND #$F8
         BNE b7243
@@ -5992,7 +5991,7 @@ b72BD   JMP DrawPlanetSurfaces
 ScrollPlanetLeft   
         LDA a6E11
         CLC 
-        ADC a6E12
+        ADC starFieldAnimationOffset
         STA a6E11
         AND #$F8
         BNE b72CF
@@ -6089,49 +6088,49 @@ AnimateEntryLevelSequence
         STA planetSurfaceDataPtrLo
         LDA currentBottomPlanetDataHiPtr
         STA planetSurfaceDataPtrHi
-        JSR DrawSomeMoreOfThePlanetForEntrySequence
-        LDA a26
+        JSR MutateSomeMoreOfThePlanetCharsetForEntrySequence
+        LDA mutatedCharToDraw
         STA planetTextureCharset3,X
         INC planetSurfaceDataPtrHi
-        JSR DrawSomeMoreOfThePlanetForEntrySequence
-        LDA a26
+        JSR MutateSomeMoreOfThePlanetCharsetForEntrySequence
+        LDA mutatedCharToDraw
         STA planetTextureCharset4,X
         RTS 
 
 ;------------------------------------------------------------------
-; DrawSomeMoreOfThePlanetForEntrySequence
+; MutateSomeMoreOfThePlanetCharsetForEntrySequence
 ;------------------------------------------------------------------
-DrawSomeMoreOfThePlanetForEntrySequence   
+MutateSomeMoreOfThePlanetCharsetForEntrySequence   
         LDA (planetSurfaceDataPtrLo),Y
         PHA 
         AND #$03
         TAX 
-        LDA f73B0,X
-        STA a26
+        LDA bitfield1ForMaterializingPlanet,X
+        STA mutatedCharToDraw
         PLA 
         ROR 
         ROR 
         PHA 
         AND #$03
         TAX 
-        LDA f73B4,X
-        ORA a26
-        STA a26
+        LDA bitfield2ForMaterializingPlanet,X
+        ORA mutatedCharToDraw
+        STA mutatedCharToDraw
         PLA 
         ROR 
         ROR 
         AND #$03
         TAX 
-        LDA f73B8,X
-        ORA a26
-        STA a26
+        LDA bitfield3ForMaterializingPlanet,X
+        ORA mutatedCharToDraw
+        STA mutatedCharToDraw
         LDA (planetSurfaceDataPtrLo),Y
         ROL 
         ROL 
         ROL 
         AND #$03
-        ORA a26
-        STA a26
+        ORA mutatedCharToDraw
+        STA mutatedCharToDraw
         TYA 
         PHA 
         AND #$07
@@ -6140,7 +6139,7 @@ DrawSomeMoreOfThePlanetForEntrySequence
         PHA 
         AND #$F8
         STA charSetDataPtrLo
-        LDA f73A4,Y
+        LDA bitsOfPlanetToShow,Y
         CLC 
         ADC charSetDataPtrLo
         TAX 
@@ -6148,14 +6147,14 @@ DrawSomeMoreOfThePlanetForEntrySequence
         TAY 
         RTS 
 
-f73A4   .BYTE $07,$06,$05,$04,$03,$02,$01,$00
+bitsOfPlanetToShow   .BYTE $07,$06,$05,$04,$03,$02,$01,$00
 currentTopPlanetDataLoPtr   .BYTE $00
 currentTopPlanetDataHiPtr   .BYTE $92
 currentBottomPlanetDataLoPtr   .BYTE $00
 currentBottomPlanetDataHiPtr   .BYTE $92
-f73B0   .BYTE $00,$40,$80,$C0
-f73B4   .BYTE $00,$10,$20,$30
-f73B8   .BYTE $00,$04,$08,$0C
+bitfield1ForMaterializingPlanet   .BYTE $00,$40,$80,$C0
+bitfield2ForMaterializingPlanet   .BYTE $00,$10,$20,$30
+bitfield3ForMaterializingPlanet   .BYTE $00,$04,$08,$0C
 
 ;------------------------------------------------------------------
 ; GeneratePlanetSurface
@@ -6629,7 +6628,7 @@ b76A8   LDA #$B5
         STA upperPlanetGilbyBulletYPos,X
         LDA #$E7 ; Gilby's ground based bullet
         STA upperPlanetGilbyBulletSpriteValue,X
-        LDA a6E12
+        LDA starFieldAnimationOffset
         EOR #$FF
         STA bulletDirectionArray,X
         INC bulletDirectionArray,X
@@ -6988,7 +6987,7 @@ SetUpPlanets
         LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
         LDA #$03
-        STA a6D86
+        STA starFieldInitialStateArray - $01
         LDX #$06
         LDA #$EC
 b7939   STA upperPlanetAttackShipsSpriteValueArray,X
@@ -7292,10 +7291,10 @@ UpdateAndAnimateAttackShips
 b7CA3   LDA upperPlanetAttackShip2MSBXPosValue,X
         BMI b7CC2
         LDA upperPlanetAttackShip2XPos,X
-        LDY a6E12
+        LDY starFieldAnimationOffset
         BMI b7CF0
         CLC 
-        ADC a6E12
+        ADC starFieldAnimationOffset
         STA upperPlanetAttackShip2XPos,X
         BCC b7CC2
 
@@ -7306,10 +7305,10 @@ j7CB9
 b7CC2   LDA lowerPlanetAttackSHip3MSBXPosValue,X
         BMI b7CE1
         LDA lowerPlanetAttackShip3XPos,X
-        LDY a6E12
+        LDY starFieldAnimationOffset
         BMI b7D07
         SEC 
-        SBC a6E12
+        SBC starFieldAnimationOffset
         STA lowerPlanetAttackShip3XPos,X
         BCS b7CE1
 
