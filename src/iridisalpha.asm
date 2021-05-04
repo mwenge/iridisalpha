@@ -74,13 +74,8 @@ tempLoPtr1                              = $FC
 tempHiPtr1                              = $FD
 tempLoPtr                               = $FE
 tempHiPtr                               = $FF
-p3A                                     = $3A
 p43                                     = $43
 p78                                     = $78
-pAD                                     = $AD
-pBF                                     = $BF
-pD0                                     = $D0
-f0000                                   = $0000
 screenLinePtrLo                         = $0340
 screenLinePtrHi                         = $0360
 randomStructureRoutineAddress           = $0029
@@ -4953,7 +4948,7 @@ DrawUpperPlanetAttackShips
 b6ACA   LDA upperPlanetttackShipsXPosArray,Y
         STA $D000,X  ;Sprite 0 X Pos
 
-        LDA MainControlLoopInterruptHandler,Y
+        LDA attackShipsXPosArray - $01,Y
         AND $D010    ;Sprites 0-7 MSB of X coordinate
         STA a20
 
@@ -4989,7 +4984,7 @@ DrawLowerPlanetAttackShips
 b6B06   LDA lowerPlanetAttackShip1XPos,Y
         STA $D000,X  ;Sprite 0 X Pos
 
-        LDA MainControlLoopInterruptHandler,Y
+        LDA attackShipsXPosArray - $01,Y
         AND $D010    ;Sprites 0-7 MSB of X coordinate
         STA a20
 
@@ -5024,7 +5019,7 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
 ;------------------------------------------------------------------
 MainControlLoopInterruptHandler
         RTI 
-;attackShipsXPosArray
+attackShipsXPosArray
         .BYTE $FD,$FB,$F7,$EF,$DF,$BF
 
 attackShipsMSBXPosOffsetArray=*-$01
