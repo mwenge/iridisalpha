@@ -166,7 +166,7 @@ DNA_MainAnimationRoutine
         LDX dnaCurrentSpritesXPosArrayIndex
         LDY currentSpriteIndex
         TYA 
-        STA backingDataLoPtr
+        STA attackWaveDataLoPtr
         CLC 
         ASL 
         TAY 
@@ -183,7 +183,7 @@ DNA_MainAnimationRoutine
         LDA dnaStarfieldSprite1Array,X
         STA $D00C    ;Sprite 6 X Pos
 
-        LDA backingDataHiPtr
+        LDA attackWaveDataHiPtr
         AND #$01
         BEQ b0E3B
 
@@ -206,7 +206,7 @@ b0E4E   TAX
         PLA 
         TAX 
         LDY currentSpriteIndex
-        STX backingDataLoPtr
+        STX attackWaveDataLoPtr
 
         LDX dnaSpriteColor2ArrayIndex
 dnaColorScheme1LoByte   =*+$01
@@ -241,7 +241,7 @@ dnaColorScheme4HiByte   =*+$02
         LDX #$00
 b0E85   STX dnaCurrentSpriteColorArrayIndex
 
-        LDX backingDataLoPtr
+        LDX attackWaveDataLoPtr
         INX 
         INY 
         CPY #$04
@@ -263,7 +263,7 @@ b0E92   STY currentSpriteIndex
         STX dnaCurrentSpritesXPosArrayIndex
         JSR DNA_UpdateHeadOfPreviousXPosData
         JSR DNA_CheckKeyBoardInput
-        DEC backingDataHiPtr
+        DEC attackWaveDataHiPtr
         JSR DNA_UpdateSpritePointers
         LDA #$01
         STA currentSpriteIndex
@@ -345,15 +345,15 @@ b0F8A   JSR DNA_CalculateValueForHeadOfPreviousXPosData
         STA a0FC5
         LDX a0F7B
         LDA dnaXPosDataHeadArray,X
-        STA a42
+        STA tempVarStorage
         LDY dnaWave2Enabled
         BEQ b0FA9
         CLC 
         ROR 
-        STA a42
+        STA tempVarStorage
 b0FA9   LDA newHeadOfXPosData
         CLC 
-        ADC a42
+        ADC tempVarStorage
         STA dnaSpritesPreviousXPosArray
         TXA 
         CLC 

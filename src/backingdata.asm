@@ -1,5 +1,18 @@
 *=$18C8
-backingData
+; The wave data has the following structure:
+; Byte 0: Color value for the attack ship
+; Byte 1: Sprite value for the attack ship
+; Byte 2: THe 'end' sprite value fo the attack ship's animation.
+; Byte 3: The animation frame rate for the attack ship.
+; Byte 4: Alternative sprite used except every 3rd level.
+; Byte 5: Alternative animation end sprite used except every 3rd level.
+; Byte 6: Determines if the inital Y Position of the ship is random or uses a default.
+; Byte 8: Determines if the inital Y Position of the ship is random or uses a default.
+; Byte 18: X Pos movement for attack ship.
+; Byte 19: Y Pos movement for attack ship.
+; Byte 20: X Pos Frame Rate for Attack ship.
+;  
+attackWaveData
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD

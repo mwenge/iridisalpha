@@ -18,6 +18,11 @@
 ;
 ; (Note: I ripped this part from the SQLite licence! :) )
 
+a77                                     = $77
+a78                                     = $78
+a79                                     = $79
+aA8                                     = $A8
+p78                                     = $78
 mapOffsetTemp = $37
 ;-------------------------------------------------------
 ; DisplayEnterBonusRoundScreen
@@ -2439,9 +2444,9 @@ bC367   INC aC356
 
         JSR BP_PutRandomValueInAccumulator
         STA aC353
-        LDA #>backingDataLoPtr
+        LDA #>attackWaveDataLoPtr
         STA aC355
-        LDA #<backingDataLoPtr
+        LDA #<attackWaveDataLoPtr
         STA aC354
 
         JSR sC380
@@ -2836,9 +2841,9 @@ bC638   CMP #$10
         STA aC676
         LDA #$04
         STA aC5FE
-        LDA #<p6001
+        LDA #$01
         STA bpCollisionSound
-        LDA #>p6001
+        LDA #$60
         STA fC708
         STA aC709
         LDA #<p6904
