@@ -476,7 +476,7 @@ aAEB6   =*+$01
 ; BP_PutRandomValueInAccumulator
 ;-------------------------------------------------------
 BP_PutRandomValueInAccumulator   
-        LDA a9A00
+        LDA sourceOfRandomBytes
         INC aAEB6
         RTS 
 

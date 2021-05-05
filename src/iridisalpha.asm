@@ -900,7 +900,7 @@ txtHard   .TEXT "UGH!"
 ;------------------------------------------------------------------
 PutRandomByteInAccumulator   
 a16A5   =*+$01
-        LDA a9A00
+        LDA sourceOfRandomBytes
         INC a16A5
         RTS 
 
@@ -6990,7 +6990,7 @@ MaybeDrawLevelEntrySequence
 b78CD   RTS 
 
 b78CE   LDX entryLevelSequenceCounter
-        LDY a9A00,X
+        LDY sourceOfRandomBytes,X
         LDA currentTopPlanetDataLoPtr
         STA planetSurfaceDataPtrLo
         LDA currentTopPlanetDataHiPtr
@@ -8186,18 +8186,15 @@ bCCB7   LDA (tempLoPtr1),Y
         PLA 
         STA tempLoPtr1
         LDX #$27
-bCCE0   LDA fCCED,X
+bCCE0   LDA gameCompletionText,X
         AND #$3F
         STA SCREEN_RAM + $02F8,X
         DEX 
         BPL bCCE0
         BMI bCD15
 
-fCCED   .BYTE $47,$41,$4D,$45,$20,$43,$4F,$4D
-        .BYTE $50,$4C,$45,$54,$49,$4F,$4E,$20
-        .BYTE $43,$48,$41,$52,$54,$20,$46,$4F
-        .BYTE $52,$20,$5A,$41,$52,$44,$2C,$20
-        .BYTE $54,$48,$45,$20,$48,$45,$52,$4F
+
+gameCompletionText   .TEXT "GAME COMPLETION CHART FOR ZARD, THE HERO"
 
 bCD15   LDY #$07
         LDX #$00
