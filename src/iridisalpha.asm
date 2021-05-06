@@ -99,10 +99,6 @@ GRAY2                                   = $0C
 LTGREEN                                 = $0D
 LTBLUE                                  = $0E
 GRAY3                                   = $0F
-;
-; **** EXTERNAL JUMPS **** 
-;
-e00FD                                   = $00FD
 
 
 * = $0801
@@ -437,11 +433,15 @@ b0AD0   LDA titleScreenBottomRightCharArray,X
         ASL 
         TAY 
 
-        LDA f0B19,X
+        ; Update the Y Position of the sprite
+        LDA titleAnimationSpriteYPosSequence - $01,X
         STA $CFFE,Y
+
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         ORA titleScreenGilbiesMSBXPosAnimationSequence,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
+
+        ; Update the X position of hte sprite
         LDA #$40
         STA $CFFF,Y
         DEX 
@@ -465,8 +465,7 @@ b0AD0   LDA titleScreenBottomRightCharArray,X
         STA Sprite6Ptr
         RTS 
 
-f0B19 =*-$01
-                                           .BYTE $20,$50,$80,$B0,$E0
+titleAnimationSpriteYPosSequence           .BYTE $20,$50,$80,$B0,$E0
 titleScreenGilbiesMSBXPosAnimationSequence .BYTE $10,$00,$00,$00,$00,$00
 titleScreenBottomRightCharArray            .BYTE $20,$F1,$F2,$F1,$F3,$F1,$F4
 shouldUpdateTitleScreenColors              .BYTE $01
@@ -652,34 +651,34 @@ b0D26   LDA lastBlastScore,X
 
 
 ; Data seeding generated music in title screen
-titleMusicHiBytes  .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
-                   .BYTE $0D,$0E,$0E,$0F,$10,$11,$12,$13
-                   .BYTE $15,$16,$17,$19,$1A,$1C,$1D,$1F
-                   .BYTE $21,$23,$25,$27,$2A,$2C,$2F,$32
-                   .BYTE $35,$38,$3B,$3F,$43,$47,$4B,$4F
-                   .BYTE $54,$59,$5E,$64,$6A,$70,$77,$7E
-                   .BYTE $86,$8E,$96,$9F,$A8,$B3,$BD,$C8
-                   .BYTE $D4,$E1,$EE,$FD
-titleMusicLowBytes .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F
-                   .BYTE $4E,$18,$EF,$D2,$C3,$C3,$D1,$EF
-                   .BYTE $1F,$60,$B5,$1E,$9C,$31,$DF,$A5
-                   .BYTE $87,$86,$A2,$DF,$3E,$C1,$6B,$3C
-                   .BYTE $39,$63,$BE,$4B,$0F,$0C,$45,$BF
-                   .BYTE $7D,$83,$D6,$79,$73,$C7,$7C,$97
-                   .BYTE $1E,$18,$8B,$7E,$FA,$06,$AC,$F3
-                   .BYTE $E6,$8F,$F8,$2E
-titleMusicNoteArray   .BYTE $00,$07,$0C,$07
-titleMusicNote3   .BYTE $01
-titleMusicNote4   .BYTE $01
-titleMusicNote5   .BYTE $25
-titleMusicNote6   .BYTE $85
-titleMusicNote7   .BYTE $00
-titleMusicNote8   .BYTE $01
-titleMusicNote9   .BYTE $02
-titleMusicNoteA   .BYTE $02
-titleMusicNoteC   =*+$01
-titleMusicNoteD   =*+$02
-titleMusicNoteB   ASL dnaCurrentSpritesXPosArrayIndex
+titleMusicHiBytes   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
+                    .BYTE $0D,$0E,$0E,$0F,$10,$11,$12,$13
+                    .BYTE $15,$16,$17,$19,$1A,$1C,$1D,$1F
+                    .BYTE $21,$23,$25,$27,$2A,$2C,$2F,$32
+                    .BYTE $35,$38,$3B,$3F,$43,$47,$4B,$4F
+                    .BYTE $54,$59,$5E,$64,$6A,$70,$77,$7E
+                    .BYTE $86,$8E,$96,$9F,$A8,$B3,$BD,$C8
+                    .BYTE $D4,$E1,$EE,$FD
+titleMusicLowBytes  .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F
+                    .BYTE $4E,$18,$EF,$D2,$C3,$C3,$D1,$EF
+                    .BYTE $1F,$60,$B5,$1E,$9C,$31,$DF,$A5
+                    .BYTE $87,$86,$A2,$DF,$3E,$C1,$6B,$3C
+                    .BYTE $39,$63,$BE,$4B,$0F,$0C,$45,$BF
+                    .BYTE $7D,$83,$D6,$79,$73,$C7,$7C,$97
+                    .BYTE $1E,$18,$8B,$7E,$FA,$06,$AC,$F3
+                    .BYTE $E6,$8F,$F8,$2E
+titleMusicNoteArray .BYTE $00,$07,$0C,$07
+titleMusicNote3     .BYTE $01
+titleMusicNote4     .BYTE $01
+titleMusicNote5     .BYTE $25
+titleMusicNote6     .BYTE $85
+titleMusicNote7     .BYTE $00
+titleMusicNote8     .BYTE $01
+titleMusicNote9     .BYTE $02
+titleMusicNoteA     .BYTE $02
+titleMusicNoteB     .BYTE $0E
+titleMusicNoteC     .BYTE $07
+titleMusicNoteD     .BYTE $0E
 ;------------------------------------------------------------------
 ; PlayTitleScreenMusic
 ;------------------------------------------------------------------
@@ -1061,9 +1060,9 @@ someGameData   .BYTE $A0,$50,$A7,$08,$A2,$D0,$9B,$A0
         .BYTE $A7,$80,$A8,$20,$A8,$70,$A2,$D0
         .BYTE $AA,$10,$AA,$60,$A8,$20,$A2,$08
 hasEnteredNewLevel   .BYTE $01
-f4851   .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
+yPosMovementPatternForShips1   .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
         .BYTE $10,$10,$10,$10,$10,$10,$10,$14
-f4861   .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
+yPosMovementPatternForShips2   .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
         .BYTE $F0,$F0,$F0,$F0,$F0,$F0
 
 ; Pointers to:
@@ -1085,15 +1084,14 @@ f4897   .BYTE $00,$00,$02,$02,$02,$02,$00,$00
 f48A1   .BYTE $02,$02,$00,$00,$00,$00,$FF,$FF
         .BYTE $00,$00
 
-f48AB   .BYTE $00
-f48AC   .BYTE $00,$00,$00,$00,$00,$00
+upperPlanetAttackShipYPosUpdated   .BYTE $00,$00,$00,$00,$00,$00,$00
 f48B2   .BYTE $00,$00,$00
-f48B5   .BYTE $00
-f48B6   .BYTE $00,$00,$00,$00,$00,$00
+
+upperPlanetAttackShipYPosUpdated2   .BYTE $00,$00,$00,$00,$00,$00,$00
 f48BC   .BYTE $00,$00,$00
 f48BF   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00
-f48C9   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+shipsThatHaveCollidedWithGilby   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00
 a48D5   .BYTE $04
 a48D6   .BYTE $00
@@ -1125,9 +1123,9 @@ p4961   .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
         .BYTE $80,$CA,$7B,$00
 
 ;------------------------------------------------------------------
-; b499D
+; Put00orFFinAccumulator
 ;------------------------------------------------------------------
-b499D
+Put00orFFinAccumulator
         LDA attackWaveDataHiPtrArray,X
         BEQ b49B5
         LDA levelEntrySequenceActive
@@ -1137,7 +1135,7 @@ b499D
         BEQ b49B2
         CPX #$0C
         BEQ b49B2
-        BNE b499D
+        BNE Put00orFFinAccumulator
 
 b49B2   LDA #$00
         RTS 
@@ -1145,10 +1143,10 @@ b49B2   LDA #$00
 b49B5   LDA #$FF
 b49B7   RTS 
 
-a49B8                                         .BYTE $A0
-a49B9                                         .BYTE $A0
-a49BA                                         .BYTE $58
-a49BB                                         .BYTE $1E
+previousAttackWaveLoPtr                                         .BYTE $A0
+previousAttackWaveHiPtr                                         .BYTE $A0
+previousAttackWaveLoPtr2                                         .BYTE $58
+previousAttackWaveHiPtr2                                         .BYTE $1E
 enemiesKilledTopPlanetsSinceLastUpdate        .BYTE $28,$00,$00,$00
 enemiesKilledTopPlanetsSinceLastUpdatePtr     .BYTE $00
 enemiesKilledBottomsPlanetsSinceLastUpdate    .BYTE $18,$00,$00,$00
@@ -1162,9 +1160,9 @@ a49D2                                         .BYTE $00
 a49D3                                         .BYTE $00
 
 ;------------------------------------------------------------------
-; ProcessSomeGameSequenceData
+; PerformMainGameProcessing
 ;------------------------------------------------------------------
-ProcessSomeGameSequenceData   
+PerformMainGameProcessing   
         LDA levelEntrySequenceActive
         BNE b49F5
         LDA gilbyHasJustDied
@@ -1173,29 +1171,33 @@ ProcessSomeGameSequenceData
         JMP ProcessGilbyExplosion
         ;Returns
 
-b49E1   JSR TrackProgressInGame
+b49E1   JSR PerformMainAttackWaveProcessing
         JSR UpdateAttackShipsPosition
-        JSR AdjustAttackShipsToGilbyPosition
+        JSR DetectAttackShipCollisionWithGilby
         JSR DecreaseEnergyStorage
         JSR UpdateCoreEnergyValues
         DEC gameSequenceCounter
-        BEQ b49F7
+        BEQ ProcessAttackWaveData
 b49F5   RTS 
 
 gameSequenceCounter   .BYTE $14
 
-b49F7   LDA #$20
+;---------------------------------------------------------------------------------
+; ProcessAttackWaveData   
+;---------------------------------------------------------------------------------
+ProcessAttackWaveData   
+        LDA #$20
         STA gameSequenceCounter
         LDX #$02
-        JSR b499D
+        JSR Put00orFFinAccumulator
         BEQ b4A1F
 
         LDA a49D0
         CMP a49D2
         BEQ b4A1F
-        LDA a49B8
+        LDA previousAttackWaveLoPtr
         STA attackWaveDataLoPtrArray,X
-        LDA a49B9
+        LDA previousAttackWaveHiPtr
         STA attackWaveDataHiPtrArray,X
         TXA 
         TAY 
@@ -1203,22 +1205,23 @@ b49F7   LDA #$20
         INC a49D2
 
 b4A1F   LDX #$08
-        JSR b499D
+        JSR Put00orFFinAccumulator
         BEQ b49B7 ; Returns early
 
         LDA a49D1
         CMP a49D3
         BEQ b49B7 ; Returns early
 
-        LDA a49BA
+        LDA previousAttackWaveLoPtr2
         STA attackWaveDataLoPtrArray,X
-        LDA a49BB
+        LDA previousAttackWaveHiPtr2
         STA attackWaveDataHiPtrArray,X
         TXA 
         CLC 
         ADC #$02
         TAY 
         INC a49D3
+        ; Falls through
 
 ;------------------------------------------------------------------
 ; UpdateBackingDataPtr
@@ -1230,8 +1233,9 @@ UpdateBackingDataPtr
         STA attackWaveDataHiPtr
         LDA #$00
         STA updatingWaveData
-        STA f48C9,X
+        STA shipsThatHaveCollidedWithGilby,X
         STY a48D5
+        ; Falls through
 
 ;------------------------------------------------------------------
 ; UpdateWaveDataFromBackingStore
@@ -1266,7 +1270,7 @@ UpdateWaveDataFromBackingStore
         ; from pause mode or a restart.
         TXA 
         TAY 
-        LDX f4B7B,Y
+        LDX orderForUpdatingPositionOfAttackShips,Y
         LDY #$01
         LDA (attackWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpritesLoadedFromBackingData,X
@@ -1329,14 +1333,14 @@ b4AD6   TXA
         LDA (attackWaveDataLoPtr),Y
         AND #$0F
         TAX 
-        LDA f4861,X
+        LDA yPosMovementPatternForShips2,X
         LDX a5529
         JMP LoadYPosForAttackShip
 
 b4AEC   LDA (attackWaveDataLoPtr),Y
         AND #$0F
         TAX 
-        LDA f4851,X
+        LDA yPosMovementPatternForShips1,X
         LDX a5529
 
 LoadYPosForAttackShip   
@@ -1416,20 +1420,20 @@ b4B5A   JSR PutRandomByteInAccumulatorRegister
 
 b4B7A   RTS 
 
-f4B7B   .BYTE $00,$00,$00,$01,$02,$03,$00,$00
-        .BYTE $04,$05,$06,$07
-indexForWaveData   .BYTE $02,$03,$04,$05,$08,$09,$0A,$0B
-f4B8F   .BYTE $00,$00,$02,$03,$04,$05,$00,$00
-        .BYTE $0A,$0B,$0C,$0D
-f4B9B   .BYTE $02,$03,$04,$05,$0A,$0B,$0C,$0D
-f4BA3   .BYTE $00,$00,$00,$01,$02,$03,$00,$00
-        .BYTE $00,$00,$04,$05,$06,$07
-f4BB1   .BYTE $00,$00,$02,$03,$04,$05,$00,$00
-        .BYTE $00,$00,$08,$09,$0A,$0B
+orderForUpdatingPositionOfAttackShips          .BYTE $00,$00,$00,$01,$02,$03,$00,$00
+                                               .BYTE $04,$05,$06,$07
+indexForWaveData                               .BYTE $02,$03,$04,$05,$08,$09,$0A,$0B
+indexIntoUpperPlanetAttackShipXPosAndYPosArray .BYTE $00,$00,$02,$03,$04,$05,$00,$00
+                                               .BYTE $0A,$0B,$0C,$0D
+indexIntoUpperPlanetAttackShipsYPosArray       .BYTE $02,$03,$04,$05,$0A,$0B,$0C,$0D
+indexIntoYPosMovementForUpperPlanetAttackShips .BYTE $00,$00,$00,$01,$02,$03,$00,$00
+                                               .BYTE $00,$00,$04,$05,$06,$07
+indexIntoAttackWaveDataHiPtrArray              .BYTE $00,$00,$02,$03,$04,$05,$00,$00
+                                               .BYTE $00,$00,$08,$09,$0A,$0B
 ;------------------------------------------------------------------
-; TrackProgressInGame
+; PerformMainAttackWaveProcessing
 ;------------------------------------------------------------------
-TrackProgressInGame   
+PerformMainAttackWaveProcessing   
         LDY #$00
         LDA pauseModeSelected
         BEQ b4BC7
@@ -1439,7 +1443,7 @@ b4BC7   LDX indexForWaveData,Y
         LDA attackWaveDataHiPtrArray,X
         BEQ b4BD6
         STY tempVarStorage
-        JSR UpdateScoresAndPlanetProgress
+        JSR ProcessAttackWaves
         LDY tempVarStorage
 b4BD6   INY 
         CPY #$08
@@ -1454,9 +1458,9 @@ b4BD6   INY
 b4BEB   RTS 
 
 ;------------------------------------------------------------------
-; UpdateScoresAndPlanetProgress
+; ProcessAttackWaves
 ;------------------------------------------------------------------
-UpdateScoresAndPlanetProgress   
+ProcessAttackWaves   
         ; X is the current value in indexForWaveData
         STA attackWaveDataHiPtr
         LDA attackWaveDataLoPtrArray,X
@@ -1475,10 +1479,15 @@ UpdateScoresAndPlanetProgress
 
         
 b4C03   LDA f48BF,X
-        BNE b4C0B
-        JMP j4CBB
+        BNE MoveToNewPlanet
+        JMP CheckForCollisionsBeforeUpdatingWaveData
+        ; Returns
 
-b4C0B   LDA #$00
+;---------------------------------------------------------------------------------
+; MoveToNewPlanet 
+;---------------------------------------------------------------------------------
+MoveToNewPlanet 
+        LDA #$00
         STA f48BF,X
         LDA #<p48E9
         STA soundDataAE
@@ -1554,18 +1563,22 @@ b4CAB   JSR UpdateBottomPlanetProgressData
 
 b4CB1   LDY #$1D
         LDA (attackWaveDataLoPtr),Y
-        BEQ j4CBB
+        BEQ CheckForCollisionsBeforeUpdatingWaveData
         DEY 
-        JMP j4DDD
+        JMP UpdatePointersAndGetWaveDataForNewLevel
+        ;Returns
 
-j4CBB   
-        LDA f48C9,X
-        BEQ b4CDC
+;---------------------------------------------------------------------------------
+; CheckForCollisionsBeforeUpdatingWaveData   
+;---------------------------------------------------------------------------------
+CheckForCollisionsBeforeUpdatingWaveData   
+        LDA shipsThatHaveCollidedWithGilby,X
+        BEQ UpdateWaves
         LDA #$00
-        STA f48C9,X
+        STA shipsThatHaveCollidedWithGilby,X
         LDY #$1F
         LDA (attackWaveDataLoPtr),Y
-        BEQ b4CDC
+        BEQ UpdateWaves
         LDY #$0E
         LDA (attackWaveDataLoPtr),Y
         BEQ b4CE2
@@ -1575,19 +1588,35 @@ j4CBB
         DEC a49D2
         JMP b4CE2
 
-b4CDC   JMP UpdateFromBackingData
+;---------------------------------------------------------------------------------
+; UpdateWaves 
+;---------------------------------------------------------------------------------
+UpdateWaves 
+        JMP UpdateFromBackingData
+        ; Returns
 
-b4CDF   DEC a49D3
-b4CE2   LDY #$24
+;---------------------------------------------------------------------------------
+; b4CDF   
+;---------------------------------------------------------------------------------
+b4CDF   
+        DEC a49D3
+        ; Falls through
+;---------------------------------------------------------------------------------
+; b4CE2   
+;---------------------------------------------------------------------------------
+b4CE2   
+        LDY #$24
         LDA (attackWaveDataLoPtr),Y
         BNE b4CEB
-        JMP j4D36
+        JMP UpdateEnergyLevelsAndStartNewLevel
+        ;Returns
 
-b4CEB   LDA joystickInput
+b4CEB   
+        LDA joystickInput
         AND #$10
-        BEQ b4CDC
+        BEQ UpdateWaves
         LDA lowerPlanetActivated
-        BNE b4CDC
+        BNE UpdateWaves
         LDA a4F57
         BNE b4D0D
         JSR ResetSoundDataPtr1
@@ -1614,8 +1643,12 @@ b4D1C   STA a4F57
         STA gilbyExploding
         LDA #$04
         STA starFieldInitialStateArray - $01
+        ; Falls through
 
-j4D36   
+;---------------------------------------------------------------------------------
+; UpdateEnergyLevelsAndStartNewLevel   
+;---------------------------------------------------------------------------------
+UpdateEnergyLevelsAndStartNewLevel   
         LDY #$23
         LDA (attackWaveDataLoPtr),Y
         BEQ b4D7F
@@ -1647,31 +1680,32 @@ b4D72   LDA energyLabelColorIndexTopPlanet
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexTopPlanet
 b4D7F   LDY #$1E
-        JMP j4DDD
+        JMP UpdatePointersAndGetWaveDataForNewLevel
+        ; Returns
 
 ;------------------------------------------------------------------
 ; UpdateFromBackingData
 ;------------------------------------------------------------------
 UpdateFromBackingData   
-        LDA f48AB,X
+        LDA upperPlanetAttackShipYPosUpdated,X
         BEQ b4D98
         LDA #$00
-        STA f48AB,X
+        STA upperPlanetAttackShipYPosUpdated,X
         LDY #$19
         LDA (attackWaveDataLoPtr),Y
         BEQ b4D98
         DEY 
-        JMP j4DDD
+        JMP UpdatePointersAndGetWaveDataForNewLevel
 
-b4D98   LDA f48B5,X
+b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
         BEQ b4DAC
         LDA #$00
-        STA f48B5,X
+        STA upperPlanetAttackShipYPosUpdated2,X
         LDY #$1B
         LDA (attackWaveDataLoPtr),Y
         BEQ b4DAC
         DEY 
-        JMP j4DDD
+        JMP UpdatePointersAndGetWaveDataForNewLevel
 
 b4DAC   LDA joystickInput
         AND #$10
@@ -1680,7 +1714,7 @@ b4DAC   LDA joystickInput
         LDA (attackWaveDataLoPtr),Y
         BEQ b4DBD
         DEY 
-        JMP j4DDD
+        JMP UpdatePointersAndGetWaveDataForNewLevel
 
 b4DBD   LDA f4897,X
         BEQ UpdateAttackShipData
@@ -1699,9 +1733,9 @@ b4DD8   DEC a49D3
 b4DDB   LDY #$10
 
 ;---------------------------------------------------------------------------------
-; j4DDD   
+; UpdatePointersAndGetWaveDataForNewLevel   
 ;---------------------------------------------------------------------------------
-j4DDD   
+UpdatePointersAndGetWaveDataForNewLevel   
         LDA (attackWaveDataLoPtr),Y
         PHA 
         INY 
@@ -1733,7 +1767,7 @@ GetDefaultWaveData
         PHA 
         LDA #$00
         STA attackWaveDataHiPtrArray,X
-        LDY f4B7B,X
+        LDY orderForUpdatingPositionOfAttackShips,X
         PLA 
         STA upperPlanetAttackShipSpritesLoadedFromBackingData,Y
         LDA #$F1
@@ -1763,7 +1797,7 @@ UpdateAttackShipData
         LDA (attackWaveDataLoPtr),Y
         STA f488D,X
         LDY f4883,X
-        LDA f4B7B,X
+        LDA orderForUpdatingPositionOfAttackShips,X
         TAX 
         LDA (tempLoPtr3),Y
         CMP #$80
@@ -1791,7 +1825,7 @@ UpdateAttackShipData
 b4E6A   LDY #$0C
         LDA indexForWaveData,X
         TAX 
-        JMP j4DDD
+        JMP UpdatePointersAndGetWaveDataForNewLevel
 
 b4E73   LDY #$17
         LDA (attackWaveDataLoPtr),Y
@@ -1799,7 +1833,7 @@ b4E73   LDY #$17
         CLC 
         ADC gilbyVerticalPosition
         STA a4E17
-        LDA f4B7B,X
+        LDA orderForUpdatingPositionOfAttackShips,X
         TAX 
         LDA upperPlanetYPosFrameRateForAttackShips,X
         CMP #$01
@@ -1817,11 +1851,11 @@ b4E96   TXA
         SBC a4E17
         ADC #$07
         STA a4E17
-b4EA6   LDA f4B9B,X
+b4EA6   LDA indexIntoUpperPlanetAttackShipsYPosArray,X
         TAX 
         LDA upperPlanetAttackShipsYPosArray + $01,X
         PHA 
-        LDA f4BA3,X
+        LDA indexIntoYPosMovementForUpperPlanetAttackShips,X
         TAX 
         PLA 
         CMP a4E17
@@ -1838,12 +1872,12 @@ b4EC7   LDY #$16
         CLC 
         ADC #$58
         STA a4E17
-        LDA f4B7B,X
+        LDA orderForUpdatingPositionOfAttackShips,X
         TAX 
         LDA upperPlanetXPosFrameRateForAttackShip,X
         CMP #$01
         BNE b4F01
-        LDA f4B9B,X
+        LDA indexIntoUpperPlanetAttackShipsYPosArray,X
         TAX 
         CLC 
         LDA upperPlanetAttackShipsMSBXPosArray + $01,X
@@ -1852,7 +1886,7 @@ b4EC7   LDY #$16
 b4EE9   LDA upperPlanetAttackShipsXPosArray + $01,X
         ROR 
         PHA 
-        LDA f4BA3,X
+        LDA indexIntoYPosMovementForUpperPlanetAttackShips,X
         TAX 
         PLA 
         CMP a4E17
@@ -1871,7 +1905,7 @@ b4F05   LDY #$06
         STA f48A1,X
         TXA 
         PHA 
-        LDY f4B8F,X
+        LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
         LDA upperPlanetAttackShipsXPosArray + $01,Y
         PHA 
         LDA upperPlanetAttackShipsMSBXPosArray + $01,Y
@@ -1882,9 +1916,9 @@ b4F05   LDY #$06
         AND #$08
         BNE b4F4C
         LDX #$02
-b4F2D   JSR b499D
+b4F2D   JSR Put00orFFinAccumulator
         BEQ b4F50
-        LDY f4B8F,X
+        LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
         PLA 
         STA upperPlanetAttackShipsYPosArray + $01,Y
         PLA 
@@ -1895,7 +1929,7 @@ b4F3F   STA upperPlanetAttackShipsMSBXPosArray + $01,Y
         STA upperPlanetAttackShipsXPosArray + $01,Y
         PLA 
         LDY #$07
-        JMP j4DDD
+        JMP UpdatePointersAndGetWaveDataForNewLevel
 
 b4F4C   LDX #$08
         BNE b4F2D
@@ -1948,6 +1982,7 @@ b4F92   LDA upperPlanetAttackShipsXPosArray + $02,Y
         STA a4F59
         LDA #$01
         STA a48D6
+        ; Falls through
 
 ;------------------------------------------------------------------
 ; UpdateAttackShipsMSBXPosition
@@ -1960,7 +1995,7 @@ UpdateAttackShipsMSBXPosition
 
 j4FA8   
         STX tempLoPtr3
-        LDA f4BB1,X
+        LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX 
         LDA attackWaveDataHiPtrArray,X
         BNE b4FB6
@@ -1990,7 +2025,7 @@ b4FDD   CMP #$10
         BMI b4FE4
         JMP j501B
 
-b4FE4   LDA f4BB1,X
+b4FE4   LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX 
         LDA attackWaveDataLoPtrArray,X
         STA attackWaveDataLoPtr
@@ -2033,9 +2068,9 @@ j501B
 b5029   RTS 
 
 ;------------------------------------------------------------------
-; AdjustAttackShipsToGilbyPosition
+; DetectAttackShipCollisionWithGilby
 ;------------------------------------------------------------------
-AdjustAttackShipsToGilbyPosition   
+DetectAttackShipCollisionWithGilby   
         LDY #$00
         LDA levelEntrySequenceActive
         BNE b5029
@@ -2048,7 +2083,7 @@ b503C   LDX a4F57
         INX 
         INX 
 
-j5041   
+CheckCollisionsLoop   
         CLC 
         LDA upperPlanetAttackShipsMSBXPosArray + $01,X
         BEQ b5048
@@ -2061,7 +2096,7 @@ b5048   LDA upperPlanetAttackShipsXPosArray + $01,X
         EOR #$FF
 b5053   CMP #$08
         BMI b505A
-        JMP j5079
+        JMP GoToNextShip
 
 b505A   LDA upperPlanetAttackShipsYPosArray + $01,X
         SEC 
@@ -2070,22 +2105,22 @@ b505A   LDA upperPlanetAttackShipsYPosArray + $01,X
         EOR #$FF
 b5065   CMP #$08
         BMI b506C
-        JMP j5079
+        JMP GoToNextShip
 
 b506C   STX tempLoPtr3
-        LDA f4BB1,X
+        LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX 
         LDA #$FF
-        STA f48C9,X
+        STA shipsThatHaveCollidedWithGilby,X
         LDX tempLoPtr3
 
-j5079   
+GoToNextShip   
         INX 
         CPX #$06
         BEQ ExitRTS
         CPX #$0E
         BEQ ExitRTS
-        JMP j5041
+        JMP CheckCollisionsLoop
 
 ExitRTS
         RTS 
@@ -2771,10 +2806,10 @@ b55FF   LDA currentLevelInCurrentPlanet
         LDA updateLevelForBottomPlanet
         BNE b5644
         PLA 
-        STA a49B8
+        STA previousAttackWaveLoPtr
         STA gameDataPtrLo
         PLA 
-        STA a49B9
+        STA previousAttackWaveHiPtr
         STA gameDataPtrHi
         LDY #$26
         LDX oldTopPlanetIndex
@@ -2796,10 +2831,10 @@ b5638   DEY
         RTS 
 
 b5644   PLA 
-        STA a49BA
+        STA previousAttackWaveLoPtr2
         STA gameDataPtrLo
         PLA 
-        STA a49BB
+        STA previousAttackWaveHiPtr2
         STA gameDataPtrHi
         LDY #$26
         LDX oldBottomPlanetIndex
@@ -2886,7 +2921,7 @@ b56E3   LDA #$04
 InitializePlanetProgressArrays   
         LDX #$05
         LDA #$00
-b5705   STA a49BB,X
+b5705   STA previousAttackWaveHiPtr2,X
         STA enemiesKilledBottomsPlanetsSinceLastUpdatePtr,X
         STA currentLevelInTopPlanetsPtr,X
         STA enemiesKilledTopPlanetsSinceLastUpdatePtr,X
@@ -5079,14 +5114,13 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
 ;------------------------------------------------------------------
 MainControlLoopInterruptHandler
         RTI 
-attackShipsXPosArray
-        .BYTE $FD,$FB,$F7,$EF,$DF,$BF
 
+attackShipsXPosArray          .BYTE $FD,$FB,$F7,$EF,$DF,$BF
 attackShipsMSBXPosOffsetArray =*-$01
-gilbyBulletMSBXPosOffset   .BYTE $02
-attackShip2MSBXPosOffsetArray   .BYTE $04,$08,$10,$20,$40,$02,$04,$08
-        .BYTE $10,$20,$40
-difficultySetting   .BYTE $00
+gilbyBulletMSBXPosOffset      .BYTE $02
+attackShip2MSBXPosOffsetArray .BYTE $04,$08,$10,$20,$40,$02,$04,$08
+                              .BYTE $10,$20,$40
+difficultySetting             .BYTE $00
 
 ;------------------------------------------------------------------
 ; MainGameInterruptHandler
@@ -5163,7 +5197,7 @@ b6BBE   RTS
 ; RasterPositionMatchesRequestedInterrupt 
 ;---------------------------------------------------------------------------------
 RasterPositionMatchesRequestedInterrupt 
-        LDY a6D84
+        LDY currentIndexInRasterInterruptArrays
         LDA levelRestartInProgress
         BEQ b6BCA
         JMP FlashBackgroundAndBorder
@@ -5174,12 +5208,18 @@ b6BCA   LDA progressDisplaySelected
         JMP GameSwitchAndGameOverInterruptHandler
         ; Returns from Interrupt
 
-b6BD2   LDA f6D52,Y
-        BEQ b6BDA
-        JMP AnimateStarField
+        
+b6BD2   LDA nextRasterPositionArray - $01,Y ; Y is currentIndexInRasterInterruptArrays
+        BEQ ResetRasterAndPerformMainGameUpdate
+        JMP AnimateStarFieldAndDrawLowerPlanet
+        ; Returns from Interrupt
 
-b6BDA   LDA #$00
-        STA a6D84
+;---------------------------------------------------------------------------------
+; ResetRasterAndPerformMainGameUpdate   
+;---------------------------------------------------------------------------------
+ResetRasterAndPerformMainGameUpdate   
+        LDA #$00
+        STA currentIndexInRasterInterruptArrays
         LDA #$5C
         STA $D012    ;Raster Position
         LDA $D016    ;VIC Control Register 2
@@ -5189,8 +5229,11 @@ b6BDA   LDA #$00
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        BNE b6C26
+        BNE PerformMainGameUpdate
 
+;---------------------------------------------------------------------------------
+; UpdateGilbyPositionAndColor   
+;---------------------------------------------------------------------------------
 UpdateGilbyPositionAndColor   
         LDA gilbyHasJustDied
         BNE b6C24
@@ -5212,7 +5255,11 @@ b6C24   RTS
 
 currentGilbySprite   .BYTE $D3
 
-b6C26   LDX currentPlanetBackgroundClr1
+;---------------------------------------------------------------------------------
+; PerformMainGameUpdate   
+;---------------------------------------------------------------------------------
+PerformMainGameUpdate   
+        LDX currentPlanetBackgroundClr1
         LDA backgroundColorsForPlanets,X
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDX currentPlanetBackgroundClr2
@@ -5225,7 +5272,7 @@ b6C26   LDX currentPlanetBackgroundClr1
         JSR CheckKeyboardInGame
         JSR ScrollStarfieldAndThenPlanets
         JSR AnimateGilbySpriteMovement
-        JSR ProcessSomeGameSequenceData
+        JSR PerformMainGameProcessing
         JSR ProcessJoystickInput
         JSR UpdateGilbyVerticalPosition
         JSR AlsoUpdateGilbyVerticalPosition
@@ -5238,12 +5285,15 @@ b6C26   LDX currentPlanetBackgroundClr1
         JSR DrawUpperPlanetAttackShips
         JSR UpdateControlPanelColors
         JMP $EA31 ; jump into KERNAL's standard interrupt service routine to handle keyboard scan, cursor display etc.
+        ;Returns From Interrupt
 
 ;------------------------------------------------------------------
-; AnimateStarField
+; AnimateStarFieldAndDrawLowerPlanet
 ; Sprite 7 is used to draw the parallax starfield background.
 ;------------------------------------------------------------------
-AnimateStarField   
+AnimateStarFieldAndDrawLowerPlanet   
+
+        ; Animate the Starfield
         STA $D00F    ;Sprite 7 Y Pos
         LDA starFieldXPosArray,Y
         STA $D00E    ;Sprite 7 X Pos
@@ -5256,18 +5306,23 @@ AnimateStarField
         AND #$7F
         ORA spriteMSBXPosOffset
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        LDA f6D53,Y
+
+        ; Pull the next position at which to interrupt the raster
+        ; from our array.
+        LDA nextRasterPositionArray,Y
         BNE b6C91
-        JMP b6BDA
+
+        ; Reset the raster interrupt
+        JMP ResetRasterAndPerformMainGameUpdate
 
 b6C91   SEC 
         SBC #$02
         STA $D012    ;Raster Position
         LDA starFieldInitialStateArray,Y
         TAX 
-        LDA f6DBA,X
+        LDA starFieldColorsArray,X
         STA $D02E    ;Sprite 7 Color
-        CPY a6D4F
+        CPY zeroRasterPosition
         BNE b6CB5
         LDA $D016    ;VIC Control Register 2
         AND #$F0
@@ -5279,7 +5334,7 @@ b6C91   SEC
 b6CB5   CPY #$06
         BNE b6CD3
         LDA lowerPlanetActivated
-        BEQ b6CD6
+        BEQ DrawLowerPlanet
 
         LDA #$90
         STA $D001    ;Sprite 0 Y Pos
@@ -5291,11 +5346,17 @@ b6CC5   DEX
         LDA $D016    ;VIC Control Register 2
         AND #$F8
         STA $D016    ;VIC Control Register 2
-        JMP j6D36
+        JMP UpdateRasterPositionAndReturn
+        ;Returns
 
-b6CD3   JMP j6D41
+b6CD3   JMP UpdateInterruptRegisterAndReturn
+        ;Returns
 
-b6CD6   JSR DrawLowerPlanetAttackShips
+;---------------------------------------------------------------------------------
+; DrawLowerPlanet   
+;---------------------------------------------------------------------------------
+DrawLowerPlanet   
+        JSR DrawLowerPlanetAttackShips
         LDA #$07
         SEC 
         SBC a6E11
@@ -5328,7 +5389,7 @@ b6D07   LDX currentPlanetBackgroundColor1
         STA $D023    ;Background Color 2, Multi-Color Register 1
 
         LDA gilbyHasJustDied
-        BNE j6D36
+        BNE UpdateRasterPositionAndReturn
 
         ; Update the color of the lower planet gilby to match its energy level
         LDX currEnergyBottom
@@ -5343,41 +5404,46 @@ b6D2C   LDY a4F57
         LDA #$0B
 b6D33   STA $D027    ;Sprite 0 Color (lower planet gilby)
 
-j6D36   
+;---------------------------------------------------------------------------------
+; UpdateRasterPositionAndReturn   
+;---------------------------------------------------------------------------------
+UpdateRasterPositionAndReturn   
         LDY #$0A
-        STY a6D84
+        STY currentIndexInRasterInterruptArrays
         LDA spriteCollidedWithBackground,Y
         STA $D012    ;Raster Position
 
-j6D41   
+;---------------------------------------------------------------------------------
+; UpdateInterruptRegisterAndReturn   
+;---------------------------------------------------------------------------------
+UpdateInterruptRegisterAndReturn   
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        INC a6D84
+        INC currentIndexInRasterInterruptArrays
         JMP ReturnFromInterrupt
 
 
-a6D4F                        .BYTE $00,$0D
-spriteCollidedWithBackground .BYTE $00
-f6D52                        .BYTE $60
-f6D53                        .BYTE $66,$6C,$72,$78,$7E,$84,$8A,$90
-                             .BYTE $96,$9C,$A2,$A8,$AE,$B4,$00
-starFieldXPosArray           .BYTE $44,$CD,$9F,$F7,$EF,$7F,$79,$2D
-                             .BYTE $9D,$D5,$01,$79,$96,$FB,$C0
-starFieldXPosMSBArray        .BYTE $01,$00,$01,$00,$01,$01,$00,$01
-                             .BYTE $00,$00,$00,$01,$00,$01,$00,$00
-                             .BYTE $01,$01,$00
-a6D84                        .BYTE $00
-gilbyExploding               .BYTE $00,$00
-starFieldInitialStateArray   .BYTE $02,$03,$04,$03,$02,$03,$04,$03
-                             .BYTE $02,$03,$04,$03,$02,$02,$03,$04
-                             .BYTE $03,$02,$03,$04,$03,$02,$01,$02
-                             .BYTE $03
-starFieldCurrentStateArray   .BYTE $04,$02,$03,$04,$03,$02,$03,$04
-                             .BYTE $03,$02,$03,$04,$03,$02,$02,$03
-                             .BYTE $04,$03,$02,$03,$04,$03,$02,$01
-                             .BYTE $02,$03
-f6DBA                        .BYTE $04,$01,$0F,$0C,$0B,$08,$06
+zeroRasterPosition                  .BYTE $00,$0D
+spriteCollidedWithBackground        .BYTE $00,$60
+nextRasterPositionArray             .BYTE $66,$6C,$72,$78,$7E,$84,$8A,$90
+                                    .BYTE $96,$9C,$A2,$A8,$AE,$B4,$00
+starFieldXPosArray                  .BYTE $44,$CD,$9F,$F7,$EF,$7F,$79,$2D
+                                    .BYTE $9D,$D5,$01,$79,$96,$FB,$C0
+starFieldXPosMSBArray               .BYTE $01,$00,$01,$00,$01,$01,$00,$01
+                                    .BYTE $00,$00,$00,$01,$00,$01,$00,$00
+                                    .BYTE $01,$01,$00
+currentIndexInRasterInterruptArrays .BYTE $00
+gilbyExploding                      .BYTE $00,$00
+starFieldInitialStateArray          .BYTE $02,$03,$04,$03,$02,$03,$04,$03
+                                    .BYTE $02,$03,$04,$03,$02,$02,$03,$04
+                                    .BYTE $03,$02,$03,$04,$03,$02,$01,$02
+                                    .BYTE $03
+starFieldCurrentStateArray          .BYTE $04,$02,$03,$04,$03,$02,$03,$04
+                                    .BYTE $03,$02,$03,$04,$03,$02,$02,$03
+                                    .BYTE $04,$03,$02,$03,$04,$03,$02,$01
+                                    .BYTE $02,$03
+starFieldColorsArray                .BYTE $04,$01,$0F,$0C,$0B,$08,$06
 
 ;------------------------------------------------------------------
 ; ScrollStarfieldAndThenPlanets
@@ -7433,12 +7499,12 @@ UpdateAttackShipsXAndYPositions
         LDA #$10
         STA upperPlanetAttackShip2YPos,X
         LDA #$01
-        STA f48AC,X
+        STA upperPlanetAttackShipYPosUpdated + $01,X
         BNE b7D74
 b7D6A   LDA #$6D
         STA upperPlanetAttackShip2YPos,X
         LDA #$01
-        STA f48B6,X
+        STA upperPlanetAttackShipYPosUpdated2 + $01,X
 b7D74   LDA #$00
         STA yPosMovementForUpperPlanetAttackShips - $01,X
 b7D79   DEC f7D3A - $01,X
