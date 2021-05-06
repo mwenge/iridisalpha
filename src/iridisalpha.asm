@@ -910,12 +910,12 @@ a16A5   =*+$01
 .include "charset.asm"
 .include "sprites.asm"
 
+difficultySelected   =*+$01
 ;------------------------------------------------------------------
 ; MainControlLoop
 ; Execution starts here
 ;------------------------------------------------------------------
 MainControlLoop   
-difficultySelected   =*+$01
         LDA #$00
         SEI 
 p4003   LDA #<MainControlLoopInterruptHandler
@@ -1034,36 +1034,36 @@ gilbyHasJustDied           .BYTE $00
 ;------------------------------------------------------------------
 .include "madeinfrance.asm"
 
-someGameData   .BYTE $A0,$50,$A7,$08,$A2,$D0,$9B,$A0
-        .BYTE $18,$00,$1D,$E0,$A0,$A0,$13,$70
-        .BYTE $1A,$70,$1E,$58,$11,$40,$11,$B8
-        .BYTE $13,$E8,$13,$C0,$9B,$00,$A6,$E0
-        .BYTE $1D,$18,$A9,$48,$A9,$98,$A1,$68
-        .BYTE $A0,$00,$A5,$78,$A5,$A0,$15,$28
-        .BYTE $10,$00,$10,$C8,$19,$68,$1B,$60
-        .BYTE $1B,$D8,$9D,$A8,$9E,$70,$A4,$10
-        .BYTE $A5,$28,$A5,$C8,$A8,$C0,$AA,$38
-        .BYTE $A5,$F0,$A3,$70,$A3,$98,$A1,$90
-        .BYTE $9F,$D8,$1E,$A8,$1A,$E8,$1C,$50
-        .BYTE $1C,$78,$1C,$C8,$10,$78,$1F,$20
-        .BYTE $12,$30,$9C,$68,$16,$40,$12,$D0
-        .BYTE $9D,$F8,$A2,$80,$A4,$38,$A9,$20
-        .BYTE $AA,$88,$A4,$88,$9E,$C0,$A1,$B8
-        .BYTE $9F,$88,$13,$20,$1A,$20,$19,$D0
-        .BYTE $1F,$98,$1D,$90,$14,$38,$17,$58
-        .BYTE $17,$A8,$9C,$B8,$A7,$D0,$A4,$D8
-        .BYTE $A9,$E8,$14,$B0,$9D,$58,$A7,$30
-        .BYTE $9B,$50,$A6,$68,$18,$F0,$A1,$E0
-        .BYTE $9F,$38,$A2,$30,$15,$78,$17,$08
-        .BYTE $9B,$F0,$9D,$08,$A6,$90,$A9,$C0
-        .BYTE $12,$80,$15,$00,$16,$90,$14,$60
-        .BYTE $A7,$80,$A8,$20,$A8,$70,$A2,$D0
-        .BYTE $AA,$10,$AA,$60,$A8,$20,$A2,$08
-hasEnteredNewLevel   .BYTE $01
-yPosMovementPatternForShips1   .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
-        .BYTE $10,$10,$10,$10,$10,$10,$10,$14
-yPosMovementPatternForShips2   .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
-        .BYTE $F0,$F0,$F0,$F0,$F0,$F0
+someGameData .BYTE $A0,$50,$A7,$08,$A2,$D0,$9B,$A0
+             .BYTE $18,$00,$1D,$E0,$A0,$A0,$13,$70
+             .BYTE $1A,$70,$1E,$58,$11,$40,$11,$B8
+             .BYTE $13,$E8,$13,$C0,$9B,$00,$A6,$E0
+             .BYTE $1D,$18,$A9,$48,$A9,$98,$A1,$68
+             .BYTE $A0,$00,$A5,$78,$A5,$A0,$15,$28
+             .BYTE $10,$00,$10,$C8,$19,$68,$1B,$60
+             .BYTE $1B,$D8,$9D,$A8,$9E,$70,$A4,$10
+             .BYTE $A5,$28,$A5,$C8,$A8,$C0,$AA,$38
+             .BYTE $A5,$F0,$A3,$70,$A3,$98,$A1,$90
+             .BYTE $9F,$D8,$1E,$A8,$1A,$E8,$1C,$50
+             .BYTE $1C,$78,$1C,$C8,$10,$78,$1F,$20
+             .BYTE $12,$30,$9C,$68,$16,$40,$12,$D0
+             .BYTE $9D,$F8,$A2,$80,$A4,$38,$A9,$20
+             .BYTE $AA,$88,$A4,$88,$9E,$C0,$A1,$B8
+             .BYTE $9F,$88,$13,$20,$1A,$20,$19,$D0
+             .BYTE $1F,$98,$1D,$90,$14,$38,$17,$58
+             .BYTE $17,$A8,$9C,$B8,$A7,$D0,$A4,$D8
+             .BYTE $A9,$E8,$14,$B0,$9D,$58,$A7,$30
+             .BYTE $9B,$50,$A6,$68,$18,$F0,$A1,$E0
+             .BYTE $9F,$38,$A2,$30,$15,$78,$17,$08
+             .BYTE $9B,$F0,$9D,$08,$A6,$90,$A9,$C0
+             .BYTE $12,$80,$15,$00,$16,$90,$14,$60
+             .BYTE $A7,$80,$A8,$20,$A8,$70,$A2,$D0
+             .BYTE $AA,$10,$AA,$60,$A8,$20,$A2,$08
+hasEnteredNewLevel           .BYTE $01
+yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
+                             .BYTE $10,$10,$10,$10,$10,$10,$10,$14
+yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
+                             .BYTE $F0,$F0,$F0,$F0,$F0,$F0
 
 ; Pointers to:
 ; a50F0
@@ -1775,10 +1775,10 @@ GetDefaultWaveData
         PLA 
         RTS 
 
-a4E17   .BYTE $00
-updatingWaveData   .BYTE $00
-currentTopPlanet   .BYTE $01
-currentBottomPlanet   .BYTE $01
+a4E17               .BYTE $00
+updatingWaveData    .BYTE $00
+currentTopPlanet    .BYTE $01
+currentBottomPlanet .BYTE $01
 
 ;---------------------------------------------------------------------------------
 ; UpdateAttackShipData   
@@ -3834,9 +3834,9 @@ b6105   LDY #$00
 
         ; Draw the progress map
 b610D   LDX #$0A
-b610F   LDA progressMapScreenPtrArrayHi,X
+b610F   LDA progressMapTopPlanetScreenPtrArrayHi - $01,X
         STA tempHiPtr
-        LDA progressMapScreenPtrArrayLo,X
+        LDA progressMapScreenTopPlanetPtrArrayLo - $01,X
         STA tempLoPtr
         LDA #$2D ; Progress chart tick
         STA (tempLoPtr),Y
@@ -3892,11 +3892,11 @@ b6195   RTS
 ; DrawProgressForTopPlanets
 ;------------------------------------------------------------------
 DrawProgressForTopPlanets   
-        LDA progressMapTopPlanetScreenPtrArrayHi1,X
+        LDA progressMapTopPlanetScreenPtrArrayHi,X
         CLC 
         ADC #$D4
         STA tempHiPtr
-        LDA progressMapScreenTopPlanetPtrArrayLo1,X
+        LDA progressMapScreenTopPlanetPtrArrayLo,X
         STA tempLoPtr
 
 DrawProgressForThePlanet   
@@ -3914,23 +3914,21 @@ b61A9   STA (tempLoPtr),Y
 ; DrawProgressForBottomPlanets
 ;------------------------------------------------------------------
 DrawProgressForBottomPlanets   
-        LDA progressMapBottomPlanetScreenPtrArrayHi1,X
+        LDA progressMapBottomPlanetScreenPtrArrayHi,X
         CLC 
         ADC #$D4
         STA tempHiPtr
-        LDA progressMapScreenBottomPlanetPtrArrayLo1,X
+        LDA progressMapScreenBottomPlanetPtrArrayLo,X
         STA tempLoPtr
         JMP DrawProgressForThePlanet
 
 ; This is an array of pointers to the screen. For example the
 ; first one is $04F0. It is used to draw the progress map in the
 ; progress display screen.
-progressMapScreenPtrArrayHi   =*-$01
-progressMapTopPlanetScreenPtrArrayHi1    .BYTE $04,$04,$04,$04,$04
-progressMapBottomPlanetScreenPtrArrayHi1 .BYTE $05,$05,$05,$05,$05
-progressMapScreenPtrArrayLo=*-$01
-progressMapScreenTopPlanetPtrArrayLo1    .BYTE $F0,$CB,$A6,$81,$5C
-progressMapScreenBottomPlanetPtrArrayLo1 .BYTE $18,$43,$6E,$99,$C4
+progressMapTopPlanetScreenPtrArrayHi    .BYTE $04,$04,$04,$04,$04
+progressMapBottomPlanetScreenPtrArrayHi .BYTE $05,$05,$05,$05,$05
+progressMapScreenTopPlanetPtrArrayLo    .BYTE $F0,$CB,$A6,$81,$5C
+progressMapScreenBottomPlanetPtrArrayLo .BYTE $18,$43,$6E,$99,$C4
 
 ; As above, but for the planet icons.
 planetIconsHiPtrArray                    .BYTE $04,$04
@@ -3949,7 +3947,7 @@ ShowProgressScreen
         JSR DrawProgressDisplayScreen
 
         LDX #$28
-b61FE   LDA txtProgressStatusLine1,X
+b61FE   LDA txtProgressStatusLine1 - $01,X
         AND #$3F
         STA SCREEN_RAM + $0257,X
         LDA #$01
@@ -4083,8 +4081,7 @@ b62D2   JSR PlaySoundEffects
         STA $D012    ;Raster Position
         JMP $EA31
 
-txtProgressStatusLine1   =*-$01
-                       .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
+txtProgressStatusLine1 .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
 txtProgressStatusLine2 .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READY"
 
 p6335   .BYTE $00,$00,$20
@@ -4395,21 +4392,8 @@ NewBonusGilbyAnimation
         PLA 
         RTI 
 
-a65DD   .BYTE $04
-a65DE   .BYTE $04
-a65DF   .BYTE $02
-a65E0   .BYTE $02
-a65E1   .BYTE $00
-a65E2   .BYTE $00
-a65E3   .BYTE $00
-a65E4   .BYTE $03
-a65E5   .BYTE $03
-a65E6   .BYTE $06
-a65E7   .BYTE $06
-a65E8   .BYTE $01
-a65E9   .BYTE $01
-a65EA   .BYTE $00
-a65EB   .BYTE $00
+bonusGilbyAnimation   .BYTE $04,$04,$02,$02,$00,$00,$00,$03
+                      .BYTE $03,$06,$06,$01,$01,$00,$00
 NewBonusGilbyColors   .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
 
 ;---------------------------------------------------------------------------------
@@ -4419,90 +4403,90 @@ AnimateGilbiesForNewBonus
         LDY #$00
         LDA #$F0
         STA $D012    ;Raster Position
-        DEC a65DD
+        DEC bonusGilbyAnimation
         BNE b6610
-        LDA a65DE
-        STA a65DD
+        LDA bonusGilbyAnimation + $01
+        STA bonusGilbyAnimation
         LDA a673D
         CLC 
-        ADC a65E2
-        STA a65E2
-b6610   DEC a65E0
+        ADC bonusGilbyAnimation + $05
+        STA bonusGilbyAnimation + $05
+b6610   DEC bonusGilbyAnimation + $03
         BNE b6625
-        LDA a65DF
-        STA a65E0
-        LDA a65E3
+        LDA bonusGilbyAnimation + $02
+        STA bonusGilbyAnimation + $03
+        LDA bonusGilbyAnimation + $06
         CLC 
         ADC a673E
-        STA a65E3
-b6625   DEC a65E4
+        STA bonusGilbyAnimation + $06
+b6625   DEC bonusGilbyAnimation + $07
         BNE b6633
-        LDA a65E5
-        STA a65E4
-        INC a65EA
-b6633   DEC a65E6
+        LDA bonusGilbyAnimation + $08
+        STA bonusGilbyAnimation + $07
+        INC bonusGilbyAnimation + $0D
+b6633   DEC bonusGilbyAnimation + $09
         BNE b6641
-        LDA a65E7
-        STA a65E6
-        INC a65EB
-b6641   LDA a65E2
+        LDA bonusGilbyAnimation + $0A
+        STA bonusGilbyAnimation + $09
+        INC bonusGilbyAnimation + $0E
+b6641   LDA bonusGilbyAnimation + $05
         PHA 
-        LDA a65E3
+        LDA bonusGilbyAnimation + $06
         PHA 
-        LDA a65EA
+        LDA bonusGilbyAnimation + $0D
         PHA 
-        LDA a65EB
+        LDA bonusGilbyAnimation + $0E
         PHA 
-b6651   LDA a65E2
+b6651   LDA bonusGilbyAnimation + $05
         AND #$3F
         TAX 
         LDA bonusGilbiesPositionArray,X
         STA bonusGilbyXPos1
-        LDA a65E3
+        LDA bonusGilbyAnimation + $06
         AND #$3F
         TAX 
         LDA bonusGilbiesPositionArray,X
         STA bonusGilbyYPos1
-        LDA a65EA
+        LDA bonusGilbyAnimation + $0D
         AND #$3F
         TAX 
         LDA bonusGilbiesPositionArray,X
         STA bonusGilbyXPos2
-        LDA a65EB
+        LDA bonusGilbyAnimation + $0E
         AND #$3F
         TAX 
         LDA bonusGilbiesPositionArray,X
         STA bonusGilbyYPos2
         JSR BonusBountyPerformAnimation
-        LDA a65EB
+        LDA bonusGilbyAnimation + $0E
         CLC 
         ADC #$08
-        STA a65EB
-        LDA a65EA
+        STA bonusGilbyAnimation + $0E
+        LDA bonusGilbyAnimation + $0D
         CLC 
         ADC #$08
-        STA a65EA
-        LDA a65E3
+        STA bonusGilbyAnimation + $0D
+        LDA bonusGilbyAnimation + $06
         CLC 
         ADC #$08
-        STA a65E3
-        LDA a65E2
+        STA bonusGilbyAnimation + $06
+        LDA bonusGilbyAnimation + $05
         CLC 
         ADC #$08
-        STA a65E2
+        STA bonusGilbyAnimation + $05
         INY 
         INY 
         CPY #$10
         BNE b6651
         PLA 
-        STA a65EB
+        STA bonusGilbyAnimation + $0E
         PLA 
-        STA a65EA
+        STA bonusGilbyAnimation + $0D
         PLA 
-        STA a65E3
+        STA bonusGilbyAnimation + $06
         PLA 
-        STA a65E2
-        DEC a65E1
+        STA bonusGilbyAnimation + $05
+        DEC bonusGilbyAnimation + $04
         BNE b6709
         JSR PutRandomByteInAccumulatorRegister
         AND #$07
@@ -4510,7 +4494,7 @@ b6651   LDA a65E2
         ADC #$04
         TAX 
         LDA f673F,X
-        STA a65DE
+        STA bonusGilbyAnimation + $01
         LDA f674F,X
         STA a673D
         JSR PutRandomByteInAccumulatorRegister
@@ -4519,21 +4503,21 @@ b6651   LDA a65E2
         ADC #$04
         TAX 
         LDA f673F,X
-        STA a65DF
+        STA bonusGilbyAnimation + $02
         LDA f674F,X
         STA a673E
         JSR PutRandomByteInAccumulatorRegister
         AND #$07
         CLC 
         ADC #$01
-        STA a65E4
-        STA a65E5
+        STA bonusGilbyAnimation + $07
+        STA bonusGilbyAnimation + $08
         JSR PutRandomByteInAccumulatorRegister
         AND #$07
         CLC 
         ADC #$01
-        STA a65E6
-        STA a65E7
+        STA bonusGilbyAnimation + $09
+        STA bonusGilbyAnimation + $0A
 b6709   LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
@@ -4545,7 +4529,7 @@ b6709   LDA #$01
 ;------------------------------------------------------------------
 BonusBountyPerformAnimation   
         LDA bonusGilbyXPos1
-        LDX a65E8
+        LDX bonusGilbyAnimation + $0B
         BEQ b6725
         JSR BonusBountyAnimateGilbyXPos
         JMP j672B
@@ -4556,7 +4540,7 @@ b6725   CLC
 
 j672B   
         LDA bonusGilbyYPos1
-        LDX a65E9
+        LDX bonusGilbyAnimation + $0C
         BEQ b6736
         JMP BonusBountyAnimateGilbyYPos
 
@@ -5686,6 +5670,9 @@ b6F63   LDA gilbyVerticalPosition
         STA a7177
 b6F98   RTS 
 
+;---------------------------------------------------------------------------------
+; j6F99   
+;---------------------------------------------------------------------------------
 j6F99   
         CMP #$01
         BEQ b6FA0
@@ -5750,6 +5737,9 @@ j700F
         BNE j701E
         JMP b6F63
 
+;---------------------------------------------------------------------------------
+; j701E   
+;---------------------------------------------------------------------------------
 j701E   
         LDA gilbyVerticalPosition
         CMP #$6D
@@ -5764,6 +5754,9 @@ j701E
         DEC gilbyVerticalPosition
 b703A   RTS 
 
+;---------------------------------------------------------------------------------
+; j703B   
+;---------------------------------------------------------------------------------
 j703B   
         CMP #$02
         BNE b707E
@@ -5812,21 +5805,35 @@ b7099   JSR s70AF
         LDA #$D1
         STA currentGilbySprite
 
+;---------------------------------------------------------------------------------
+; s70A1   
+;---------------------------------------------------------------------------------
 s70A1   
         LDA #$04
         STA a7177
         RTS 
 
-b70A7   LDA #$D3
+;---------------------------------------------------------------------------------
+; b70A7   
+;---------------------------------------------------------------------------------
+b70A7   
+        LDA #$D3
         STA currentGilbySprite
         JSR s70A1
 
+;---------------------------------------------------------------------------------
+; s70AF   
+;---------------------------------------------------------------------------------
 s70AF   
         LDA #$00
         STA a7140
         RTS 
 
-b70B5   JSR ProcessFireButtonPressed
+;---------------------------------------------------------------------------------
+; b70B5   
+;---------------------------------------------------------------------------------
+b70B5   
+        JSR ProcessFireButtonPressed
         LDA joystickInput
         AND #$04
         BNE b70FC
@@ -6268,14 +6275,14 @@ MutateSomeMoreOfThePlanetCharsetForEntrySequence
         TAY 
         RTS 
 
-bitsOfPlanetToShow   .BYTE $07,$06,$05,$04,$03,$02,$01,$00
-currentTopPlanetDataLoPtr   .BYTE $00
-currentTopPlanetDataHiPtr   .BYTE $92
-currentBottomPlanetDataLoPtr   .BYTE $00
-currentBottomPlanetDataHiPtr   .BYTE $92
-bitfield1ForMaterializingPlanet   .BYTE $00,$40,$80,$C0
-bitfield2ForMaterializingPlanet   .BYTE $00,$10,$20,$30
-bitfield3ForMaterializingPlanet   .BYTE $00,$04,$08,$0C
+bitsOfPlanetToShow              .BYTE $07,$06,$05,$04,$03,$02,$01,$00
+currentTopPlanetDataLoPtr       .BYTE $00
+currentTopPlanetDataHiPtr       .BYTE $92
+currentBottomPlanetDataLoPtr    .BYTE $00
+currentBottomPlanetDataHiPtr    .BYTE $92
+bitfield1ForMaterializingPlanet .BYTE $00,$40,$80,$C0
+bitfield2ForMaterializingPlanet .BYTE $00,$10,$20,$30
+bitfield3ForMaterializingPlanet .BYTE $00,$04,$08,$0C
 
 ;------------------------------------------------------------------
 ; GeneratePlanetSurface
@@ -7470,15 +7477,16 @@ b7D07   PHA
         BCC b7CE1
         JMP j7CD8
 
-a7D1E   .BYTE $10
-upperPlanetInitialXPosFrameRateForAttackShip   .BYTE $01,$01,$01,$01
-f7D22   .BYTE $01,$01,$01,$01
-upperPlanetXPosFrameRateForAttackShip   .BYTE $01,$01,$01,$01
-f7D2A   .BYTE $01,$01,$01,$01
-upperPlanetInitialYPosFrameRateForAttackShips   .BYTE $01,$01,$01,$01
-f7D32   .BYTE $01,$01,$01,$01
-upperPlanetYPosFrameRateForAttackShips   .BYTE $01,$01,$01,$01
-f7D3A   .BYTE $01,$01,$01,$01
+a7D1E                                         .BYTE $10
+upperPlanetInitialXPosFrameRateForAttackShip  .BYTE $01,$01,$01,$01
+lowerPlanetInitialXPosFrameRateForAttackShip  .BYTE $01,$01,$01,$01
+upperPlanetXPosFrameRateForAttackShip         .BYTE $01,$01,$01,$01
+lowerPlanetXPosFrameRateForAttackShip         .BYTE $01,$01,$01,$01
+upperPlanetInitialYPosFrameRateForAttackShips .BYTE $01,$01,$01,$01
+lowerPlanetInitialYPosFrameRateForAttackShips .BYTE $01,$01,$01,$01
+upperPlanetYPosFrameRateForAttackShips        .BYTE $01,$01,$01,$01
+lowerPlanetYPosFrameRateForAttackShips        .BYTE $01,$01,$01,$01
+
 ;------------------------------------------------------------------
 ; UpdateAttackShipsXAndYPositions
 ;------------------------------------------------------------------
@@ -7507,10 +7515,10 @@ b7D6A   LDA #$6D
         STA upperPlanetAttackShipYPosUpdated2 + $01,X
 b7D74   LDA #$00
         STA yPosMovementForUpperPlanetAttackShips - $01,X
-b7D79   DEC f7D3A - $01,X
+b7D79   DEC lowerPlanetYPosFrameRateForAttackShips - $01,X
         BNE b7DB4
-        LDA f7D32 - $01,X
-        STA f7D3A - $01,X
+        LDA lowerPlanetInitialYPosFrameRateForAttackShips - $01,X
+        STA lowerPlanetYPosFrameRateForAttackShips - $01,X
         LDA yPosMovementForLowerPlanetAttackShips - $01,X
         CLC 
         ADC lowerPlanetAttackShip2YPos,X
@@ -7557,10 +7565,10 @@ b7DD9   EOR #$FF
         LDA upperPlanetAttackShip2MSBXPosValue,X
         EOR attackShip2MSBXPosOffsetArray,X
         STA upperPlanetAttackShip2MSBXPosValue,X
-b7DF6   DEC f7D2A - $01,X
+b7DF6   DEC lowerPlanetXPosFrameRateForAttackShip - $01,X
         BNE b7E38
-        LDA f7D22 - $01,X
-        STA f7D2A - $01,X
+        LDA lowerPlanetInitialXPosFrameRateForAttackShip - $01,X
+        STA lowerPlanetXPosFrameRateForAttackShip - $01,X
         LDA xPosMovementForLowerPlanetAttackShip - $01,X
         BMI b7E1B
         CLC 
@@ -7730,55 +7738,51 @@ jumpToDrawProgressLoPtr   =*+$01
 jumpToDrawProgressHiPtr   =*+$02
 JumpToDrawProgressDisplayScreen   JMP DrawProgressDisplayScreen
 
+;------------------------------------------------------------------
+; The high score table.
+;------------------------------------------------------------------
 hiScoreTablePtr           .TEXT "0068000"
 canAwardBonus             .TEXT "YAK "
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT  "0065535RATT"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-                          .TEXT  "00491"
-                          .TEXT "52WULF"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
+                          .TEXT  "0049152WULF"
+                          .FILL 10, $00
                           .TEXT "0032768INCA"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-                          .TEXT "003"
-                          .TEXT "0000MAT "
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
+                          .TEXT "0030000MAT "
+                          .FILL 10, $00
                           .TEXT "0025000PSY "
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-                          .TEXT "0"
-                          .TEXT "020000TAK "
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
+                          .TEXT "0020000TAK "
+                          .FILL 10, $00
                           .TEXT "0016384GOAT"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00
-                          .TEXT $00
+                          .FILL 10, $00
                           .TEXT "0010000PINK"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0009000FLYD"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00
-                          .TEXT $00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0008192LED "
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0007000ZEP "
-                          .BYTE $00,$00,$00,$00,$00
-                          .TEXT $00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0006000MACH"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0005000SCUM"
-                          .BYTE $00,$00,$00
-                          .TEXT $00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0004096TREV"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0003000MARK"
-                          .BYTE $00
-                          .TEXT $00,$00,$00,$00,$00,$00,$00,$00,$00
+                          .FILL 10, $00
                           .TEXT "0002000MAH "
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-                          .TEXT "0001000INT"
-                          .TEXT "I"
-                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
-ptrSecondLastScoreInTable .TEXT "0000900GIJO", $00, $00, $00, $00, $00, $00, $00, $00, $00, $00
-ptrLastScoreInTable       .TEXT "0000800LAMA", $00, $00, $00, $00, $00, $00, $00, $00, $00
-                          .BYTE $00,$FF
+                          .FILL 10, $00
+                          .TEXT "0001000INTI"
+                          .FILL 10, $00
+ptrSecondLastScoreInTable .TEXT "0000900GIJO"
+                          .FILL 10, $00
+ptrLastScoreInTable       .TEXT "0000800LAMA"
+                          .FILL 10, $00
+                          .BYTE $FF
 
 ;------------------------------------------------------------------
 ; InitAndDisplayHiScoreScreen
@@ -7874,7 +7878,7 @@ bCA51   LDA #<ptrSecondLastScoreInTable
         LDA #>ptrSecondLastScoreInTable
         STA tempHiPtr1
 
-jCA59   
+StoreScoreLoop   
         LDY #$00
 bCA5B   LDA (tempLoPtr1),Y
         STA aF9
@@ -7902,7 +7906,7 @@ bCA5B   LDA (tempLoPtr1),Y
         LDA tempHiPtr1
         SBC #$00
         STA tempHiPtr1
-        JMP jCA59
+        JMP StoreScoreLoop
 
 ;------------------------------------------------------------------
 ; StoreLastBlasScoreInTable
@@ -8045,13 +8049,12 @@ bCB85   JSR GetHiScoreScreenInput
 
         JMP DisplayHiScoreScreen
 
-hiScoreTableInputName   =*-$0A
-        .TEXT "YAK "
+hiScoreTableInputName .TEXT "YAK "
 ;------------------------------------------------------------------
 ; GetHiScoreScreenInput
 ;------------------------------------------------------------------
 GetHiScoreScreenInput   
-        LDA hiScoreTableInputName,Y
+        LDA hiScoreTableInputName - $0A,Y
         AND #$3F
         STA (tempLoPtr),Y
         STA aF8
@@ -8068,25 +8071,25 @@ GetHiScoreScreenInput
         STA aFA
         AND #$04
         BNE bCBC4
-        LDA hiScoreTableInputName,Y
+        LDA hiScoreTableInputName - $0A,Y
         SEC 
         SBC #$01
         CMP #$FF
         BNE bCBBC
-bCBBC   STA hiScoreTableInputName,Y
+bCBBC   STA hiScoreTableInputName - $0A,Y
         LDA #$3F
         JMP jCBD9
 
 bCBC4   LDA aFA
         AND #$08
         BNE bCBE9
-        LDA hiScoreTableInputName,Y
+        LDA hiScoreTableInputName - $0A,Y
         CLC 
         ADC #$01
         CMP #$40
         BNE bCBD6
         LDA #$00
-bCBD6   STA hiScoreTableInputName,Y
+bCBD6   STA hiScoreTableInputName - $0A,Y
 
 jCBD9   
         LDA #$50
@@ -8306,8 +8309,7 @@ HiScoreScreeInterruptHandler
         PLA 
         RTI 
 
-bCD59
-        LDA #$01
+bCD59   LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         LDA #$F0
@@ -8358,39 +8360,41 @@ bCDC1   LDA currHiScoreColorSeq1
         STA currHiScoreColorSeq1
 bCDCD   JMP $EA31
 
-currHiScoreColorSeq1  .BYTE $1C
-currHiScoreColorSeq2  .BYTE $0C
-hiScoreColorSequence  .BYTE $0B,$0B,$0B,$0B,$0C,$0C,$0C,$0C
-                      .BYTE $0F,$0F,$0F,$0F,$01,$01,$01,$01
-hiScoreColorSequence2 .BYTE $02,$02,$08,$08,$08,$07,$07,$07
-                      .BYTE $05,$05,$05,$0E,$0E,$0E,$07,$07
-txtHiScorLine1        .TEXT "YAK'S GREAT GILBIES OF OUR TIME..... % %"
-txtHiScorLine2        .TEXT "LEFT AND RIGHT TO SELECT, FIRE TO ENTER."
-txtHiScorLine3        .TEXT "UP AND DOWN, SPACE FOR RECORD, FIRE QUIT"
-txtHiScorLine4        .TEXT "THE SCORE FOR THE LAST BLAST WAS 0000000"
-
-aCE92   .BYTE $00
-aCE93   .BYTE $00
-aCE94   .BYTE $00
+currHiScoreColorSeq1    .BYTE $1C
+currHiScoreColorSeq2    .BYTE $0C
+hiScoreColorSequence    .BYTE $0B,$0B,$0B,$0B,$0C,$0C,$0C,$0C
+                        .BYTE $0F,$0F,$0F,$0F,$01,$01,$01,$01
+hiScoreColorSequence2   .BYTE $02,$02,$08,$08,$08,$07,$07,$07
+                        .BYTE $05,$05,$05,$0E,$0E,$0E,$07,$07
+txtHiScorLine1          .TEXT "YAK'S GREAT GILBIES OF OUR TIME..... % %"
+txtHiScorLine2          .TEXT "LEFT AND RIGHT TO SELECT, FIRE TO ENTER."
+txtHiScorLine3          .TEXT "UP AND DOWN, SPACE FOR RECORD, FIRE QUIT"
+txtHiScorLine4          .TEXT "THE SCORE FOR THE LAST BLAST WAS 0000000"
+hiScoreInputRateControl .BYTE $00
+hiScoreInputWait1       .BYTE $00
+hiScoreInputWait2       .BYTE $00
 ;------------------------------------------------------------------
 ; HiScoreCheckInput
 ;------------------------------------------------------------------
 HiScoreCheckInput   
-        DEC aCE92
+        DEC hiScoreInputRateControl
         BEQ bCEAC
-bCE9A   LDA $DC00    ;CIA1: Data Port Register A
+
+HiScoreInputLoop
+        LDA $DC00    ;CIA1: Data Port Register A
         AND #$0F
         CMP #$0F
         BEQ bCEA8
         LDA #$04
-        STA aCE94
+        STA hiScoreInputWait2
 bCEA8   LDA $DC00    ;CIA1: Data Port Register A
         RTS 
 
-bCEAC   DEC aCE93
-        BNE bCE9A
-        DEC aCE94
-        BNE bCE9A
+bCEAC   DEC hiScoreInputWait1
+        BNE HiScoreInputLoop
+        DEC hiScoreInputWait2
+        BNE HiScoreInputLoop
+
         JMP ExitHiScoreScreen
 
 ;------------------------------------------------------------------
@@ -8403,7 +8407,7 @@ HiScoreStopSounds
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
         LDA #$04
-        STA aCE94
+        STA hiScoreInputWait2
         RTS 
 
 
