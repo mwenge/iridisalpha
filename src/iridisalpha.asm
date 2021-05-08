@@ -100,6 +100,45 @@ LTGREEN                                 = $0D
 LTBLUE                                  = $0E
 GRAY3                                   = $0F
 
+STARFIELD_SPRITE = $C0
+LAND_GILBY1 = $C1
+LAND_GILBY2 = $C2
+LAND_GILBY3 = $C3
+LAND_GILBY4 = $C4
+LAND_GILBY5 = $C5
+LAND_GILBY6 = $C6
+LAND_GILBY7 = $C7
+LAND_GILBY8 = $C8
+LAND_GILBY9 = $C9
+LAND_GILBY10 = $CA
+LAND_GILBY11 = $CB
+GILBY_TAKING_OFF1 = $CC
+GILBY_TAKING_OFF2 = $CD
+GILBY_TAKING_OFF3 = $CE
+GILBY_TAKING_OFF4 = $CF
+GILBY_TAKING_OFF5 = $D0
+GILBY_AIRBORNE_LEFT = $D1
+GILBY_AIRBORNE_TURNING = $D2
+GILBY_AIRBORNE_RIGHT = $D3
+LAND_GILBY_LOWERPLANET1 = $D4
+LAND_GILBY_LOWERPLANET2 = $D5
+LAND_GILBY_LOWERPLANET3 = $D6
+LAND_GILBY_LOWERPLANET4 = $D7
+LAND_GILBY_LOWERPLANET5 = $D8
+LAND_GILBY_LOWERPLANET6 = $D9
+LAND_GILBY_LOWERPLANET7 = $DA
+LAND_GILBY_LOWERPLANET8 = $DB
+LAND_GILBY_LOWERPLANET9 = $DC
+LAND_GILBY_LOWERPLANET10 = $DD
+LAND_GILBY_LOWERPLANET11 = $DE
+GILBY_TAKING_OFF_LOWERPLANET1 = $DF
+GILBY_TAKING_OFF_LOWERPLANET2 = $E0
+GILBY_TAKING_OFF_LOWERPLANET3 = $E1
+GILBY_TAKING_OFF_LOWERPLANET4 = $E2
+GILBY_TAKING_OFF_LOWERPLANET5 = $E3
+GILBY_AIRBORNE_LOWERPLANET_RIGHT = $E4
+GILBY_AIRBORNED_TURNING_LOWER_PLANET = $E5
+GILBY_AIRBORNED_LOWERPLANET_LEFT = $E6
 
 * = $0801
 ;-----------------------------------------------------------------------------------------------------
@@ -1070,9 +1109,9 @@ yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
 ; a50EC
 ; aA078
 attackWaveDataLoPtrArray .BYTE $F0,$EC,$78,$78,$78,$78,$00,$00
-                      .BYTE $78,$78
+                         .BYTE $78,$78
 attackWaveDataHiPtrArray .BYTE $50,$50,$A0,$A0,$A0,$A0,$00,$00
-                      .BYTE $A0,$A0
+                         .BYTE $A0,$A0
 
 ; This is level data, one entry for each level per planet
 f4883   .BYTE $A0,$A0,$00,$00,$00,$00,$00,$00
@@ -4783,7 +4822,7 @@ p6904   JMP PrepareToRunGame
 ; SetUpGilbySprite
 ;------------------------------------------------------------------
 SetUpGilbySprite   
-        LDA #$D3
+        LDA #GILBY_AIRBORNE_RIGHT
         STA currentGilbySprite
         STA Sprite0Ptr
         LDA #$02
@@ -5237,7 +5276,7 @@ b6C1A   LDY valueIsAlwaysZero
 b6C21   STA $D027    ;Sprite 0 Color
 b6C24   RTS 
 
-currentGilbySprite   .BYTE $D3
+currentGilbySprite   .BYTE GILBY_AIRBORNE_RIGHT
 
 ;---------------------------------------------------------------------------------
 ; PerformMainGameUpdate   
@@ -5814,7 +5853,7 @@ MaybePreviousActionWasSomething
         JMP b6FB7
 
 b7099   JSR s70AF
-        LDA #$D1 ; Left-facing gilby
+        LDA #GILBY_AIRBORNE_LEFT
         STA currentGilbySprite
 
 ;---------------------------------------------------------------------------------
@@ -5829,7 +5868,7 @@ s70A1
 ; b70A7   
 ;---------------------------------------------------------------------------------
 b70A7   
-        LDA #$D3 ; Right facing airborne gilby
+        LDA #GILBY_AIRBORNE_RIGHT
         STA currentGilbySprite
         JSR s70A1
 
@@ -5852,7 +5891,7 @@ RightJoystickPressedWithPreviousAction
 
         ; Right Joystick pressed
         LDA currentGilbySprite
-        CMP #$D3
+        CMP #GILBY_AIRBORNE_RIGHT
         BNE b70E0
         LDA #$01
         STA a7178
@@ -5886,7 +5925,7 @@ LeftJoystickPressedWithPreviousAction
 
         ; Left joystick Pressed
         LDA currentGilbySprite
-        CMP #$D1
+        CMP #GILBY_AIRBORNE_LEFT
         BNE b7124
         LDA #$01
         STA a7178
@@ -5933,7 +5972,7 @@ b715A   LDA joystickInput
         BEQ b7141
         LDA #$01
         STA a7140
-        LDA #$CF
+        LDA #GILBY_TAKING_OFF4
         STA currentGilbySprite
         JMP j705E
 
@@ -6627,11 +6666,14 @@ DrawRandomlyChosenStructure
 structureSubRoutineArrayHiPtr   .BYTE $74,$74,$74,$74
 structureSubRoutineArrayLoPtr   .BYTE $86,$B1,$CB,$E5
 
-gilbySprites .BYTE $C1,$C2,$C3,$C4,$C5,$C6,$C7,$C6
-             .BYTE $C5,$C4,$C3,$C2,$C1,$C8,$C9,$CA
-             .BYTE $CB,$CB,$CC,$CD,$CE,$CF,$CE,$CD
-             .BYTE $CC,$CB,$D3,$D2,$CF,$D0,$D1,$D1
-             .BYTE $D0,$CF,$D2,$D3
+gilbySprites .BYTE LAND_GILBY1,LAND_GILBY2,LAND_GILBY3,LAND_GILBY4,LAND_GILBY5,LAND_GILBY6,LAND_GILBY7,LAND_GILBY6
+             .BYTE LAND_GILBY5,LAND_GILBY4,LAND_GILBY3,LAND_GILBY2,LAND_GILBY1,LAND_GILBY8,LAND_GILBY9,LAND_GILBY10
+             .BYTE LAND_GILBY11,LAND_GILBY11,GILBY_TAKING_OFF1,GILBY_TAKING_OFF2,GILBY_TAKING_OFF3
+						 .BYTE GILBY_TAKING_OFF4,GILBY_TAKING_OFF3,GILBY_TAKING_OFF2
+             .BYTE GILBY_TAKING_OFF1,LAND_GILBY11,GILBY_AIRBORNE_RIGHT,GILBY_AIRBORNE_TURNING
+             .BYTE GILBY_TAKING_OFF4,GILBY_TAKING_OFF5,GILBY_AIRBORNE_LEFT,GILBY_AIRBORNE_LEFT
+             .BYTE GILBY_TAKING_OFF5,GILBY_TAKING_OFF4,GILBY_AIRBORNE_TURNING,GILBY_AIRBORNE_RIGHT
+
 a75A3        .BYTE $11
 a75A4        .BYTE $0D
 a75A5        .BYTE $06
@@ -6738,7 +6780,7 @@ b765F   DEC a760B
         JMP j7631
 
 bulletDirectionArray   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-a7670   .BYTE $01
+bulletFrameRate   .BYTE $01
 ;------------------------------------------------------------------
 ; ProcessFireButtonPressed
 ;------------------------------------------------------------------
@@ -6750,7 +6792,7 @@ ProcessFireButtonPressed
 
         ; Fire not pressed
         LDA #$01
-        STA a7670
+        STA bulletFrameRate
 b767D   RTS 
 
         ;Fire has been pressed
@@ -6761,10 +6803,10 @@ b767E   LDX #$00
         LDA upperPlanetGilbyBulletMSBXPosValue,X
         BMI b76A8
         LDX #$01
-        DEC a7670
+        DEC bulletFrameRate
         BNE b767D
         LDA #$06
-        STA a7670
+        STA bulletFrameRate
         LDA upperPlanetGilbyBulletMSBXPosValue,X
         BPL b76A0
         JSR b76A8
@@ -6822,7 +6864,7 @@ b76F8   LDA gilbyVerticalPosition
         STA upperPlanetGilbyBulletSpriteValue,X
 
         LDA currentGilbySprite
-        CMP #$D1 ; Left-facing in-flight gilby
+        CMP #GILBY_AIRBORNE_LEFT 
         BNE b7718
 
         ; Gilby is left-facing.
@@ -6830,7 +6872,7 @@ b76F8   LDA gilbyVerticalPosition
         STA bulletDirectionArray,X
 b7717   RTS 
 
-b7718   CMP #$D3 ; Right-facing gilby
+b7718   CMP #GILBY_AIRBORNE_RIGHT
         BNE b7722
         
         ; Gilby is right-facing.
