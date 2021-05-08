@@ -40,11 +40,7 @@ colormap = {
     }
 
 s = """
-colorsForFlashBackgroundAndBorderEffect   .BYTE $08
-        .BYTE $07,$05,$0E,$04,$06,$0F,$0F,$0C
-        .BYTE $0F,$0C,$0C,$0B,$0C,$0B,$0B,$80
-        .BYTE $0B,$80,$80,$0B,$80,$0B,$0B,$0C
-        .BYTE $0B,$0C,$0C,$0F,$0C,$0F,$0F
+scoreColors   .BYTE $06,$04,$05,$07,$01
 """
 ls = re.split("([, \n])", s)
 
