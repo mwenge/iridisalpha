@@ -960,7 +960,7 @@ p4003   LDA #<MainControlLoopInterruptHandler
         STA gilbyHasJustDied
         STA bonusPhaseEarned
         STA bonusPhaseCounter
-        STA a4F57
+        STA valueIsAlwaysZero
 
         ; Point at the planet data for the first planet.
         ; The planet data starts at $8000. Each planet
@@ -1617,7 +1617,7 @@ b4CEB
         BEQ UpdateWaves
         LDA lowerPlanetActivated
         BNE UpdateWaves
-        LDA a4F57
+        LDA valueIsAlwaysZero
         BNE b4D0D
         JSR ResetSoundDataPtr1
         LDA #<p6362
@@ -1633,7 +1633,7 @@ b4D0D   JSR ResetSoundDataPtr1
         STA soundDataAD
 
         LDA #$00
-b4D1C   STA a4F57
+b4D1C   STA valueIsAlwaysZero
         LDA #$00
         STA a7C8A
         LDA #$08
@@ -1661,12 +1661,12 @@ UpdateEnergyLevelsAndStartNewLevel
         STA gilbyExploding
         LDA #$02
         STA starFieldInitialStateArray - $01
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         EOR #$FF
         CLC 
         ADC #$01
-        STA starFieldAnimationOffset
-        LDA a4F57
+        STA starFieldAnimationSpeed
+        LDA valueIsAlwaysZero
         BEQ b4D72
         LDA energyLabelColorIndexBottomPlanet
         BNE b4D7F
@@ -1942,14 +1942,14 @@ b4F55   RTS
 
 b4F56   RTS 
 
-a4F57   .BYTE $00
-a4F58   .BYTE $00
-a4F59   .BYTE $00,$00
+valueIsAlwaysZero   .BYTE $00
+currentAttackShipXPos   .BYTE $00
+currentAttackShipYPos   .BYTE $00,$00
 ;------------------------------------------------------------------
 ; UpdateAttackShipsPosition
 ;------------------------------------------------------------------
 UpdateAttackShipsPosition   
-        LDA a4F57
+        LDA valueIsAlwaysZero
         TAY 
         AND #$08
         BEQ b4F65
@@ -1957,16 +1957,16 @@ UpdateAttackShipsPosition
         DEY 
 b4F65   LDA upperPlanetAttackShipsMSBXPosArray + $01,Y
         BMI b4F89
-        LDY a4F57
+        LDY valueIsAlwaysZero
         LDA upperPlanetAttackShipsMSBXPosArray + $01,Y
         CLC 
         BEQ b4F74
         SEC 
 b4F74   LDA upperPlanetAttackShipsXPosArray + $01,Y
         ROR 
-        STA a4F58
+        STA currentAttackShipXPos
         LDA upperPlanetAttackShipsYPosArray + $01,Y
-        STA a4F59
+        STA currentAttackShipYPos
         LDA #$00
         STA a48D6
         JSR UpdateAttackShipsMSBXPosition
@@ -1977,9 +1977,9 @@ b4F89   LDA upperPlanetAttackShipsMSBXPosArray + $02,Y
         SEC 
 b4F92   LDA upperPlanetAttackShipsXPosArray + $02,Y
         ROR 
-        STA a4F58
+        STA currentAttackShipXPos
         LDA upperPlanetAttackShipsYPosArray + $02,Y
-        STA a4F59
+        STA currentAttackShipYPos
         LDA #$01
         STA a48D6
         ; Falls through
@@ -2009,7 +2009,7 @@ b4FB6   LDX tempLoPtr3
 b4FBF   LDA upperPlanetAttackShipsXPosArray + $01,X
         ROR 
         SEC 
-        SBC a4F58
+        SBC currentAttackShipXPos
         BPL b4FCB
         EOR #$FF
 b4FCB   CMP #$08
@@ -2018,7 +2018,7 @@ b4FCB   CMP #$08
 
 b4FD2   LDA upperPlanetAttackShipsYPosArray + $01,X
         SEC 
-        SBC a4F59
+        SBC currentAttackShipYPos
         BPL b4FDD
         EOR #$FF
 b4FDD   CMP #$10
@@ -2076,10 +2076,10 @@ DetectAttackShipCollisionWithGilby
         BNE b5029
         LDA inAttractMode
         BNE b5029
-        LDA a4F57
+        LDA valueIsAlwaysZero
         BEQ b503C
         INY 
-b503C   LDX a4F57
+b503C   LDX valueIsAlwaysZero
         INX 
         INX 
 
@@ -2667,7 +2667,7 @@ UpdateCoreEnergyValues
         BNE b5530
 b552F   RTS 
 
-b5530   LDA a7177
+b5530   LDA previousJoystickAction
         BNE b552F
         LDA currEnergyTop
         CMP #$04
@@ -3457,7 +3457,7 @@ b5CCB   LDA gilbyVerticalPosition
         LDA colorSequenceArray,X
         STA upperPlanetAttackShipsColorArray + $01,X
         STA lowerPlanetAttackShipsColorArray + $01,X
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         BMI b5D0B
 
         LDA initialXPosArray1,X
@@ -3521,7 +3521,7 @@ UpdateDisplayedScoringRate
         STA SCREEN_RAM + $0387
         LDA #$01
         STA COLOR_RAM + $0387
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         BPL b5E14
         EOR #$FF
         CLC 
@@ -3553,7 +3553,7 @@ UpdatePlanetEntropyStatus
         BEQ b5E5D
         JMP ReturnFromSub
 
-b5E5D   LDA a4F57
+b5E5D   LDA valueIsAlwaysZero
         BEQ b5E69
         LDA #$08
         STA lowerPlanetEntropyStatus
@@ -3579,7 +3579,7 @@ MaybeUpdateDisplayedEntropy
         STA a5E78
         LDA #$00
         STA a7C8A
-        LDA a4F57
+        LDA valueIsAlwaysZero
         BEQ b5EA6
         DEC upperPlanetEntropyStatus
         BNE b5E95
@@ -3658,7 +3658,7 @@ b5F0D   JSR UpdateEnemiesLeftStorage
         LDA txtEnemiesLeftCol2
         STA SCREEN_RAM + $0350
 
-b5F21   LDA starFieldAnimationOffset
+b5F21   LDA starFieldAnimationSpeed
         BNE b5F28
 
         LDA #$01
@@ -4590,7 +4590,7 @@ BonusBountyAnimateGilbyYPos
         RTS 
 
 txtBonus10000                      .TEXT "BONUS 10000"
-a6794                              .BYTE $BC
+planetScrollFrameRate                              .BYTE $BC
 unusedDataArray                              .BYTE $00,$06,$02,$04,$05,$03,$07,$01
                                    .BYTE $01,$07,$03,$05,$04,$02,$06,$00
 
@@ -4599,8 +4599,8 @@ colorSequenceArray         .BYTE RED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE,GRAY
 
 backgroundColorsForPlanets .BYTE BLACK,WHITE,RED,CYAN,PURPLE,GREEN,BLUE,YELLOW
                            .BYTE ORANGE,BROWN,LTRED,GRAY1,GRAY2,LTGREEN,LTBLUE,GRAY3
-a67C5                      .BYTE $04
-a67C6                      .BYTE $05
+unusedByte1                      .BYTE $04
+unusedByte2                      .BYTE $05
                            .BYTE $00
 
 upperPlanetAttackShipsXPosArray =*-$01
@@ -4665,7 +4665,7 @@ b6812   STA starFieldSprite - $01,Y
 ; ManipulateStarfieldSprite
 ;------------------------------------------------------------------
 ManipulateStarfieldSprite   
-        LDX starFieldAnimationOffset
+        LDX starFieldAnimationSpeed
         BPL b6822
         TXA 
         EOR #$FF
@@ -4791,9 +4791,9 @@ SetUpGilbySprite
         LDA #$40
         STA $D001    ;Sprite 0 Y Pos
         LDA #$04
-        STA a7177
+        STA previousJoystickAction
         LDA #$EA
-        STA starFieldAnimationOffset
+        STA starFieldAnimationSpeed
         LDA #$00
         STA a7140
         RTS 
@@ -5231,7 +5231,7 @@ UpdateGilbyPositionAndColor
         LDX energyLabelColorIndexTopPlanet
         BEQ b6C1A
         LDA defaultGilbyColor
-b6C1A   LDY a4F57
+b6C1A   LDY valueIsAlwaysZero
         BEQ b6C21
         LDA #$0B
 b6C21   STA $D027    ;Sprite 0 Color
@@ -5310,7 +5310,7 @@ b6C91   SEC
         BNE b6CB5
         LDA $D016    ;VIC Control Register 2
         AND #$F0
-        ORA a6E11
+        ORA planetScrollSpeed
         ORA #$10
         STA $D016    ;VIC Control Register 2
         BNE b6CD3
@@ -5343,7 +5343,7 @@ DrawLowerPlanet
         JSR DrawLowerPlanetAttackShips
         LDA #$07
         SEC 
-        SBC a6E11
+        SBC planetScrollSpeed
         STA currentMSBXPosOffset
         LDA $D016    ;VIC Control Register 2
         AND #$F8
@@ -5382,7 +5382,7 @@ b6D07   LDX currentPlanetBackgroundColor1
         BEQ b6D2C
 
         LDA defaultGilbyColor
-b6D2C   LDY a4F57
+b6D2C   LDY valueIsAlwaysZero
         BNE b6D33
 
         LDA #$0B
@@ -5436,7 +5436,7 @@ ScrollStarfieldAndThenPlanets
         LDX #$0F
         LDA #$00
         STA starFieldAnimationRate
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         BPL StarFieldUpdateLoop
 
         LDA #$FF
@@ -5452,7 +5452,7 @@ StarFieldUpdateLoop
         CPX #$08
         BMI b6DF4
         SEC 
-        SBC starFieldAnimationOffset
+        SBC starFieldAnimationSpeed
         STA starFieldXPosArray - $01,X
         LDA starFieldXPosMSBArray - $01,X
         SBC starFieldAnimationRate
@@ -5460,7 +5460,7 @@ StarFieldUpdateLoop
         JMP j6E03
 
 b6DF4   CLC 
-        ADC starFieldAnimationOffset
+        ADC starFieldAnimationSpeed
         STA starFieldXPosArray - $01,X
         LDA starFieldXPosMSBArray - $01,X
         ADC starFieldAnimationRate
@@ -5476,8 +5476,8 @@ b6E0B   DEX
 
         JMP ScrollPlanets
 
-a6E11                        .BYTE $02
-starFieldAnimationOffset     .BYTE $EA
+planetScrollSpeed            .BYTE $02
+starFieldAnimationSpeed  .BYTE $EA
 starfieldSpriteAnimationData .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
                              .BYTE $F0,$F0,$F0,$F0,$F8,$F8,$F8,$F8
                              .BYTE $FC,$FC,$FC,$FC,$FE,$FE,$FE,$FF
@@ -5526,10 +5526,10 @@ b6E67   JSR UpdatePlanetProgress
         LDA #$04
         STA starFieldInitialStateArray - $01
         LDY #$14
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         BPL b6E85
         LDY #$EC
-b6E85   STY starFieldAnimationOffset
+b6E85   STY starFieldAnimationSpeed
 
 b6E88   DEC defaultGilbyColor
         BEQ b6E8E
@@ -5565,9 +5565,11 @@ b6EAF   LDA #$02
 
 b6EC4   LDA #$01
         STA gilbyIsAirborne
-b6EC9   LDA a4F57
+
+b6EC9   LDA valueIsAlwaysZero
         BEQ b6EF6
 
+        ; Reverses the joystick input if valueIsAlwaysZero is set.
         LDA joystickInput
         AND #$10
         STA tempVarStorage
@@ -5578,6 +5580,7 @@ b6EC9   LDA a4F57
         BEQ b6EE4
         EOR #$03
         STA tempLoPtr3
+
 b6EE4   LDA joystickInput
         AND #$0C
         CMP #$0C
@@ -5590,11 +5593,12 @@ b6EEF   ORA tempLoPtr3
 b6EF6   LDA levelEntrySequenceActive
         BNE b6E8D
 
-        LDA a7177
+        LDA previousJoystickAction
         BEQ b6F03
-        JMP j6F99
+        JMP ActionIfPreviousActionWasHorizontal
 
-b6F03   JSR ProcessFireButtonPressed
+b6F03
+        JSR ProcessFireButtonPressed
 
         ;Check if joystick pushed to left.
         LDA joystickInput
@@ -5602,10 +5606,10 @@ b6F03   JSR ProcessFireButtonPressed
         BNE b6F2E
 
         ; Joystick pushed to left
+        LDA #HORIZONTAL_MOVEMENT
+        STA previousJoystickAction
         LDA #$01
-        STA a7177
-        LDA #$01
-        STA starFieldAnimationOffset
+        STA starFieldAnimationSpeed
         LDA #$04
         STA a75A5
         STA a75A6
@@ -5631,9 +5635,9 @@ b6F2E   LDA joystickInput
         LDA #$0D
         STA a75A3
         LDA #$FF
-        STA starFieldAnimationOffset
-        LDA #$01
-        STA a7177
+        STA starFieldAnimationSpeed
+        LDA #HORIZONTAL_MOVEMENT
+        STA previousJoystickAction
 
         ;Check if joystick pushed down.
 b6F54   LDA joystickInput
@@ -5643,7 +5647,7 @@ b6F54   LDA joystickInput
         ; Joystick pushed down.
         LDA gilbyIsAirborne
         BEQ b6F63
-        JMP j701E
+        JMP JoystickPushedDown
 
         ; Joystick pushed up
 b6F63   LDA gilbyVerticalPosition
@@ -5666,17 +5670,17 @@ b6F63   LDA gilbyVerticalPosition
         STA a7178
         LDA #$0A
         STA a75A5
-        LDA #$02
-        STA a7177
+        LDA #LAUNCHED_INTO_AIR
+        STA previousJoystickAction
 b6F98   RTS 
 
 ;---------------------------------------------------------------------------------
-; j6F99   
+; ActionIfPreviousActionWasHorizontal   
 ;---------------------------------------------------------------------------------
-j6F99   
-        CMP #$01
+ActionIfPreviousActionWasHorizontal   
+        CMP #HORIZONTAL_MOVEMENT ; Looking at previousJoystickAction
         BEQ b6FA0
-        JMP j703B
+        JMP MaybePreviousActionWasToLaunchIntoAir
 
 b6FA0   JSR ProcessFireButtonPressed
         LDA joystickInput
@@ -5684,14 +5688,14 @@ b6FA0   JSR ProcessFireButtonPressed
         BNE b6FEB
 
         ; Joystick Left Pressed 
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         BPL b6FDA
         INC a75A5
-        INC starFieldAnimationOffset
+        INC starFieldAnimationSpeed
         BNE b6FD7
 b6FB7   LDA #$00
-        STA a7177
-        STA starFieldAnimationOffset
+        STA previousJoystickAction
+        STA starFieldAnimationSpeed
         STA a7178
         LDA #$06
         STA a75A5
@@ -5703,11 +5707,11 @@ b6FB7   LDA #$00
         STA a75A3
 b6FD7   JMP j700F
 
-b6FDA   INC starFieldAnimationOffset
+b6FDA   INC starFieldAnimationSpeed
         DEC a75A5
         BNE b6FD7
         INC a75A5
-        DEC starFieldAnimationOffset
+        DEC starFieldAnimationSpeed
         JMP j700F
 
 b6FEB   LDA joystickInput
@@ -5715,16 +5719,16 @@ b6FEB   LDA joystickInput
         BNE j700F
 
         ; Joystick right pressed
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         BMI b7001
         INC a75A5
-        DEC starFieldAnimationOffset
+        DEC starFieldAnimationSpeed
         BEQ b6FB7
         BNE j700F
-b7001   DEC starFieldAnimationOffset
+b7001   DEC starFieldAnimationSpeed
         DEC a75A5
         BNE b6FD7
-        INC starFieldAnimationOffset
+        INC starFieldAnimationSpeed
         INC a75A5
 
 j700F   
@@ -5734,13 +5738,13 @@ j700F
 
         ;Joystick up pressed
         LDA gilbyIsAirborne
-        BNE j701E
+        BNE JoystickPushedDown
         JMP b6F63
 
 ;---------------------------------------------------------------------------------
-; j701E   
+; JoystickPushedDown   
 ;---------------------------------------------------------------------------------
-j701E   
+JoystickPushedDown   
         LDA gilbyVerticalPosition
         CMP #$6D
         BNE b703A
@@ -5755,11 +5759,12 @@ j701E
 b703A   RTS 
 
 ;---------------------------------------------------------------------------------
-; j703B   
+; MaybePreviousActionWasToLaunchIntoAir   
 ;---------------------------------------------------------------------------------
-j703B   
-        CMP #$02
-        BNE b707E
+MaybePreviousActionWasToLaunchIntoAir   
+        CMP #LAUNCHED_INTO_AIR ; Looks at previousJoystickAction
+        BNE MaybePreviousActionWasSomething
+
         JSR ProcessFireButtonPressed
         LDA a7178
         CMP #$02
@@ -5774,7 +5779,10 @@ j703B
         CMP #$02
         BNE b703A
 
-j705E   
+;---------------------------------------------------------------------------------
+; j705E
+;---------------------------------------------------------------------------------
+j705E
         LDA #$15
         STA a75A4
         STA gilbySpriteIndex
@@ -5786,11 +5794,15 @@ j705E
         STA a75A5
         STA a75A6
         LDA #$03
-        STA a7177
+        STA previousJoystickAction
 b707D   RTS 
 
-b707E   CMP #$03
-        BNE b70B5
+;---------------------------------------------------------------------------------
+; MaybePreviousActionWasSomething
+;---------------------------------------------------------------------------------
+MaybePreviousActionWasSomething
+        CMP #$03 ; Looks at previousJoystickAction
+        BNE RightJoystickPressedWithPreviousAction
         JSR ProcessFireButtonPressed
         LDA gilbyVerticalPosition
         CMP #$6D
@@ -5802,7 +5814,7 @@ b707E   CMP #$03
         JMP b6FB7
 
 b7099   JSR s70AF
-        LDA #$D1
+        LDA #$D1 ; Left-facing gilby
         STA currentGilbySprite
 
 ;---------------------------------------------------------------------------------
@@ -5810,14 +5822,14 @@ b7099   JSR s70AF
 ;---------------------------------------------------------------------------------
 s70A1   
         LDA #$04
-        STA a7177
+        STA previousJoystickAction
         RTS 
 
 ;---------------------------------------------------------------------------------
 ; b70A7   
 ;---------------------------------------------------------------------------------
 b70A7   
-        LDA #$D3
+        LDA #$D3 ; Right facing airborne gilby
         STA currentGilbySprite
         JSR s70A1
 
@@ -5830,13 +5842,15 @@ s70AF
         RTS 
 
 ;---------------------------------------------------------------------------------
-; b70B5   
+; RightJoystickPressedWithPreviousAction   
 ;---------------------------------------------------------------------------------
-b70B5   
+RightJoystickPressedWithPreviousAction   
         JSR ProcessFireButtonPressed
         LDA joystickInput
         AND #$04
-        BNE b70FC
+        BNE LeftJoystickPressedWithPreviousAction
+
+        ; Right Joystick pressed
         LDA currentGilbySprite
         CMP #$D3
         BNE b70E0
@@ -5850,21 +5864,27 @@ b70B5
         STA gilbySpriteIndex
         LDA #$1F
         STA a75A3
-b70E0   INC starFieldAnimationOffset
+b70E0   INC starFieldAnimationSpeed
         LDA lowerPlanetActivated
         BEQ b70EF
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         CMP #$0C
         BEQ b70F6
-b70EF   LDA starFieldAnimationOffset
+b70EF   LDA starFieldAnimationSpeed
         CMP #$18
         BNE b70F9
-b70F6   DEC starFieldAnimationOffset
+b70F6   DEC starFieldAnimationSpeed
 b70F9   JMP j7173
 
-b70FC   LDA joystickInput
+;---------------------------------------------------------------------------------
+; LeftJoystickPressedWithPreviousAction
+;---------------------------------------------------------------------------------
+LeftJoystickPressedWithPreviousAction
+        LDA joystickInput
         AND #$08
         BNE b7142
+
+        ; Left joystick Pressed
         LDA currentGilbySprite
         CMP #$D1
         BNE b7124
@@ -5878,29 +5898,33 @@ b70FC   LDA joystickInput
         STA gilbySpriteIndex
         LDA #$24
         STA a75A3
-b7124   DEC starFieldAnimationOffset
+b7124   DEC starFieldAnimationSpeed
         LDA lowerPlanetActivated
         BEQ b7133
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         CMP #$F4
         BEQ b713A
-b7133   LDA starFieldAnimationOffset
+b7133   LDA starFieldAnimationSpeed
         CMP #$E6
         BNE j7173
-b713A   INC starFieldAnimationOffset
+b713A   INC starFieldAnimationSpeed
         JMP j7173
 
 a7140   .BYTE $00
 b7141   RTS 
 
-b7142   LDA starFieldAnimationOffset
+;---------------------------------------------------------------------------------
+; b7142
+;---------------------------------------------------------------------------------
+b7142
+        LDA starFieldAnimationSpeed
         BEQ b715A
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         BMI b7152
-        DEC starFieldAnimationOffset
-        DEC starFieldAnimationOffset
-b7152   INC starFieldAnimationOffset
-        LDA starFieldAnimationOffset
+        DEC starFieldAnimationSpeed
+        DEC starFieldAnimationSpeed
+b7152   INC starFieldAnimationSpeed
+        LDA starFieldAnimationSpeed
         BNE j7173
 b715A   LDA joystickInput
         AND #$10
@@ -5918,14 +5942,17 @@ j7173
         ; Returns
 
 joystickInput .BYTE $09
-a7177         .BYTE $04
+previousJoystickAction         .BYTE $04
+HORIZONTAL_MOVEMENT = $01
+LAUNCHED_INTO_AIR = $02
+
 a7178         .BYTE $02
 
 ;------------------------------------------------------------------
 ; AlsoUpdateGilbyVerticalPosition
 ;------------------------------------------------------------------
 AlsoUpdateGilbyVerticalPosition   
-        LDA a7177
+        LDA previousJoystickAction
         CMP #$04
         BEQ b7181
 b7180   RTS 
@@ -6012,27 +6039,27 @@ b71E8   LDA (planetTextureTopLayerPtr),Y
 ; ScrollPlanets
 ;------------------------------------------------------------------
 ScrollPlanets   
-        INC a6794
-        LDA a6794
+        INC planetScrollFrameRate
+        LDA planetScrollFrameRate
         AND #$0F
         TAX 
         LDA unusedDataArray,X
-        STA a67C5
+        STA unusedByte1
         LDA colorSequenceArray,X
-        STA a67C6
-        LDA starFieldAnimationOffset
+        STA unusedByte2
+        LDA starFieldAnimationSpeed
         BMI b7234
         JMP ScrollPlanetLeft
 
-b7234   LDA a6E11
+b7234   LDA planetScrollSpeed
         CLC 
-        ADC starFieldAnimationOffset
-        STA a6E11
+        ADC starFieldAnimationSpeed
+        STA planetScrollSpeed
         AND #$F8
         BNE b7243
         RTS 
 
-b7243   LDA a6E11
+b7243   LDA planetScrollSpeed
         EOR #$FF
         CLC 
         AND #$F8
@@ -6067,9 +6094,9 @@ DrawPlanetScroll
         ADC #$04
         STA planetTextureBottomLayerPtrHi
 
-        LDA a6E11
+        LDA planetScrollSpeed
         AND #$07
-        STA a6E11
+        STA planetScrollSpeed
         LDA planetTextureTopLayerPtrHi
         CMP #$7F
         BNE b7294
@@ -6117,10 +6144,10 @@ b72BD   JMP DrawPlanetSurfaces
 ; ScrollPlanetLeft
 ;------------------------------------------------------------------
 ScrollPlanetLeft   
-        LDA a6E11
+        LDA planetScrollSpeed
         CLC 
-        ADC starFieldAnimationOffset
-        STA a6E11
+        ADC starFieldAnimationSpeed
+        STA planetScrollSpeed
         AND #$F8
         BNE b72CF
         RTS 
@@ -6644,7 +6671,7 @@ b75CF   INC gilbySpriteIndex
 
 b75E3   LDA a75A4
         STA gilbySpriteIndex
-        LDA a7177
+        LDA previousJoystickAction
         CMP #$01
         BNE b7601
         LDA gilbyVerticalPosition
@@ -6757,7 +6784,7 @@ b76A8   LDA #$B5
         STA upperPlanetGilbyBulletYPos,X
         LDA #$E7 ; Gilby's ground based bullet
         STA upperPlanetGilbyBulletSpriteValue,X
-        LDA starFieldAnimationOffset
+        LDA starFieldAnimationSpeed
         EOR #$FF
         STA bulletDirectionArray,X
         INC bulletDirectionArray,X
@@ -6772,7 +6799,7 @@ b76A8   LDA #$B5
         LDA #>p7BD4
         STA soundDataAF
 
-b76DF   LDA a7177
+b76DF   LDA previousJoystickAction
         CMP #$04
         BNE b7717
 
@@ -7420,10 +7447,10 @@ UpdateAndAnimateAttackShips
 b7CA3   LDA upperPlanetAttackShip2MSBXPosValue,X
         BMI b7CC2
         LDA upperPlanetAttackShip2XPos,X
-        LDY starFieldAnimationOffset
+        LDY starFieldAnimationSpeed
         BMI b7CF0
         CLC 
-        ADC starFieldAnimationOffset
+        ADC starFieldAnimationSpeed
         STA upperPlanetAttackShip2XPos,X
         BCC b7CC2
 
@@ -7434,10 +7461,10 @@ j7CB9
 b7CC2   LDA lowerPlanetAttackSHip3MSBXPosValue,X
         BMI b7CE1
         LDA lowerPlanetAttackShip3XPos,X
-        LDY starFieldAnimationOffset
+        LDY starFieldAnimationSpeed
         BMI b7D07
         SEC 
-        SBC starFieldAnimationOffset
+        SBC starFieldAnimationSpeed
         STA lowerPlanetAttackShip3XPos,X
         BCS b7CE1
 
