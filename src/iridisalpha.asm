@@ -1102,19 +1102,22 @@ hasEnteredNewLevel           .BYTE $01
 yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
                              .BYTE $10,$10,$10,$10,$10,$10,$10,$14
 yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
-                             .BYTE $F0,$F0,$F0,$F0,$F0,$F0
+                             .BYTE $F0,$F0,$F0,$F0,$F0,$F0,$F0,$EC
 
 ; Pointers to:
-; a50F0
-; a50EC
+; aA050
 ; aA078
-attackWaveDataLoPtrArray .BYTE $F0,$EC,$78,$78,$78,$78,$00,$00
-                         .BYTE $78,$78
-attackWaveDataHiPtrArray .BYTE $50,$50,$A0,$A0,$A0,$A0,$00,$00
-                         .BYTE $A0,$A0
+
+a0000 = $0000
+attackWaveDataLoPtrArray = *-$02
+        .BYTE <aA078,<aA078,<aA078,<aA078,<a0000,<a0000,<aA078,<aA078,<aA050,<aA050
+attackWaveDataHiPtrArray =*-$02
+        .BYTE >aA078,>aA078,>aA078,>aA078,>a0000,>a0000,>aA078,>aA078,>aA050,>aA050
+
 
 ; This is level data, one entry for each level per planet
-f4883   .BYTE $A0,$A0,$00,$00,$00,$00,$00,$00
+f4883 = *-$02
+        .BYTE $00,$00,$00,$00,$00,$00
         .BYTE $00,$00
 f488D   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00
@@ -1586,6 +1589,7 @@ j4C8D
         PLA 
         TAX 
         LDY #$22
+
         LDA (attackWaveDataLoPtr),Y
         BEQ b4CB1
         LDA inAttractMode
@@ -2177,8 +2181,12 @@ controlPanelData =*-$01
                    .BYTE $9E,$A0,$A2,$A4,$A6,$A8,$AA,$AC
                    .BYTE $8C,$8E,$20,$80,$80,$80,$80,$80
                    .BYTE $80,$80,$80,$20,$20,$80,$80,$80
-                   .BYTE $80,$80,$80,$80,$80,$80,$80,$80
-                   .BYTE $80,$80,$80,$9A,$9C,$20,$9B,$9D
+                   .BYTE $80,$80,$80,$80,$80,$80
+a50EC
+                   .BYTE $80,$80
+                   .BYTE $80,$80
+a50F0
+                   .BYTE $80,$9A,$9C,$20,$9B,$9D
                    .BYTE $9F,$A1,$A3,$A5,$A7,$A9,$AB,$AD
                    .BYTE $8D,$8F,$20,$90,$92,$91,$93,$20
                    .BYTE $20,$AE,$B0,$AF,$B1,$30,$30,$30
