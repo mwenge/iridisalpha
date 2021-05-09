@@ -1,7 +1,7 @@
 # Iridis Alpha (1986) by Jeff Minter
 <img src="https://www.c64-wiki.com/images/a/a2/Iridisalphacover.jpg" height=300><img src="https://user-images.githubusercontent.com/58846/106015821-c330c600-60b6-11eb-9e5c-321c1320b7b3.gif" height=300>
 
-[<img src="https://img.shields.io/badge/Lastest%20Release-Windows-blue.svg">](https://github.com/mwenge/iridisalpha/releases/latest)
+[<img src="https://img.shields.io/badge/Lastest%20Release-Windows-blue.svg">](https://github.com/mwenge/iridisalpha/releases/download/v0.2/iridisalpha.exe)
 [<img src="https://img.shields.io/badge/Lastest%20Release-C64-green.svg">](https://github.com/mwenge/iridisalpha/releases/tag/0.01)
 [<img src="https://img.shields.io/badge/Latest%20Release-Play%20Online-purple.svg">](https://iridisalpha.xyz)
 
@@ -14,7 +14,7 @@ The game compiles and plays. The routines in [the main game](https://github.com/
 ## Download
 
 ### Windows
-[<img src="https://img.shields.io/badge/Lastest%20Release-Windows-blue.svg">](https://github.com/mwenge/iridisalpha/releases/latest)
+[<img src="https://img.shields.io/badge/Lastest%20Release-Windows-blue.svg">](https://github.com/mwenge/iridisalpha/releases/download/v0.2/iridisalpha.exe)
 
 No need for an emulator or to install anything else: just double-click `iridisalpha.exe` and you can get playing. Note that for the Windows version you will need to use the arrow-keys to move and the '`ctrl` key to press fire. You can play the Windows version on Linux using [wine](https://winehq.org) as follows:
 ```bash
