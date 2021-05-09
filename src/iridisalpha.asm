@@ -563,13 +563,13 @@ b0B73   TXA
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         ORA titleScreenGilbiesMSBXPosArray,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        JMP j0B94
+        JMP UpdateYPosJumpingGilbies
 
 b0B8B   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND titleScreenGilbiesMSBXPosOffset,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 
-j0B94   
+UpdateYPosJumpingGilbies   
         LDA titleScreenGilbiesYPosARray,X
         STA $D001,Y  ;Sprite 0 Y Pos
         LDA currentTitleScreenGilbySpriteValue
@@ -1104,10 +1104,6 @@ yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
 yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
                              .BYTE $F0,$F0,$F0,$F0,$F0,$F0,$F0,$EC
 
-; Pointers to:
-; aA050
-; aA078
-
 a0000 = $0000
 attackWaveDataLoPtrArray = *-$02
         .BYTE <aA078,<aA078,<aA078,<aA078,<a0000,<a0000,<aA078,<aA078,<aA050,<aA050
@@ -1116,53 +1112,52 @@ attackWaveDataHiPtrArray =*-$02
 
 
 ; This is level data, one entry for each level per planet
-f4883 = *-$02
-        .BYTE $00,$00,$00,$00,$00,$00
-        .BYTE $00,$00
-f488D   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00
-f4897   .BYTE $00,$00,$02,$02,$02,$02,$00,$00
-        .BYTE $02,$02
-f48A1   .BYTE $02,$02,$00,$00,$00,$00,$FF,$FF
-        .BYTE $00,$00
+indexForYPosMovementForUpperPlanetAttackShips = *-$02
+                                  .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+someKindOfRateLimitingForAttackWaves                             .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                  .BYTE $00,$00
+updateRateForAttackShips                             .BYTE $00,$00,$02,$02,$02,$02,$00,$00
+                                  .BYTE $02,$02
+f48A1                             .BYTE $02,$02,$00,$00,$00,$00,$FF,$FF
+                                  .BYTE $00,$00
 
-upperPlanetAttackShipYPosUpdated   .BYTE $00,$00,$00,$00,$00,$00,$00
-f48B2   .BYTE $00,$00,$00
+upperPlanetAttackShipYPosUpdated  .BYTE $00,$00,$00,$00,$00,$00,$00
+f48B2                             .BYTE $00,$00,$00
 
-upperPlanetAttackShipYPosUpdated2   .BYTE $00,$00,$00,$00,$00,$00,$00
-f48BC   .BYTE $00,$00,$00
-f48BF   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00
-shipsThatHaveCollidedWithGilby   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00
-a48D5   .BYTE $04
-a48D6   .BYTE $00
-a48D7   .BYTE $00,$01,$00,$01,$00,$00,$01,$00
-        .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
-        .BYTE $02,$80
-p48E9   .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
-        .BYTE $13,$00,$00,$00,$00,$0D,$00,$00
-        .BYTE $00,$00,$14,$00,$00,$00,$10,$08
-        .BYTE $00,$00,$00,$10,$0F,$00,$00,$00
-        .BYTE $11,$0B,$00,$00,$00,$11,$12,$02
-        .BYTE $0F,$02,$02,$0F,$00,$08,$02,$02
-        .BYTE $08,$01,$00,$81,$08,$00,$00,$00
-        .BYTE $00,$81,$0B,$00,$00,$00,$28,$08
-        .BYTE $00,$00,$00,$80,$12,$02,$08,$02
-        .BYTE $03,$08,$01,$00,$81,$05,$00,$00
-        .BYTE $00,$00,$21,$12,$00,$00,$00,$20
-        .BYTE $0F,$02,$08,$02,$03,$08,$00,$0F
-        .BYTE $02,$04,$0F,$01,$00,$81,$08,$00
-        .BYTE $00,$00,$00,$80,$0B,$00,$00,$00
-        .BYTE $80,$12,$00,$00,$80,$CA,$7B,$00
-p4961   .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
-        .BYTE $06,$00,$00,$00,$40,$01,$00,$00
-        .BYTE $00,$81,$04,$02,$01,$01,$0C,$01
-        .BYTE $01,$00,$81,$04,$00,$00,$00,$00
-        .BYTE $20,$01,$00,$00,$00,$11,$04,$02
-        .BYTE $01,$02,$04,$01,$01,$00,$81,$08
-        .BYTE $00,$00,$00,$00,$10,$04,$00,$00
-        .BYTE $80,$CA,$7B,$00
+upperPlanetAttackShipYPosUpdated2 .BYTE $00,$00,$00,$00,$00,$00,$00
+f48BC                             .BYTE $00,$00,$00
+f48BF                             .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                  .BYTE $00,$00
+shipsThatHaveCollidedWithGilby    .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                  .BYTE $00,$00,$00,$00
+a48D5                             .BYTE $04
+a48D6                             .BYTE $00
+soundEffectInProgress             .BYTE $00,$01,$00,$01,$00,$00,$01,$00
+                                  .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
+                                  .BYTE $02,$80
+newPlanetSound                    .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
+                                  .BYTE $13,$00,$00,$00,$00,$0D,$00,$00
+                                  .BYTE $00,$00,$14,$00,$00,$00,$10,$08
+                                  .BYTE $00,$00,$00,$10,$0F,$00,$00,$00
+                                  .BYTE $11,$0B,$00,$00,$00,$11,$12,$02
+                                  .BYTE $0F,$02,$02,$0F,$00,$08,$02,$02
+                                  .BYTE $08,$01,$00,$81,$08,$00,$00,$00
+                                  .BYTE $00,$81,$0B,$00,$00,$00,$28,$08
+                                  .BYTE $00,$00,$00,$80,$12,$02,$08,$02
+                                  .BYTE $03,$08,$01,$00,$81,$05,$00,$00
+                                  .BYTE $00,$00,$21,$12,$00,$00,$00,$20
+                                  .BYTE $0F,$02,$08,$02,$03,$08,$00,$0F
+                                  .BYTE $02,$04,$0F,$01,$00,$81,$08,$00
+                                  .BYTE $00,$00,$00,$80,$0B,$00,$00,$00
+                                  .BYTE $80,$12,$00,$00,$80,$CA,$7B,$00
+shipCollidedWithGilbySound .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
+                                  .BYTE $06,$00,$00,$00,$40,$01,$00,$00
+                                  .BYTE $00,$81,$04,$02,$01,$01,$0C,$01
+                                  .BYTE $01,$00,$81,$04,$00,$00,$00,$00
+                                  .BYTE $20,$01,$00,$00,$00,$11,$04,$02
+                                  .BYTE $01,$02,$04,$01,$01,$00,$81,$08
+                                  .BYTE $00,$00,$00,$00,$10,$04,$00,$00
+                                  .BYTE $80,$CA,$7B,$00
 
 ;------------------------------------------------------------------
 ; Put00orFFinAccumulator
@@ -1185,10 +1180,10 @@ b49B2   LDA #$00
 b49B5   LDA #$FF
 b49B7   RTS 
 
-previousAttackWaveLoPtr                                         .BYTE $A0
-previousAttackWaveHiPtr                                         .BYTE $A0
-previousAttackWaveLoPtr2                                         .BYTE $58
-previousAttackWaveHiPtr2                                         .BYTE $1E
+previousAttackWaveLoPtr                       .BYTE $A0
+previousAttackWaveHiPtr                       .BYTE $A0
+previousAttackWaveLoPtr2                      .BYTE $58
+previousAttackWaveHiPtr2                      .BYTE $1E
 enemiesKilledTopPlanetsSinceLastUpdate        .BYTE $28,$00,$00,$00
 enemiesKilledTopPlanetsSinceLastUpdatePtr     .BYTE $00
 enemiesKilledBottomsPlanetsSinceLastUpdate    .BYTE $18,$00,$00,$00
@@ -1196,10 +1191,10 @@ enemiesKilledBottomsPlanetsSinceLastUpdatePtr .BYTE $00
 currentLevelInTopPlanets                      .BYTE $06,$02,$06,$0A
 currentLevelInTopPlanetsPtr                   .BYTE $08
 currentLevelInBottomPlanets                   .BYTE $09,$0E,$0A,$0B,$01
-a49D0                                         .BYTE $04
-a49D1                                         .BYTE $04
-a49D2                                         .BYTE $00
-a49D3                                         .BYTE $00
+topPlanetStepsBetweenAttackWaveUpdates        .BYTE $04
+bottomPlanetStepsBetweenAttackWaveUpdates     .BYTE $04
+currentStepsBetweenTopPlanetAttackWaves       .BYTE $00
+currentStepsBetweenBottomPlanetAttackWaves    .BYTE $00
 
 ;------------------------------------------------------------------
 ; PerformMainGameProcessing
@@ -1234,8 +1229,8 @@ ProcessAttackWaveData
         JSR Put00orFFinAccumulator
         BEQ b4A1F
 
-        LDA a49D0
-        CMP a49D2
+        LDA topPlanetStepsBetweenAttackWaveUpdates
+        CMP currentStepsBetweenTopPlanetAttackWaves
         BEQ b4A1F
         LDA previousAttackWaveLoPtr
         STA attackWaveDataLoPtrArray,X
@@ -1244,14 +1239,14 @@ ProcessAttackWaveData
         TXA 
         TAY 
         JSR UpdateBackingDataPtr
-        INC a49D2
+        INC currentStepsBetweenTopPlanetAttackWaves
 
 b4A1F   LDX #$08
         JSR Put00orFFinAccumulator
         BEQ b49B7 ; Returns early
 
-        LDA a49D1
-        CMP a49D3
+        LDA bottomPlanetStepsBetweenAttackWaveUpdates
+        CMP currentStepsBetweenBottomPlanetAttackWaves
         BEQ b49B7 ; Returns early
 
         LDA previousAttackWaveLoPtr2
@@ -1262,7 +1257,7 @@ b4A1F   LDX #$08
         CLC 
         ADC #$02
         TAY 
-        INC a49D3
+        INC currentStepsBetweenBottomPlanetAttackWaves
         ; Falls through
 
 ;------------------------------------------------------------------
@@ -1294,14 +1289,14 @@ UpdateWaveDataFromBackingStore
 
         LDY #$0B
         LDA (attackWaveDataLoPtr),Y
-        STA f488D,X
+        STA someKindOfRateLimitingForAttackWaves,X
 
         LDA #$00
-        STA f4883,X
+        STA indexForYPosMovementForUpperPlanetAttackShips,X
 
         LDY #$0F
         LDA (attackWaveDataLoPtr),Y
-        STA f4897,X
+        STA updateRateForAttackShips,X
 
         ; Load the sprite value.
         LDY #$01
@@ -1369,21 +1364,21 @@ b4AC4   INY
         JMP LoadYPosForAttackShip
 
 b4AD6   TXA 
-        STX a5529
+        STX temporaryStorageForXRegister
         AND #$04
         BNE b4AEC
         LDA (attackWaveDataLoPtr),Y
         AND #$0F
         TAX 
         LDA yPosMovementPatternForShips2,X
-        LDX a5529
+        LDX temporaryStorageForXRegister
         JMP LoadYPosForAttackShip
 
 b4AEC   LDA (attackWaveDataLoPtr),Y
         AND #$0F
         TAX 
         LDA yPosMovementPatternForShips1,X
-        LDX a5529
+        LDX temporaryStorageForXRegister
 
 LoadYPosForAttackShip   
         STA yPosMovementForUpperPlanetAttackShips,X
@@ -1494,8 +1489,8 @@ b4BD6   INY
         LDA hasEnteredNewLevel
         BEQ b4BEB
         LDA #$00
-        STA a49D2
-        STA a49D3
+        STA currentStepsBetweenTopPlanetAttackWaves
+        STA currentStepsBetweenBottomPlanetAttackWaves
         STA hasEnteredNewLevel
 b4BEB   RTS 
 
@@ -1531,13 +1526,13 @@ b4C03   LDA f48BF,X
 MoveToNewPlanet 
         LDA #$00
         STA f48BF,X
-        LDA #<p48E9
+        LDA #<newPlanetSound
         STA soundDataAE
-        LDA #>p48E9
+        LDA #>newPlanetSound
         STA soundDataAF
         JSR ResetSoundDataPtr2
         LDA #$1C
-        STA a48D7
+        STA soundEffectInProgress
         TXA 
         PHA 
         AND #$08
@@ -1628,7 +1623,7 @@ CheckForCollisionsBeforeUpdatingWaveData
         TXA 
         AND #$08
         BNE b4CDF
-        DEC a49D2
+        DEC currentStepsBetweenTopPlanetAttackWaves
         JMP CheckCollisionType
 
 ;---------------------------------------------------------------------------------
@@ -1642,7 +1637,7 @@ UpdateWaves
 ; b4CDF   
 ;---------------------------------------------------------------------------------
 b4CDF   
-        DEC a49D3
+        DEC currentStepsBetweenBottomPlanetAttackWaves
         ; Falls through
 ;---------------------------------------------------------------------------------
 ; CheckCollisionType   
@@ -1651,7 +1646,7 @@ CheckCollisionType
         LDY #$24
         LDA (attackWaveDataLoPtr),Y
         BNE MaybeTransferToOtherPlanet
-        JMP UpdateEnergyLevelsAndStartNewLevel
+        JMP UpdateEnergyLevelsAfterCollision
         ;Returns
 
 ;---------------------------------------------------------------------------------
@@ -1684,7 +1679,7 @@ b4D0D   JSR ResetSoundDataPtr1
         LDA #$00
 b4D1C   STA valueIsAlwaysZero
         LDA #$00
-        STA a7C8A
+        STA currentEntropy
         LDA #$08
         STA upperPlanetEntropyStatus
         STA lowerPlanetEntropyStatus
@@ -1695,15 +1690,15 @@ b4D1C   STA valueIsAlwaysZero
         ; Falls through
 
 ;---------------------------------------------------------------------------------
-; UpdateEnergyLevelsAndStartNewLevel   
+; UpdateEnergyLevelsAfterCollision   
 ;---------------------------------------------------------------------------------
-UpdateEnergyLevelsAndStartNewLevel   
+UpdateEnergyLevelsAfterCollision   
         LDY #$23
         LDA (attackWaveDataLoPtr),Y
         BEQ b4D7F
-        LDA #<p4961
+        LDA #<shipCollidedWithGilbySound
         STA soundDataAC
-        LDA #>p4961
+        LDA #>shipCollidedWithGilbySound
         STA soundDataAD
         JSR ResetSoundDataPtr1
         LDA #$0E
@@ -1765,9 +1760,9 @@ b4DAC   LDA joystickInput
         DEY 
         JMP UpdatePointersAndGetWaveDataForNewLevel
 
-b4DBD   LDA f4897,X
+b4DBD   LDA updateRateForAttackShips,X
         BEQ UpdateAttackShipData
-        DEC f4897,X
+        DEC updateRateForAttackShips,X
         BNE UpdateAttackShipData
         LDY #$0E
         LDA (attackWaveDataLoPtr),Y
@@ -1775,10 +1770,10 @@ b4DBD   LDA f4897,X
         TXA 
         AND #$08
         BNE b4DD8
-        DEC a49D2
+        DEC currentStepsBetweenTopPlanetAttackWaves
         JMP b4DDB
 
-b4DD8   DEC a49D3
+b4DD8   DEC currentStepsBetweenBottomPlanetAttackWaves
 b4DDB   LDY #$10
 
 ;---------------------------------------------------------------------------------
@@ -1836,7 +1831,7 @@ UpdateAttackShipData
         LDY #$0A
         LDA (attackWaveDataLoPtr),Y
         BEQ b4E73
-        DEC f488D,X
+        DEC someKindOfRateLimitingForAttackWaves,X
         BNE b4E73
         STA tempHiPtr3
         DEY 
@@ -1844,10 +1839,10 @@ UpdateAttackShipData
         STA tempLoPtr3
         LDY #$0B
         LDA (attackWaveDataLoPtr),Y
-        STA f488D,X
-        LDY f4883,X
+        STA someKindOfRateLimitingForAttackWaves,X
+        LDY indexForYPosMovementForUpperPlanetAttackShips,X
         LDA orderForUpdatingPositionOfAttackShips,X
-        TAX 
+        TAX
         LDA (tempLoPtr3),Y
         CMP #$80
         BEQ b4E6A
@@ -1868,7 +1863,7 @@ UpdateAttackShipData
         LDA indexForWaveData,X
         TAX 
         TYA 
-        STA f4883,X
+        STA indexForYPosMovementForUpperPlanetAttackShips,X
         JMP b4E73
 
 b4E6A   LDY #$0C
@@ -2187,12 +2182,8 @@ controlPanelData =*-$01
                    .BYTE $9E,$A0,$A2,$A4,$A6,$A8,$AA,$AC
                    .BYTE $8C,$8E,$20,$80,$80,$80,$80,$80
                    .BYTE $80,$80,$80,$20,$20,$80,$80,$80
-                   .BYTE $80,$80,$80,$80,$80,$80
-a50EC
-                   .BYTE $80,$80
-                   .BYTE $80,$80
-a50F0
-                   .BYTE $80,$9A,$9C,$20,$9B,$9D
+                   .BYTE $80,$80,$80,$80,$80,$80,$80,$80
+                   .BYTE $80,$80,$80,$9A,$9C,$20,$9B,$9D
                    .BYTE $9F,$A1,$A3,$A5,$A7,$A9,$AB,$AD
                    .BYTE $8D,$8F,$20,$90,$92,$91,$93,$20
                    .BYTE $20,$AE,$B0,$AF,$B1,$30,$30,$30
@@ -2578,7 +2569,7 @@ updateEnergyStorageInterval .BYTE $01
 ; DepleteEnergyTop
 ;------------------------------------------------------------------
 DepleteEnergyTop   
-        STX a5529
+        STX temporaryStorageForXRegister
         LDX currEnergyTop
         INC SCREEN_RAM + $0373,X
         LDA SCREEN_RAM + $0373,X
@@ -2596,7 +2587,7 @@ b545B   JMP GilbyDiedBecauseEnergyDepleted
 ; DepleteEnergyBottom
 ;------------------------------------------------------------------
 DepleteEnergyBottom   
-        STX a5529
+        STX temporaryStorageForXRegister
         LDX currEnergyBottom
         INC SCREEN_RAM + $039B,X
         LDA SCREEN_RAM + $039B,X
@@ -2608,7 +2599,7 @@ DepleteEnergyBottom
         STX currEnergyBottom
         CMP #$FF
         BEQ b545B
-b547B   LDX a5529
+b547B   LDX temporaryStorageForXRegister
         RTS 
 
 b547F   LDA #$01
@@ -2619,7 +2610,7 @@ b547F   LDA #$01
 ; IncreaseEnergyTop
 ;------------------------------------------------------------------
 IncreaseEnergyTop   
-        STX a5529
+        STX temporaryStorageForXRegister
         LDX currEnergyTop
         DEC SCREEN_RAM + $0373,X
         LDA SCREEN_RAM + $0373,X
@@ -2639,7 +2630,7 @@ IncreaseEnergyTop
 ; IncreaseEnergyBottom
 ;------------------------------------------------------------------
 IncreaseEnergyBottom   
-        STX a5529
+        STX temporaryStorageForXRegister
         LDX currEnergyBottom
         DEC SCREEN_RAM + $039B,X
         LDA SCREEN_RAM + $039B,X
@@ -2710,7 +2701,7 @@ IncreaseCoreEnergyLevel
         BNE b5508
 b5528   RTS 
 
-a5529   .BYTE $00
+temporaryStorageForXRegister   .BYTE $00
 
 ;------------------------------------------------------------------
 ; UpdateCoreEnergyValues
@@ -2878,7 +2869,7 @@ b562A   STA enemiesKilledTopPlanetsSinceLastUpdate,X
         STA enemiesKilledTopPlanetSinceLastUpdate
 b5638   DEY 
         LDA (gameDataPtrLo),Y
-        STA a49D0
+        STA topPlanetStepsBetweenAttackWaveUpdates
         LDA #$00
         STA unusedVariable1
         RTS 
@@ -2902,7 +2893,7 @@ b565E   STA enemiesKilledBottomsPlanetsSinceLastUpdate,X
         STA enemiesKilledBottomPlanetSinceLastUpdate
 b566C   DEY 
         LDA (gameDataPtrLo),Y
-        STA a49D1
+        STA bottomPlanetStepsBetweenAttackWaveUpdates
         LDA #$00
         STA unusedVariable3
         RTS 
@@ -2911,7 +2902,7 @@ b566C   DEY
 ; UpdateTopPlanetProgressData
 ;------------------------------------------------------------------
 UpdateTopPlanetProgressData   
-        STX a5529
+        STX temporaryStorageForXRegister
         LDX oldTopPlanetIndex
         DEC enemiesKilledTopPlanetsSinceLastUpdate,X
         LDA enemiesKilledTopPlanetSinceLastUpdate
@@ -2935,14 +2926,14 @@ b569E   LDA #$04
         STA updateLevelForBottomPlanet
         JSR CheckProgressInPlanet
         JSR UpdateLevelText
-b56B9   LDX a5529
+b56B9   LDX temporaryStorageForXRegister
         RTS 
 
 ;------------------------------------------------------------------
 ; UpdateBottomPlanetProgressData
 ;------------------------------------------------------------------
 UpdateBottomPlanetProgressData   
-        STX a5529
+        STX temporaryStorageForXRegister
         LDX oldBottomPlanetIndex
         DEC enemiesKilledBottomsPlanetsSinceLastUpdate,X
         LDA enemiesKilledBottomPlanetSinceLastUpdate
@@ -3044,7 +3035,7 @@ b5767   LDA bonusBountiesEarned
         LDY currentTopPlanet
         LDX #$00
 b5774   LDA enemiesKilledBottomsPlanetsSinceLastUpdatePtr,Y
-        CMP f57A6,X
+        CMP everyThirdLevelInPlanet,X
         BMI b578E
         INX 
         DEY 
@@ -3066,7 +3057,7 @@ b5791   LDA currentTopPlanet
         STA lowerPlanetActivated
         JMP CheckProgressInBottomPlanet
 
-f57A6   .BYTE $03,$06,$09,$0C,$0F
+everyThirdLevelInPlanet   .BYTE $03,$06,$09,$0C,$0F
 ;------------------------------------------------------------------
 ; CheckProgressInBottomPlanet
 ;------------------------------------------------------------------
@@ -3074,7 +3065,7 @@ CheckProgressInBottomPlanet
         LDY currentBottomPlanet
         LDX #$00
 b57B0   LDA currentLevelInTopPlanetsPtr,Y
-        CMP f57A6,X
+        CMP everyThirdLevelInPlanet,X
         BMI b57CA
         INX 
         DEY 
@@ -3100,15 +3091,15 @@ b57CB   LDA currentBottomPlanet
 ; UpdateEnergyLabelColorIndexFromBounties
 ;------------------------------------------------------------------
 UpdateEnergyLabelColorIndexFromBounties   
-        STY a57EC
+        STY tempStorageForYRegister
         LDY bonusBountiesEarned
         CLC 
-        ADC f57ED,Y
-        LDY a57EC
+        ADC energyLabelColorIndexOffsetArray,Y
+        LDY tempStorageForYRegister
         RTS 
 
-a57EC   .BYTE $23
-f57ED   .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
+tempStorageForYRegister   .BYTE $23
+energyLabelColorIndexOffsetArray   .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
         .BYTE $50
 ;------------------------------------------------------------------
 ; GilbyDied
@@ -3230,24 +3221,24 @@ b58C9   DEC explosionInProgress
 
 b58E8   RTS 
 
-explosionInProgress   .BYTE $0A
-gilbyDiedSoundSequence   .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
-        .BYTE $13,$00,$00,$00,$00,$0D,$00,$00
-        .BYTE $00,$00,$14,$00,$00,$00,$80,$08
-        .BYTE $00,$00,$00,$40,$0F,$00,$00,$00
-        .BYTE $81,$0B,$00,$00,$00,$81,$12,$02
-        .BYTE $08,$01,$0C,$08,$00,$0F,$01,$0C
-        .BYTE $0F,$01,$00,$81,$1C,$00,$00,$00
-        .BYTE $00,$20,$08,$00,$00,$00,$20,$0F
-        .BYTE $00,$00,$00,$81,$0B,$00,$00,$00
-        .BYTE $21,$12,$02,$08,$02,$01,$08,$00
-        .BYTE $0F,$02,$45,$0F,$01,$00,$81,$1F
-        .BYTE $00,$00,$00,$00,$10,$08,$02,$08
-        .BYTE $02,$01,$08,$00,$0F,$02,$01,$0F
-        .BYTE $00,$18,$02,$01,$18,$01,$00,$81
-        .BYTE $0F,$00,$00,$00,$00,$80,$0B,$00
-        .BYTE $00,$00,$80,$12,$00,$00,$80,$CA
-        .BYTE $7B,$00
+explosionInProgress    .BYTE $0A
+gilbyDiedSoundSequence .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
+                       .BYTE $13,$00,$00,$00,$00,$0D,$00,$00
+                       .BYTE $00,$00,$14,$00,$00,$00,$80,$08
+                       .BYTE $00,$00,$00,$40,$0F,$00,$00,$00
+                       .BYTE $81,$0B,$00,$00,$00,$81,$12,$02
+                       .BYTE $08,$01,$0C,$08,$00,$0F,$01,$0C
+                       .BYTE $0F,$01,$00,$81,$1C,$00,$00,$00
+                       .BYTE $00,$20,$08,$00,$00,$00,$20,$0F
+                       .BYTE $00,$00,$00,$81,$0B,$00,$00,$00
+                       .BYTE $21,$12,$02,$08,$02,$01,$08,$00
+                       .BYTE $0F,$02,$45,$0F,$01,$00,$81,$1F
+                       .BYTE $00,$00,$00,$00,$10,$08,$02,$08
+                       .BYTE $02,$01,$08,$00,$0F,$02,$01,$0F
+                       .BYTE $00,$18,$02,$01,$18,$01,$00,$81
+                       .BYTE $0F,$00,$00,$00,$00,$80,$0B,$00
+                       .BYTE $00,$00,$80,$12,$00,$00,$80,$CA
+                       .BYTE $7B,$00
 
 ;---------------------------------------------------------------------------------
 ; SetUpLevelRestart   
@@ -3286,8 +3277,8 @@ b596E   LDA #$C0 ; Starfield sprite
         JMP ResetSoundDataPtr2
         ; Returns
 
-levelRestartInProgress   .BYTE $00
-gilbiesLeft   .BYTE $02
+levelRestartInProgress .BYTE $00
+gilbiesLeft            .BYTE $02
 
 ;------------------------------------------------------------------
 ; FlashBackgroundAndBorder
@@ -3631,12 +3622,12 @@ MaybeUpdateDisplayedEntropy
         LDA #$10
         STA entroyDisplayUpdateRate
         LDA #$00
-        STA a7C8A
+        STA currentEntropy
         LDA valueIsAlwaysZero
         BEQ b5EA6
         DEC upperPlanetEntropyStatus
         BNE b5E95
-        INC a7C8A
+        INC currentEntropy
 b5E95   LDA upperPlanetEntropyStatus
         CMP #$FF
         BNE UpdateDisplayedEntropyStatus
@@ -3649,7 +3640,7 @@ EntropyKillsGilby
         BNE UpdateDisplayedEntropyStatus
 b5EA6   DEC lowerPlanetEntropyStatus
         BNE b5EAE
-        INC a7C8A
+        INC currentEntropy
 b5EAE   LDA lowerPlanetEntropyStatus
         CMP #$FF
         BNE UpdateDisplayedEntropyStatus
@@ -4137,19 +4128,19 @@ b62D2   JSR PlaySoundEffects
 txtProgressStatusLine1 .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
 txtProgressStatusLine2 .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READY"
 
-transferToOtherPlanetSound2   .BYTE $00,$00,$20
-        .BYTE $04,$00,$00,$00,$03,$02,$00,$00
-        .BYTE $00,$21,$04,$00,$00,$00,$60,$01
-        .BYTE $02,$01,$01,$10,$01,$01,$00,$81
-        .BYTE $08,$00,$00,$02,$05,$01,$44,$63
-        .BYTE $00,$00,$20,$04,$00,$00,$80,$CA
-        .BYTE $7B,$00
-transferToOtherPlanetSound1   .BYTE $00,$00,$20,$04,$00,$00,$00,$03
-        .BYTE $02,$00,$00,$00,$21,$04,$00,$00
-        .BYTE $00,$A0,$01,$02,$01,$02,$10,$01
-        .BYTE $01,$00,$81,$08,$00,$00,$02,$05
-        .BYTE $01,$71,$63,$00,$00,$20,$04,$00
-        .BYTE $00,$80,$CA,$7B,$00
+transferToOtherPlanetSound2 .BYTE $00,$00,$20
+                            .BYTE $04,$00,$00,$00,$03,$02,$00,$00
+                            .BYTE $00,$21,$04,$00,$00,$00,$60,$01
+                            .BYTE $02,$01,$01,$10,$01,$01,$00,$81
+                            .BYTE $08,$00,$00,$02,$05,$01,$44,$63
+                            .BYTE $00,$00,$20,$04,$00,$00,$80,$CA
+                            .BYTE $7B,$00
+transferToOtherPlanetSound1 .BYTE $00,$00,$20,$04,$00,$00,$00,$03
+                            .BYTE $02,$00,$00,$00,$21,$04,$00,$00
+                            .BYTE $00,$A0,$01,$02,$01,$02,$10,$01
+                            .BYTE $01,$00,$81,$08,$00,$00,$02,$05
+                            .BYTE $01,$71,$63,$00,$00,$20,$04,$00
+                            .BYTE $00,$80,$CA,$7B,$00
 ;------------------------------------------------------------------
 ; SwapRoutines
 ;------------------------------------------------------------------
@@ -4604,12 +4595,12 @@ b6736   CLC
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS 
 
-bonusBountyOffset2   .BYTE $01
-bounsBountyOffset   .BYTE $01
-bonusBountyAnimationArray2   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-        .BYTE $02,$03,$04,$05,$06,$07,$08,$09
-bonusBountyAnimationArray   .BYTE $08,$07,$06,$05,$04,$03,$02,$01
-        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+bonusBountyOffset2         .BYTE $01
+bounsBountyOffset          .BYTE $01
+bonusBountyAnimationArray2 .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+                           .BYTE $02,$03,$04,$05,$06,$07,$08,$09
+bonusBountyAnimationArray  .BYTE $08,$07,$06,$05,$04,$03,$02,$01
+                           .BYTE $01,$01,$01,$01,$01,$01,$01,$01
 ;------------------------------------------------------------------
 ; BonusBountyAnimateGilbyXPos
 ;------------------------------------------------------------------
@@ -4842,10 +4833,10 @@ SetUpGilbySprite
         STA currentGilbySprite
         STA Sprite0Ptr
         LDA #$02
-        STA a7178
+        STA gilbyAnimationTYpe
         LDA #$40
         STA $D001    ;Sprite 0 Y Pos
-        LDA #$04
+        LDA #ALREADY_AIRBORNE
         STA previousJoystickAction
         LDA #$EA
         STA currentGilbySpeed
@@ -4888,7 +4879,7 @@ BeginRunningGame
         BNE StartTheGame
 
         LDA #$01
-        STA aCC88
+        STA hasDisplayedHiScoreScreen
         LDA $D016    ;VIC Control Register 2
         AND #$E8
         ORA #$08
@@ -5198,26 +5189,26 @@ b6B63   STA SCREEN_RAM,X
 ; FlashBorderAndBackground
 ;------------------------------------------------------------------
 FlashBorderAndBackground   
-        LDA a7C8A
+        LDA currentEntropy
         BEQ b6BA3
-        LDA a7C89
+        LDA borderFlashControl1
         BNE b6B90
-        DEC a7C88
+        DEC borderFlashControl2
         BNE b6BBE
         LDA #$01
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         LDA #$01
-        STA a7C89
+        STA borderFlashControl1
 b6B8F   RTS 
 
-b6B90   DEC a7C89
+b6B90   DEC borderFlashControl1
         BNE b6B8F
         LDA #$00
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         LDA #$02
-        STA a7C88
+        STA borderFlashControl2
         RTS 
 
 b6BA3   LDA gilbyExploding
@@ -5566,6 +5557,8 @@ ProcessJoystickInput
         CMP #$7D
         BEQ WarpToNextPlanet
 
+        ; THe difference between 'Easy' and 'Hard' difficulty setting consists
+        ; only in colliding with the landscape.
         LDA difficultySetting
         BEQ CheckJoystickInput
 
@@ -5737,7 +5730,7 @@ JoystickPushedUpWhileLandGilbyAirborneOverSea
         LDA #$16
         STA spriteIndexToUseNextInGilbyAnimation
         LDA #$01
-        STA a7178
+        STA gilbyAnimationTYpe
         LDA #$0A
         STA gilbyInitialAnimationFrameRate
         LDA #LAUNCHED_INTO_AIR
@@ -5766,7 +5759,7 @@ b6FA0   JSR ProcessFireButtonPressed
 b6FB7   LDA #$00
         STA previousJoystickAction
         STA currentGilbySpeed
-        STA a7178
+        STA gilbyAnimationTYpe
         LDA #$06
         STA gilbyInitialAnimationFrameRate
         STA gilbyAnimationFrameRate
@@ -5836,7 +5829,7 @@ MaybePreviousActionWasToLaunchIntoAir
         BNE MaybePreviousActionWasSomething
 
         JSR ProcessFireButtonPressed
-        LDA a7178
+        LDA gilbyAnimationTYpe
         CMP #$02
         BNE b703A
         LDA joystickInput
@@ -5844,7 +5837,7 @@ MaybePreviousActionWasToLaunchIntoAir
         BEQ b7099
         LDA joystickInput
         AND #$08
-        BEQ b70A7
+        BEQ UpdateGilbySpriteToAirborne
         LDA gilbyLandingJumpingAnimationYPosOffset
         CMP #$02
         BNE b703A
@@ -5859,11 +5852,11 @@ LandGilby
         LDA #$1A
         STA spriteIndexToUseNextInGilbyAnimation
         LDA #$01
-        STA a7178
+        STA gilbyAnimationTYpe
         LDA #$06
         STA gilbyInitialAnimationFrameRate
         STA gilbyAnimationFrameRate
-        LDA #$03
+        LDA #LANDED
         STA previousJoystickAction
 b707D   RTS 
 
@@ -5871,7 +5864,7 @@ b707D   RTS
 ; MaybePreviousActionWasSomething
 ;---------------------------------------------------------------------------------
 MaybePreviousActionWasSomething
-        CMP #$03 ; Looks at previousJoystickAction
+        CMP #LANDED ; Looks at previousJoystickAction
         BNE RightJoystickPressedWithPreviousAction
         JSR ProcessFireButtonPressed
         LDA gilbyVerticalPosition
@@ -5883,30 +5876,30 @@ MaybePreviousActionWasSomething
         STA soundDataAD
         JMP b6FB7
 
-b7099   JSR s70AF
+b7099   JSR ResetGilbyIsLanding
         LDA #GILBY_AIRBORNE_LEFT
         STA currentGilbySprite
 
 ;---------------------------------------------------------------------------------
-; s70A1   
+; UpdatePreviousJoystickAction   
 ;---------------------------------------------------------------------------------
-s70A1   
-        LDA #$04
+UpdatePreviousJoystickAction   
+        LDA #ALREADY_AIRBORNE
         STA previousJoystickAction
         RTS 
 
 ;---------------------------------------------------------------------------------
-; b70A7   
+; UpdateGilbySpriteToAirborne   
 ;---------------------------------------------------------------------------------
-b70A7   
+UpdateGilbySpriteToAirborne   
         LDA #GILBY_AIRBORNE_RIGHT
         STA currentGilbySprite
-        JSR s70A1
+        JSR UpdatePreviousJoystickAction
 
 ;---------------------------------------------------------------------------------
-; s70AF   
+; ResetGilbyIsLanding   
 ;---------------------------------------------------------------------------------
-s70AF   
+ResetGilbyIsLanding   
         LDA #$00
         STA gilbyIsLanding
         RTS 
@@ -5925,7 +5918,7 @@ RightJoystickPressedWithPreviousAction
         CMP #GILBY_AIRBORNE_RIGHT
         BNE b70E0
         LDA #$01
-        STA a7178
+        STA gilbyAnimationTYpe
         LDA #$01
         STA gilbyInitialAnimationFrameRate
         STA gilbyAnimationFrameRate
@@ -5959,7 +5952,7 @@ LeftJoystickPressedWithPreviousAction
         CMP #GILBY_AIRBORNE_LEFT
         BNE b7124
         LDA #$01
-        STA a7178
+        STA gilbyAnimationTYpe
         LDA #$01
         STA gilbyInitialAnimationFrameRate
         STA gilbyAnimationFrameRate
@@ -6017,19 +6010,21 @@ AnimateGilbyMovement
         JMP DrawParallaxOfStarfieldInGilbyDirection
         ; Returns
 
-joystickInput .BYTE $09
-previousJoystickAction         .BYTE $04
+joystickInput          .BYTE $09
+previousJoystickAction .BYTE $04
+gilbyAnimationTYpe     .BYTE $02
 HORIZONTAL_MOVEMENT = $01
-LAUNCHED_INTO_AIR = $02
+LAUNCHED_INTO_AIR   = $02
+LANDED              = $03
+ALREADY_AIRBORNE    = $04
 
-a7178         .BYTE $02
 
 ;------------------------------------------------------------------
 ; AlsoPerformGilbyLandingOrJumpingAnimation
 ;------------------------------------------------------------------
 AlsoPerformGilbyLandingOrJumpingAnimation   
         LDA previousJoystickAction
-        CMP #$04
+        CMP #ALREADY_AIRBORNE
         BEQ b7181
 b7180   RTS 
 
@@ -6691,7 +6686,7 @@ DrawRandomlyChosenStructure
         TAX 
 
         ; Run the randomly chose subroutine, one of:
-        ; $7486, $74B1, $74CB, $74E5 to draw a structure
+        ; DrawLittleStructure, DrawMediumStructure, DrawLargestStructure, DrawNextLargestStructure to draw a structure
         ; on the planet surface
         LDA structureSubRoutineArrayHiPtr,X
         STA structureRoutineHiPtr
@@ -6700,8 +6695,8 @@ DrawRandomlyChosenStructure
         JMP (randomStructureRoutineAddress)
 
 ;Jump table
-structureSubRoutineArrayHiPtr   .BYTE $74,$74,$74,$74
-structureSubRoutineArrayLoPtr   .BYTE $86,$B1,$CB,$E5
+structureSubRoutineArrayHiPtr   .BYTE >DrawLittleStructure,>DrawMediumStructure,>DrawLargestStructure,>DrawNextLargestStructure
+structureSubRoutineArrayLoPtr   .BYTE <DrawLittleStructure,<DrawMediumStructure,<DrawLargestStructure,<DrawNextLargestStructure
 
 gilbySprites .BYTE LAND_GILBY1,LAND_GILBY2,LAND_GILBY3,LAND_GILBY4,LAND_GILBY5,LAND_GILBY6,LAND_GILBY7,LAND_GILBY6
              .BYTE LAND_GILBY5,LAND_GILBY4,LAND_GILBY3,LAND_GILBY2,LAND_GILBY1,LAND_GILBY8,LAND_GILBY9,LAND_GILBY10
@@ -6711,11 +6706,11 @@ gilbySprites .BYTE LAND_GILBY1,LAND_GILBY2,LAND_GILBY3,LAND_GILBY4,LAND_GILBY5,L
              .BYTE GILBY_TAKING_OFF4,GILBY_TAKING_OFF5,GILBY_AIRBORNE_LEFT,GILBY_AIRBORNE_LEFT
              .BYTE GILBY_TAKING_OFF5,GILBY_TAKING_OFF4,GILBY_AIRBORNE_TURNING,GILBY_AIRBORNE_RIGHT
 
-spriteIndexToUseNextInGilbyAnimation        .BYTE $11
-backupGilbySpriteIndex        .BYTE $0D
-gilbyInitialAnimationFrameRate        .BYTE $06
-gilbyAnimationFrameRate        .BYTE $06
-gilbySpriteIndex   .BYTE $0D
+spriteIndexToUseNextInGilbyAnimation .BYTE $11
+backupGilbySpriteIndex               .BYTE $0D
+gilbyInitialAnimationFrameRate       .BYTE $06
+gilbyAnimationFrameRate              .BYTE $06
+gilbySpriteIndex                     .BYTE $0D
 ;------------------------------------------------------------------
 ; AnimateGilbySpriteMovement
 ;------------------------------------------------------------------
@@ -6735,7 +6730,7 @@ b75BF   RTS
 
 b75C0   LDA gilbyInitialAnimationFrameRate
         STA gilbyAnimationFrameRate
-        LDA a7178
+        LDA gilbyAnimationTYpe
         BEQ b75CF
         CMP #$02
         BEQ b75BF
@@ -6743,15 +6738,15 @@ b75CF   INC gilbySpriteIndex
         LDA gilbySpriteIndex
         CMP spriteIndexToUseNextInGilbyAnimation
         BNE b7601
-        LDA a7178
+        LDA gilbyAnimationTYpe
         BEQ b75E3
-        INC a7178
+        INC gilbyAnimationTYpe
         RTS 
 
 b75E3   LDA backupGilbySpriteIndex
         STA gilbySpriteIndex
         LDA previousJoystickAction
-        CMP #$01
+        CMP #HORIZONTAL_MOVEMENT
         BNE b7601
         LDA gilbyVerticalPosition
         CMP #$6D
@@ -6765,11 +6760,11 @@ b7601   LDX gilbySpriteIndex
         STA currentGilbySprite
         RTS 
 
-gilbyLandingJumpingAnimationYPosOffset   .BYTE $01
-gilbyVerticalPosition   .BYTE $3F
-unusedLandingVariable   .BYTE $CA
-gilbyLandingFrameRate   .BYTE $01
-gilbyJumpingAndLandingFrameRate   .BYTE $03
+gilbyLandingJumpingAnimationYPosOffset .BYTE $01
+gilbyVerticalPosition                  .BYTE $3F
+unusedLandingVariable                  .BYTE $CA
+gilbyLandingFrameRate                  .BYTE $01
+gilbyJumpingAndLandingFrameRate        .BYTE $03
 ;------------------------------------------------------------------
 ; PerformGilbyLandingOrJumpingAnimation
 ;------------------------------------------------------------------
@@ -6870,7 +6865,7 @@ b76A8   LDA #$B5
         LDA #$FA
         STA upperPlanetGilbyBulletNextYPosArray,X
 
-        LDA a48D7
+        LDA soundEffectInProgress
         BNE b76DF
 
         LDA #<bulletSoundEffect
@@ -6879,11 +6874,11 @@ b76A8   LDA #$B5
         STA soundDataAF
 
 b76DF   LDA previousJoystickAction
-        CMP #$04
+        CMP #ALREADY_AIRBORNE
         BNE b7717
 
         ; The gilby is in the air
-        LDA a48D7
+        LDA soundEffectInProgress
         BNE b76F8
         JSR ResetSoundDataPtr2
         LDA #<airborneBulletSoundEffect
@@ -7240,7 +7235,7 @@ b7939   STA upperPlanetAttackShipsSpriteValueArray,X
         LDA #>levelEntrySound
         STA soundDataAF
         LDA #$30
-        STA a48D7
+        STA soundEffectInProgress
         LDA lowerPlanetActivated
         BEQ b797C
         LDX currentTopPlanetIndex
@@ -7252,34 +7247,34 @@ b7939   STA upperPlanetAttackShipsSpriteValueArray,X
         JSR UpdateBottomPlanetSurfaceColor
 b797C   RTS 
 
-lowerPlanetActivated   .BYTE $01
-soundData7E   .BYTE $00,$94,$00,$00,$11,$0F,$00,$00
-        .BYTE $03,$00,$00,$21,$0F,$00,$08,$03
-        .BYTE $00,$00,$21,$0F,$00,$00,$00,$00
-        .BYTE $02,$00,$00,$00,$00,$00,$00,$00
-soundData9E   .BYTE $92
-soundData9F   .BYTE $5D,$85,$5C
-soundDataA2   .BYTE $02,$00
-soundDataA4   .BYTE $00,$00
-soundDataA6   .BYTE $02
-soundDataA7   .BYTE $18
-soundDataA8   .BYTE $05
-soundDataA9   .BYTE $00
-soundDataAA   .BYTE $65
-soundDataAB   .BYTE $5D
-soundDataAC   .BYTE $97
-soundDataAD   .BYTE $5D
-soundDataAE   .BYTE $65
-soundDataAF   .BYTE $5D
+lowerPlanetActivated .BYTE $01
+soundData7E          .BYTE $00,$94,$00,$00,$11,$0F,$00,$00
+                     .BYTE $03,$00,$00,$21,$0F,$00,$08,$03
+                     .BYTE $00,$00,$21,$0F,$00,$00,$00,$00
+                     .BYTE $02,$00,$00,$00,$00,$00,$00,$00
+soundData9E          .BYTE $92
+soundData9F          .BYTE $5D,$85,$5C
+soundDataA2          .BYTE $02,$00
+soundDataA4          .BYTE $00,$00
+soundDataA6          .BYTE $02
+soundDataA7          .BYTE $18
+soundDataA8          .BYTE $05
+soundDataA9          .BYTE $00
+soundDataAA          .BYTE $65
+soundDataAB          .BYTE $5D
+soundDataAC          .BYTE $97
+soundDataAD          .BYTE $5D
+soundDataAE          .BYTE $65
+soundDataAF          .BYTE $5D
 ;------------------------------------------------------------------
 ; PlaySoundEffects
 ;------------------------------------------------------------------
 PlaySoundEffects   
         LDA #$00
         STA soundDataA6
-        LDA a48D7
+        LDA soundEffectInProgress
         BEQ b79BD
-        DEC a48D7
+        DEC soundEffectInProgress
 b79BD   LDA soundDataAC
         STA soundTmpLoPtr
         LDA soundDataAD
@@ -7291,6 +7286,8 @@ b79BD   LDA soundDataAC
         STA soundTmpLoPtr
         LDA soundDataAF
         STA soundTmpHiPtr
+        ;Falls through
+
 ;------------------------------------------------------------------
 ; PlaySound1
 ;------------------------------------------------------------------
@@ -7444,59 +7441,59 @@ b7B03   JMP PlaySound2
 
 b7B06   RTS 
 
-gilbyWalkingSound   .BYTE $00,$00,$00,$04,$00,$00,$00,$00
-        .BYTE $05,$00,$00,$00,$60,$06,$00,$00
-        .BYTE $00,$40,$01,$00,$00,$00,$81,$04
-        .BYTE $01,$00,$00,$20,$04,$01,$00,$00
-        .BYTE $10,$01,$01,$00,$00,$20,$01,$01
-        .BYTE $00,$80,$CA,$7B,$00
-soundGilbyJumpOnLand   .BYTE $00,$00,$00,$04,$01,$00,$00,$0F
-        .BYTE $05,$00,$00,$00,$F9,$06,$00,$00
-        .BYTE $00,$C0,$01,$00,$00,$00,$21,$04
-        .BYTE $01,$00,$00,$10,$04,$02,$01,$01
-        .BYTE $41,$01,$01,$00,$81,$30,$00,$00
-        .BYTE $00,$80,$CA,$7B,$00
-pushedUpWhileOverSea   .BYTE $00,$00,$00,$04,$00,$00,$00,$00
-        .BYTE $05,$00,$00,$00,$F9,$06,$00,$00
-        .BYTE $00,$20,$01,$00,$00,$00,$81,$04
-        .BYTE $01,$00,$00,$10,$01,$01,$00,$00
-        .BYTE $10,$01,$00,$00,$00,$20,$04,$00
-        .BYTE $00,$00,$06,$1F,$00,$01,$01,$20
-        .BYTE $01,$02,$01,$02,$06,$01,$01,$00
-        .BYTE $81,$06,$00,$00,$1F,$05,$01,$8E
-        .BYTE $7B,$00,$80,$CA,$7B,$00,$00,$00
-        .BYTE $00,$04,$00,$00,$00,$AD,$05,$00
-        .BYTE $00,$00,$C0,$01,$00,$00,$00,$5D
-        .BYTE $06,$00,$00,$00,$81,$04,$01,$00
-        .BYTE $00,$80,$04,$01,$00,$80,$CA,$7B
-        .BYTE $00,$00,$00,$0F,$18,$01,$00,$80
-        .BYTE $CA,$7B,$00
-bulletSoundEffect   .BYTE $00,$00,$10,$08,$00,$00,$00,$0F
-        .BYTE $18,$01,$00,$00,$00,$0C,$00,$00
-        .BYTE $00,$F0,$0D,$00,$00,$00,$00,$13
-        .BYTE $00,$00,$00,$F0,$14,$00,$00,$00
-        .BYTE $C0,$0F,$00,$00,$00,$21,$0B,$00
-        .BYTE $00,$00,$21,$12,$01,$00,$00,$10
-        .BYTE $0F,$00,$0F,$02,$01,$0F,$00,$08
-        .BYTE $02,$01,$08,$01,$08,$05,$00,$06
-        .BYTE $7C,$00,$00,$10,$0B,$00,$00,$00
-        .BYTE $20,$12,$02,$00,$80,$CA,$7B,$00
-airborneBulletSoundEffect   .BYTE $00,$00,$00,$0C,$00,$00,$00,$F0
-        .BYTE $0D,$00,$00,$00,$00,$13,$00,$00
-        .BYTE $00,$F0,$14,$00,$00,$00,$0F,$18
-        .BYTE $01,$00,$00,$20,$08,$00,$00,$00
-        .BYTE $C0,$0F,$00,$00,$00,$81,$0B,$00
-        .BYTE $00,$00,$81,$12,$02,$08,$02,$02
-        .BYTE $08,$00,$0F,$01,$01,$0F,$01,$00
-        .BYTE $81,$02,$00,$00,$00,$00,$11,$0B
-        .BYTE $00,$00,$00,$15,$12,$02,$08,$02
-        .BYTE $04,$08,$00,$0F,$01,$02,$0F,$01
-        .BYTE $00,$81,$10,$00,$00,$00,$00,$80
-        .BYTE $0B,$00,$00,$00,$80,$12,$00,$00
-        .BYTE $80,$CA,$7B,$00
-a7C88   .BYTE $02
-a7C89   .BYTE $01
-a7C8A   .BYTE $00
+gilbyWalkingSound         .BYTE $00,$00,$00,$04,$00,$00,$00,$00
+                          .BYTE $05,$00,$00,$00,$60,$06,$00,$00
+                          .BYTE $00,$40,$01,$00,$00,$00,$81,$04
+                          .BYTE $01,$00,$00,$20,$04,$01,$00,$00
+                          .BYTE $10,$01,$01,$00,$00,$20,$01,$01
+                          .BYTE $00,$80,$CA,$7B,$00
+soundGilbyJumpOnLand      .BYTE $00,$00,$00,$04,$01,$00,$00,$0F
+                          .BYTE $05,$00,$00,$00,$F9,$06,$00,$00
+                          .BYTE $00,$C0,$01,$00,$00,$00,$21,$04
+                          .BYTE $01,$00,$00,$10,$04,$02,$01,$01
+                          .BYTE $41,$01,$01,$00,$81,$30,$00,$00
+                          .BYTE $00,$80,$CA,$7B,$00
+pushedUpWhileOverSea      .BYTE $00,$00,$00,$04,$00,$00,$00,$00
+                          .BYTE $05,$00,$00,$00,$F9,$06,$00,$00
+                          .BYTE $00,$20,$01,$00,$00,$00,$81,$04
+                          .BYTE $01,$00,$00,$10,$01,$01,$00,$00
+                          .BYTE $10,$01,$00,$00,$00,$20,$04,$00
+                          .BYTE $00,$00,$06,$1F,$00,$01,$01,$20
+                          .BYTE $01,$02,$01,$02,$06,$01,$01,$00
+                          .BYTE $81,$06,$00,$00,$1F,$05,$01,$8E
+                          .BYTE $7B,$00,$80,$CA,$7B,$00,$00,$00
+                          .BYTE $00,$04,$00,$00,$00,$AD,$05,$00
+                          .BYTE $00,$00,$C0,$01,$00,$00,$00,$5D
+                          .BYTE $06,$00,$00,$00,$81,$04,$01,$00
+                          .BYTE $00,$80,$04,$01,$00,$80,$CA,$7B
+                          .BYTE $00,$00,$00,$0F,$18,$01,$00,$80
+                          .BYTE $CA,$7B,$00
+bulletSoundEffect         .BYTE $00,$00,$10,$08,$00,$00,$00,$0F
+                          .BYTE $18,$01,$00,$00,$00,$0C,$00,$00
+                          .BYTE $00,$F0,$0D,$00,$00,$00,$00,$13
+                          .BYTE $00,$00,$00,$F0,$14,$00,$00,$00
+                          .BYTE $C0,$0F,$00,$00,$00,$21,$0B,$00
+                          .BYTE $00,$00,$21,$12,$01,$00,$00,$10
+                          .BYTE $0F,$00,$0F,$02,$01,$0F,$00,$08
+                          .BYTE $02,$01,$08,$01,$08,$05,$00,$06
+                          .BYTE $7C,$00,$00,$10,$0B,$00,$00,$00
+                          .BYTE $20,$12,$02,$00,$80,$CA,$7B,$00
+airborneBulletSoundEffect .BYTE $00,$00,$00,$0C,$00,$00,$00,$F0
+                          .BYTE $0D,$00,$00,$00,$00,$13,$00,$00
+                          .BYTE $00,$F0,$14,$00,$00,$00,$0F,$18
+                          .BYTE $01,$00,$00,$20,$08,$00,$00,$00
+                          .BYTE $C0,$0F,$00,$00,$00,$81,$0B,$00
+                          .BYTE $00,$00,$81,$12,$02,$08,$02,$02
+                          .BYTE $08,$00,$0F,$01,$01,$0F,$01,$00
+                          .BYTE $81,$02,$00,$00,$00,$00,$11,$0B
+                          .BYTE $00,$00,$00,$15,$12,$02,$08,$02
+                          .BYTE $04,$08,$00,$0F,$01,$02,$0F,$01
+                          .BYTE $00,$81,$10,$00,$00,$00,$00,$80
+                          .BYTE $0B,$00,$00,$00,$80,$12,$00,$00
+                          .BYTE $80,$CA,$7B,$00
+borderFlashControl2       .BYTE $02
+borderFlashControl1       .BYTE $01
+currentEntropy            .BYTE $00
 
 ;------------------------------------------------------------------
 ; ResetSoundDataPtr1
@@ -7562,11 +7559,11 @@ b7CE9   JSR AnimateAttackShipSprites
 b7CF0   PHA 
         TYA 
         EOR #$FF
-        STA a7D1E
-        INC a7D1E
+        STA attackShipOffsetRate
+        INC attackShipOffsetRate
         PLA 
         SEC 
-        SBC a7D1E
+        SBC attackShipOffsetRate
         STA upperPlanetAttackShip2XPos,X
         BCS b7CC2
         JMP j7CB9
@@ -7574,16 +7571,16 @@ b7CF0   PHA
 b7D07   PHA 
         TYA 
         EOR #$FF
-        STA a7D1E
-        INC a7D1E
+        STA attackShipOffsetRate
+        INC attackShipOffsetRate
         PLA 
         CLC 
-        ADC a7D1E
+        ADC attackShipOffsetRate
         STA lowerPlanetAttackShip3XPos,X
         BCC b7CE1
         JMP j7CD8
 
-a7D1E                                         .BYTE $10
+attackShipOffsetRate                          .BYTE $10
 upperPlanetInitialXPosFrameRateForAttackShip  .BYTE $01,$01,$01,$01
 lowerPlanetInitialXPosFrameRateForAttackShip  .BYTE $01,$01,$01,$01
 upperPlanetXPosFrameRateForAttackShip         .BYTE $01,$01,$01,$01
@@ -7661,11 +7658,11 @@ b7DB4   DEC upperPlanetXPosFrameRateForAttackShip - $01,X
         JMP b7DF6
 
 b7DD9   EOR #$FF
-        STA a7D1E
-        INC a7D1E
+        STA attackShipOffsetRate
+        INC attackShipOffsetRate
         LDA upperPlanetAttackShip2XPos,X
         SEC 
-        SBC a7D1E
+        SBC attackShipOffsetRate
         STA upperPlanetAttackShip2XPos,X
         BCS b7DF6
         LDA upperPlanetAttackShip2MSBXPosValue,X
@@ -7687,11 +7684,11 @@ b7DF6   DEC lowerPlanetXPosFrameRateForAttackShip - $01,X
         JMP b7E38
 
 b7E1B   EOR #$FF
-        STA a7D1E
-        INC a7D1E
+        STA attackShipOffsetRate
+        INC attackShipOffsetRate
         LDA lowerPlanetAttackShip3XPos,X
         SEC 
-        SBC a7D1E
+        SBC attackShipOffsetRate
         STA lowerPlanetAttackShip3XPos,X
         BCS b7E38
         LDA lowerPlanetAttackSHip3MSBXPosValue,X
@@ -7896,7 +7893,7 @@ ptrLastScoreInTable       .TEXT "0000800LAMA"
 InitAndDisplayHiScoreScreen   
         STX tempHiPtr1
         LDA #$00
-        STA aCC88
+        STA hasDisplayedHiScoreScreen
         STY tempLoPtr1
         ; Fall through
 
@@ -7914,7 +7911,7 @@ DrawHiScoreScreen
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         JSR HiScoreStopSounds
-        LDA aCC88
+        LDA hasDisplayedHiScoreScreen
         BEQ bC9E8
         JMP ClearScreenDrawHiScoreScreenText
 
@@ -8230,7 +8227,7 @@ bCBFC   DEX
 ;------------------------------------------------------------------
 DisplayHiScoreScreen   
         LDA #$01
-        STA aCC88
+        STA hasDisplayedHiScoreScreen
         LDA #$00
         STA aCA3B
 
@@ -8303,7 +8300,7 @@ bCC7E   LDA aFA
         JMP ExitHiScoreScreen
 
 currentEntryInHiScoreTable   .BYTE $00
-aCC88   .BYTE $01
+hasDisplayedHiScoreScreen   .BYTE $01
 ;------------------------------------------------------------------
 ; ExitHiScoreScreen
 ;------------------------------------------------------------------
@@ -8468,10 +8465,11 @@ bCDCD   JMP $EA31
 
 currHiScoreColorSeq1    .BYTE $1C
 currHiScoreColorSeq2    .BYTE $0C
-hiScoreColorSequence    .BYTE $0B,$0B,$0B,$0B,$0C,$0C,$0C,$0C
-                        .BYTE $0F,$0F,$0F,$0F,$01,$01,$01,$01
-hiScoreColorSequence2   .BYTE $02,$02,$08,$08,$08,$07,$07,$07
-                        .BYTE $05,$05,$05,$0E,$0E,$0E,$07,$07
+hiScoreColorSequence    .BYTE GRAY1,GRAY1,GRAY1,GRAY1,GRAY2,GRAY2,GRAY2,GRAY2
+                        .BYTE GRAY3,GRAY3,GRAY3,GRAY3,WHITE,WHITE,WHITE,WHITE
+hiScoreColorSequence2   .BYTE RED,RED,ORANGE,ORANGE,ORANGE,YELLOW,YELLOW,YELLOW
+                        .BYTE GREEN,GREEN,GREEN,LTBLUE,LTBLUE,LTBLUE,YELLOW,YELLOW
+                                                
 txtHiScorLine1          .TEXT "YAK'S GREAT GILBIES OF OUR TIME..... % %"
 txtHiScorLine2          .TEXT "LEFT AND RIGHT TO SELECT, FIRE TO ENTER."
 txtHiScorLine3          .TEXT "UP AND DOWN, SPACE FOR RECORD, FIRE QUIT"

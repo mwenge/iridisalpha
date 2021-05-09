@@ -8,6 +8,8 @@
 ; Byte 5: Alternative animation end sprite used except every 3rd level.
 ; Byte 6: Determines if the inital Y Position of the ship is random or uses a default.
 ; Byte 8: Determines if the inital Y Position of the ship is random or uses a default.
+; Byte 11 ($0B): Update rate for attack wave 
+; Byte 15 ($0F): Update rate for attack wave 
 ; Byte 18: X Pos movement for attack ship.
 ; Byte 19: Y Pos movement for attack ship.
 ; Byte 20: X Pos Frame Rate for Attack ship.

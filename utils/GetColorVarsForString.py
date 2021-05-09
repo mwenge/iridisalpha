@@ -40,7 +40,10 @@ colormap = {
     }
 
 s = """
-scoreColors   .BYTE $06,$04,$05,$07,$01
+hiScoreColorSequence    .BYTE $0B,$0B,$0B,$0B,$0C,$0C,$0C,$0C
+                        .BYTE $0F,$0F,$0F,$0F,$01,$01,$01,$01
+hiScoreColorSequence2   .BYTE $02,$02,$08,$08,$08,$07,$07,$07
+                        .BYTE $05,$05,$05,$0E,$0E,$0E,$07,$07
 """
 ls = re.split("([, \n])", s)
 
