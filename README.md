@@ -13,8 +13,6 @@ The game compiles and plays. The routines in [the main game](https://github.com/
 
 ## Download
 
-You can download the latest release above, for Windows or C64. 
-
 ### Windows
 [<img src="https://img.shields.io/badge/Lastest%20Release-Windows-blue.svg">](https://github.com/mwenge/iridisalpha/releases/latest)
 
