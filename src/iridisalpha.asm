@@ -141,10 +141,10 @@ GILBY_AIRBORNED_TURNING_LOWER_PLANET = $E5
 GILBY_AIRBORNED_LOWERPLANET_LEFT     = $E6
 
 * = $0801
-;-----------------------------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; SYS 16384 ($4000)
 ; This launches the program from address $4000, i.e. MainControlLoop.
-;-----------------------------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; $9E = SYS
 ; $31,$36,$33,$38,$34,$00 = 16384 ($4000 in hex)
 .BYTE $0C,$08,$0A,$00,$9E,$31,$36,$33,$38,$34,$00
@@ -1231,9 +1231,9 @@ b49F5   RTS
 
 gameSequenceCounter   .BYTE $14
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; ProcessAttackWaveData
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ProcessAttackWaveData
         LDA #$20
         STA gameSequenceCounter
@@ -1532,9 +1532,9 @@ b4C03   LDA shipsThatHaveBeenHitByABullet,X
         JMP CheckForCollisionsBeforeUpdatingWaveData
         ; Returns
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateScoresAfterHittingShipWithBullet
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateScoresAfterHittingShipWithBullet
         LDA #$00
         STA shipsThatHaveBeenHitByABullet,X
@@ -1618,9 +1618,9 @@ b4CB1   LDY #$1D
         JMP UpdatePointersAndGetWaveDataForNewLevel
         ;Returns
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; CheckForCollisionsBeforeUpdatingWaveData
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 CheckForCollisionsBeforeUpdatingWaveData
         LDA shipsThatHaveCollidedWithGilby,X
         BEQ UpdateWaves
@@ -1638,22 +1638,22 @@ CheckForCollisionsBeforeUpdatingWaveData
         DEC currentStepsBetweenTopPlanetAttackWaves
         JMP CheckCollisionType
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateWaves
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateWaves
         JMP UpdateFromBackingData
         ; Returns
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; b4CDF
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 b4CDF
         DEC currentStepsBetweenBottomPlanetAttackWaves
         ; Falls through
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; CheckCollisionType
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 CheckCollisionType
         LDY #$24
         LDA (attackWaveDataLoPtr),Y
@@ -1661,9 +1661,9 @@ CheckCollisionType
         JMP UpdateEnergyLevelsAfterCollision
         ;Returns
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; MaybeTransferToOtherPlanet
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 MaybeTransferToOtherPlanet
         LDA joystickInput
         AND #$10
@@ -1701,9 +1701,9 @@ b4D1C   STA valueIsAlwaysZero
         STA starFieldInitialStateArray - $01
         ; Falls through
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateEnergyLevelsAfterCollision
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateEnergyLevelsAfterCollision
         LDY #$23
         LDA (attackWaveDataLoPtr),Y
@@ -1788,9 +1788,9 @@ b4DBD   LDA updateRateForAttackShips,X
 b4DD8   DEC currentStepsBetweenBottomPlanetAttackWaves
 b4DDB   LDY #$10
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdatePointersAndGetWaveDataForNewLevel
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdatePointersAndGetWaveDataForNewLevel
         LDA (attackWaveDataLoPtr),Y
         PHA
@@ -1803,9 +1803,9 @@ UpdatePointersAndGetWaveDataForNewLevel
         STA attackWaveDataLoPtr
         STA attackWaveDataLoPtrArray,X
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; GetWaveDataForNewLevel
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 GetWaveDataForNewLevel
         LDA #$FF
         STA updatingWaveData
@@ -1814,9 +1814,9 @@ GetWaveDataForNewLevel
         STA updatingWaveData
         RTS
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; GetDefaultWaveData
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 GetDefaultWaveData
         LDA #$F0
         STA upperPlanetAttackShipsSpriteValueArray + $01,X
@@ -1836,9 +1836,9 @@ updatingWaveData    .BYTE $00
 currentTopPlanet    .BYTE $01
 currentBottomPlanet .BYTE $01
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateAttackShipData
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateAttackShipData
         LDY #$0A
         LDA (attackWaveDataLoPtr),Y
@@ -3256,9 +3256,9 @@ gilbyDiedSoundSequence .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
                        .BYTE $00,$00,$80,$12,$00,$00,$80,$CA
                        .BYTE $7B,$00
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; SetUpLevelRestart
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 SetUpLevelRestart
         LDX #$00
 b596E   LDA #$C0 ; Starfield sprite
@@ -3629,9 +3629,9 @@ upperPlanetEntropyStatus .BYTE $08
 lowerPlanetEntropyStatus .BYTE $08
 entroyDisplayUpdateRate  .BYTE $23
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; MaybeUpdateDisplayedEntropy
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 MaybeUpdateDisplayedEntropy
         DEC entroyDisplayUpdateRate
         BNE UpdateDisplayedEntropyStatus
@@ -3662,11 +3662,11 @@ b5EAE   LDA lowerPlanetEntropyStatus
         BNE UpdateDisplayedEntropyStatus
         JMP EntropyKillsGilby
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateDisplayedEntropyStatus
 ; This is the planet entropy status for the upper and
 ; lower plants, on the bottom left hand side of the screen.
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateDisplayedEntropyStatus
         LDA #$08
         SEC
@@ -4456,9 +4456,9 @@ bonusGilbyAnimation   .BYTE $04,$04,$02,$02,$00,$00,$00,$03
                       .BYTE $03,$06,$06,$01,$01,$00,$00
 NewBonusGilbyColors   .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; AnimateGilbiesForNewBonus
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 AnimateGilbiesForNewBonus
         LDY #$00
         LDA #$F0
@@ -5239,9 +5239,9 @@ b6BA3   LDA gilbyExploding
         STA $D020    ;Border Color
 b6BBE   RTS
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; RasterPositionMatchesRequestedInterrupt
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 RasterPositionMatchesRequestedInterrupt
         LDY currentIndexInRasterInterruptArrays
         LDA levelRestartInProgress
@@ -5260,9 +5260,9 @@ b6BD2   LDA nextRasterPositionArray - $01,Y ; Y is currentIndexInRasterInterrupt
         JMP AnimateStarFieldAndDrawLowerPlanet
         ; Returns from Interrupt
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; ResetRasterAndPerformMainGameUpdate
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ResetRasterAndPerformMainGameUpdate
         LDA #$00
         STA currentIndexInRasterInterruptArrays
@@ -5277,9 +5277,9 @@ ResetRasterAndPerformMainGameUpdate
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         BNE PerformMainGameUpdate
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateGilbyPositionAndColor
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateGilbyPositionAndColor
         LDA gilbyHasJustDied
         BNE b6C24
@@ -5301,9 +5301,9 @@ b6C24   RTS
 
 currentGilbySprite   .BYTE GILBY_AIRBORNE_RIGHT
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; PerformMainGameUpdate
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 PerformMainGameUpdate
         LDX currentPlanetBackgroundClr1
         LDA backgroundColorsForPlanets,X
@@ -5398,9 +5398,9 @@ b6CC5   DEX
 b6CD3   JMP UpdateInterruptRegisterAndReturn
         ;Returns
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; DrawLowerPlanet
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 DrawLowerPlanet
         JSR DrawLowerPlanetAttackShips
         LDA #$07
@@ -5450,18 +5450,18 @@ b6D2C   LDY valueIsAlwaysZero
         LDA #$0B
 b6D33   STA $D027    ;Sprite 0 Color (lower planet gilby)
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateRasterPositionAndReturn
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateRasterPositionAndReturn
         LDY #$0A
         STY currentIndexInRasterInterruptArrays
         LDA spriteCollidedWithBackground,Y
         STA $D012    ;Raster Position
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateInterruptRegisterAndReturn
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateInterruptRegisterAndReturn
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
@@ -5583,9 +5583,9 @@ ProcessJoystickInput
         STA reasonGilbyDied ; Hit something
         JMP GilbyDied
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; WarpToNextPlanet
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 WarpToNextPlanet
         JSR PerformPlanetWarp
         LDA #$01
@@ -5601,9 +5601,9 @@ WarpToNextPlanet
         LDY #$EC
 b6E85   STY currentGilbySpeed
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; CheckJoystickInput
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 CheckJoystickInput
         DEC processJoystickFrameRate
         BEQ b6E8E
@@ -5723,9 +5723,9 @@ b6F54   LDA joystickInput
         BEQ JoystickPushedUpWhileLandGilbyAirborneOverSea
         JMP JoystickPushedUpWhileOnLand
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; JoystickPushedUpWhileLandGilbyAirborneOverSea
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 JoystickPushedUpWhileLandGilbyAirborneOverSea
         ; Joystick pushed up
         LDA gilbyVerticalPosition
@@ -5753,9 +5753,9 @@ JoystickPushedUpWhileLandGilbyAirborneOverSea
         STA previousJoystickAction
 b6F98   RTS
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; ActionIfPreviousActionWasHorizontal
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ActionIfPreviousActionWasHorizontal
         CMP #HORIZONTAL_MOVEMENT ; Looking at previousJoystickAction
         BEQ b6FA0
@@ -5820,9 +5820,9 @@ j700F
         BNE JoystickPushedUpWhileOnLand
         JMP JoystickPushedUpWhileLandGilbyAirborneOverSea
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; JoystickPushedUpWhileOnLand
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 JoystickPushedUpWhileOnLand
         LDA gilbyVerticalPosition
         CMP #$6D
@@ -5837,9 +5837,9 @@ JoystickPushedUpWhileOnLand
         DEC gilbyVerticalPosition
 b703A   RTS
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; MaybePreviousActionWasToLaunchIntoAir
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 MaybePreviousActionWasToLaunchIntoAir
         CMP #LAUNCHED_INTO_AIR ; Looks at previousJoystickAction
         BNE MaybePreviousActionWasSomething
@@ -5858,9 +5858,9 @@ MaybePreviousActionWasToLaunchIntoAir
         CMP #$02
         BNE b703A
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; LandGilby
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 LandGilby
         LDA #$15
         STA backupGilbySpriteIndex
@@ -5876,9 +5876,9 @@ LandGilby
         STA previousJoystickAction
 b707D   RTS
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; MaybePreviousActionWasSomething
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 MaybePreviousActionWasSomething
         CMP #LANDED ; Looks at previousJoystickAction
         BNE RightJoystickPressedWithPreviousAction
@@ -5896,33 +5896,33 @@ b7099   JSR ResetGilbyIsLanding
         LDA #GILBY_AIRBORNE_LEFT
         STA currentGilbySprite
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdatePreviousJoystickAction
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdatePreviousJoystickAction
         LDA #ALREADY_AIRBORNE
         STA previousJoystickAction
         RTS
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; UpdateGilbySpriteToAirborne
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 UpdateGilbySpriteToAirborne
         LDA #GILBY_AIRBORNE_RIGHT
         STA currentGilbySprite
         JSR UpdatePreviousJoystickAction
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; ResetGilbyIsLanding
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ResetGilbyIsLanding
         LDA #$00
         STA gilbyIsLanding
         RTS
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; RightJoystickPressedWithPreviousAction
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 RightJoystickPressedWithPreviousAction
         JSR ProcessFireButtonPressed
         LDA joystickInput
@@ -5955,9 +5955,9 @@ b70EF   LDA currentGilbySpeed
 b70F6   DEC currentGilbySpeed
 b70F9   JMP AnimateGilbyMovement
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; LeftJoystickPressedWithPreviousAction
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 LeftJoystickPressedWithPreviousAction
         LDA joystickInput
         AND #$08
@@ -5992,9 +5992,9 @@ b713A   INC currentGilbySpeed
 gilbyIsLanding   .BYTE $00
 
 
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 ; DecelerateGilbyAndPossiblySetUpToLand
-;---------------------------------------------------------------------------------
+;------------------------------------------------------------------
 b7141   RTS
 
 DecelerateGilbyAndPossiblySetUpToLand
