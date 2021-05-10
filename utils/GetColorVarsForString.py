@@ -40,12 +40,11 @@ colormap = {
     }
 
 s = """
-hiScoreColorSequence    .BYTE $0B,$0B,$0B,$0B,$0C,$0C,$0C,$0C
-                        .BYTE $0F,$0F,$0F,$0F,$01,$01,$01,$01
-hiScoreColorSequence2   .BYTE $02,$02,$08,$08,$08,$07,$07,$07
-                        .BYTE $05,$05,$05,$0E,$0E,$0E,$07,$07
+energyLabelColors           .BYTE $01,$06,$02,$04,$05,$03,$07,$01
+                            .BYTE $00,$06,$02,$04,$05,$03,$07,$01
+                            .BYTE $06
 """
-ls = re.split("([, \n])", s)
+ls = re.split("([, #\n])", s)
 
 r = [colormap[c]  if c in colormap else c for c in ls]
 print(''.join(r))

@@ -390,9 +390,8 @@ titleScreenStarfieldAnimationSeedArray .BYTE $06,$01,$03,$02,$01,$01,$01,$01
                                        .BYTE $02,$03,$02,$01,$06,$01,$01,$01
                                        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
                                        .BYTE $01,$01
-gilbyColorsArray                       .BYTE $07,$05,$0E,$00,$02,$08
-starFieldOffset                        .BYTE $04
-                                       .BYTE $01,$0F,$0C,$0B
+gilbyColorsArray                       .BYTE YELLOW,GREEN,LTBLUE,BLACK,RED,ORANGE
+starFieldOffset                        .BYTE $04,$01,$0F,$0C,$0B
 
 ;------------------------------------------------------------------
 ; TitleScreenMutateStarfieldAnimationData
@@ -423,21 +422,21 @@ DrawStripesBehindTitle
         LDX #$28
         LDA #$00
         STA shouldUpdateTitleScreenColors
-b0A78   LDA #$02
+b0A78   LDA #RED
         STA COLOR_RAM + $0077,X
-        LDA #$08
+        LDA #ORANGE
         STA COLOR_RAM + $009F,X
-        LDA #$07
+        LDA #YELLOW
         STA COLOR_RAM + $00C7,X
-        LDA #$05
+        LDA #GREEN
         STA COLOR_RAM + $00EF,X
-        LDA #$0E
+        LDA #LTBLUE
         STA COLOR_RAM + $0117,X
-        LDA #$04
+        LDA #PURPLE
         STA COLOR_RAM + $013F,X
-        LDA #$06
+        LDA #BLUE
         STA COLOR_RAM + $0167,X
-        LDA #$00; Stripe character
+        LDA #$00 ; Stripe character
         STA SCREEN_RAM + $0077,X
         STA SCREEN_RAM + $009F,X
         STA SCREEN_RAM + $00C7,X
@@ -667,7 +666,7 @@ b0CE8   LDA currentTitleScreenGilbySpriteValue,X
         AND #$3F
         STA SCREEN_RAM + $031F,X
 
-        LDA #$0C
+        LDA #GRAY2
         STA COLOR_RAM + $01DF,X
         STA COLOR_RAM + $022F,X
         STA COLOR_RAM + $027F,X
@@ -2189,28 +2188,29 @@ controlPanelData =*-$01
                    .BYTE $20,$AE,$B0,$AF,$B1,$30,$30,$30
                    .BYTE $30,$30,$30,$30,$20,$20,$B2,$B4
                    .BYTE $30,$30,$20,$9B,$9D,$20,$99,$20
-                   .BYTE $20,$20,$20,$20,$20,$20,$20
-controlPanelColors .BYTE $20,$09,$09,$00,$01,$01,$01,$01
-                   .BYTE $00,$00,$01,$01,$01,$01,$01,$01
-                   .BYTE $01,$01,$01,$01,$01,$00,$00,$01
-                   .BYTE $01,$01,$01,$00,$07,$07,$00,$01
-                   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-                   .BYTE $01,$09,$09,$00,$02,$07,$07,$05
-                   .BYTE $05,$07,$07,$02,$00,$00,$00,$00
-                   .BYTE $00,$00,$00,$01,$01,$01,$01,$00
-                   .BYTE $00,$00,$00,$00,$07,$07,$00,$07
-                   .BYTE $07,$04,$04,$0E,$0E,$08,$08,$0A
-                   .BYTE $0A,$06,$06,$00,$02,$07,$07,$05
-                   .BYTE $05,$07,$07,$02,$00,$00,$02,$02
-                   .BYTE $08,$08,$07,$07,$05,$05,$0E,$0E
-                   .BYTE $04,$04,$06,$06,$07,$07,$00,$07
-                   .BYTE $07,$04,$04,$0E,$0E,$08,$08,$0A
-                   .BYTE $0A,$06,$06,$00,$01,$01,$01,$01
-                   .BYTE $00,$00,$01,$01,$01,$01,$01,$01
-                   .BYTE $01,$01,$01,$01,$01,$00,$00,$01
-                   .BYTE $01,$01,$01,$00,$07,$07,$00,$01
-                   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-                   .BYTE $01
+                   .BYTE $20,$20,$20,$20,$20,$20,$20,$20
+controlPanelColors .BYTE BROWN,BROWN,BLACK,WHITE,WHITE,WHITE,WHITE
+                   .BYTE BLACK,BLACK,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE
+                   .BYTE WHITE,WHITE,WHITE,WHITE,WHITE,BLACK,BLACK,WHITE
+                   .BYTE WHITE,WHITE,WHITE,BLACK,YELLOW,YELLOW,BLACK,WHITE
+                   .BYTE WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE
+                   .BYTE WHITE,BROWN,BROWN,BLACK,RED,YELLOW,YELLOW,GREEN
+                   .BYTE GREEN,YELLOW,YELLOW,RED,BLACK,BLACK,BLACK,BLACK
+                   .BYTE BLACK,BLACK,BLACK,WHITE,WHITE,WHITE,WHITE,BLACK
+                   .BYTE BLACK,BLACK,BLACK,BLACK,YELLOW,YELLOW,BLACK,YELLOW
+                   .BYTE YELLOW,PURPLE,PURPLE,LTBLUE,LTBLUE,ORANGE,ORANGE,LTRED
+                   .BYTE LTRED,BLUE,BLUE,BLACK,RED,YELLOW,YELLOW,GREEN
+                   .BYTE GREEN,YELLOW,YELLOW,RED,BLACK,BLACK,RED,RED
+                   .BYTE ORANGE,ORANGE,YELLOW,YELLOW,GREEN,GREEN,LTBLUE,LTBLUE
+                   .BYTE PURPLE,PURPLE,BLUE,BLUE,YELLOW,YELLOW,BLACK,YELLOW
+                   .BYTE YELLOW,PURPLE,PURPLE,LTBLUE,LTBLUE,ORANGE,ORANGE,LTRED
+                   .BYTE LTRED,BLUE,BLUE,BLACK,WHITE,WHITE,WHITE,WHITE
+                   .BYTE BLACK,BLACK,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE
+                   .BYTE WHITE,WHITE,WHITE,WHITE,WHITE,BLACK,BLACK,WHITE
+                   .BYTE WHITE,WHITE,WHITE,BLACK,YELLOW,YELLOW,BLACK,WHITE
+                   .BYTE WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE,WHITE
+                   .BYTE WHITE
+
 
 ; This is the hiptr (e.g. $9200, $9000) array into some planet data.
 somePlanetDataHiPtrArray              .BYTE $92,$90,$94,$96,$98
@@ -2248,8 +2248,8 @@ b5208   LDA #$ED
         STA upperPlanetAttackShipSpritesLoadedFromBackingData - $01,X
         LDA #$F0
         STA upperPlanetAttackShipSpriteAnimationEnd - $01,X
-        LDA f5270,X
-        STA f9FF7,X
+        LDA dataToResetOnPlanet,X
+        STA pieceOfPlanetData,X
         DEX
         BNE b5208
 
@@ -2288,16 +2288,16 @@ b523C   STA SCREEN_RAM + $0365,X
         STA SCREEN_RAM + $03DD,Y
         RTS
 
-        .BYTE $02,$02,$02,$03,$04,$05,$06,$07
-        .BYTE $08,$30,$30,$30,$20,$18,$10,$0C
-        .BYTE $0A,$06,$04,$02
-f5270   .BYTE $01,$00,$00,$01,$01,$00,$04,$20
-        .BYTE $00
-shouldResetPlanetEntropy   .BYTE $00,$08,$08
-unusedVariable1   .BYTE $00
-unusedVariable3   .BYTE $00
-controlPanelIsGrey   .BYTE $01
-planetProgressPointersOffsets   .BYTE $01,$03,$05,$07,$09
+                              .BYTE $02,$02,$02,$03,$04,$05,$06,$07
+                              .BYTE $08,$30,$30,$30,$20,$18,$10,$0C
+                              .BYTE $0A,$06,$04,$02
+dataToResetOnPlanet           .BYTE $01,$00,$00,$01,$01,$00,$04,$20
+                              .BYTE $00
+shouldResetPlanetEntropy      .BYTE $00,$08,$08
+unusedVariable1               .BYTE $00
+unusedVariable3               .BYTE $00
+controlPanelIsGrey            .BYTE $01
+planetProgressPointersOffsets .BYTE $01,$03,$05,$07,$09
 
 ;------------------------------------------------------------------
 ; UpdateControlPanelColors
@@ -2315,7 +2315,7 @@ RestoreControlPanelColors
         BEQ b5290
 
         LDX #$A0
-b5298   LDA controlPanelColors,X
+b5298   LDA controlPanelColors - $01,X
         STA COLOR_RAM + $0347,X
         DEX
         BNE b5298
@@ -2332,7 +2332,7 @@ b52A7   LDA controlPanelIsGrey
 
 ResetControlPanelToGrey
         LDX #$A0
-        LDA #$0B ; Gray
+        LDA #GRAY1
 b52B6   STA COLOR_RAM + $0347,X
         DEX
         BNE b52B6
@@ -2560,9 +2560,9 @@ b540B   STA COLOR_RAM + $03C2,Y
         BEQ GilbyDiedBecauseEnergyDepleted
 b542B   RTS
 
-energyLabelColors           .BYTE $01,$06,$02,$04,$05,$03,$07,$01
-                            .BYTE $00,$06,$02,$04,$05,$03,$07,$01
-                            .BYTE $06
+energyLabelColors           .BYTE WHITE,BLUE,RED,PURPLE,GREEN,CYAN,YELLOW,WHITE
+                            .BYTE BLACK,BLUE,RED,PURPLE,GREEN,CYAN,YELLOW,WHITE
+                            .BYTE BLUE
 updateEnergyStorageInterval .BYTE $01
 
 ;------------------------------------------------------------------
@@ -3136,12 +3136,11 @@ b5807   LDA #$FC
 
 b5833   RTS
 
-mapPlanetEntropyToColor   .BYTE WHITE,YELLOW,CYAN,GREEN,PURPLE
-
-explosionXPosOffSet   .BYTE $02,$06,$00
-explosionXPosOffset1   .BYTE $50,$A0,$40
-explosionSprite   .BYTE $FE
-gilbyExplosionColorIndex   .BYTE $08
+mapPlanetEntropyToColor  .BYTE WHITE,YELLOW,CYAN,GREEN,PURPLE
+explosionXPosOffSet      .BYTE $02,$06,$00
+explosionXPosOffset1     .BYTE $50,$A0,$40
+explosionSprite          .BYTE $FE
+gilbyExplosionColorIndex .BYTE $08
 ;------------------------------------------------------------------
 ; ProcessGilbyExplosion
 ;------------------------------------------------------------------
@@ -3431,7 +3430,7 @@ b5A98   LDA #$20
         STA SCREEN_RAM + $0100,X
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $0248,X
-        LDA #$01
+        LDA #WHITE
         STA COLOR_RAM + $0000,X
         STA COLOR_RAM + $0100,X
         STA COLOR_RAM + $0200,X
@@ -3562,7 +3561,7 @@ levelEntrySound        .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
 UpdateDisplayedScoringRate
         LDA #$23
         STA SCREEN_RAM + $0387
-        LDA #$01
+        LDA #WHITE
         STA COLOR_RAM + $0387
         LDA currentGilbySpeed
         BPL b5E14
@@ -3819,7 +3818,7 @@ DrawLowerPlanetWhileInactive
 b604F   LDA textForInactiveLowerPlanet - $01,X
         AND #$3F
         STA SCREEN_RAM + $02F7,X
-        LDA #$01
+        LDA #WHITE
         STA COLOR_RAM + $02F7,X
         DEX
         BNE b604F
@@ -3912,7 +3911,7 @@ b6132   LDY currentLevelInTopPlanets,X
 b6148   LDA txtGilbiesLeftBonusBounty,X
         AND #$3F
         STA SCREEN_RAM + $02F8,X
-        LDA #$07
+        LDA #YELLOW
         STA COLOR_RAM + $02F8,X
         DEX
         BPL b6148
@@ -3994,7 +3993,7 @@ ShowProgressScreen
 b61FE   LDA txtProgressStatusLine1 - $01,X
         AND #$3F
         STA SCREEN_RAM + $0257,X
-        LDA #$01
+        LDA #WHITE
         STA COLOR_RAM + $0257,X
         DEX
         BNE b61FE
@@ -4015,7 +4014,7 @@ b6217   DEY
 b6223   LDA txtProgressStatusLine2,X
         AND #$3F
         STA SCREEN_RAM + $02A7,X
-        LDA #$07
+        LDA #YELLOW
         STA COLOR_RAM + $02A7,X
         DEX
         BNE b6223
@@ -4219,10 +4218,10 @@ b63FA   LDA txtGameOver,X
         LDA txtFinalScoreValue,X
         AND #$3F
         STA SCREEN_RAM + $015D,X
-        LDA #$01
+        LDA #WHITE
         STA COLOR_RAM + $00BD,X
         STA COLOR_RAM + $010D,X
-        LDA #$04
+        LDA #PURPLE
         STA COLOR_RAM + $015D,X
         DEX
         BPL b63FA
@@ -4329,7 +4328,7 @@ b64F6   TAX
 b64F7   LDA txtReasonGilbyDied,X
         AND #$3F
         STA SCREEN_RAM + $02B7,Y
-        LDA #$02
+        LDA #RED
         STA COLOR_RAM + $02B7,Y
         INY
         INX
@@ -4401,7 +4400,7 @@ b6595   LDA #$C1
 b65A5   LDA txtBonus10000,X
         AND #$3F
         STA SCREEN_RAM + $019F,X
-        LDA #$07
+        LDA #YELLOW
         STA COLOR_RAM + $019F,X
         DEX
         BPL b65A5
@@ -4798,7 +4797,7 @@ SetupSpritesAndSound
 
 b68D2   LDA #$00
         STA SCREEN_RAM + $01B7,X
-        LDA #$04
+        LDA #PURPLE
         STA COLOR_RAM + $01B7,X
         DEX
         BNE b68D2
@@ -7085,7 +7084,7 @@ DrawControlPanel
         LDX #$A0
 b7850   LDA controlPanelData,X
         STA SCREEN_RAM + $0347,X
-        LDA controlPanelColors,X
+        LDA controlPanelColors - $01,X
         STA COLOR_RAM + $0347,X
         DEX
         BNE b7850
@@ -8037,7 +8036,7 @@ bCA9F   LDA #$20
         STA SCREEN_RAM + $0100,X
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $0247,X
-        LDA #$01
+        LDA #WHITE
         STA COLOR_RAM + $0000,X
         STA COLOR_RAM + $0100,X
         STA COLOR_RAM + $0200,X
@@ -8380,7 +8379,7 @@ bCD19   LDA (tempLoPtr1),Y
         LDY #$06
 bCD28   LDA (tempLoPtr1),Y
         STA SCREEN_RAM + $00E7,Y
-        LDA #$04
+        LDA #PURPLE
         STA COLOR_RAM + $00E7,Y
         DEY
         BPL bCD28
