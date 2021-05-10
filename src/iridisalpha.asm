@@ -947,9 +947,9 @@ txtHard   .TEXT "UGH!"
 ; PutRandomByteInAccumulator
 ;------------------------------------------------------------------
 PutRandomByteInAccumulator
-a16A5   =*+$01
+srcOfRandomBytes   =*+$01
         LDA sourceOfRandomBytes
-        INC a16A5
+        INC srcOfRandomBytes
         RTS
 
 
@@ -1116,9 +1116,11 @@ yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
 
 a0000 = $0000
 attackWaveDataLoPtrArray = *-$02
-        .BYTE <aA078,<aA078,<aA078,<aA078,<a0000,<a0000,<aA078,<aA078,<aA050,<aA050
+        .BYTE <attackWaveData1,<attackWaveData1,<attackWaveData1,<attackWaveData1
+        .BYTE <a0000,<a0000,<attackWaveData1,<attackWaveData1,<attackWaveData2,<attackWaveData2
 attackWaveDataHiPtrArray =*-$02
-        .BYTE >aA078,>aA078,>aA078,>aA078,>a0000,>a0000,>aA078,>aA078,>aA050,>aA050
+        .BYTE >attackWaveData1,>attackWaveData1,>attackWaveData1,>attackWaveData1
+        .BYTE >a0000,>a0000,>attackWaveData1,>attackWaveData1,>attackWaveData2,>attackWaveData2
 
 
 ; This is level data, one entry for each level per planet
@@ -1141,7 +1143,7 @@ shipsThatHaveBeenHitByABullet                                .BYTE $00,$00,$00,$
 shipsThatHaveCollidedWithGilby       .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00,$00,$00
 previousAttaWaveHiPtrTempStorage     .BYTE $04
-a48D6                                .BYTE $00
+nextShipOffset                                .BYTE $00
 soundEffectInProgress                .BYTE $00,$01,$00,$01,$00,$00,$01,$00
                                      .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
                                      .BYTE $02,$80
@@ -1829,7 +1831,7 @@ GetDefaultWaveData
         PLA
         RTS
 
-a4E17               .BYTE $00
+positionRelativeToGilby               .BYTE $00
 updatingWaveData    .BYTE $00
 currentTopPlanet    .BYTE $01
 currentBottomPlanet .BYTE $01
@@ -1886,7 +1888,7 @@ b4E73   LDY #$17
         BEQ b4EC7
         CLC
         ADC gilbyVerticalPosition
-        STA a4E17
+        STA positionRelativeToGilby
         LDA orderForUpdatingPositionOfAttackShips,X
         TAX
         LDA upperPlanetYPosFrameRateForAttackShips,X
@@ -1896,15 +1898,15 @@ b4E73   LDY #$17
         CMP #$23
         BNE b4E96
         LDA #$77
-        STA a4E17
+        STA positionRelativeToGilby
 b4E96   TXA
         AND #$04
         BEQ b4EA6
         LDA #$FF
         SEC
-        SBC a4E17
+        SBC positionRelativeToGilby
         ADC #$07
-        STA a4E17
+        STA positionRelativeToGilby
 b4EA6   LDA indexIntoUpperPlanetAttackShipsYPosArray,X
         TAX
         LDA upperPlanetAttackShipsYPosArray + $01,X
@@ -1912,7 +1914,7 @@ b4EA6   LDA indexIntoUpperPlanetAttackShipsYPosArray,X
         LDA indexIntoYPosMovementForUpperPlanetAttackShips,X
         TAX
         PLA
-        CMP a4E17
+        CMP positionRelativeToGilby
         BEQ b4EC3
         BMI b4EC0
         DEC yPosMovementForUpperPlanetAttackShips,X
@@ -1925,7 +1927,7 @@ b4EC7   LDY #$16
         BEQ b4F05
         CLC
         ADC #$58
-        STA a4E17
+        STA positionRelativeToGilby
         LDA orderForUpdatingPositionOfAttackShips,X
         TAX
         LDA upperPlanetXPosFrameRateForAttackShip,X
@@ -1943,7 +1945,7 @@ b4EE9   LDA upperPlanetAttackShipsXPosArray + $01,X
         LDA indexIntoYPosMovementForUpperPlanetAttackShips,X
         TAX
         PLA
-        CMP a4E17
+        CMP positionRelativeToGilby
         BMI b4EFE
         DEC xPosMovementForUpperPlanetAttackShip,X
         DEC xPosMovementForUpperPlanetAttackShip,X
@@ -2022,7 +2024,7 @@ b4F74   LDA upperPlanetAttackShipsXPosArray + $01,Y
         LDA upperPlanetAttackShipsYPosArray + $01,Y
         STA currentAttackShipYPos
         LDA #$00
-        STA a48D6
+        STA nextShipOffset
         JSR UpdateAttackShipsMSBXPosition
 b4F89   LDA upperPlanetAttackShipsMSBXPosArray + $02,Y
         BMI b4F56
@@ -2035,7 +2037,7 @@ b4F92   LDA upperPlanetAttackShipsXPosArray + $02,Y
         LDA upperPlanetAttackShipsYPosArray + $02,Y
         STA currentAttackShipYPos
         LDA #$01
-        STA a48D6
+        STA nextShipOffset
         ; Falls through
 
 ;------------------------------------------------------------------
@@ -2098,7 +2100,7 @@ b4FE4   LDA indexIntoAttackWaveDataHiPtrArray,X
         TYA
         PHA
         CLC
-        ADC a48D6
+        ADC nextShipOffset
         TAY
         LDX tempLoPtr3
         TYA
@@ -3173,7 +3175,8 @@ b5847   LDA #$F0
         STA explosionXPosOffset1 + $02
 
         LDX #$00
-b5860   LDA explosionSprite
+ExplosionLoop
+        LDA explosionSprite
         STA upperPlanetGilbyBulletSpriteValue,X
         STA lowerPlanetGilbyBulletSpriteValue,X
         LDY gilbyExplosionColorIndex
@@ -3200,7 +3203,7 @@ b5860   LDA explosionSprite
         LDA gilbyBulletMSBXPosOffset,X
         STA upperPlanetGilbyBulletMSBXPosValue,X
         STA lowerPlanetAttackShip2MSBXPosValue,X
-b58A6   JMP j58B5
+b58A6   JMP CheckAndLoop
 
 b58A9   LDA #$B0
         SEC
@@ -3208,10 +3211,11 @@ b58A9   LDA #$B0
         STA upperPlanetGilbyBulletXPos,X
         STA lowerPlanetAttackShip2XPos,X
 
-j58B5
+CheckAndLoop
         INX
         CPX #$06
-        BNE b5860
+        BNE ExplosionLoop
+
         INC explosionSprite
         LDA explosionSprite
         CMP #$FF
@@ -6283,13 +6287,13 @@ b72F9   LDA planetPtrLo
         LDY #$00
         RTS
 
-a7317   =*+$01
+randomIntToIncrement   =*+$01
 ;------------------------------------------------------------------
 ; PutRandomByteInAccumulatorRegister
 ;------------------------------------------------------------------
 PutRandomByteInAccumulatorRegister
-        LDA a9ABB
-        INC a7317
+        LDA randomPlanetData
+        INC randomIntToIncrement
         RTS
 
 ;------------------------------------------------------------------
@@ -8363,7 +8367,7 @@ bCCB7   LDA (tempLoPtr1),Y
         PHA
         LDA tempHiPtr1
         PHA
-        DEC aCD4B
+        DEC hiScoreScreenUpdateRate
         JSR JumpToDrawProgressDisplayScreen
         PLA
         STA tempHiPtr1
@@ -8405,10 +8409,10 @@ bCD3B   LDA lastKeyPressed
 bCD41   LDA lastKeyPressed
         CMP #$3C
         BEQ bCD41
-        INC aCD4B
+        INC hiScoreScreenUpdateRate
         RTS
 
-aCD4B   .BYTE $01
+hiScoreScreenUpdateRate   .BYTE $01
 ;------------------------------------------------------------------
 ; HiScoreScreeInterruptHandler
 ; Paints the color effects on the hi-score screen
@@ -8429,7 +8433,7 @@ bCD59   LDA #$01
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         LDA #$F0
         STA $D012    ;Raster Position
-        LDA aCD4B
+        LDA hiScoreScreenUpdateRate
         BNE bCD6E
         JMP $EA31
 

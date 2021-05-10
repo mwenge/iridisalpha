@@ -45,7 +45,7 @@ DisplayEnterBonusRoundScreen
         ORA #$08
         STA $D016    ;VIC Control Register 2
         LDA #$00
-        STA aABE5
+        STA backgroundColorIndex
         STA $D020    ;Border Color
         LDA #$0F
         STA $D405    ;Voice 1: Attack / Decay Cycle Control
@@ -57,7 +57,7 @@ DisplayEnterBonusRoundScreen
         STA $D414    ;Voice 3: Sustain / Release Cycle Control
         LDX #$0E
 bAB49   LDA #$00
-        STA fAC3E,X
+        STA fAC3F - $01,X
         DEX 
         BNE bAB49
         STA aAC97
@@ -84,7 +84,7 @@ bAB77   LDA aAD23
 
 txtStandByEnterBonusPhase   =*-$01
         .TEXT "STAND BY TO ENTER BONUS PHASE, HOTSHOT.."
-fABA7   .BYTE $01,$01,$01,$01,$02,$02,$02,$02
+bpRasterPositionArray   .BYTE $01,$01,$01,$01,$02,$02,$02,$02
         .BYTE $03,$03,$03,$03,$04,$04,$04,$04
         .BYTE $05,$05,$05,$05,$06,$06,$06,$06
         .BYTE $07,$07,$07,$07,$07,$07,$00
@@ -92,7 +92,7 @@ enterBPBackgroundColors   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00
-aABE5   .BYTE $00
+backgroundColorIndex   .BYTE $00
 ;-------------------------------------------------------
 ; EnterBonusPhaseInterruptHandler   
 ;-------------------------------------------------------
@@ -111,10 +111,10 @@ bABF3   LDY #$03
 bABF5   DEY 
         BNE bABF5
 
-        LDY aABE5
+        LDY backgroundColorIndex
         LDA enterBPBackgroundColors,Y
         STA $D021    ;Background Color 0
-        LDA fABA7,Y
+        LDA bpRasterPositionArray,Y
         BEQ bAC1E
         CLC 
         ADC $D012    ;Raster Position
@@ -122,7 +122,7 @@ bABF5   DEY
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        INC aABE5
+        INC backgroundColorIndex
         PLA 
         TAY 
         PLA 
@@ -136,7 +136,7 @@ bAC1E   JSR InitializeEnterBPData
         STA $D012    ;Raster Position
         LDA #$00
         STA $D021    ;Background Color 0
-        STA aABE5
+        STA backgroundColorIndex
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
@@ -145,7 +145,7 @@ bAC1E   JSR InitializeEnterBPData
         PLA 
         TAX 
         PLA 
-fAC3E   RTI 
+        RTI 
 
 fAC3F   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
