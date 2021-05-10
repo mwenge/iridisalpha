@@ -631,38 +631,49 @@ b0BF0   INX
 
 b0C0E   RTS
 
+.enc "petscii"  ;define an ascii->petscii encoding
+        .cdef "  ", $20  ;characters
+        .cdef ",,", $2c  ;characters
+        .cdef "--", $ad  ;characters
+        .cdef "..", $ae  ;characters
+        .cdef "AZ", $c1
+        .cdef "az", $41
+        .cdef "11", $31
+.enc "none"
+
 titleScreenGilbiesMSBXPosArray     .BYTE $01,$02,$04,$08,$10,$20,$40
 titleScreenGilbiesMSBXPosOffset    .TEXT $FE,$FD,$FB,$F7,$EF,$DF,$BF
-                                    ; IRIDIS ALPHA
-currentTitleScreenGilbySpriteValue .TEXT $C1,$C9,$D2,$C9,$C4,$C9,$D3, " ",$C1,$CC,$D0,$C8,$C1
-                                   .TEXT ".....  HARD AND FAST ZAPPIN"
-titleScreenTextLine2               .TEXT "GPRESS FIRE TO BEGIN PLAY.. ONCE STARTED"
-                                    ; F1 FOR PAUSE
-titleScreenTextLine3               .TEXT ",",$C6, "1 ",$C6,$CF,$D2, " ",$D0,$C1,$D5,$D3,$C5, " "
-                                    ; MODE. Q TO QU
-                                   .TEXT $CD,$CF,$C4,$C5, "     ",$D1, " ",$D4,$CF, " ",$D1,$D5
-                                    ; IT THE
-                                   .TEXT $C9,$D4, " ",$D4,$C8,$C5, " GAM"
-titleScreenTextLine4               .TEXT "ECREATED BY JEFF MINTER...SPACE EASY/HAR"
-titleScreenTextLine5               .TEXT "DLAST GILBY HIT 0000000; MODE IS NOW EASY"
+currentTitleScreenGilbySpriteValue .TEXT $C1
+
+.enc "petscii" 
+titleScreenTextLine1               .TEXT "IRIDIS ALPHA"
+.enc "none"
+                                   .TEXT ".....  HARD AND FAST ZAPPING"
+titleScreenTextLine2               .TEXT "PRESS FIRE TO BEGIN PLAY.. ONCE STARTED,"
+.enc "petscii" 
+titleScreenTextLine3               .TEXT "F1 FOR PAUSE MODE     Q TO QUIT THE "
+.enc "none"
+                                   .TEXT "GAME"
+titleScreenTextLine4               .TEXT "CREATED BY JEFF MINTER...SPACE EASY/HARD"
+titleScreenTextLine5               .TEXT "LAST GILBY HIT 0000000; MODE IS NOW EASY"
 ;------------------------------------------------------------------
 ; DrawTitleScreenText
 ;------------------------------------------------------------------
 DrawTitleScreenText
         LDX #$28
-b0CE8   LDA currentTitleScreenGilbySpriteValue,X
+b0CE8   LDA titleScreenTextLine1 - $01,X
         AND #$3F
         STA SCREEN_RAM + $01DF,X
-        LDA titleScreenTextLine2,X
+        LDA titleScreenTextLine2 - $01,X
         AND #$3F
         STA SCREEN_RAM + $022F,X
-        LDA titleScreenTextLine3,X
+        LDA titleScreenTextLine3 - $01,X
         AND #$3F
         STA SCREEN_RAM + $027F,X
-        LDA titleScreenTextLine4,X
+        LDA titleScreenTextLine4 - $01,X
         AND #$3F
         STA SCREEN_RAM + $02CF,X
-        LDA titleScreenTextLine5,X
+        LDA titleScreenTextLine5 - $01,X
         AND #$3F
         STA SCREEN_RAM + $031F,X
 
@@ -1112,51 +1123,51 @@ attackWaveDataHiPtrArray =*-$02
 
 ; This is level data, one entry for each level per planet
 indexForYPosMovementForUpperPlanetAttackShips = *-$02
-                                  .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-someKindOfRateLimitingForAttackWaves                             .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-                                  .BYTE $00,$00
-updateRateForAttackShips                             .BYTE $00,$00,$02,$02,$02,$02,$00,$00
-                                  .BYTE $02,$02
-f48A1                             .BYTE $02,$02,$00,$00,$00,$00,$FF,$FF
-                                  .BYTE $00,$00
+                                     .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+someKindOfRateLimitingForAttackWaves .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                     .BYTE $00,$00
+updateRateForAttackShips             .BYTE $00,$00,$02,$02,$02,$02,$00,$00
+                                     .BYTE $02,$02
+anotherUpdateRateForAttackShips      .BYTE $02,$02,$00,$00,$00,$00,$FF,$FF
+                                     .BYTE $00,$00
 
-upperPlanetAttackShipYPosUpdated  .BYTE $00,$00,$00,$00,$00,$00,$00
-f48B2                             .BYTE $00,$00,$00
+upperPlanetAttackShipYPosUpdated     .BYTE $00,$00,$00,$00,$00,$00,$00
+                                     .BYTE $00,$00,$00
 
-upperPlanetAttackShipYPosUpdated2 .BYTE $00,$00,$00,$00,$00,$00,$00
-f48BC                             .BYTE $00,$00,$00
-f48BF                             .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-                                  .BYTE $00,$00
-shipsThatHaveCollidedWithGilby    .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-                                  .BYTE $00,$00,$00,$00
-a48D5                             .BYTE $04
-a48D6                             .BYTE $00
-soundEffectInProgress             .BYTE $00,$01,$00,$01,$00,$00,$01,$00
-                                  .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
-                                  .BYTE $02,$80
-newPlanetSound                    .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
-                                  .BYTE $13,$00,$00,$00,$00,$0D,$00,$00
-                                  .BYTE $00,$00,$14,$00,$00,$00,$10,$08
-                                  .BYTE $00,$00,$00,$10,$0F,$00,$00,$00
-                                  .BYTE $11,$0B,$00,$00,$00,$11,$12,$02
-                                  .BYTE $0F,$02,$02,$0F,$00,$08,$02,$02
-                                  .BYTE $08,$01,$00,$81,$08,$00,$00,$00
-                                  .BYTE $00,$81,$0B,$00,$00,$00,$28,$08
-                                  .BYTE $00,$00,$00,$80,$12,$02,$08,$02
-                                  .BYTE $03,$08,$01,$00,$81,$05,$00,$00
-                                  .BYTE $00,$00,$21,$12,$00,$00,$00,$20
-                                  .BYTE $0F,$02,$08,$02,$03,$08,$00,$0F
-                                  .BYTE $02,$04,$0F,$01,$00,$81,$08,$00
-                                  .BYTE $00,$00,$00,$80,$0B,$00,$00,$00
-                                  .BYTE $80,$12,$00,$00,$80,$CA,$7B,$00
-shipCollidedWithGilbySound .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
-                                  .BYTE $06,$00,$00,$00,$40,$01,$00,$00
-                                  .BYTE $00,$81,$04,$02,$01,$01,$0C,$01
-                                  .BYTE $01,$00,$81,$04,$00,$00,$00,$00
-                                  .BYTE $20,$01,$00,$00,$00,$11,$04,$02
-                                  .BYTE $01,$02,$04,$01,$01,$00,$81,$08
-                                  .BYTE $00,$00,$00,$00,$10,$04,$00,$00
-                                  .BYTE $80,$CA,$7B,$00
+upperPlanetAttackShipYPosUpdated2    .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                     .BYTE $00,$00
+shipsThatHaveBeenHitByABullet                                .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                     .BYTE $00,$00
+shipsThatHaveCollidedWithGilby       .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                                     .BYTE $00,$00,$00,$00
+previousAttaWaveHiPtrTempStorage     .BYTE $04
+a48D6                                .BYTE $00
+soundEffectInProgress                .BYTE $00,$01,$00,$01,$00,$00,$01,$00
+                                     .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
+                                     .BYTE $02,$80
+newPlanetSound                       .BYTE $00,$00,$0F,$0C,$00,$00,$00,$0F
+                                     .BYTE $13,$00,$00,$00,$00,$0D,$00,$00
+                                     .BYTE $00,$00,$14,$00,$00,$00,$10,$08
+                                     .BYTE $00,$00,$00,$10,$0F,$00,$00,$00
+                                     .BYTE $11,$0B,$00,$00,$00,$11,$12,$02
+                                     .BYTE $0F,$02,$02,$0F,$00,$08,$02,$02
+                                     .BYTE $08,$01,$00,$81,$08,$00,$00,$00
+                                     .BYTE $00,$81,$0B,$00,$00,$00,$28,$08
+                                     .BYTE $00,$00,$00,$80,$12,$02,$08,$02
+                                     .BYTE $03,$08,$01,$00,$81,$05,$00,$00
+                                     .BYTE $00,$00,$21,$12,$00,$00,$00,$20
+                                     .BYTE $0F,$02,$08,$02,$03,$08,$00,$0F
+                                     .BYTE $02,$04,$0F,$01,$00,$81,$08,$00
+                                     .BYTE $00,$00,$00,$80,$0B,$00,$00,$00
+                                     .BYTE $80,$12,$00,$00,$80,$CA,$7B,$00
+shipCollidedWithGilbySound           .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
+                                     .BYTE $06,$00,$00,$00,$40,$01,$00,$00
+                                     .BYTE $00,$81,$04,$02,$01,$01,$0C,$01
+                                     .BYTE $01,$00,$81,$04,$00,$00,$00,$00
+                                     .BYTE $20,$01,$00,$00,$00,$11,$04,$02
+                                     .BYTE $01,$02,$04,$01,$01,$00,$81,$08
+                                     .BYTE $00,$00,$00,$00,$10,$04,$00,$00
+                                     .BYTE $80,$CA,$7B,$00
 
 ;------------------------------------------------------------------
 ; Put00orFFinAccumulator
@@ -1270,7 +1281,7 @@ UpdateBackingDataPtr
         LDA #$00
         STA updatingWaveData
         STA shipsThatHaveCollidedWithGilby,X
-        STY a48D5
+        STY previousAttaWaveHiPtrTempStorage
         ; Falls through
 
 ;------------------------------------------------------------------
@@ -1284,7 +1295,7 @@ UpdateWaveDataFromBackingStore
 
         LDY #$06
         LDA (attackWaveDataLoPtr),Y
-        STA f48A1,X
+        STA anotherUpdateRateForAttackShips,X
 
         LDY #$0B
         LDA (attackWaveDataLoPtr),Y
@@ -1405,7 +1416,7 @@ b4B14   LDA #$01
 
         ; Set the initial Y Position of the new attack ships.
         ; This is random.
-b4B1C   LDY a48D5
+b4B1C   LDY previousAttaWaveHiPtrTempStorage
         LDA indexForWaveData,X
         TAX
         LDA attackShipsMSBXPosOffsetArray + $01,X
@@ -1514,17 +1525,17 @@ ProcessAttackWaves
         ; Returns
 
 
-b4C03   LDA f48BF,X
-        BNE MoveToNewPlanet
+b4C03   LDA shipsThatHaveBeenHitByABullet,X
+        BNE UpdateScoresAfterHittingShipWithBullet
         JMP CheckForCollisionsBeforeUpdatingWaveData
         ; Returns
 
 ;---------------------------------------------------------------------------------
-; MoveToNewPlanet
+; UpdateScoresAfterHittingShipWithBullet
 ;---------------------------------------------------------------------------------
-MoveToNewPlanet
+UpdateScoresAfterHittingShipWithBullet
         LDA #$00
-        STA f48BF,X
+        STA shipsThatHaveBeenHitByABullet,X
         LDA #<newPlanetSound
         STA soundDataAE
         LDA #>newPlanetSound
@@ -1942,10 +1953,10 @@ b4F01   LDA indexForWaveData,X
 b4F05   LDY #$06
         LDA (attackWaveDataLoPtr),Y
         BEQ b4F55
-        DEC f48A1,X
+        DEC anotherUpdateRateForAttackShips,X
         BNE b4F55
         LDA (attackWaveDataLoPtr),Y
-        STA f48A1,X
+        STA anotherUpdateRateForAttackShips,X
         TXA
         PHA
         LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
@@ -2080,8 +2091,10 @@ b4FE4   LDA indexIntoAttackWaveDataHiPtrArray,X
         LDY tempVarStorage
         CMP #$00
         BEQ j501B
+
+        ; Bullet hit an attack ship
         LDA #$FF
-        STA f48BF,X
+        STA shipsThatHaveBeenHitByABullet,X
         TYA
         PHA
         CLC
@@ -7633,12 +7646,12 @@ b7D79   DEC lowerPlanetYPosFrameRateForAttackShips - $01,X
         LDA #$99
         STA lowerPlanetAttackShip2YPos,X
         LDA #$01
-        STA f48BC,X
+        STA upperPlanetAttackShipYPosUpdated2 +$07,X
         BNE b7DAF
 b7DA5   LDA #$FF
         STA lowerPlanetAttackShip2YPos,X
         LDA #$01
-        STA f48B2,X
+        STA upperPlanetAttackShipYPosUpdated + $07,X
 b7DAF   LDA #$00
         STA yPosMovementForLowerPlanetAttackShips - $01,X
 b7DB4   DEC upperPlanetXPosFrameRateForAttackShip - $01,X
@@ -7956,10 +7969,10 @@ bCA1E   LDA tempLoPtr
         DEC aFB
         BNE bCA18
         LDA #$00
-        STA aCA3B
+        STA storedLastBlastScore
         JMP ClearScreenDrawHiScoreScreenText
 
-aCA3B   .BYTE $00
+storedLastBlastScore   .BYTE $00
 ;------------------------------------------------------------------
 ; StoreLastBlastInTable
 ;------------------------------------------------------------------
@@ -8015,7 +8028,7 @@ bCA5B   LDA (tempLoPtr1),Y
 ;------------------------------------------------------------------
 StoreLastBlasScoreInTable
         LDA #$01
-        STA aCA3B
+        STA storedLastBlastScore
         LDY #$14
 bCA8F   LDA lastBlastScore,Y
         STA (tempLoPtr1),Y
@@ -8118,7 +8131,7 @@ hiScoreTableCursorPosHiPtr .BYTE $04,$04,$04,$05,$05,$05,$05,$05
 ; ClearScreenDrawHiScoreTextContinued
 ;------------------------------------------------------------------
 ClearScreenDrawHiScoreTextContinued
-        LDA aCA3B
+        LDA storedLastBlastScore
         BNE bCB60
         JMP DisplayHiScoreScreen
 
@@ -8228,7 +8241,7 @@ DisplayHiScoreScreen
         LDA #$01
         STA hasDisplayedHiScoreScreen
         LDA #$00
-        STA aCA3B
+        STA storedLastBlastScore
 
         LDX #$27
 bCC10   LDA txtHiScorLine3,X

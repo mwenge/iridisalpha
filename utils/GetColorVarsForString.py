@@ -40,9 +40,8 @@ colormap = {
     }
 
 s = """
-energyLabelColors           .BYTE $01,$06,$02,$04,$05,$03,$07,$01
-                            .BYTE $00,$06,$02,$04,$05,$03,$07,$01
-                            .BYTE $06
+dnaSpriteColor2Array            .BYTE $02,$08,$07,$05,$04,$06,$FF
+dnaSpriteColorArray             .BYTE $0B,$0C,$0F,$01,$0F,$0C,$FF
 """
 ls = re.split("([, #\n])", s)
 

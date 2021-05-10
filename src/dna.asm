@@ -16,7 +16,6 @@
 ;    May you find forgiveness for yourself and forgive others.
 ;    May you share freely, never taking more than you give.
 ;
-; (Note: I ripped this part from the SQLite licence! :) )
 ;----------------------------------------------------------------
 ; LaunchDNA
 ;----------------------------------------------------------------
@@ -28,6 +27,7 @@ LaunchDNA
         JSR DNA_SwapSpriteData
         JMP DNA_ClearScreenAndInit
 
+startofBonusPhaseSprites = $E400
 ;----------------------------------------------------------------
 ; DNA_SwapSpriteData
 ;----------------------------------------------------------------
@@ -38,12 +38,12 @@ DNA_SwapSpriteData
 
         ; $E400 is the location of the IBALL sprites
         LDX #$00
-b0D47   LDA $E400,X
+b0D47   LDA startofBonusPhaseSprites,X
         PHA 
-        LDA f3040,X
-        STA $E400,X
+        LDA beginningOfGilbySprites,X
+        STA startofBonusPhaseSprites,X
         PLA 
-        STA f3040,X
+        STA beginningOfGilbySprites,X
         DEX 
         BNE b0D47
         LDA #$36
@@ -300,8 +300,8 @@ dnaSpritesXPositionsArray       .BYTE $30,$38,$40,$48,$50,$58,$60,$68
                                 .BYTE $70,$78,$80,$88,$90,$98,$A0,$A8
                                 .BYTE $B0,$B8,$C0,$C8,$D0,$D8,$E0,$E8
                                 .BYTE $FF
-dnaSpriteColor2Array            .BYTE $02,$08,$07,$05,$04,$06,$FF
-dnaSpriteColorArray             .BYTE $0B,$0C,$0F,$01,$0F,$0C,$FF
+dnaSpriteColor2Array            .BYTE RED,ORANGE,YELLOW,GREEN,PURPLE,BLUE,END_SENTINEL
+dnaSpriteColorArray             .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,END_SENTINEL
 dnaXPosDataHeadArray            .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
                                 .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
                                 .BYTE $80,$7F,$7E,$7D,$7B,$78,$75,$71
@@ -339,10 +339,10 @@ DNA_UpdateHeadOfPreviousXPosData
         JSR DNA_PropagatePreviousXPosToTheRight
 
 b0F8A   JSR DNA_CalculateValueForHeadOfPreviousXPosData
-        DEC a0FC5
+        DEC timeToNextUpdateCounter
         BNE b0FC3
-        LDA a0FC6
-        STA a0FC5
+        LDA initialTimeToNextUpdate
+        STA timeToNextUpdateCounter
         LDX a0F7B
         LDA dnaXPosDataHeadArray,X
         STA tempVarStorage
@@ -357,7 +357,7 @@ b0FA9   LDA newHeadOfXPosData
         STA dnaSpritesPreviousXPosArray
         TXA 
         CLC 
-        ADC a0FC4
+        ADC incrementToXPosition
         TAX 
         CPX #$40
         BMI b0FC0
@@ -367,21 +367,21 @@ b0FA9   LDA newHeadOfXPosData
 b0FC0   STX a0F7B
 b0FC3   RTS 
 
-a0FC4   .BYTE $02
-a0FC5   .BYTE $01
-a0FC6   .BYTE $05
-dnaCurrentSpeed   .BYTE $01
-actualSpeed   .BYTE $01
-dnaWave1Frequency   .BYTE $11
-dnaLastRecordedKey   .BYTE $00
-f0FCB   .BYTE $10,$0F,$0E,$0D,$0C,$0B,$0A,$09
-    .BYTE $08,$07,$06,$05,$04,$03,$02,$01
-    .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-    .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-f0FEB   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-    .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-    .BYTE $01,$02,$03,$04,$05,$06,$07,$08
-    .BYTE $09,$0A,$0B,$0C,$0D,$0E,$0F,$10
+incrementToXPosition          .BYTE $02
+timeToNextUpdateCounter       .BYTE $01
+initialTimeToNextUpdate       .BYTE $05
+dnaCurrentSpeed               .BYTE $01
+actualSpeed                   .BYTE $01
+dnaWave1Frequency             .BYTE $11
+dnaLastRecordedKey            .BYTE $00
+timesToNextUpdateForFrequency .BYTE $10,$0F,$0E,$0D,$0C,$0B,$0A,$09
+                              .BYTE $08,$07,$06,$05,$04,$03,$02,$01
+                              .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+                              .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+xPosOffsetsForFrequency       .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+                              .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+                              .BYTE $01,$02,$03,$04,$05,$06,$07,$08
+                              .BYTE $09,$0A,$0B,$0C,$0D,$0E,$0F,$10
 ;----------------------------------------------------------------
 ; DNA_CheckKeyBoardInput
 ; We only act on a keypress the first time we see it. This means
@@ -442,20 +442,20 @@ DNA_DrawStuff
         LDA dnaWave1Frequency
         AND #$1F
         TAX 
-        LDA f0FCB,X
-        STA a0FC6
-        STA a0FC5
-        LDA f0FEB,X
-        STA a0FC4
+        LDA timesToNextUpdateForFrequency,X
+        STA initialTimeToNextUpdate
+        STA timeToNextUpdateCounter
+        LDA xPosOffsetsForFrequency,X
+        STA incrementToXPosition
 
         LDA dnaWave2Frequency
         AND #$1F
         TAX 
-        LDA f0FCB,X
-        STA a11CA
-        STA a11CB
-        LDA f0FEB,X
-        STA a11CC
+        LDA timesToNextUpdateForFrequency,X
+        STA initialTimeToNextUpdateForPreviousHead
+        STA timeToNextUpdateCounterForPreviousHead
+        LDA xPosOffsetsForFrequency,X
+        STA incrementToXPositionForPreviousHead
         JMP DNA_UpdateDisplayedSettings
         ; Returns
 
@@ -534,14 +534,14 @@ b10D9   TAX
 
 b10F2   CMP #$03 ; F7
         BNE b111D
-        ;F7 pressed
-        INC a1389
-        LDA a1389
+        ;F7 pressed - change colors
+        INC dnaCurrentColorScheme2
+        LDA dnaCurrentColorScheme2
         CMP #$08
         BNE b1105
 
         LDA #$00
-        STA a1389
+        STA dnaCurrentColorScheme2
 b1105   TAX 
         LDA dnaColorSchemeLoPtr,X
         STA dnaColorScheme4LoByte
@@ -559,19 +559,19 @@ b111D   CMP #$31 ; *
 
 b1124   RTS 
 
-dnaWave2Frequency   .BYTE $12
-dnaPlayerPressedExit   .BYTE $00
-dnaStarfieldSprite1Array   .BYTE $4E,$05,$66,$FD,$12,$28,$CC,$87
-        .BYTE $37,$93,$F5,$3B,$09,$9D,$A8,$7D
-        .BYTE $DD,$67,$20,$C4,$AA,$35,$02,$74
-dnaStarfielSprite2Array   .BYTE $94,$E2,$33,$38,$C6,$DF,$23,$42
-        .BYTE $71,$12,$29,$67,$7F,$EA,$A9,$34
-        .BYTE $A5,$81,$01,$4C,$29,$36,$55
-        .BYTE $98
-currentColorIBallSprite   .BYTE $00
-dnaIBallBlinkInterval   .BYTE $01
-currentMonochromIBallSprite   .BYTE $04
-dnaColorUpdateInterval   .BYTE $01
+dnaWave2Frequency           .BYTE $12
+dnaPlayerPressedExit        .BYTE $00
+dnaStarfieldSprite1Array    .BYTE $4E,$05,$66,$FD,$12,$28,$CC,$87
+                            .BYTE $37,$93,$F5,$3B,$09,$9D,$A8,$7D
+                            .BYTE $DD,$67,$20,$C4,$AA,$35,$02,$74
+dnaStarfielSprite2Array     .BYTE $94,$E2,$33,$38,$C6,$DF,$23,$42
+                            .BYTE $71,$12,$29,$67,$7F,$EA,$A9,$34
+                            .BYTE $A5,$81,$01,$4C,$29,$36,$55
+                            .BYTE $98
+currentColorIBallSprite     .BYTE $00
+dnaIBallBlinkInterval       .BYTE $01
+currentMonochromIBallSprite .BYTE $04
+dnaColorUpdateInterval      .BYTE $01
 
 ;----------------------------------------------------------------
 ; DNA_UpdateSpritePointers
@@ -582,7 +582,7 @@ DNA_UpdateSpritePointers
 
         LDA #$05
         STA dnaColorUpdateInterval
-        LDX a11C9
+        LDX indexToSpriteColor1Array
         LDA dnaSpriteColor1Array,X
         STA $D025    ;Sprite Multi-Color Register 0
         INX 
@@ -590,7 +590,7 @@ DNA_UpdateSpritePointers
         BPL b1176
 
         LDX #$00
-b1176   STX a11C9
+b1176   STX indexToSpriteColor1Array
         LDA #$C0
         STA Sprite7PtrStarField
         STA Sprite6Ptr
@@ -629,13 +629,13 @@ b11B8   DEC currentMonochromIBallSprite
         STA currentMonochromIBallSprite
 b11C7   RTS 
 
-a11C8   .BYTE $00
-a11C9   .BYTE $00
-a11CA   .BYTE $03
-a11CB   .BYTE $03
-a11CC   .BYTE $01
-dnaWave2Enabled   .BYTE $01
-newHeadOfXPosData   .BYTE $00
+indexToXPosDataHeadArray               .BYTE $00
+indexToSpriteColor1Array               .BYTE $00
+initialTimeToNextUpdateForPreviousHead .BYTE $03
+timeToNextUpdateCounterForPreviousHead .BYTE $03
+incrementToXPositionForPreviousHead    .BYTE $01
+dnaWave2Enabled                        .BYTE $01
+newHeadOfXPosData                      .BYTE $00
 ;----------------------------------------------------------------
 ; DNA_CalculateValueForHeadOfPreviousXPosData
 ;----------------------------------------------------------------
@@ -646,11 +646,11 @@ DNA_CalculateValueForHeadOfPreviousXPosData
         STA newHeadOfXPosData
 b11D9   RTS 
 
-b11DA   DEC a11CB
+b11DA   DEC timeToNextUpdateCounterForPreviousHead
         BNE b11D9
-        LDA a11CA
-        STA a11CB
-        LDX a11C8
+        LDA initialTimeToNextUpdateForPreviousHead
+        STA timeToNextUpdateCounterForPreviousHead
+        LDX indexToXPosDataHeadArray
         LDA dnaXPosDataHeadArray,X
         CLC 
         ROR 
@@ -659,12 +659,12 @@ b11DA   DEC a11CB
         STA newHeadOfXPosData
         TXA 
         CLC 
-        ADC a11CC
+        ADC incrementToXPositionForPreviousHead
         CMP #$40
         BMI b11FF
         SEC 
         SBC #$40
-b11FF   STA a11C8
+b11FF   STA indexToXPosDataHeadArray
         RTS 
 
 ;----------------------------------------------------------------
@@ -672,55 +672,55 @@ b11FF   STA a11C8
 ;----------------------------------------------------------------
 DNA_DrawTitleScreen   
         LDX #$07
-b1205   LDA f1263,X
+b1205   LDA sideBarTxt1,X
         AND #$3F
         STA SCREEN_RAM + $0048,X
-        LDA f126B,X
+        LDA sideBarTxt2,X
         AND #$3F
         STA SCREEN_RAM + $0070,X
-        LDA f1273,X
+        LDA sideBarText3,X
         AND #$3F
         STA SCREEN_RAM + $00C0,X
-        LDA f127B,X
+        LDA sideBarTxt4,X
         AND #$3F
         STA SCREEN_RAM + $0110,X
-        LDA f1283,X
+        LDA sideBarText5,X
         AND #$3F
         STA SCREEN_RAM + $0138,X
-        LDA f128B,X
+        LDA sideBarTxt6,X
         AND #$3F
         STA SCREEN_RAM + $0188,X
-        LDA f1293,X
+        LDA sideBarTxt7,X
         AND #$3F
         STA SCREEN_RAM + $01B0,X
-        LDA f129B,X
+        LDA sideBarTxt8,X
         AND #$3F
         STA SCREEN_RAM + $0200,X
-        LDA f12A3,X
+        LDA sideBarTxt9,X
         AND #$3F
         STA SCREEN_RAM + $0228,X
-        LDA f12AB,X
+        LDA sideBarTxt10,X
         AND #$3F
         STA SCREEN_RAM + $02C8,X
-        LDA f12B3,X
+        LDA sideBarTxt11,X
         AND #$3F
         STA SCREEN_RAM + $02F0,X
         DEX 
         BNE b1205
         JMP DNA_DrawCreditsText
 
-f1263   .TEXT " SPEED:F"
-f126B   .TEXT "  <A S> "
-f1273   .TEXT " WAVE 1 "
-f127B   .TEXT " FREQ: F"
-f1283   .TEXT "  <Z X> "
-f128B   .TEXT " WAVE 2 "
-f1293   .TEXT " ON   F1"
-f129B   .TEXT " FREQ: F"
-f12A3   .TEXT "  <C V> "
-f12AB   .TEXT " PHASE:F"
-f12B3   .TEXT "   Q>>  "
-f12BB   .TEXT "0123456789ABCDEF"
+sideBarTxt1  .TEXT " SPEED:F"
+sideBarTxt2  .TEXT "  <A S> "
+sideBarText3 .TEXT " WAVE 1 "
+sideBarTxt4  .TEXT " FREQ: F"
+sideBarText5 .TEXT "  <Z X> "
+sideBarTxt6  .TEXT " WAVE 2 "
+sideBarTxt7  .TEXT " ON   F1"
+sideBarTxt8  .TEXT " FREQ: F"
+sideBarTxt9  .TEXT "  <C V> "
+sideBarTxt10 .TEXT " PHASE:F"
+sideBarTxt11 .TEXT "   Q>>  "
+sideBarTxt12 .TEXT "0123456789ABCDEF"
 ;----------------------------------------------------------------
 ; DNA_UpdateDisplayedSettings
 ;----------------------------------------------------------------
@@ -743,7 +743,7 @@ b12D6   LDA #$20
 b12EA   LDA dnaWave1Frequency
         AND #$0F
         TAX 
-        LDA f12BB,X
+        LDA sideBarTxt12,X
         AND #$3F
         STA SCREEN_RAM + $0117
 
@@ -756,17 +756,17 @@ b12EA   LDA dnaWave1Frequency
 b1304   LDA dnaWave2Frequency
         AND #$0F
         TAX 
-        LDA f12BB,X
+        LDA sideBarTxt12,X
         AND #$3F
         STA SCREEN_RAM + $0207
 
         LDX dnaCurrentSpeed
-        LDA f12BB,X
+        LDA sideBarTxt12,X
         AND #$3F
         STA SCREEN_RAM + $004F
 
         LDX dnaCurrentPhase
-        LDA f12BB,X
+        LDA sideBarTxt12,X
         AND #$3F
         STA SCREEN_RAM + $02CF
 
@@ -784,57 +784,58 @@ b1336   LDA #<p200E
         STA SCREEN_RAM + $01B3
         RTS 
 
-dnaTextDisplayed   .BYTE $01
-dnaSpriteColor1Array   .BYTE $06,$02,$04,$05,$03,$07,$01,$07
-        .BYTE $03,$05,$04,$02,$06,$FF
-f1350
-        .BYTE $06,$05,$0E,$0D,$03,$FF
-f1356
-        .BYTE $09,$08,$07,$08,$09,$FF
-f135C
-        .BYTE $00,$00,$00,$02,$00,$00,$07,$FF
-f1364
-        .BYTE $01,$0F,$0D,$0C,$00,$00
-f1372
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$FF
-        .BYTE $06,$0E,$0B,$02,$05,$FF
+END_SENTINEL = $FF
+dnaTextDisplayed     .BYTE $01
+dnaSpriteColor1Array .BYTE BLUE,RED,PURPLE,GREEN,CYAN,YELLOW,WHITE,YELLOW
+                     .BYTE CYAN,GREEN,PURPLE,RED,BLUE,END_SENTINEL
+dnaSprite3ColorArray .BYTE BLUE,GREEN,LTBLUE,LTGREEN,CYAN,END_SENTINEL
+dnsSprite4ColorArray .BYTE BROWN,ORANGE,YELLOW,ORANGE,BROWN,END_SENTINEL
+dnaSprite5ColorArray .BYTE BLACK,BLACK,BLACK,RED,BLACK,BLACK,YELLOW,END_SENTINEL
+dnaSPrite6ColorArray .BYTE WHITE,GRAY3,LTGREEN,GRAY2,BLACK,BLACK
+                     .BYTE BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,END_SENTINEL
+dnaSPrite7ColorArray .BYTE BLUE,LTBLUE,GRAY1,RED,GREEN,END_SENTINEL
 
-dnaColorSchemeLoPtr   .BYTE $1C,$23,$42,$50,$56,$5C,$64,$72
-dnaColorSchemeHiPtr   .BYTE $0F,$0F,$13,$13,$13,$13,$13,$13
+dnaColorSchemeLoPtr .BYTE <dnaSpriteColor2Array,<dnaSpriteColorArray,<dnaSpriteColor1Array
+                    .BYTE <dnaSprite3ColorArray,<dnsSprite4ColorArray,<dnaSprite5ColorArray
+                    .BYTE <dnaSPrite6ColorArray,<dnaSPrite7ColorArray
+dnaColorSchemeHiPtr .BYTE >dnaSpriteColor2Array,>dnaSpriteColorArray,>dnaSpriteColor1Array
+                    .BYTE >dnaSprite3ColorArray,>dnsSprite4ColorArray,>dnaSprite5ColorArray
+                    .BYTE >dnaSPrite6ColorArray,>dnaSPrite7ColorArray
+
 
 dnaCurrentColorScheme   .BYTE $00
-a1389   .BYTE $01
-        .TEXT "    % % %  DNA  % % %   "
-f13A2   .TEXT " CONCEIVED AND EXECUTED B"
-f13BB   .TEXT "Y            Y A K       "
-f13D4   .TEXT " SPACE: CANCEL SCREEN TEX"
-f13ED   .TEXT "TF5 AND F7 CHANGE COLOURS"
-f1406   .TEXT " LISTEN TO TALKING HEADS."
-f141F   .TEXT ".BE NICE TO HAIRY ANIMALS "
+dnaCurrentColorScheme2   .BYTE $01
+titleTextLine1   .TEXT "    % % %  DNA  % % %   "
+titleTextLine2   .TEXT " CONCEIVED AND EXECUTED B"
+titleTextLine3   .TEXT "Y            Y A K       "
+titleTextLine4   .TEXT " SPACE: CANCEL SCREEN TEX"
+titleTextLine5   .TEXT "TF5 AND F7 CHANGE COLOURS"
+titleTextLine6   .TEXT " LISTEN TO TALKING HEADS."
+titleTextLine7   .TEXT ".BE NICE TO HAIRY ANIMALS "
 ;----------------------------------------------------------------
 ; DNA_DrawCreditsText
 ;----------------------------------------------------------------
 DNA_DrawCreditsText   
         LDX #$19
-b143B   LDA a1389,X
+b143B   LDA titleTextLine1 - $01,X
         AND #$3F
         STA SCREEN_RAM + $002B,X
-        LDA f13A2,X
+        LDA titleTextLine2,X
         AND #$3F
         STA SCREEN_RAM + $00A3,X
-        LDA f13BB,X
+        LDA titleTextLine3,X
         AND #$3F
         STA SCREEN_RAM + $011B,X
-        LDA f13D4,X
+        LDA titleTextLine4,X
         AND #$3F
         STA SCREEN_RAM + $020B,X
-        LDA f13ED,X
+        LDA titleTextLine5,X
         AND #$3F
         STA SCREEN_RAM + $025B,X
-        LDA f1406,X
+        LDA titleTextLine6,X
         AND #$3F
         STA SCREEN_RAM + $034B,X
-        LDA f141F,X
+        LDA titleTextLine7,X
         AND #$3F
         STA SCREEN_RAM + $039B,X
         DEX 
