@@ -16,7 +16,6 @@
 ;    May you find forgiveness for yourself and forgive others.
 ;    May you share freely, never taking more than you give.
 ;
-; (Note: I ripped this part from the SQLite licence! :) )
 
 ;-----------------------------------------------------------------------------------------
 ; LaunchMIF
@@ -77,9 +76,9 @@ mifCurrentCharColor .BYTE $00
 mifCurrentXPos      .BYTE $00
 mifCurrentYPos      .BYTE $00
 mifCurrentChar      .BYTE $00
-mifSnakeColorArray  .BYTE $02,$08,$07,$05,$0E,$04,$06,$00
+mifSnakeColorArray  .BYTE RED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE,BLACK
 mifSnakeSpeed       .BYTE $03
-a4148               .BYTE $03
+snakeAnimationRate               .BYTE $03
 ;------------------------------------------------------------------------
 ; MIF_PutCharAtCurrPosInAccumulator
 ;------------------------------------------------------------------------
@@ -111,13 +110,14 @@ MIF_DrawCurrentCharAtCurrentPos
         STA (planetPtrLo),Y
         PLA 
         STA planetPtrHi
-f4174   RTS 
+        RTS 
 
-mifSnakeCurrentXPos   .BYTE $0A,$09,$08,$07,$06,$05
-a417B   .BYTE $04
-f417C   .BYTE $03
-mifSnakeCurrentYPos   .BYTE $0C,$0C,$0C,$0C,$0C,$0C
-a4183   .BYTE $0C
+snakeXPosArray = *-$01
+               .BYTE $0A,$09,$08,$07,$06,$05
+initialMIFXPos .BYTE $04,$03
+snakeYPosArray = *-$01  
+               .BYTE $0C,$0C,$0C,$0C,$0C,$0C
+initialMIFYPos .BYTE $0C
 ;------------------------------------------------------------------------
 ; MIF_SetUpInterruptHandler
 ;------------------------------------------------------------------------
@@ -200,18 +200,18 @@ b41ED   JSR UpdateSnakePositionAndCheckInput
         STA $D012    ;Raster Position
         JMP $EA31
 
-a4209   .BYTE $01
-a420A   .BYTE $00
+snakeXPosIncrement   .BYTE $01
+snakeYPosIncrement   .BYTE $00
 ;------------------------------------------------------------------------
 ; UpdateSnakePositionAndCheckInput
 ;------------------------------------------------------------------------
 UpdateSnakePositionAndCheckInput   
-        DEC a4148
+        DEC snakeAnimationRate
         BEQ b4211
         RTS 
 
 b4211   LDA mifSnakeSpeed
-        STA a4148
+        STA snakeAnimationRate
         LDA a4588
         BEQ b4224
 
@@ -219,66 +219,66 @@ b4211   LDA mifSnakeSpeed
         STA a4588
         JMP j42BD
 
-b4224   LDA a417B
+b4224   LDA initialMIFXPos
         STA mifCurrentXPos
-        LDA a4183
+        LDA initialMIFYPos
         STA mifCurrentYPos
         JSR MIF_ClearCharAtCurrentPosIfIsSnakeSegment
 
         LDX #$06
-b4235   LDA f4174,X
-        STA mifSnakeCurrentXPos,X
-        LDA f417C,X
-        STA mifSnakeCurrentYPos,X
+b4235   LDA snakeXPosArray,X
+        STA snakeXPosArray + $01,X
+        LDA snakeYPosArray,X
+        STA snakeYPosArray + $01,X
         DEX 
         BNE b4235
 
 j4244   
-        LDA mifSnakeCurrentXPos
+        LDA snakeXPosArray + $01
         CLC 
-        ADC a4209
-        STA mifSnakeCurrentXPos
+        ADC snakeXPosIncrement
+        STA snakeXPosArray + $01
         CMP #$FF
         BNE b425A
         LDA #$26
-        STA mifSnakeCurrentXPos
+        STA snakeXPosArray + $01
         JMP j4263
 
 b425A   CMP #$27
         BNE j4263
         LDA #$00
-        STA mifSnakeCurrentXPos
+        STA snakeXPosArray + $01
 
 j4263   
-        LDA mifSnakeCurrentYPos
+        LDA snakeYPosArray + $01
         CLC 
-        ADC a420A
-        STA mifSnakeCurrentYPos
+        ADC snakeYPosIncrement
+        STA snakeYPosArray + $01
         CMP #$FF
         BNE b4279
         LDA #$16
-        STA mifSnakeCurrentYPos
+        STA snakeYPosArray + $01
         JMP j4282
 
 b4279   CMP #$17
         BNE j4282
         LDA #$00
-        STA mifSnakeCurrentYPos
+        STA snakeYPosArray + $01
 
 j4282   
         JSR MIF_CheckInputForAddingDeflectors
-        LDA mifSnakeCurrentXPos
+        LDA snakeXPosArray + $01
         STA mifCurrentXPos
-        LDA mifSnakeCurrentYPos
+        LDA snakeYPosArray + $01
         STA mifCurrentYPos
         JSR MIF_PutCharAtCurrPosInAccumulator
         JSR MIF_CheckSnakeCollisionWithDeflectors
 
         ; Draw the rest of the snake
         LDX #$00
-b4299   LDA mifSnakeCurrentXPos,X
+b4299   LDA snakeXPosArray + $01,X
         STA mifCurrentXPos
-        LDA mifSnakeCurrentYPos,X
+        LDA snakeYPosArray + $01,X
         STA mifCurrentYPos
         LDA #$A0
         STA mifCurrentChar
@@ -296,9 +296,9 @@ b4299   LDA mifSnakeCurrentXPos,X
 b42BC   RTS 
 
 j42BD   
-        LDA mifSnakeCurrentXPos
+        LDA snakeXPosArray + $01
         STA mifCurrentXPos
-        LDA mifSnakeCurrentYPos
+        LDA snakeYPosArray + $01
         STA mifCurrentYPos
         JMP j4282
 
@@ -328,9 +328,9 @@ b42E1   STA mifPreviousKeyPress
         CMP #$40
         BEQ b42D7
         PHA 
-        LDA mifSnakeCurrentXPos
+        LDA snakeXPosArray + $01
         STA mifCurrentXPos
-        LDA mifSnakeCurrentYPos
+        LDA snakeYPosArray + $01
         STA mifCurrentYPos
         PLA 
         CMP #$27
@@ -372,12 +372,12 @@ MIF_CheckSnakeCollisionWithDeflectors
         BNE b434F
         LDA #$4E
         STA (planetPtrLo),Y
-        LDA a4209
+        LDA snakeXPosIncrement
         PHA 
-        LDA a420A
-        STA a4209
+        LDA snakeYPosIncrement
+        STA snakeXPosIncrement
         PLA 
-        STA a420A
+        STA snakeYPosIncrement
         PLA 
         PLA 
         LDA #$01
@@ -385,25 +385,25 @@ MIF_CheckSnakeCollisionWithDeflectors
 
 j4347   
         LDA #$04
-        STA a4738
+        STA soundControl1
         JMP j4244
 
 b434F   CMP #$4E
         BNE b4379
         LDA #$4D
         STA (planetPtrLo),Y
-        LDA a4209
+        LDA snakeXPosIncrement
         EOR #$FF
         CLC 
         ADC #$01
         PHA 
-        LDA a420A
+        LDA snakeYPosIncrement
         EOR #$FF
         CLC 
         ADC #$01
-        STA a4209
+        STA snakeXPosIncrement
         PLA 
-        STA a420A
+        STA snakeYPosIncrement
         PLA 
         PLA 
         LDA #$01
@@ -413,31 +413,31 @@ b434F   CMP #$4E
 b4379   CMP #$51
         BNE b439B
         LDA #$20
-        STA a4739
+        STA soundControl2
         LDA #$20
         STA (planetPtrLo),Y
         LDA #$01
-        STA a44A9
-        INC a439C
-        JSR MIF_s4512
+        STA nextOffsetToApplyToSnakePos
+        INC updateTargetRate
+        JSR CalculateProgressAndUpdateBar
         JSR MIF_DrawCountdownBarAndCredit
         RTS 
 
-a4396   =*+$01
+RandomValue   =*+$01
 ;------------------------------------------------------------------------
 ; MIF_PutRandomValueInAccumulator
 ;------------------------------------------------------------------------
 MIF_PutRandomValueInAccumulator   
         LDA $EF00
-        INC a4396
+        INC RandomValue
 b439B   RTS 
 
-a439C   .BYTE $00
+updateTargetRate   .BYTE $00
 ;------------------------------------------------------------------------
 ; MIF_UpdateTarget
 ;------------------------------------------------------------------------
 MIF_UpdateTarget   
-        LDA a439C
+        LDA updateTargetRate
         BNE b43BD
 
         JSR MIF_PutRandomValueInAccumulator
@@ -453,7 +453,7 @@ MIF_UpdateTarget
         STA mifRandomYPos
 
         LDA #$01
-        STA a439C
+        STA updateTargetRate
 
 b43BD   CMP #$01
         BNE b43E7
@@ -478,10 +478,14 @@ mifRandomXPos   .BYTE $00
 mifRandomYPos   .BYTE $00
 mifTargetCurrentColor   .BYTE $00
 
-b43E7   LDA #$A0
+;------------------------------------------------------------------------
+; b43E7   
+;------------------------------------------------------------------------
+b43E7
+		    LDA #$A0
         STA mifCurrentChar
-        LDA a44A9
-        STA a44AA
+        LDA nextOffsetToApplyToSnakePos
+        STA offsetToApplyToSnakePos
         LDA #$00
         STA mifTargetCurrentColor
 
@@ -490,17 +494,17 @@ b43F7   JSR MIF_UpdateSnakePositionOnScreen
         LDA mifTargetCurrentColor
         CMP #$08
         BEQ b4409
-        DEC a44AA
+        DEC offsetToApplyToSnakePos
         BNE b43F7
 
-b4409   INC a44A9
-        LDA a44A9
+b4409   INC nextOffsetToApplyToSnakePos
+        LDA nextOffsetToApplyToSnakePos
         CMP #$30
         BEQ b4414
         RTS 
 
 b4414   LDA #$00
-        STA a439C
+        STA updateTargetRate
         RTS 
 
 ;------------------------------------------------------------------------
@@ -512,46 +516,46 @@ MIF_UpdateSnakePositionOnScreen
         STA mifCurrentCharColor
         LDA mifRandomXPos
         SEC 
-        SBC a44AA
+        SBC offsetToApplyToSnakePos
         STA mifCurrentXPos
         LDA mifRandomYPos
         SEC 
-        SBC a44AA
+        SBC offsetToApplyToSnakePos
         STA mifCurrentYPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         CLC 
-        ADC a44AA
+        ADC offsetToApplyToSnakePos
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         CLC 
-        ADC a44AA
+        ADC offsetToApplyToSnakePos
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentYPos
         CLC 
-        ADC a44AA
+        ADC offsetToApplyToSnakePos
         STA mifCurrentYPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentYPos
         CLC 
-        ADC a44AA
+        ADC offsetToApplyToSnakePos
         STA mifCurrentYPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         SEC 
-        SBC a44AA
+        SBC offsetToApplyToSnakePos
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         SEC 
-        SBC a44AA
+        SBC offsetToApplyToSnakePos
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentYPos
         SEC 
-        SBC a44AA
+        SBC offsetToApplyToSnakePos
         STA mifCurrentYPos
 
 ;------------------------------------------------------------------------
@@ -572,8 +576,8 @@ b449C   LDA mifCurrentYPos
 
 b44A6   JMP MIF_DrawCurrentCharAtCurrentPos
 
-a44A9   .BYTE $00
-a44AA   .BYTE $00
+nextOffsetToApplyToSnakePos   .BYTE $00
+offsetToApplyToSnakePos   .BYTE $00
 ;------------------------------------------------------------------------
 ; MIF_InitializeProgressBar
 ;------------------------------------------------------------------------
@@ -603,19 +607,19 @@ b44BA   LDX mifCurrentXPos
         STA a44DF
         RTS 
 
-a44DF   .BYTE $00
-mifProgressBarColors   .BYTE $02,$02,$02,$02,$02,$02,$08,$08
-        .BYTE $08,$08,$08,$08,$07,$07,$07,$07
-        .BYTE $07,$05,$05,$05,$05,$05,$05,$0B
-        .BYTE $0B,$0B,$0B,$0B,$04,$04,$04,$04
-        .BYTE $04,$04,$06,$06,$06,$06,$06,$06
-a4508   .BYTE $00
-f4509   .BYTE $20,$65,$74,$75,$61,$F6,$EA,$E7
-        .BYTE $A0
+a44DF                .BYTE $00
+mifProgressBarColors .BYTE RED,RED,RED,RED,RED,RED,ORANGE,ORANGE
+                     .BYTE ORANGE,ORANGE,ORANGE,ORANGE,YELLOW,YELLOW,YELLOW,YELLOW
+                     .BYTE YELLOW,GREEN,GREEN,GREEN,GREEN,GREEN,GREEN,GRAY1
+                     .BYTE GRAY1,GRAY1,GRAY1,GRAY1,PURPLE,PURPLE,PURPLE,PURPLE
+                     .BYTE PURPLE,PURPLE,BLUE,BLUE,BLUE,BLUE,BLUE,BLUE
+progressToDraw       .BYTE $00
+progressBarChars2    .BYTE $20,$65,$74,$75,$61,$F6,$EA,$E7
+                     .BYTE $A0
 ;------------------------------------------------------------------------
-; MIF_s4512
+; CalculateProgressAndUpdateBar
 ;------------------------------------------------------------------------
-MIF_s4512   
+CalculateProgressAndUpdateBar   
         LDA mifCurrentYPosInCountdownBar
         ROR 
         ROR 
@@ -624,28 +628,28 @@ MIF_s4512
         INX 
 
         LDA #$00
-        STA a4508
+        STA progressToDraw
 
 b4520   LDA #$05
         SEC 
         SBC mifSnakeSpeed
         CLC 
-        ADC a4508
-        STA a4508
+        ADC progressToDraw
+        STA progressToDraw
         DEX 
         BNE b4520
 
-b4530   JSR MIF_s453C
-        DEC a4508
+b4530   JSR DrawSegmentOfPorgressBar
+        DEC progressToDraw
         BNE b4530
 
         JSR MIF_UpdateProgressBar
         RTS 
 
 ;------------------------------------------------------------------------
-; MIF_s453C
+; DrawSegmentOfPorgressBar
 ;------------------------------------------------------------------------
-MIF_s453C   
+DrawSegmentOfPorgressBar   
         LDA #$18
         STA mifCurrentYPos
         LDA a44DF
@@ -654,7 +658,7 @@ MIF_s453C
 
         LDX #$00
 j454C   
-        CMP f4509,X
+        CMP progressBarChars2,X
         BEQ b4555
         INX 
         JMP j454C
@@ -662,7 +666,7 @@ j454C
 b4555   CMP #$A0
         BEQ b456C
         INX 
-        LDA f4509,X
+        LDA progressBarChars2,X
         STA mifCurrentChar
 
 j4560   
@@ -713,13 +717,16 @@ b45BA   RTS
 
 mifCountdownBarAndCredit      .BYTE $A0,$A0,$A0,$A0,$A0,$A0,$A0,$A0
                               .BYTE $A0,$A0,$A0,$A0,$20
-                              ; MIF
-                              .BYTE $CD,$C9,$C6
-                              ; BY YAK
-                              .BYTE $20,$20,$42,$59,$20,$D9,$C1,$CB
-mifSidebarColorArray          .BYTE $02,$02,$02,$02,$01,$01,$01,$01
-                              .BYTE $06,$06,$06,$06,$00,$02,$01,$06
-                              .BYTE $00,$00,$04,$04,$00,$07,$07,$07
+.enc "petscii" 
+                              .TEXT "MIF  "
+.enc "none" 
+															.TEXT "BY "
+.enc "petscii" 
+															.TEXT "YAK"
+.enc "none" 
+mifSidebarColorArray          .BYTE RED,RED,RED,RED,WHITE,WHITE,WHITE,WHITE
+                              .BYTE BLUE,BLUE,BLUE,BLUE,BLACK,RED,WHITE,BLUE
+                              .BYTE BLACK,BLACK,PURPLE,PURPLE,BLACK,YELLOW,YELLOW,YELLOW
 mifCountdownBarUpdateInterval .BYTE $10
 ;------------------------------------------------------------------------
 ; MIF_UpdateCountdownBar
@@ -771,7 +778,7 @@ MIF_CountdownOver
         LDA #$CF
         STA mifCurrentChar
         LDA #$00
-        STA a46AB
+        STA indexToColorArray
         JSR MIF_ClearDownScreenBeforeRestart
         LDA #$20
         STA mifCurrentChar
@@ -792,13 +799,13 @@ MIF_ClearDownScreenBeforeRestart
         BEQ b4684 ; This will clear the coloured lozenge pattern
 
         ; We're painting the coloured lozenge pattern
-        INC a46AB
-        LDA a46AB
+        INC indexToColorArray
+        LDA indexToColorArray
         CMP #$06
         BNE b467B
         LDA #$00
-        STA a46AB
-b467B   LDX a46AB
+        STA indexToColorArray
+b467B   LDX indexToColorArray
         LDA mifSnakeColorArray,X
         STA mifCurrentCharColor
 
@@ -822,10 +829,10 @@ b468B   DEX
         BNE MIF_ClearDownScreenBeforeRestart
         RTS 
 
-a46AB   .BYTE $00
+indexToColorArray   .BYTE $00
 mifGameOver   .BYTE $00
 mifCurrentProgressIndex   .BYTE $00
-a46AE   .BYTE $00
+indexToProgressBarChars   .BYTE $00
 ;------------------------------------------------------------------------
 ; MIF_UpdateProgressBar
 ;------------------------------------------------------------------------
@@ -850,8 +857,8 @@ j46CC
         LDX mifCurrentProgressIndex
         LDA mifProgressBarColors,X
         STA mifCurrentCharColor
-        LDX a46AE
-        LDA f472F,X
+        LDX indexToProgressBarChars
+        LDA progressBarChars,X
         STA mifCurrentChar
         JMP MIF_DrawCurrentCharAtCurrentPos
 
@@ -862,12 +869,12 @@ b46EC   LDA a44DF
         JSR MIF_PutCharAtCurrPosInAccumulator
 
         LDX #$00
-b46FC   CMP f4509,X
+b46FC   CMP progressBarChars2,X
         BEQ b4704
         INX 
         BNE b46FC
 
-b4704   STX a46AE
+b4704   STX indexToProgressBarChars
         LDA a44DF
         STA mifCurrentProgressIndex
         JMP j46CC
@@ -879,39 +886,39 @@ b4710   LDA a44DF
         JSR MIF_PutCharAtCurrPosInAccumulator
 
         LDX #$00
-b4720   CMP f4509,X
+b4720   CMP progressBarChars2,X
         BEQ b4728
         INX 
         BNE b4720
 
 b4728   TXA 
-        CMP a46AE
+        CMP indexToProgressBarChars
         BPL b4704
         RTS 
 
-f472F   .BYTE $65,$65,$54,$47,$42,$5D,$48,$59
+progressBarChars   .BYTE $65,$65,$54,$47,$42,$5D,$48,$59
         .BYTE $67
-a4738   .BYTE $00
-a4739   .BYTE $00
-f473A   .BYTE $C0,$40,$E0,$10
+soundControl1   .BYTE $00
+soundControl2   .BYTE $00
+soundToPlay   .BYTE $C0,$40,$E0,$10
 ;------------------------------------------------------------------------
 ; MIF_PlaySound
 ;------------------------------------------------------------------------
 MIF_PlaySound   
-        LDA a4738
+        LDA soundControl1
         BEQ b475A
         TAX 
         LDA #$21
         STA $D404    ;Voice 1: Control Register
-        LDA f473A,X
+        LDA soundToPlay,X
         STA $D401    ;Voice 1: Frequency Control - High-Byte
-        DEC a4738
+        DEC soundControl1
         BNE b475A
         LDA #$80
         STA $D404    ;Voice 1: Control Register
 b4759   RTS 
 
-b475A   LDA a4739
+b475A   LDA soundControl2
         BEQ b4759
         LDA #$00
         STA $D407    ;Voice 2: Frequency Control - Low-Byte
@@ -920,10 +927,10 @@ b475A   LDA a4739
         LDA #$21
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
-        LDA a4739
+        LDA soundControl2
         STA $D408    ;Voice 2: Frequency Control - High-Byte
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
-        DEC a4739
+        DEC soundControl2
         BNE b4759
         LDA #$80
         STA $D40B    ;Voice 2: Control Register

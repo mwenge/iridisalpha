@@ -40,8 +40,7 @@ colormap = {
     }
 
 s = """
-dnaSpriteColor2Array            .BYTE $02,$08,$07,$05,$04,$06,$FF
-dnaSpriteColorArray             .BYTE $0B,$0C,$0F,$01,$0F,$0C,$FF
+mifSnakeColorArray  .BYTE $02,$08,$07,$05,$0E,$04,$06,$00
 """
 ls = re.split("([, #\n])", s)
 
