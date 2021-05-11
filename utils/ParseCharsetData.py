@@ -1,5 +1,5 @@
-f = open("../src/compressed-charset.asm", 'r')
-o = open("../src/decompressed-charset.asm", 'w')
+f = open("../src/planet_textures_in.asm", 'r')
+o = open("../src/planet_textures.asm", 'w')
 
 bytes = []
 labels = {}

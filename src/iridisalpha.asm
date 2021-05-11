@@ -2292,8 +2292,9 @@ controlPanelColors .BYTE BROWN,BROWN,BLACK,WHITE,WHITE,WHITE,WHITE
                    .BYTE WHITE
 
 
-; This is the hiptr (e.g. $9200, $9000) array into some planet data.
-somePlanetDataHiPtrArray              .BYTE $92,$90,$94,$96,$98
+; This is the hiptr (e.g. $9200, $9000) array into the character sets for each planet.
+somePlanetDataHiPtrArray   .BYTE >planet1Charset,>planet2Charset,>planet3Charset
+                           .BYTE >planet4Charset,>planet5Charset
 ;------------------------------------------------------------------
 ; PerformPlanetWarp
 ;------------------------------------------------------------------
@@ -2303,6 +2304,7 @@ PerformPlanetWarp
         STA currentTopPlanetDataHiPtr
         LDA #$00
         STA currentTopPlanetDataLoPtr
+
         LDX currentBottomPlanetIndex
         LDA somePlanetDataHiPtrArray,X
         STA currentBottomPlanetDataHiPtr
@@ -2432,15 +2434,17 @@ UpdateControlPanelColor
 
 controlPanelColorDoesntNeedUpdating   .BYTE $00
 
+planetStoragePtrLo = tmpPtrHi
+planetStoragePtrHi = tmpPtrZp47
 ;------------------------------------------------------------------
 ; InitializeSomeGameStorage
-; Writes storage for top and bottom planets to $0763 and $0783
+; Writes storage for top and bottom planets to $0763 and $07B3
 ;------------------------------------------------------------------
 InitializeSomeGameStorage
         LDA #$07
-        STA tmpPtrZp47 ; Actually the hi ptr here
+        STA planetStoragePtrHi ; Actually the hi ptr here
         LDA #$63
-        STA tmpPtrHi ; Actually the lo ptr here
+        STA planetStoragePtrLo ; Actually the lo ptr here
 
         ; For the top planet
         LDX currentTopPlanetIndex
@@ -2448,7 +2452,7 @@ InitializeSomeGameStorage
 
         ; For the bottom planet
         LDA #$B3
-        STA tmpPtrHi
+        STA planetStoragePtrLo
         LDX currentBottomPlanetIndex
 
 ;------------------------------------------------------------------
@@ -2461,32 +2465,32 @@ InitSomeGameStorage
         CLC
         ADC #$9A
         LDY #$00
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         LDY #$28
         CLC
         ADC #$01
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         LDY #$01
         CLC
         ADC #$01
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         LDY #$29
         CLC
         ADC #$01
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         LDA #$DB
-        STA tmpPtrZp47
+        STA planetStoragePtrHi
         LDA somethingStorageForPlanets,X
         LDY #$00
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         INY
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         LDY #$28
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         INY
-        STA (tmpPtrHi),Y
+        STA (planetStoragePtrLo),Y
         LDA #$07
-        STA tmpPtrZp47
+        STA planetStoragePtrHi
         RTS
 
 somethingStorageForPlanets   .BYTE $07,$04,$0E,$08,$0A
@@ -6478,7 +6482,7 @@ bitfield3ForMaterializingPlanet .BYTE $00,$04,$08,$0C
 ;
 ; From Jeff Minter's development diary:
 ; 17 February 1986
-; Redid the graphics completely, came up with some really nice looking
+; "Redid the graphics completely, came up with some really nice looking
 ; metallic planet structures that I'll probably stick with. Started to
 ; write the GenPlan routine that'll generate random planets at will.
 ; Good to have a C64 that can generate planets in its spare time.
@@ -6489,7 +6493,7 @@ bitfield3ForMaterializingPlanet .BYTE $00,$04,$08,$0C
 ; and sea a bit like 'Sheep in Space', cos I did like that one. It'll
 ; be nice to have completely different planet surfaces in top and bottom
 ; of the screen. The neat thing is that all the surfaces have the same
-; basic structures, all I do is fit different graphics around each one.
+; basic structures, all I do is fit different graphics around each one."
 ;------------------------------------------------------------------
 
 GeneratePlanetSurface
@@ -6790,7 +6794,7 @@ structureSubRoutineArrayLoPtr   .BYTE <DrawLittleStructure,<DrawMediumStructure,
 gilbySprites .BYTE LAND_GILBY1,LAND_GILBY2,LAND_GILBY3,LAND_GILBY4,LAND_GILBY5,LAND_GILBY6,LAND_GILBY7,LAND_GILBY6
              .BYTE LAND_GILBY5,LAND_GILBY4,LAND_GILBY3,LAND_GILBY2,LAND_GILBY1,LAND_GILBY8,LAND_GILBY9,LAND_GILBY10
              .BYTE LAND_GILBY11,LAND_GILBY11,GILBY_TAKING_OFF1,GILBY_TAKING_OFF2,GILBY_TAKING_OFF3
-						 .BYTE GILBY_TAKING_OFF4,GILBY_TAKING_OFF3,GILBY_TAKING_OFF2
+             .BYTE GILBY_TAKING_OFF4,GILBY_TAKING_OFF3,GILBY_TAKING_OFF2
              .BYTE GILBY_TAKING_OFF1,LAND_GILBY11,GILBY_AIRBORNE_RIGHT,GILBY_AIRBORNE_TURNING
              .BYTE GILBY_TAKING_OFF4,GILBY_TAKING_OFF5,GILBY_AIRBORNE_LEFT,GILBY_AIRBORNE_LEFT
              .BYTE GILBY_TAKING_OFF5,GILBY_TAKING_OFF4,GILBY_AIRBORNE_TURNING,GILBY_AIRBORNE_RIGHT
@@ -7895,6 +7899,7 @@ b7F01   LDA randomJoystickInput
         RTS
 
 .include "planet_data.asm"
+.include "planet_textures.asm"
 .include "level_data.asm"
 
 *=$AAC0
