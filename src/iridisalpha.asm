@@ -139,6 +139,12 @@ GILBY_TAKING_OFF_LOWERPLANET5        = $E3
 GILBY_AIRBORNE_LOWERPLANET_RIGHT     = $E4
 GILBY_AIRBORNED_TURNING_LOWER_PLANET = $E5
 GILBY_AIRBORNED_LOWERPLANET_LEFT     = $E6
+EXPLOSION_START = $ED
+EXPLOSION_MIDDLE = $EE
+EXPLOSION_END = $EF
+EXPLOSION1 = $FC
+EXPLOSION2 = $FD
+EXPLOSION3 = $FE
 
 * = $0801
 ;------------------------------------------------------------------
@@ -931,11 +937,12 @@ LoopUntilKeyReleased
         LDA lastKeyPressed
         CMP #$40
         BNE LoopUntilKeyReleased
-b168E   RTS
+ReturnFromCheckInput   RTS
+
 
         ;F7 pressed?
 b168F   CMP #$03
-        BNE b168E
+        BNE ReturnFromCheckInput
         LDA #$04
         STA f7PressedOrTimedOutToAttractMode
         STA unusedVariable2
@@ -952,8 +959,6 @@ srcOfRandomBytes   =*+$01
         INC srcOfRandomBytes
         RTS
 
-
-.include "backingdata.asm"
 
 *=$2000
 .include "charset.asm"
@@ -1083,31 +1088,66 @@ gilbyHasJustDied           .BYTE $00
 ;------------------------------------------------------------------
 .include "madeinfrance.asm"
 
-someGameData .BYTE $A0,$50,$A7,$08,$A2,$D0,$9B,$A0
-             .BYTE $18,$00,$1D,$E0,$A0,$A0,$13,$70
-             .BYTE $1A,$70,$1E,$58,$11,$40,$11,$B8
-             .BYTE $13,$E8,$13,$C0,$9B,$00,$A6,$E0
-             .BYTE $1D,$18,$A9,$48,$A9,$98,$A1,$68
-             .BYTE $A0,$00,$A5,$78,$A5,$A0,$15,$28
-             .BYTE $10,$00,$10,$C8,$19,$68,$1B,$60
-             .BYTE $1B,$D8,$9D,$A8,$9E,$70,$A4,$10
-             .BYTE $A5,$28,$A5,$C8,$A8,$C0,$AA,$38
-             .BYTE $A5,$F0,$A3,$70,$A3,$98,$A1,$90
-             .BYTE $9F,$D8,$1E,$A8,$1A,$E8,$1C,$50
-             .BYTE $1C,$78,$1C,$C8,$10,$78,$1F,$20
-             .BYTE $12,$30,$9C,$68,$16,$40,$12,$D0
-             .BYTE $9D,$F8,$A2,$80,$A4,$38,$A9,$20
-             .BYTE $AA,$88,$A4,$88,$9E,$C0,$A1,$B8
-             .BYTE $9F,$88,$13,$20,$1A,$20,$19,$D0
-             .BYTE $1F,$98,$1D,$90,$14,$38,$17,$58
-             .BYTE $17,$A8,$9C,$B8,$A7,$D0,$A4,$D8
-             .BYTE $A9,$E8,$14,$B0,$9D,$58,$A7,$30
-             .BYTE $9B,$50,$A6,$68,$18,$F0,$A1,$E0
-             .BYTE $9F,$38,$A2,$30,$15,$78,$17,$08
-             .BYTE $9B,$F0,$9D,$08,$A6,$90,$A9,$C0
-             .BYTE $12,$80,$15,$00,$16,$90,$14,$60
-             .BYTE $A7,$80,$A8,$20,$A8,$70,$A2,$D0
-             .BYTE $AA,$10,$AA,$60,$A8,$20,$A2,$08
+f1000 = $1000
+f1078 = $1078
+f10C8 = $10C8
+f1140 = $1140
+f11B8 = $11B8
+f1230 = $1230
+f1280 = $1280
+f12D0 = $12D0
+f1320 = $1320
+f1370 = $1370
+f13C0 = $13C0
+f13E8 = $13E8
+f1438 = $1438
+f1460 = $1460
+f14B0 = $14B0
+f1500 = $1500
+f1528 = $1528
+f1578 = $1578
+f1640 = $1640
+f1690 = $1690
+f1708 = $1708
+f1758 = $1758
+f17A8 = $17A8
+f1800 = $1800
+f18F0 = $18F0
+
+; A block of pointers for each planet, and a point for each of the
+; fifteen levels in each planet.
+levelDataPerPlanet
+             .BYTE >fA050,<fA050,>fA708,<fA708,>fA2D0,<fA2D0,>f9BA0,<f9BA0
+             .BYTE >f1800,<f1800,>f1DE0,<f1DE0,>fA0A0,<fA0A0,>f1370,<f1370
+             .BYTE >f1A70,<f1A70,>f1E58,<f1E58,>f1140,<f1140,>f11B8,<f11B8
+             .BYTE >f13E8,<f13E8,>f13C0,<f13C0,>f9B00,<f9B00,>fA6E0,<fA6E0
+             .BYTE >f1D18,<f1D18,>fA948,<fA948,>fA998,<fA998,>fA168,<fA168
+
+
+             .BYTE >fA000,<fA000,>fA578,<fA578,>fA5A0,<fA5A0,>f1528,<f1528
+             .BYTE >f1000,<f1000,>f10C8,<f10C8,>f1968,<f1968,>f1B60,<f1B60
+             .BYTE >f1BD8,<f1BD8,>f9DA8,<f9DA8,>f9E70,<f9E70,>fA410,<fA410
+             .BYTE >fA528,<fA528,>fA5C8,<fA5C8,>fA8C0,<fA8C0,>fAA38,<fAA38
+             .BYTE >fA5F0,<fA5F0,>fA370,<fA370,>fA398,<fA398,>fA190,<fA190
+
+             .BYTE >f9FD8,<f9FD8,>f1EA8,<f1EA8,>f1AE8,<f1AE8,>f1C50,<f1C50
+             .BYTE >f1C78,<f1C78,>f1CC8,<f1CC8,>f1078,<f1078,>f1F20,<f1F20
+             .BYTE >f1230,<f1230,>f9C68,<f9C68,>f1640,<f1640,>f12D0,<f12D0
+             .BYTE >f9DF8,<f9DF8,>fA280,<fA280,>fA438,<fA438,>fA920,<fA920
+             .BYTE >fAA88,<fAA88,>fA488,<fA488,>f9EC0,<f9EC0,>fA1B8,<fA1B8
+
+             .BYTE >f9F88,<f9F88,>f1320,<f1320,>f1A20,<f1A20,>f19D0,<f19D0
+             .BYTE >f1F98,<f1F98,>f1D90,<f1D90,>f1438,<f1438,>f1758,<f1758
+             .BYTE >f17A8,<f17A8,>f9CB8,<f9CB8,>fA7D0,<fA7D0,>fA4D8,<fA4D8
+             .BYTE >fA9E8,<fA9E8,>f14B0,<f14B0,>f9D58,<f9D58,>fA730,<fA730
+             .BYTE >f9B50,<f9B50,>fA668,<fA668,>f18F0,<f18F0,>fA1E0,<fA1E0
+
+             .BYTE >f9F38,<f9F38,>fA230,<fA230,>f1578,<f1578,>f1708,<f1708
+             .BYTE >f9BF0,<f9BF0,>f9D08,<f9D08,>fA690,<fA690,>fA9C0,<fA9C0
+             .BYTE >f1280,<f1280,>f1500,<f1500,>f1690,<f1690,>f1460,<f1460
+             .BYTE >fA780,<fA780,>fA820,<fA820,>fA870,<fA870,>fA2D0,<fA2D0
+             .BYTE >fAA10,<fAA10,>fAA60,<fAA60,>fA820,<fA820,>fA208,<fA208
+
 hasEnteredNewLevel           .BYTE $01
 yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
                              .BYTE $10,$10,$10,$10,$10,$10,$10,$14
@@ -1116,11 +1156,11 @@ yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
 
 a0000 = $0000
 attackWaveDataLoPtrArray = *-$02
-        .BYTE <attackWaveData1,<attackWaveData1,<attackWaveData1,<attackWaveData1
-        .BYTE <a0000,<a0000,<attackWaveData1,<attackWaveData1,<attackWaveData2,<attackWaveData2
+        .BYTE <fA078,<fA078,<fA078,<fA078
+        .BYTE <a0000,<a0000,<fA078,<fA078,<fA050,<fA050
 attackWaveDataHiPtrArray =*-$02
-        .BYTE >attackWaveData1,>attackWaveData1,>attackWaveData1,>attackWaveData1
-        .BYTE >a0000,>a0000,>attackWaveData1,>attackWaveData1,>attackWaveData2,>attackWaveData2
+        .BYTE >fA078,>fA078,>fA078,>fA078
+        .BYTE >a0000,>a0000,>fA078,>fA078,>fA050,>fA050
 
 
 ; This is level data, one entry for each level per planet
@@ -2259,7 +2299,7 @@ b51F7   LDA currentTopPlanetIndex
         JSR MapPlanetProgressToLevelText
 
         LDX #$08
-b5208   LDA #$ED
+b5208   LDA #EXPLOSION_START
         STA upperPlanetAttackShipSpritesLoadedFromBackingData - $01,X
         LDA #$F0
         STA upperPlanetAttackShipSpriteAnimationEnd - $01,X
@@ -2810,7 +2850,7 @@ b55B3   DEX
 
 b55B6   LDA oldTopPlanetIndex
         PHA
-        JMP UpdateSomeGameInfo
+        JMP UpdateLevelData
 
 
         ; Update the current level (bottom planet)
@@ -2833,17 +2873,22 @@ b55DF   LDA oldBottomPlanetIndex
         PHA
 
 ;------------------------------------------------------------------
-; UpdateSomeGameInfo
+; UpdateLevelData
 ;------------------------------------------------------------------
-UpdateSomeGameInfo
-        LDA #<someGameData
+UpdateLevelData
+        LDA #<levelDataPerPlanet
         STA gameDataPtrLo
-        LDA #>someGameData
+        LDA #>levelDataPerPlanet
         STA gameDataPtrHi
+
+        ; Get the current planet
         PLA
         TAX
         BEQ b55FF
 
+        ; X is the current planet.
+        ; Move the pointer to the location in levelDataPerPlanet for the
+        ; current planet.
 b55EF   LDA gameDataPtrLo
         CLC
         ADC #$28
@@ -2854,6 +2899,9 @@ b55EF   LDA gameDataPtrLo
         DEX
         BNE b55EF
 
+        ; Use currentLevelInCurrentPlanet as an index into the section
+        ; of levelDataPerPlanet for the level in the current planet. What we're
+        ; retrieving here is a pointer to the data in planetData.
 b55FF   LDA currentLevelInCurrentPlanet
         ASL
         TAY
@@ -7822,6 +7870,7 @@ b7F01   LDA randomJoystickInput
         RTS
 
 .include "planet_data.asm"
+.include "level_data.asm"
 
 *=$AAC0
 currentBonusBounty    .BYTE $F0
