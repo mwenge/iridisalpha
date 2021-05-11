@@ -1088,65 +1088,90 @@ gilbyHasJustDied           .BYTE $00
 ;------------------------------------------------------------------
 .include "madeinfrance.asm"
 
-f1000 = $1000
-f1078 = $1078
-f10C8 = $10C8
-f1140 = $1140
-f11B8 = $11B8
-f1230 = $1230
-f1280 = $1280
-f12D0 = $12D0
-f1320 = $1320
-f1370 = $1370
-f13C0 = $13C0
-f13E8 = $13E8
-f1438 = $1438
-f1460 = $1460
-f14B0 = $14B0
-f1500 = $1500
-f1528 = $1528
-f1578 = $1578
-f1640 = $1640
-f1690 = $1690
-f1708 = $1708
-f1758 = $1758
-f17A8 = $17A8
-f1800 = $1800
-f18F0 = $18F0
+planet2Level5Data = $1000
+planet3Level7Data = $1078
+planet2Level6Data = $10C8
+planet1Level11Data = $1140
+planet1Level12Data = $11B8
+planet3Level9Data = $1230
+planet5Level9Data = $1280
+planet3Level12Data = $12D0
+planet4Level2Data = $1320
+planet1Level8Data = $1370
+planet1Level14Data = $13C0
+planet1Level13Data = $13E8
+planet4Level7Data = $1438
+planet5Level12Data = $1460
+planet4Level14Data = $14B0
+planet5Level10Data = $1500
+planet2Level4Data = $1528
+planet5Level3Data = $1578
+planet3Level11Data = $1640
+planet5Level11Data = $1690
+planet5Level4Data = $1708
+planet4Level8Data = $1758
+planet4Level9Data = $17A8
+planet1Level5Data = $1800
+planet4Level19Data = $18F0
 
 ; A block of pointers for each planet, and a point for each of the
 ; fifteen levels in each planet.
 levelDataPerPlanet
-             .BYTE >fA050,<fA050,>fA708,<fA708,>fA2D0,<fA2D0,>f9BA0,<f9BA0
-             .BYTE >f1800,<f1800,>f1DE0,<f1DE0,>fA0A0,<fA0A0,>f1370,<f1370
-             .BYTE >f1A70,<f1A70,>f1E58,<f1E58,>f1140,<f1140,>f11B8,<f11B8
-             .BYTE >f13E8,<f13E8,>f13C0,<f13C0,>f9B00,<f9B00,>fA6E0,<fA6E0
-             .BYTE >f1D18,<f1D18,>fA948,<fA948,>fA998,<fA998,>fA168,<fA168
+             .BYTE >planet1Level1Data,<planet1Level1Data,>planet1Level2Data,<planet1Level2Data
+             .BYTE >planet1Level3Data,<planet1Level3Data,>planet1Level4Data,<planet1Level4Data
+             .BYTE >planet1Level5Data,<planet1Level5Data,>planet1Level6Data,<planet1Level6Data
+             .BYTE >planet1Level7Data,<planet1Level7Data,>planet1Level8Data,<planet1Level8Data
+             .BYTE >planet1Level9Data,<planet1Level9Data,>planet1Level10Data,<planet1Level10Data
+             .BYTE >planet1Level11Data,<planet1Level11Data,>planet1Level12Data,<planet1Level12Data
+             .BYTE >planet1Level13Data,<planet1Level13Data,>planet1Level14Data,<planet1Level14Data
+             .BYTE >planet1Level15Data,<planet1Level15Data,>planet1Level16Data,<planet1Level16Data
+             .BYTE >planet1Level17Data,<planet1Level17Data,>planet1Level18Data,<planet1Level18Data
+             .BYTE >planet1Level19Data,<planet1Level19Data,>planet1Level20Data,<planet1Level20Data
 
 
-             .BYTE >fA000,<fA000,>fA578,<fA578,>fA5A0,<fA5A0,>f1528,<f1528
-             .BYTE >f1000,<f1000,>f10C8,<f10C8,>f1968,<f1968,>f1B60,<f1B60
-             .BYTE >f1BD8,<f1BD8,>f9DA8,<f9DA8,>f9E70,<f9E70,>fA410,<fA410
-             .BYTE >fA528,<fA528,>fA5C8,<fA5C8,>fA8C0,<fA8C0,>fAA38,<fAA38
-             .BYTE >fA5F0,<fA5F0,>fA370,<fA370,>fA398,<fA398,>fA190,<fA190
+             .BYTE >planet2Level1Data,<planet2Level1Data,>planet2Level2Data,<planet2Level2Data
+             .BYTE >planet2Level3Data,<planet2Level3Data,>planet2Level4Data,<planet2Level4Data
+             .BYTE >planet2Level5Data,<planet2Level5Data,>planet2Level6Data,<planet2Level6Data
+             .BYTE >planet2Level7Data,<planet2Level7Data,>planet2Level8Data,<planet2Level8Data
+             .BYTE >planet2Level9Data,<planet2Level9Data,>planet2Level10Data,<planet2Level10Data
+             .BYTE >planet2Level11Data,<planet2Level11Data,>planet2Level12Data,<planet2Level12Data
+             .BYTE >planet2Level13Data,<planet2Level13Data,>planet2Level14Data,<planet2Level14Data
+             .BYTE >planet2Level15Data,<planet2Level15Data,>planet2Level16Data,<planet2Level16Data
+             .BYTE >planet2Level17Data,<planet2Level17Data,>planet2Level18Data,<planet2Level18Data
+             .BYTE >planet2Level19Data,<planet2Level19Data,>planet2Level20Data,<planet2Level20Data
 
-             .BYTE >f9FD8,<f9FD8,>f1EA8,<f1EA8,>f1AE8,<f1AE8,>f1C50,<f1C50
-             .BYTE >f1C78,<f1C78,>f1CC8,<f1CC8,>f1078,<f1078,>f1F20,<f1F20
-             .BYTE >f1230,<f1230,>f9C68,<f9C68,>f1640,<f1640,>f12D0,<f12D0
-             .BYTE >f9DF8,<f9DF8,>fA280,<fA280,>fA438,<fA438,>fA920,<fA920
-             .BYTE >fAA88,<fAA88,>fA488,<fA488,>f9EC0,<f9EC0,>fA1B8,<fA1B8
+             .BYTE >planet3Level1Data,<planet3Level1Data,>planet3Level2Data,<planet3Level2Data
+             .BYTE >planet3Level3Data,<planet3Level3Data,>planet3Level4Data,<planet3Level4Data
+             .BYTE >planet3Level5Data,<planet3Level5Data,>planet3Level6Data,<planet3Level6Data
+             .BYTE >planet3Level7Data,<planet3Level7Data,>planet3Level8Data,<planet3Level8Data
+             .BYTE >planet3Level9Data,<planet3Level9Data,>planet3Level10Data,<planet3Level10Data
+             .BYTE >planet3Level11Data,<planet3Level11Data,>planet3Level12Data,<planet3Level12Data
+             .BYTE >planet3Level13Data,<planet3Level13Data,>planet3Level14Data,<planet3Level14Data
+             .BYTE >planet3Level15Data,<planet3Level15Data,>planet3Level16Data,<planet3Level16Data
+             .BYTE >planet3Level17Data,<planet3Level17Data,>planet3Level18Data,<planet3Level18Data
+             .BYTE >planet3Level19Data,<planet3Level19Data,>planet3Level20Data,<planet3Level20Data
 
-             .BYTE >f9F88,<f9F88,>f1320,<f1320,>f1A20,<f1A20,>f19D0,<f19D0
-             .BYTE >f1F98,<f1F98,>f1D90,<f1D90,>f1438,<f1438,>f1758,<f1758
-             .BYTE >f17A8,<f17A8,>f9CB8,<f9CB8,>fA7D0,<fA7D0,>fA4D8,<fA4D8
-             .BYTE >fA9E8,<fA9E8,>f14B0,<f14B0,>f9D58,<f9D58,>fA730,<fA730
-             .BYTE >f9B50,<f9B50,>fA668,<fA668,>f18F0,<f18F0,>fA1E0,<fA1E0
+             .BYTE >planet4Level1Data,<planet4Level1Data,>planet4Level2Data,<planet4Level2Data
+             .BYTE >planet4Level3Data,<planet4Level3Data,>planet4Level4Data,<planet4Level4Data
+             .BYTE >planet4Level5Data,<planet4Level5Data,>planet4Level6Data,<planet4Level6Data
+             .BYTE >planet4Level7Data,<planet4Level7Data,>planet4Level8Data,<planet4Level8Data
+             .BYTE >planet4Level9Data,<planet4Level9Data,>planet4Level10Data,<planet4Level10Data
+             .BYTE >planet4Level11Data,<planet4Level11Data,>planet4Level12Data,<planet4Level12Data
+             .BYTE >planet4Level13Data,<planet4Level13Data,>planet4Level14Data,<planet4Level14Data
+             .BYTE >planet4Level15Data,<planet4Level15Data,>planet4Level16Data,<planet4Level16Data
+             .BYTE >planet4Level17Data,<planet4Level17Data,>planet4Level18Data,<planet4Level18Data
+             .BYTE >planet4Level19Data,<planet4Level19Data,>planet4Level20Data,<planet4Level20Data
 
-             .BYTE >f9F38,<f9F38,>fA230,<fA230,>f1578,<f1578,>f1708,<f1708
-             .BYTE >f9BF0,<f9BF0,>f9D08,<f9D08,>fA690,<fA690,>fA9C0,<fA9C0
-             .BYTE >f1280,<f1280,>f1500,<f1500,>f1690,<f1690,>f1460,<f1460
-             .BYTE >fA780,<fA780,>fA820,<fA820,>fA870,<fA870,>fA2D0,<fA2D0
-             .BYTE >fAA10,<fAA10,>fAA60,<fAA60,>fA820,<fA820,>fA208,<fA208
+             .BYTE >planet5Level1Data,<planet5Level1Data,>planet5Level2Data,<planet5Level2Data
+             .BYTE >planet5Level3Data,<planet5Level3Data,>planet5Level4Data,<planet5Level4Data
+             .BYTE >planet5Level5Data,<planet5Level5Data,>planet5Level6Data,<planet5Level6Data
+             .BYTE >planet5Level7Data,<planet5Level7Data,>planet5Level8Data,<planet5Level8Data
+             .BYTE >planet5Level9Data,<planet5Level9Data,>planet5Level10Data,<planet5Level10Data
+             .BYTE >planet5Level11Data,<planet5Level11Data,>planet5Level12Data,<planet5Level12Data
+             .BYTE >planet5Level13Data,<planet5Level13Data,>planet5Level14Data,<planet5Level14Data
+             .BYTE >planet5Level15Data,<planet5Level15Data,>planet1Level3Data,<planet1Level3Data
+             .BYTE >planet5Level17Data,<planet5Level17Data,>planet5Level18Data,<planet5Level18Data
+             .BYTE >planet5Level14Data,<planet5Level14Data,>planet5Level20Data,<planet5Level20Data
 
 hasEnteredNewLevel           .BYTE $01
 yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
@@ -1157,10 +1182,10 @@ yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
 a0000 = $0000
 attackWaveDataLoPtrArray = *-$02
         .BYTE <fA078,<fA078,<fA078,<fA078
-        .BYTE <a0000,<a0000,<fA078,<fA078,<fA050,<fA050
+        .BYTE <a0000,<a0000,<fA078,<fA078,<planet1Level1Data,<planet1Level1Data
 attackWaveDataHiPtrArray =*-$02
         .BYTE >fA078,>fA078,>fA078,>fA078
-        .BYTE >a0000,>a0000,>fA078,>fA078,>fA050,>fA050
+        .BYTE >a0000,>a0000,>fA078,>fA078,>planet1Level1Data,>planet1Level1Data
 
 
 ; This is level data, one entry for each level per planet
