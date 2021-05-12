@@ -7900,7 +7900,7 @@ b7F01   LDA randomJoystickInput
         STA joystickInput
         RTS
 
-.include "planet_data.asm"
+.include "planet_surface.asm"
 .include "planet_textures.asm"
 .include "level_data.asm"
 

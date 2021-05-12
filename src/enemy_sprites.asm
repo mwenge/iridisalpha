@@ -938,6 +938,7 @@ aEF00
         .BYTE $C0,$00,$FF,$00,$00,$00,$00,$00
         ;End of Sprites
 
+fEFF0
         ; There is game data in here
         .BYTE $05,$F6,$F7,$00,$F9,$FA,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
