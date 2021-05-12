@@ -1019,13 +1019,13 @@ p4003   LDA #<MainControlLoopInterruptHandler
         ; Point at the planet data for the first planet.
         ; The planet data starts at $8000. Each planet
         ; has 4 lines or layers.
-        LDA #$80
+        LDA #>planetOneTopLayer
         STA planetTextureTopLayerPtrHi
-        LDA #$84
+        LDA #>planetOneSecondFromTopLayer
         STA planetTextureSecondFromTopLayerPtrHi
-        LDA #$88
+        LDA #>planetOneSecondFromBottomLayer
         STA planetTextureSecondFromBottomLayerPtrHi
-        LDA #$8C
+        LDA #>planetOneBottomLayer
         STA planetTextureBottomLayerPtrHi
 
         LDA #$0F
@@ -3190,9 +3190,9 @@ UpdateEnergyLabelColorIndexFromBounties
         LDY tempStorageForYRegister
         RTS
 
-tempStorageForYRegister   .BYTE $23
-energyLabelColorIndexOffsetArray   .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
-        .BYTE $50
+tempStorageForYRegister          .BYTE $23
+energyLabelColorIndexOffsetArray .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
+                                 .BYTE $50
 ;------------------------------------------------------------------
 ; GilbyDied
 ;------------------------------------------------------------------
@@ -3456,7 +3456,7 @@ b5A29   LDA txtGilbiesLeft,X
         JSR PutRandomByteInAccumulatorRegister
         AND #$07 ; Make it a number between 0 and 7
         CLC
-        ADC #$08; Selects the 'encouragement text' in the second half of txtRestartLevelMsg
+        ADC #$08 ; Selects the 'encouragement text' in the second half of txtRestartLevelMsg
         TAY
         ;Fall through
 
@@ -6339,9 +6339,9 @@ b72CF   CLC
 ; StoreRandomPositionInPlanetInPlanetPtr
 ;------------------------------------------------------------------
 StoreRandomPositionInPlanetInPlanetPtr
-        LDA #<p8C00
+        LDA #<planetOneBottomLayer
         STA planetPtrLo
-        LDA #>p8C00
+        LDA #>planetOneBottomLayer
         STA planetPtrHi
         LDA charSetDataPtrLo
         BEQ b72F9
@@ -6788,8 +6788,10 @@ DrawRandomlyChosenStructure
         JMP (randomStructureRoutineAddress)
 
 ;Jump table
-structureSubRoutineArrayHiPtr   .BYTE >DrawLittleStructure,>DrawMediumStructure,>DrawLargestStructure,>DrawNextLargestStructure
-structureSubRoutineArrayLoPtr   .BYTE <DrawLittleStructure,<DrawMediumStructure,<DrawLargestStructure,<DrawNextLargestStructure
+structureSubRoutineArrayHiPtr   .BYTE >DrawLittleStructure,>DrawMediumStructure
+                                .BYTE >DrawLargestStructure,>DrawNextLargestStructure
+structureSubRoutineArrayLoPtr   .BYTE <DrawLittleStructure,<DrawMediumStructure
+                                .BYTE <DrawLargestStructure,<DrawNextLargestStructure
 
 gilbySprites .BYTE LAND_GILBY1,LAND_GILBY2,LAND_GILBY3,LAND_GILBY4,LAND_GILBY5,LAND_GILBY6,LAND_GILBY7,LAND_GILBY6
              .BYTE LAND_GILBY5,LAND_GILBY4,LAND_GILBY3,LAND_GILBY2,LAND_GILBY1,LAND_GILBY8,LAND_GILBY9,LAND_GILBY10
