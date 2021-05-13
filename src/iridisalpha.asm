@@ -4234,6 +4234,7 @@ transferToOtherPlanetSound1 .BYTE $00,$00,$20,$04,$00,$00,$00,$03
                             .BYTE $01,$00,$81,$08,$00,$00,$02,$05
                             .BYTE $01,$71,$63,$00,$00,$20,$04,$00
                             .BYTE $00,$80,$CA,$7B,$00
+fE800 = $E800
 ;------------------------------------------------------------------
 ; SwapRoutines
 ;------------------------------------------------------------------
@@ -4245,9 +4246,9 @@ SwapRoutines
         STA tempLoPtr1
         LDA #>LaunchCurrentProgram
         STA tempHiPtr1
-        LDA #>$E800
+        LDA #>fE800
         STA tempHiPtr
-        LDA #<$E800
+        LDA #<fE800
         STA tempLoPtr
 
 b63A4   LDY #$00
