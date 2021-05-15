@@ -2444,9 +2444,9 @@ bC367   INC aC356
 
         JSR BP_PutRandomValueInAccumulator
         STA aC353
-        LDA #>attackWaveDataLoPtr
+        LDA #>currentShipWaveDataLoPtr
         STA aC355
-        LDA #<attackWaveDataLoPtr
+        LDA #<currentShipWaveDataLoPtr
         STA aC354
 
         JSR sC380

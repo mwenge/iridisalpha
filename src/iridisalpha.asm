@@ -47,8 +47,8 @@ planetPtrLo2                            = $35
 planetPtrHi2                            = $36
 screenLintPtrTempLo                     = $3A
 screenLintPtrTempHi                     = $3B
-attackWaveDataLoPtr                     = $40
-attackWaveDataHiPtr                     = $41
+currentShipWaveDataLoPtr                     = $40
+currentShipWaveDataHiPtr                     = $41
 tempVarStorage                          = $42
 tempLoPtr3                              = $43
 tempHiPtr3                              = $44
@@ -56,8 +56,8 @@ tmpPtrLo                                = $45
 tmpPtrHi                                = $46
 tmpPtrZp47                              = $47
 energyChangeCounter                     = $4A
-gameDataPtrLo                           = $4E
-gameDataPtrHi                           = $4F
+levelDataPtrLo                           = $4E
+levelDataPtrHi                           = $4F
 lastKeyPressed                          = $C5
 currentLevelInTopPlanetsLoPtr           = $F0
 currentLevelInTopPlanetsHiPtr           = $F1
@@ -1112,6 +1112,19 @@ planet5Level4Data = $1708
 planet4Level8Data = $1758
 planet4Level9Data = $17A8
 planet1Level5Data = $1800
+f1118 = $1118
+f11B8 = $11B8
+f1398 = $1398
+f13E8 = $13E8
+f1500 = $1500
+f1800 = $1800
+f1850 = $1850
+f1878 = $1878
+f1968 = $1968
+f1A20 = $1A20
+f1A70 = $1A70
+f1AE8 = $1AE8
+
 planet4Level19Data = $18F0
 
 ; A block of pointers for each planet, and a point for each of the
@@ -1179,13 +1192,13 @@ yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
 yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
                              .BYTE $F0,$F0,$F0,$F0,$F0,$F0,$F0,$EC
 
-a0000 = $0000
-attackWaveDataLoPtrArray = *-$02
+f0000 = $0000
+activeShipsWaveDataLoPtrArray = *-$02
         .BYTE <fA078,<fA078,<fA078,<fA078
-        .BYTE <a0000,<a0000,<fA078,<fA078,<planet1Level1Data,<planet1Level1Data
-attackWaveDataHiPtrArray =*-$02
+        .BYTE <f0000,<f0000,<fA078,<fA078,<planet1Level1Data,<planet1Level1Data
+activeShipsWaveDataHiPtrArray =*-$02
         .BYTE >fA078,>fA078,>fA078,>fA078
-        .BYTE >a0000,>a0000,>fA078,>fA078,>planet1Level1Data,>planet1Level1Data
+        .BYTE >f0000,>f0000,>fA078,>fA078,>planet1Level1Data,>planet1Level1Data
 
 
 ; This is level data, one entry for each level per planet
@@ -1240,7 +1253,7 @@ shipCollidedWithGilbySound           .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
 ; Put00orFFinAccumulator
 ;------------------------------------------------------------------
 Put00orFFinAccumulator
-        LDA attackWaveDataHiPtrArray,X
+        LDA activeShipsWaveDataHiPtrArray,X
         BEQ b49B5
         LDA levelEntrySequenceActive
         BNE b49B2
@@ -1257,14 +1270,14 @@ b49B2   LDA #$00
 b49B5   LDA #$FF
 b49B7   RTS
 
-previousAttackWaveLoPtr                       .BYTE $A0
-previousAttackWaveHiPtr                       .BYTE $A0
-previousAttackWaveLoPtr2                      .BYTE $58
-previousAttackWaveHiPtr2                      .BYTE $1E
+topPlanetLevelDataLoPtr                       .BYTE $A0
+topPlanetLevelDataHiPtr                       .BYTE $A0
+bottomPlanetLevelDataLoPtr                      .BYTE $58
+bottomPlanetLevelDataHiPtr                      .BYTE $1E
 enemiesKilledTopPlanetsSinceLastUpdate        .BYTE $28,$00,$00,$00
 enemiesKilledTopPlanetsSinceLastUpdatePtr     .BYTE $00
-enemiesKilledBottomsPlanetsSinceLastUpdate    .BYTE $18,$00,$00,$00
-enemiesKilledBottomsPlanetsSinceLastUpdatePtr .BYTE $00
+enemiesKilledBottomPlanetsSinceLastUpdate    .BYTE $18,$00,$00,$00
+enemiesKilledBottomPlanetsSinceLastUpdatePtr .BYTE $00
 currentLevelInTopPlanets                      .BYTE $06,$02,$06,$0A
 currentLevelInTopPlanetsPtr                   .BYTE $08
 currentLevelInBottomPlanets                   .BYTE $09,$0E,$0A,$0B,$01
@@ -1304,18 +1317,19 @@ ProcessAttackWaveData
         STA gameSequenceCounter
         LDX #$02
         JSR Put00orFFinAccumulator
-        BEQ b4A1F
+        BEQ b4A1F ; Skips updating waves for top planet.
 
         LDA topPlanetStepsBetweenAttackWaveUpdates
         CMP currentStepsBetweenTopPlanetAttackWaves
-        BEQ b4A1F
-        LDA previousAttackWaveLoPtr
-        STA attackWaveDataLoPtrArray,X
-        LDA previousAttackWaveHiPtr
-        STA attackWaveDataHiPtrArray,X
+        BEQ b4A1F ; Skips updating waves for top planet.
+
+        LDA topPlanetLevelDataLoPtr
+        STA activeShipsWaveDataLoPtrArray,X
+        LDA topPlanetLevelDataHiPtr
+        STA activeShipsWaveDataHiPtrArray,X
         TXA
         TAY
-        JSR UpdateBackingDataPtr
+        JSR UpdateAttackWaveDataPtr
         INC currentStepsBetweenTopPlanetAttackWaves
 
 b4A1F   LDX #$08
@@ -1326,10 +1340,10 @@ b4A1F   LDX #$08
         CMP currentStepsBetweenBottomPlanetAttackWaves
         BEQ b49B7 ; Returns early
 
-        LDA previousAttackWaveLoPtr2
-        STA attackWaveDataLoPtrArray,X
-        LDA previousAttackWaveHiPtr2
-        STA attackWaveDataHiPtrArray,X
+        LDA bottomPlanetLevelDataLoPtr
+        STA activeShipsWaveDataLoPtrArray,X
+        LDA bottomPlanetLevelDataHiPtr
+        STA activeShipsWaveDataHiPtrArray,X
         TXA
         CLC
         ADC #$02
@@ -1338,13 +1352,13 @@ b4A1F   LDX #$08
         ; Falls through
 
 ;------------------------------------------------------------------
-; UpdateBackingDataPtr
+; UpdateAttackWaveDataPtr
 ;------------------------------------------------------------------
-UpdateBackingDataPtr
-        LDA attackWaveDataLoPtrArray,X
-        STA attackWaveDataLoPtr
-        LDA attackWaveDataHiPtrArray,X
-        STA attackWaveDataHiPtr
+UpdateAttackWaveDataPtr
+        LDA activeShipsWaveDataLoPtrArray,X
+        STA currentShipWaveDataLoPtr
+        LDA activeShipsWaveDataHiPtrArray,X
+        STA currentShipWaveDataHiPtr
         LDA #$00
         STA updatingWaveData
         STA shipsThatHaveCollidedWithGilby,X
@@ -1357,27 +1371,27 @@ UpdateBackingDataPtr
 UpdateWaveDataFromBackingStore
         ; X is the index of the current level on the planet.
         LDY #$00
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipsColorArray + $01,X
 
         LDY #$06
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA anotherUpdateRateForAttackShips,X
 
         LDY #$0B
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA someKindOfRateLimitingForAttackWaves,X
 
         LDA #$00
         STA indexForYPosMovementForUpperPlanetAttackShips,X
 
         LDY #$0F
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA updateRateForAttackShips,X
 
         ; Load the sprite value.
         LDY #$01
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipsSpriteValueArray + $01,X
 
         ; Store the sprite value in the storage used to reload the game
@@ -1386,15 +1400,15 @@ UpdateWaveDataFromBackingStore
         TAY
         LDX orderForUpdatingPositionOfAttackShips,Y
         LDY #$01
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpritesLoadedFromBackingData,X
 
         LDY #$02
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpriteAnimationEnd,X
 
         LDY #$03
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipAnimationFrameRate,X
         STA upperPlanetAttackShipInitialFrameRate,X
 
@@ -1406,12 +1420,12 @@ UpdateWaveDataFromBackingStore
 
         INY
         ; Y is now 4
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpritesLoadedFromBackingData,X
 
         INY
         ; Y is now 5
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpriteAnimationEnd,X
 
         TXA
@@ -1423,7 +1437,7 @@ UpdateWaveDataFromBackingStore
 
         ; Load the x-pos movement for the attack ship.
 b4AB9   LDY #$12
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
         BEQ b4AC4
         STA xPosMovementForUpperPlanetAttackShip,X
@@ -1431,27 +1445,27 @@ b4AB9   LDY #$12
 b4AC4   INY
         ; Y is now 19 ($13). This has the Y-Pos movement for the
         ; attack ship.
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
         BEQ b4AFA
         AND #$F0
         CMP #$20
         BEQ b4AD6
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         JMP LoadYPosForAttackShip
 
 b4AD6   TXA
         STX temporaryStorageForXRegister
         AND #$04
         BNE b4AEC
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         AND #$0F
         TAX
         LDA yPosMovementPatternForShips2,X
         LDX temporaryStorageForXRegister
         JMP LoadYPosForAttackShip
 
-b4AEC   LDA (attackWaveDataLoPtr),Y
+b4AEC   LDA (currentShipWaveDataLoPtr),Y
         AND #$0F
         TAX
         LDA yPosMovementPatternForShips1,X
@@ -1462,7 +1476,7 @@ LoadYPosForAttackShip
 
 b4AFA   INY
         ; Y is now 20 ($14)
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
         BEQ b4B07
         STA upperPlanetInitialXPosFrameRateForAttackShip,X
@@ -1470,7 +1484,7 @@ b4AFA   INY
 
 b4B07   INY
         ; Y is now 21 ($15)
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
         BEQ b4B14
         STA upperPlanetInitialYPosFrameRateForAttackShips,X
@@ -1504,10 +1518,10 @@ b4B1C   LDY previousAttaWaveHiPtrTempStorage
 
         STY tmpPtrLo
         LDY #$06
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BNE b4B59
         LDY #$08
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4B59
         LDA #$6C
         LDY tmpPtrLo
@@ -1522,10 +1536,10 @@ b4B5A   JSR PutRandomByteInAccumulatorRegister
 
         STY tmpPtrLo
         LDY #$06
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BNE b4B7A
         LDY #$08
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4B7A
 
         LDA #$90
@@ -1554,7 +1568,7 @@ PerformMainAttackWaveProcessing
         RTS
 
 b4BC7   LDX indexForWaveData,Y
-        LDA attackWaveDataHiPtrArray,X
+        LDA activeShipsWaveDataHiPtrArray,X
         BEQ b4BD6
         STY tempVarStorage
         JSR ProcessAttackWaves
@@ -1576,18 +1590,18 @@ b4BEB   RTS
 ;------------------------------------------------------------------
 ProcessAttackWaves
         ; X is the current value in indexForWaveData
-        STA attackWaveDataHiPtr
-        LDA attackWaveDataLoPtrArray,X
-        STA attackWaveDataLoPtr
+        STA currentShipWaveDataHiPtr
+        LDA activeShipsWaveDataLoPtrArray,X
+        STA currentShipWaveDataLoPtr
         LDA hasEnteredNewLevel
         BEQ b4C03
 
         ; We've entered a new level.
         ; Get the wave data from the wave data store and return
         LDA #>attackWaveData
-        STA attackWaveDataHiPtr
+        STA currentShipWaveDataHiPtr
         LDA #<attackWaveData
-        STA attackWaveDataLoPtr
+        STA currentShipWaveDataLoPtr
         JMP GetWaveDataForNewLevel
         ; Returns
 
@@ -1626,7 +1640,7 @@ UpdateScoresAfterHittingShipWithBullet
         LDA #$00
         STA currentTopPlanetIndex
 b4C42   LDY #$22
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         JSR CalculatePointsForByte2
         CLC
         ADC pointsEarnedTopPlanetByte1
@@ -1647,7 +1661,7 @@ b4C5C   LDA levelEntrySequenceActive
         LDA #$00
         STA currentBottomPlanetIndex
 b4C76   LDY #$22
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         JSR CalculatePointsForByte2
         CLC
         ADC pointsEarnedBottomPlanetByte1
@@ -1662,7 +1676,7 @@ j4C8D
         TAX
         LDY #$22
 
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4CB1
         LDA inAttractMode
         BNE b4CB1
@@ -1677,7 +1691,7 @@ b4CAB   JSR UpdateBottomPlanetProgressData
         JSR IncreaseEnergyBottomOnly
 
 b4CB1   LDY #$1D
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckForCollisionsBeforeUpdatingWaveData
         DEY
         JMP UpdatePointersAndGetWaveDataForNewLevel
@@ -1692,10 +1706,10 @@ CheckForCollisionsBeforeUpdatingWaveData
         LDA #$00
         STA shipsThatHaveCollidedWithGilby,X
         LDY #$1F
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ UpdateWaves
         LDY #$0E
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckCollisionType
         TXA
         AND #$08
@@ -1721,7 +1735,7 @@ b4CDF
 ;------------------------------------------------------------------
 CheckCollisionType
         LDY #$24
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BNE MaybeTransferToOtherPlanet
         JMP UpdateEnergyLevelsAfterCollision
         ;Returns
@@ -1771,7 +1785,7 @@ b4D1C   STA valueIsAlwaysZero
 ;------------------------------------------------------------------
 UpdateEnergyLevelsAfterCollision
         LDY #$23
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4D7F
         LDA #<shipCollidedWithGilbySound
         STA soundDataAC
@@ -1791,13 +1805,13 @@ UpdateEnergyLevelsAfterCollision
         BEQ b4D72
         LDA energyLabelColorIndexBottomPlanet
         BNE b4D7F
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexBottomPlanet
         BNE b4D7F
 b4D72   LDA energyLabelColorIndexTopPlanet
         BNE b4D7F
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexTopPlanet
 b4D7F   LDY #$1E
@@ -1813,7 +1827,7 @@ UpdateFromBackingData
         LDA #$00
         STA upperPlanetAttackShipYPosUpdated,X
         LDY #$19
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4D98
         DEY
         JMP UpdatePointersAndGetWaveDataForNewLevel
@@ -1823,7 +1837,7 @@ b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
         LDA #$00
         STA upperPlanetAttackShipYPosUpdated2,X
         LDY #$1B
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DAC
         DEY
         JMP UpdatePointersAndGetWaveDataForNewLevel
@@ -1832,7 +1846,7 @@ b4DAC   LDA joystickInput
         AND #$10
         BNE b4DBD
         LDY #$21
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DBD
         DEY
         JMP UpdatePointersAndGetWaveDataForNewLevel
@@ -1842,7 +1856,7 @@ b4DBD   LDA updateRateForAttackShips,X
         DEC updateRateForAttackShips,X
         BNE UpdateAttackShipData
         LDY #$0E
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DDB
         TXA
         AND #$08
@@ -1857,16 +1871,17 @@ b4DDB   LDY #$10
 ; UpdatePointersAndGetWaveDataForNewLevel
 ;------------------------------------------------------------------
 UpdatePointersAndGetWaveDataForNewLevel
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         PHA
         INY
-        LDA (attackWaveDataLoPtr),Y
-        BEQ GetDefaultWaveData
-        STA attackWaveDataHiPtrArray,X
-        STA attackWaveDataHiPtr
+        LDA (currentShipWaveDataLoPtr),Y
+        BEQ ClearDeadShipFromLevelData
+        STA activeShipsWaveDataHiPtrArray,X
+        STA currentShipWaveDataHiPtr
         PLA
-        STA attackWaveDataLoPtr
-        STA attackWaveDataLoPtrArray,X
+        STA currentShipWaveDataLoPtr
+        STA activeShipsWaveDataLoPtrArray,X
+        ; Falls through
 
 ;------------------------------------------------------------------
 ; GetWaveDataForNewLevel
@@ -1880,14 +1895,14 @@ GetWaveDataForNewLevel
         RTS
 
 ;------------------------------------------------------------------
-; GetDefaultWaveData
+; ClearDeadShipFromLevelData
 ;------------------------------------------------------------------
-GetDefaultWaveData
+ClearDeadShipFromLevelData
         LDA #$F0
         STA upperPlanetAttackShipsSpriteValueArray + $01,X
         PHA
         LDA #$00
-        STA attackWaveDataHiPtrArray,X
+        STA activeShipsWaveDataHiPtrArray,X
         LDY orderForUpdatingPositionOfAttackShips,X
         PLA
         STA upperPlanetAttackShipSpritesLoadedFromBackingData,Y
@@ -1906,16 +1921,16 @@ currentBottomPlanet .BYTE $01
 ;------------------------------------------------------------------
 UpdateAttackShipData
         LDY #$0A
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4E73
         DEC someKindOfRateLimitingForAttackWaves,X
         BNE b4E73
         STA tempHiPtr3
         DEY
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA tempLoPtr3
         LDY #$0B
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA someKindOfRateLimitingForAttackWaves,X
         LDY indexForYPosMovementForUpperPlanetAttackShips,X
         LDA orderForUpdatingPositionOfAttackShips,X
@@ -1949,7 +1964,7 @@ b4E6A   LDY #$0C
         JMP UpdatePointersAndGetWaveDataForNewLevel
 
 b4E73   LDY #$17
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4EC7
         CLC
         ADC gilbyVerticalPosition
@@ -1959,7 +1974,7 @@ b4E73   LDY #$17
         LDA upperPlanetYPosFrameRateForAttackShips,X
         CMP #$01
         BNE b4EC3
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         CMP #$23
         BNE b4E96
         LDA #$77
@@ -1988,7 +2003,7 @@ b4EC0   INC yPosMovementForUpperPlanetAttackShips,X
 b4EC3   LDA indexForWaveData,X
         TAX
 b4EC7   LDY #$16
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4F05
         CLC
         ADC #$58
@@ -2018,11 +2033,11 @@ b4EFE   INC xPosMovementForUpperPlanetAttackShip,X
 b4F01   LDA indexForWaveData,X
         TAX
 b4F05   LDY #$06
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b4F55
         DEC anotherUpdateRateForAttackShips,X
         BNE b4F55
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         STA anotherUpdateRateForAttackShips,X
         TXA
         PHA
@@ -2118,7 +2133,7 @@ UpdateAttackShipsMSBXPositionLoop
         STX tempLoPtr3
         LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX
-        LDA attackWaveDataHiPtrArray,X
+        LDA activeShipsWaveDataHiPtrArray,X
         BNE b4FB6
         JMP j501B
 
@@ -2148,13 +2163,13 @@ b4FDD   CMP #$10
 
 b4FE4   LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX
-        LDA attackWaveDataLoPtrArray,X
-        STA attackWaveDataLoPtr
-        LDA attackWaveDataHiPtrArray,X
-        STA attackWaveDataHiPtr
+        LDA activeShipsWaveDataLoPtrArray,X
+        STA currentShipWaveDataLoPtr
+        LDA activeShipsWaveDataHiPtrArray,X
+        STA currentShipWaveDataHiPtr
         STY tempVarStorage
         LDY #$1D
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         LDY tempVarStorage
         CMP #$00
         BEQ j501B
@@ -2822,7 +2837,7 @@ b555C   JSR UpdateCoreEnergyLevel
 ;------------------------------------------------------------------
 IncreaseEnergyTopOnly
         LDY #$23
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b5572
         STA energyChangeCounter
 b556A   JSR IncreaseEnergyTop
@@ -2838,7 +2853,7 @@ b5572   JMP IncreaseEnergyTop
 ;------------------------------------------------------------------
 IncreaseEnergyBottomOnly
         LDY #$23
-        LDA (attackWaveDataLoPtr),Y
+        LDA (currentShipWaveDataLoPtr),Y
         BEQ b5585
         STA energyChangeCounter
 b557D   JSR IncreaseEnergyBottom
@@ -2906,9 +2921,9 @@ b55DF   LDA oldBottomPlanetIndex
 ;------------------------------------------------------------------
 UpdateLevelData
         LDA #<levelDataPerPlanet
-        STA gameDataPtrLo
+        STA levelDataPtrLo
         LDA #>levelDataPerPlanet
-        STA gameDataPtrHi
+        STA levelDataPtrHi
 
         ; Get the current planet
         PLA
@@ -2918,13 +2933,13 @@ UpdateLevelData
         ; X is the current planet.
         ; Move the pointer to the location in levelDataPerPlanet for the
         ; current planet.
-b55EF   LDA gameDataPtrLo
+b55EF   LDA levelDataPtrLo
         CLC
         ADC #$28
-        STA gameDataPtrLo
-        LDA gameDataPtrHi
+        STA levelDataPtrLo
+        LDA levelDataPtrHi
         ADC #$00
-        STA gameDataPtrHi
+        STA levelDataPtrHi
         DEX
         BNE b55EF
 
@@ -2934,57 +2949,60 @@ b55EF   LDA gameDataPtrLo
 b55FF   LDA currentLevelInCurrentPlanet
         ASL
         TAY
-        LDA (gameDataPtrLo),Y
+        LDA (levelDataPtrLo),Y
         PHA
         INY
-        LDA (gameDataPtrLo),Y
+        LDA (levelDataPtrLo),Y
         PHA
         LDA updateLevelForBottomPlanet
         BNE b5644
+
+        ; Update the level data for the top planet
         PLA
-        STA previousAttackWaveLoPtr
-        STA gameDataPtrLo
+        STA topPlanetLevelDataLoPtr
+        STA levelDataPtrLo
         PLA
-        STA previousAttackWaveHiPtr
-        STA gameDataPtrHi
+        STA topPlanetLevelDataHiPtr
+        STA levelDataPtrHi
         LDY #$26
         LDX oldTopPlanetIndex
         LDA enemiesKilledTopPlanetsSinceLastUpdate,X
         BEQ b5628
         BNE b562A
 
-b5628   LDA (gameDataPtrLo),Y
+b5628   LDA (levelDataPtrLo),Y
 b562A   STA enemiesKilledTopPlanetsSinceLastUpdate,X
         LDA enemiesKilledTopPlanetSinceLastUpdate
         BNE b5638
         LDA enemiesKilledTopPlanetsSinceLastUpdate,X
         STA enemiesKilledTopPlanetSinceLastUpdate
 b5638   DEY
-        LDA (gameDataPtrLo),Y
+        LDA (levelDataPtrLo),Y
         STA topPlanetStepsBetweenAttackWaveUpdates
         LDA #$00
         STA unusedVariable1
         RTS
 
+        ; Update the level data for the bottom planet.
 b5644   PLA
-        STA previousAttackWaveLoPtr2
-        STA gameDataPtrLo
+        STA bottomPlanetLevelDataLoPtr
+        STA levelDataPtrLo
         PLA
-        STA previousAttackWaveHiPtr2
-        STA gameDataPtrHi
+        STA bottomPlanetLevelDataHiPtr
+        STA levelDataPtrHi
         LDY #$26
         LDX oldBottomPlanetIndex
-        LDA enemiesKilledBottomsPlanetsSinceLastUpdate,X
+        LDA enemiesKilledBottomPlanetsSinceLastUpdate,X
         BEQ b565C
         BNE b565E
-b565C   LDA (gameDataPtrLo),Y
-b565E   STA enemiesKilledBottomsPlanetsSinceLastUpdate,X
+b565C   LDA (levelDataPtrLo),Y
+b565E   STA enemiesKilledBottomPlanetsSinceLastUpdate,X
         LDA enemiesKilledBottomPlanetSinceLastUpdate
         BNE b566C
-        LDA enemiesKilledBottomsPlanetsSinceLastUpdate,X
+        LDA enemiesKilledBottomPlanetsSinceLastUpdate,X
         STA enemiesKilledBottomPlanetSinceLastUpdate
 b566C   DEY
-        LDA (gameDataPtrLo),Y
+        LDA (levelDataPtrLo),Y
         STA bottomPlanetStepsBetweenAttackWaveUpdates
         LDA #$00
         STA unusedVariable3
@@ -3027,12 +3045,12 @@ b56B9   LDX temporaryStorageForXRegister
 UpdateBottomPlanetProgressData
         STX temporaryStorageForXRegister
         LDX oldBottomPlanetIndex
-        DEC enemiesKilledBottomsPlanetsSinceLastUpdate,X
+        DEC enemiesKilledBottomPlanetsSinceLastUpdate,X
         LDA enemiesKilledBottomPlanetSinceLastUpdate
         BNE b56D1
-        LDA enemiesKilledBottomsPlanetsSinceLastUpdate,X
+        LDA enemiesKilledBottomPlanetsSinceLastUpdate,X
         STA enemiesKilledBottomPlanetSinceLastUpdate
-b56D1   LDA enemiesKilledBottomsPlanetsSinceLastUpdate,X
+b56D1   LDA enemiesKilledBottomPlanetsSinceLastUpdate,X
         BNE b56B9
         INC currentLevelInBottomPlanets,X
         LDA currentLevelInBottomPlanets,X
@@ -3057,8 +3075,8 @@ b56E3   LDA #$04
 InitializePlanetProgressArrays
         LDX #$05
         LDA #$00
-b5705   STA previousAttackWaveHiPtr2,X
-        STA enemiesKilledBottomsPlanetsSinceLastUpdatePtr,X
+b5705   STA bottomPlanetLevelDataHiPtr,X
+        STA enemiesKilledBottomPlanetsSinceLastUpdatePtr,X
         STA currentLevelInTopPlanetsPtr,X
         STA enemiesKilledTopPlanetsSinceLastUpdatePtr,X
         DEX
@@ -3126,7 +3144,7 @@ b5767   LDA bonusBountiesEarned
         LDX oldTopPlanetIndex
         LDY currentTopPlanet
         LDX #$00
-b5774   LDA enemiesKilledBottomsPlanetsSinceLastUpdatePtr,Y
+b5774   LDA enemiesKilledBottomPlanetsSinceLastUpdatePtr,Y
         CMP everyThirdLevelInPlanet,X
         BMI b578E
         INX
@@ -8461,12 +8479,16 @@ bCCE0   LDA gameCompletionText,X
         STA SCREEN_RAM + $02F8,X
         DEX
         BPL bCCE0
-        BMI bCD15
+        BMI UpdateDisplayedHiScore
 
 
 gameCompletionText   .TEXT "GAME COMPLETION CHART FOR ZARD, THE HERO"
 
-bCD15   LDY #$07
+;--------------------------------------------------------------------
+; UpdateDisplayedHiScore   
+;--------------------------------------------------------------------
+UpdateDisplayedHiScore   
+        LDY #$07
         LDX #$00
 bCD19   LDA (tempLoPtr1),Y
         AND #$3F
