@@ -1193,13 +1193,24 @@ yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
                              .BYTE $F0,$F0,$F0,$F0,$F0,$F0,$F0,$EC
 
 f0000 = $0000
+; This is a pointer table for the data for each of the 4 active ships on the
+; top planet and the bottom planet. It gets updated as ships die and levels
+; change.
 activeShipsWaveDataLoPtrArray = *-$02
+        ; Pointers to top planet ships.
         .BYTE <fA078,<fA078,<fA078,<fA078
-        .BYTE <f0000,<f0000,<fA078,<fA078,<planet1Level1Data,<planet1Level1Data
+        .BYTE <f0000,<f0000 ; These two are always zero. This makes it easy
+                            ; to use an 'AND #$08' on the index to check
+                            ; if it is pointing to a top planet ship or a 
+                            ; bottom planet one.
+        ; Pointers to bottom planet ships.
+        .BYTE <fA078,<fA078,<planet1Level1Data,<planet1Level1Data
 activeShipsWaveDataHiPtrArray =*-$02
+        ; Pointers to top planet ships.
         .BYTE >fA078,>fA078,>fA078,>fA078
-        .BYTE >f0000,>f0000,>fA078,>fA078,>planet1Level1Data,>planet1Level1Data
-
+        .BYTE >f0000,>f0000
+        ; Pointers to bottom planet ships.
+        .BYTE >fA078,>fA078,>planet1Level1Data,>planet1Level1Data
 
 ; This is level data, one entry for each level per planet
 indexForYPosMovementForUpperPlanetAttackShips = *-$02
@@ -1250,19 +1261,30 @@ shipCollidedWithGilbySound           .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
                                      .BYTE $80,$CA,$7B,$00
 
 ;------------------------------------------------------------------
-; Put00orFFinAccumulator
+; SetXToIndexOfShipThatNeedsReplacing
+;
+; Searches activeShipsWaveDataHiPtrArray for an entry with zeroized ptrs
+; indicating that the ship has been killed and needs to be replaced.
+; Stores the index of the ships that needs replacing in the X register.
 ;------------------------------------------------------------------
-Put00orFFinAccumulator
+SetXToIndexOfShipThatNeedsReplacing
         LDA activeShipsWaveDataHiPtrArray,X
         BEQ b49B5
         LDA levelEntrySequenceActive
         BNE b49B2
         INX
+
+        ; Have we tried all the top planet ships without finding one
+        ; that is dead (i.e. pointer set to zeros) and needs replacing?
         CPX #$06
         BEQ b49B2
+        ; Have we tried all the bottom planet ships without finding one
+        ; that is dead (i.e. pointer set to zeros) and needs replacing?
         CPX #$0C
         BEQ b49B2
-        BNE Put00orFFinAccumulator
+
+        ; Keep checking.
+        BNE SetXToIndexOfShipThatNeedsReplacing
 
 b49B2   LDA #$00
         RTS
@@ -1304,20 +1326,20 @@ b49E1   JSR PerformMainAttackWaveProcessing
         JSR DecreaseEnergyStorage
         JSR UpdateCoreEnergyValues
         DEC gameSequenceCounter
-        BEQ ProcessAttackWaveData
+        BEQ GetNewWaveDataForAnyDeadShips
 b49F5   RTS
 
 gameSequenceCounter   .BYTE $14
 
 ;------------------------------------------------------------------
-; ProcessAttackWaveData
+; GetNewWaveDataForAnyDeadShips
 ;------------------------------------------------------------------
-ProcessAttackWaveData
+GetNewWaveDataForAnyDeadShips
         LDA #$20
         STA gameSequenceCounter
         LDX #$02
-        JSR Put00orFFinAccumulator
-        BEQ b4A1F ; Skips updating waves for top planet.
+        JSR SetXToIndexOfShipThatNeedsReplacing
+        BEQ b4A1F ; Didn't find any dead ships to replace.
 
         LDA topPlanetStepsBetweenAttackWaveUpdates
         CMP currentStepsBetweenTopPlanetAttackWaves
@@ -1333,12 +1355,12 @@ ProcessAttackWaveData
         INC currentStepsBetweenTopPlanetAttackWaves
 
 b4A1F   LDX #$08
-        JSR Put00orFFinAccumulator
-        BEQ b49B7 ; Returns early
+        JSR SetXToIndexOfShipThatNeedsReplacing
+        BEQ b49B7 ; Skips updating waves for bottom planet.
 
         LDA bottomPlanetStepsBetweenAttackWaveUpdates
         CMP currentStepsBetweenBottomPlanetAttackWaves
-        BEQ b49B7 ; Returns early
+        BEQ b49B7 ; Skips updating waves for bottom planet.
 
         LDA bottomPlanetLevelDataLoPtr
         STA activeShipsWaveDataLoPtrArray,X
@@ -1366,10 +1388,10 @@ UpdateAttackWaveDataPtr
         ; Falls through
 
 ;------------------------------------------------------------------
-; UpdateWaveDataFromBackingStore
+; GetWaveDateForNewShip
 ;------------------------------------------------------------------
-UpdateWaveDataFromBackingStore
-        ; X is the index of the current level on the planet.
+GetWaveDateForNewShip
+        ; X is the index of the ship in activeShipsWaveDataLoPtrArray
         LDY #$00
         LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipsColorArray + $01,X
@@ -1430,7 +1452,7 @@ UpdateWaveDataFromBackingStore
 
         TXA
         TAY
-        LDA indexForWaveData,X
+        LDA indexForActiveShipsWaveData,X
         TAY
         LDA upperPlanetAttackShipSpritesLoadedFromBackingData,X
         STA upperPlanetAttackShipsSpriteValueArray + $01,Y
@@ -1498,7 +1520,7 @@ b4B14   LDA #$01
         ; Set the initial Y Position of the new attack ships.
         ; This is random.
 b4B1C   LDY previousAttaWaveHiPtrTempStorage
-        LDA indexForWaveData,X
+        LDA indexForActiveShipsWaveData,X
         TAX
         LDA attackShipsMSBXPosOffsetArray + $01,X
         STA upperPlanetAttackShipsMSBXPosArray + $01,Y
@@ -1550,7 +1572,7 @@ b4B7A   RTS
 
 orderForUpdatingPositionOfAttackShips          .BYTE $00,$00,$00,$01,$02,$03,$00,$00
                                                .BYTE $04,$05,$06,$07
-indexForWaveData                               .BYTE $02,$03,$04,$05,$08,$09,$0A,$0B
+indexForActiveShipsWaveData                    .BYTE $02,$03,$04,$05,$08,$09,$0A,$0B
 indexIntoUpperPlanetAttackShipXPosAndYPosArray .BYTE $00,$00,$02,$03,$04,$05,$00,$00
                                                .BYTE $0A,$0B,$0C,$0D
 indexIntoUpperPlanetAttackShipsYPosArray       .BYTE $02,$03,$04,$05,$0A,$0B,$0C,$0D
@@ -1567,11 +1589,15 @@ PerformMainAttackWaveProcessing
         BEQ b4BC7
         RTS
 
-b4BC7   LDX indexForWaveData,Y
+        ; This loop updates the state of each of the 8 attack ships
+        ; that are active at any one time tracked by activeShipsWaveDataLoPtrArray. It's 4 for the
+        ; top planet, and 4 for the bottom planet. 
+b4BC7   LDX indexForActiveShipsWaveData,Y
         LDA activeShipsWaveDataHiPtrArray,X
+        ; When there is no ship (anymore) for an entry its pointer will be zeroes.
         BEQ b4BD6
         STY tempVarStorage
-        JSR ProcessAttackWaves
+        JSR ProcessAttackWaveDataForActiveShip
         LDY tempVarStorage
 b4BD6   INY
         CPY #$08
@@ -1586,10 +1612,10 @@ b4BD6   INY
 b4BEB   RTS
 
 ;------------------------------------------------------------------
-; ProcessAttackWaves
+; ProcessAttackWaveDataForActiveShip
 ;------------------------------------------------------------------
-ProcessAttackWaves
-        ; X is the current value in indexForWaveData
+ProcessAttackWaveDataForActiveShip
+        ; X is the current value in indexForActiveShipsWaveData
         STA currentShipWaveDataHiPtr
         LDA activeShipsWaveDataLoPtrArray,X
         STA currentShipWaveDataLoPtr
@@ -1602,13 +1628,13 @@ ProcessAttackWaves
         STA currentShipWaveDataHiPtr
         LDA #<attackWaveData
         STA currentShipWaveDataLoPtr
-        JMP GetWaveDataForNewLevel
+        JMP GetWaveDataForShipForNewLevel
         ; Returns
 
 
 b4C03   LDA shipsThatHaveBeenHitByABullet,X
         BNE UpdateScoresAfterHittingShipWithBullet
-        JMP CheckForCollisionsBeforeUpdatingWaveData
+        JMP CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         ; Returns
 
 ;------------------------------------------------------------------
@@ -1617,6 +1643,7 @@ b4C03   LDA shipsThatHaveBeenHitByABullet,X
 UpdateScoresAfterHittingShipWithBullet
         LDA #$00
         STA shipsThatHaveBeenHitByABullet,X
+
         LDA #<newPlanetSound
         STA soundDataAE
         LDA #>newPlanetSound
@@ -1624,10 +1651,14 @@ UpdateScoresAfterHittingShipWithBullet
         JSR ResetSoundDataPtr2
         LDA #$1C
         STA soundEffectInProgress
+
+        ; Did the bullet hit a ship on the top planet or bottom planet?
         TXA
         PHA
         AND #$08
         BNE b4C5C
+
+        ; Bullet hit a ship on the top planet.
         LDA levelEntrySequenceActive
         BNE b4C42
         LDA inAttractMode
@@ -1650,6 +1681,7 @@ b4C42   LDY #$22
         STA pointsEarnedTopPlanetByte2
         JMP j4C8D
 
+        ; Bullet hit a ship on the bottom planet.
 b4C5C   LDA levelEntrySequenceActive
         BNE b4C76
         LDA inAttractMode
@@ -1658,6 +1690,7 @@ b4C5C   LDA levelEntrySequenceActive
         LDA currentBottomPlanetIndex
         CMP currentBottomPlanet
         BNE b4C76
+
         LDA #$00
         STA currentBottomPlanetIndex
 b4C76   LDY #$22
@@ -1692,42 +1725,44 @@ b4CAB   JSR UpdateBottomPlanetProgressData
 
 b4CB1   LDY #$1D
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ CheckForCollisionsBeforeUpdatingWaveData
+        BEQ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         DEY
         JMP UpdatePointersAndGetWaveDataForNewLevel
         ;Returns
 
 ;------------------------------------------------------------------
-; CheckForCollisionsBeforeUpdatingWaveData
+; CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
 ;------------------------------------------------------------------
-CheckForCollisionsBeforeUpdatingWaveData
+CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
+        ; X is the current value in indexForActiveShipsWaveData
         LDA shipsThatHaveCollidedWithGilby,X
-        BEQ UpdateWaves
+        BEQ JumpToGetNewShipDataFromDataStore
         LDA #$00
         STA shipsThatHaveCollidedWithGilby,X
         LDY #$1F
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ UpdateWaves
+        BEQ JumpToGetNewShipDataFromDataStore
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckCollisionType
         TXA
-        AND #$08
-        BNE b4CDF
+        AND #$08 ; Is X pointing to lower planet ships?
+        BNE DecrementStepsThenCheckCollisionsForBottomPlanet
+        ; X is pointing to a top planet ship.
         DEC currentStepsBetweenTopPlanetAttackWaves
         JMP CheckCollisionType
 
 ;------------------------------------------------------------------
-; UpdateWaves
+; JumpToGetNewShipDataFromDataStore
 ;------------------------------------------------------------------
-UpdateWaves
-        JMP UpdateFromBackingData
+JumpToGetNewShipDataFromDataStore
+        JMP GetNewShipDataFromDataStore
         ; Returns
 
 ;------------------------------------------------------------------
-; b4CDF
+; DecrementStepsThenCheckCollisionsForBottomPlanet
 ;------------------------------------------------------------------
-b4CDF
+DecrementStepsThenCheckCollisionsForBottomPlanet
         DEC currentStepsBetweenBottomPlanetAttackWaves
         ; Falls through
 ;------------------------------------------------------------------
@@ -1746,12 +1781,12 @@ CheckCollisionType
 MaybeTransferToOtherPlanet
         LDA joystickInput
         AND #$10
-        BEQ UpdateWaves
+        BEQ JumpToGetNewShipDataFromDataStore
 
         ; Fire not pressed while passing through explosion ring so can
         ; transfer to other planet
         LDA lowerPlanetActivated
-        BNE UpdateWaves
+        BNE JumpToGetNewShipDataFromDataStore
         LDA valueIsAlwaysZero
         BNE b4D0D
         JSR ResetSoundDataPtr1
@@ -1819,9 +1854,9 @@ b4D7F   LDY #$1E
         ; Returns
 
 ;------------------------------------------------------------------
-; UpdateFromBackingData
+; GetNewShipDataFromDataStore
 ;------------------------------------------------------------------
-UpdateFromBackingData
+GetNewShipDataFromDataStore
         LDA upperPlanetAttackShipYPosUpdated,X
         BEQ b4D98
         LDA #$00
@@ -1852,9 +1887,9 @@ b4DAC   LDA joystickInput
         JMP UpdatePointersAndGetWaveDataForNewLevel
 
 b4DBD   LDA updateRateForAttackShips,X
-        BEQ UpdateAttackShipData
+        BEQ UpdateAttackShipDataForNewShip
         DEC updateRateForAttackShips,X
-        BNE UpdateAttackShipData
+        BNE UpdateAttackShipDataForNewShip
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DDB
@@ -1884,12 +1919,12 @@ UpdatePointersAndGetWaveDataForNewLevel
         ; Falls through
 
 ;------------------------------------------------------------------
-; GetWaveDataForNewLevel
+; GetWaveDataForShipForNewLevel
 ;------------------------------------------------------------------
-GetWaveDataForNewLevel
+GetWaveDataForShipForNewLevel
         LDA #$FF
         STA updatingWaveData
-        JSR UpdateWaveDataFromBackingStore
+        JSR GetWaveDateForNewShip
         LDA #$00
         STA updatingWaveData
         RTS
@@ -1917,9 +1952,9 @@ currentTopPlanet    .BYTE $01
 currentBottomPlanet .BYTE $01
 
 ;------------------------------------------------------------------
-; UpdateAttackShipData
+; UpdateAttackShipDataForNewShip
 ;------------------------------------------------------------------
-UpdateAttackShipData
+UpdateAttackShipDataForNewShip
         LDY #$0A
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4E73
@@ -1952,14 +1987,14 @@ UpdateAttackShipData
         STA upperPlanetInitialYPosFrameRateForAttackShips,X
         STA upperPlanetYPosFrameRateForAttackShips,X
         INY
-        LDA indexForWaveData,X
+        LDA indexForActiveShipsWaveData,X
         TAX
         TYA
         STA indexForYPosMovementForUpperPlanetAttackShips,X
         JMP b4E73
 
 b4E6A   LDY #$0C
-        LDA indexForWaveData,X
+        LDA indexForActiveShipsWaveData,X
         TAX
         JMP UpdatePointersAndGetWaveDataForNewLevel
 
@@ -2000,7 +2035,7 @@ b4EA6   LDA indexIntoUpperPlanetAttackShipsYPosArray,X
         DEC yPosMovementForUpperPlanetAttackShips,X
         DEC yPosMovementForUpperPlanetAttackShips,X
 b4EC0   INC yPosMovementForUpperPlanetAttackShips,X
-b4EC3   LDA indexForWaveData,X
+b4EC3   LDA indexForActiveShipsWaveData,X
         TAX
 b4EC7   LDY #$16
         LDA (currentShipWaveDataLoPtr),Y
@@ -2030,7 +2065,7 @@ b4EE9   LDA upperPlanetAttackShipsXPosArray + $01,X
         DEC xPosMovementForUpperPlanetAttackShip,X
         DEC xPosMovementForUpperPlanetAttackShip,X
 b4EFE   INC xPosMovementForUpperPlanetAttackShip,X
-b4F01   LDA indexForWaveData,X
+b4F01   LDA indexForActiveShipsWaveData,X
         TAX
 b4F05   LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
@@ -2052,7 +2087,7 @@ b4F05   LDY #$06
         AND #$08
         BNE b4F4C
         LDX #$02
-b4F2D   JSR Put00orFFinAccumulator
+b4F2D   JSR SetXToIndexOfShipThatNeedsReplacing
         BEQ b4F50
         LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
         PLA
