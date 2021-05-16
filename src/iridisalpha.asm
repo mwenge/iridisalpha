@@ -47,8 +47,8 @@ planetPtrLo2                            = $35
 planetPtrHi2                            = $36
 screenLintPtrTempLo                     = $3A
 screenLintPtrTempHi                     = $3B
-currentShipWaveDataLoPtr                     = $40
-currentShipWaveDataHiPtr                     = $41
+currentShipWaveDataLoPtr                = $40
+currentShipWaveDataHiPtr                = $41
 tempVarStorage                          = $42
 tempLoPtr3                              = $43
 tempHiPtr3                              = $44
@@ -56,15 +56,13 @@ tmpPtrLo                                = $45
 tmpPtrHi                                = $46
 tmpPtrZp47                              = $47
 energyChangeCounter                     = $4A
-levelDataPtrLo                           = $4E
-levelDataPtrHi                           = $4F
+levelDataPtrLo                          = $4E
+levelDataPtrHi                          = $4F
 lastKeyPressed                          = $C5
 currentLevelInTopPlanetsLoPtr           = $F0
 currentLevelInTopPlanetsHiPtr           = $F1
-aF8                                     = $F8
-aF9                                     = $F9
-aFA                                     = $FA
-aFB                                     = $FB
+tempHiScoreInputStorage                 = $F8
+tempLastBlastStorage                    = $F9
 tempLoPtr1                              = $FC
 tempHiPtr1                              = $FD
 tempLoPtr                               = $FE
@@ -100,6 +98,7 @@ LTGREEN                              = $0D
 LTBLUE                               = $0E
 GRAY3                                = $0F
 
+; Some common sprite names
 STARFIELD_SPRITE                     = $C0
 LAND_GILBY1                          = $C1
 LAND_GILBY2                          = $C2
@@ -139,12 +138,12 @@ GILBY_TAKING_OFF_LOWERPLANET5        = $E3
 GILBY_AIRBORNE_LOWERPLANET_RIGHT     = $E4
 GILBY_AIRBORNED_TURNING_LOWER_PLANET = $E5
 GILBY_AIRBORNED_LOWERPLANET_LEFT     = $E6
-EXPLOSION_START = $ED
-EXPLOSION_MIDDLE = $EE
-EXPLOSION_END = $EF
-EXPLOSION1 = $FC
-EXPLOSION2 = $FD
-EXPLOSION3 = $FE
+EXPLOSION_START                      = $ED
+EXPLOSION_MIDDLE                     = $EE
+EXPLOSION_END                        = $EF
+EXPLOSION1                           = $FC
+EXPLOSION2                           = $FD
+EXPLOSION3                           = $FE
 
 * = $0801
 ;------------------------------------------------------------------
@@ -173,7 +172,7 @@ LaunchCurrentProgram
         JMP LaunchDNA
 
 b082F   LDX #$F8
-        JSR IA_SetupSound
+        JSR SetUpMainSound
         LDA #$7F
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
         LDA #$0F
@@ -197,7 +196,7 @@ InitializeSpritesAndInterruptsForTitleScreen
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         STA difficultySelected
-        JSR IA_ClearScreen
+        JSR ClearEntireScreen
 
         LDA #$18
         STA $D018    ;VIC Memory Control Register
@@ -291,9 +290,9 @@ ReturnFromTitleScreenInterruptHandler
         RTI
 
 ;------------------------------------------------------------------
-; IA_ClearScreen
+; ClearEntireScreen
 ;------------------------------------------------------------------
-IA_ClearScreen
+ClearEntireScreen
         LDX #$00
         LDA #$20
 b08FF   STA SCREEN_RAM,X
@@ -841,9 +840,9 @@ PlayNoteVoice3
         RTS
 
 ;------------------------------------------------------------------
-; IA_SetupSound
+; SetUpMainSound
 ;------------------------------------------------------------------
-IA_SetupSound
+SetUpMainSound
         LDA #$0F
         STA $D405    ;Voice 1: Attack / Decay Cycle Control
         STA $D40C    ;Voice 2: Attack / Decay Cycle Control
@@ -1082,12 +1081,16 @@ energyLevelToGilbyColorMap .BYTE $00,$06,$02,$04,$05,$03,$07,$01
 pauseModeSelected          .BYTE $00
 reasonGilbyDied            .BYTE $03
 gilbyHasJustDied           .BYTE $00
+
 ;------------------------------------------------------------------
 ; 'Made In France' - a pause mode mini game.
 ; Accessed by pressing F1 during play.
 ;------------------------------------------------------------------
 .include "madeinfrance.asm"
 
+;------------------------------------------------------------------
+; The data for drawing the planets.
+;------------------------------------------------------------------
 planet2Level5Data = $1000
 planet3Level7Data = $1078
 planet2Level6Data = $10C8
@@ -2484,8 +2487,8 @@ UpdateControlPanelColor
 
 controlPanelColorDoesntNeedUpdating   .BYTE $00
 
-planetStoragePtrLo = tmpPtrHi
-planetStoragePtrHi = tmpPtrZp47
+planetStoragePtrLo = $46
+planetStoragePtrHi = $47
 ;------------------------------------------------------------------
 ; InitializeSomeGameStorage
 ; Writes storage for top and bottom planets to $0763 and $07B3
@@ -4166,10 +4169,12 @@ b6223   LDA txtProgressStatusLine2,X
         DEX
         BNE b6223
 
+        ; Wait for the player to press fire to dismiss the screen.
 b6233   LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BEQ b6233
 
+        ; Make them press fire twice!
 b623A   LDA $DC00    ;CIA1: Data Port Register A
         AND #$10
         BNE b623A
@@ -4411,6 +4416,7 @@ AnimateFinalScoreTally
         STA currentLevelInTopPlanetsHiPtr
         JMP JumpToHiScoreScreen
 
+finalScoreUpdateInterval = $FB
 ;------------------------------------------------------------------
 ; IncrementFinalScoreTally
 ;------------------------------------------------------------------
@@ -4423,11 +4429,11 @@ b6482   LDA (tempLoPtr1),Y
         TAX
         JSR UpdateFinalScoreTally
 b648D   LDA #$A0
-        STA aFB
+        STA finalScoreUpdateInterval
         LDX #$00
 b6493   DEX
         BNE b6493
-        DEC aFB
+        DEC finalScoreUpdateInterval
         BNE b6493
         DEY
         BNE b6482
@@ -4748,6 +4754,7 @@ bonusBountyAnimationArray2 .BYTE $01,$01,$01,$01,$01,$01,$01,$01
                            .BYTE $02,$03,$04,$05,$06,$07,$08,$09
 bonusBountyAnimationArray  .BYTE $08,$07,$06,$05,$04,$03,$02,$01
                            .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+bonusBountyGilbyXPosOffset = $FA
 ;------------------------------------------------------------------
 ; BonusBountyAnimateGilbyXPos
 ;------------------------------------------------------------------
@@ -4755,12 +4762,12 @@ BonusBountyAnimateGilbyXPos
         LDA bonusGilbyXPos1
         CLC
         ROR
-        STA aFA
+        STA bonusBountyGilbyXPosOffset
         LDA bonusGilbyXPos2
         CLC
         ROR
         CLC
-        ADC aFA
+        ADC bonusBountyGilbyXPosOffset
         ADC #$70
         STA $D000,Y  ;Sprite 0 X Pos
         RTS
@@ -4772,12 +4779,12 @@ BonusBountyAnimateGilbyYPos
         LDA bonusGilbyYPos1
         CLC
         ROR
-        STA aFA
+        STA bonusBountyGilbyXPosOffset
         LDA bonusGilbyYPos2
         CLC
         ROR
         CLC
-        ADC aFA
+        ADC bonusBountyGilbyXPosOffset
         ADC #$40
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS
@@ -8083,9 +8090,11 @@ bC9F4   LDA (tempLoPtr1),Y
         STA tempLoPtr
         LDA #>hiScoreTablePtr
         STA tempHiPtr
+
+lastBlastScoreLength = $FB
         LDX #$00
         LDA #$14
-        STA aFB
+        STA lastBlastScoreLength
 bCA0C   LDA (tempLoPtr),Y
         CMP lastBlastScore,X
         BEQ bCA18
@@ -8105,20 +8114,22 @@ bCA1E   LDA tempLoPtr
         STA tempHiPtr
         LDY #$00
         LDX #$00
-        DEC aFB
+        DEC lastBlastScoreLength
         BNE bCA18
+
         LDA #$00
         STA storedLastBlastScore
         JMP ClearScreenDrawHiScoreScreenText
 
 storedLastBlastScore   .BYTE $00
+lastBlastCounter = $FA
 ;------------------------------------------------------------------
 ; StoreLastBlastInTable
 ;------------------------------------------------------------------
 StoreLastBlastInTable
         LDA #$01
-        STA aFA
-        LDA aFB
+        STA lastBlastCounter
+        LDA lastBlastScoreLength
         CMP #$01
         BNE bCA51
         LDA #<ptrLastScoreInTable
@@ -8135,13 +8146,13 @@ bCA51   LDA #<ptrSecondLastScoreInTable
 StoreScoreLoop
         LDY #$00
 bCA5B   LDA (tempLoPtr1),Y
-        STA aF9
+        STA tempLastBlastStorage
         TYA
         PHA
         CLC
         ADC #$15
         TAY
-        LDA aF9
+        LDA tempLastBlastStorage
         STA (tempLoPtr1),Y
         PLA
         TAY
@@ -8149,9 +8160,9 @@ bCA5B   LDA (tempLoPtr1),Y
         CPY #$15
         BNE bCA5B
 
-        INC aFA
-        LDA aFA
-        CMP aFB
+        INC lastBlastCounter
+        LDA lastBlastCounter
+        CMP lastBlastScoreLength
         BEQ StoreLastBlasScoreInTable
         LDA tempLoPtr1
         SEC
@@ -8288,7 +8299,7 @@ bCB68   LDA txtHiScorLine2,X
 
         LDA #$14
         SEC
-        SBC aFB
+        SBC lastBlastScoreLength
         TAX
         LDA hiScoreTableCursorPosLoPtr,X
         STA tempLoPtr
@@ -8304,6 +8315,7 @@ bCB85   JSR GetHiScoreScreenInput
         JMP DisplayHiScoreScreen
 
 hiScoreTableInputName .TEXT "YAK "
+hiScoreJoystickInput = $FA
 ;------------------------------------------------------------------
 ; GetHiScoreScreenInput
 ;------------------------------------------------------------------
@@ -8311,18 +8323,18 @@ GetHiScoreScreenInput
         LDA hiScoreTableInputName - $0A,Y
         AND #$3F
         STA (tempLoPtr),Y
-        STA aF8
+        STA tempHiScoreInputStorage
         TYA
         PHA
         SEC
         SBC #$03
         TAY
-        LDA aF8
+        LDA tempHiScoreInputStorage
         STA (tempLoPtr1),Y
         PLA
         TAY
         LDA $DC00    ;CIA1: Data Port Register A
-        STA aFA
+        STA hiScoreJoystickInput
         AND #$04
         BNE bCBC4
         LDA hiScoreTableInputName - $0A,Y
@@ -8334,7 +8346,7 @@ bCBBC   STA hiScoreTableInputName - $0A,Y
         LDA #$3F
         JMP jCBD9
 
-bCBC4   LDA aFA
+bCBC4   LDA hiScoreJoystickInput
         AND #$08
         BNE bCBE9
         LDA hiScoreTableInputName - $0A,Y
@@ -8347,15 +8359,15 @@ bCBD6   STA hiScoreTableInputName - $0A,Y
 
 jCBD9
         LDA #$50
-        STA aF9
+        STA tempLastBlastStorage
         LDX #$00
 bCBDF   DEX
         BNE bCBDF
-        DEC aF9
+        DEC tempLastBlastStorage
         BNE bCBDF
         JMP GetHiScoreScreenInput
 
-bCBE9   LDA aFA
+bCBE9   LDA hiScoreJoystickInput
         AND #$10
         BNE GetHiScoreScreenInput
 
@@ -8364,12 +8376,12 @@ bCBEF   LDA $DC00    ;CIA1: Data Port Register A
         BEQ bCBEF
 
         LDA #$C0
-        STA aF9
+        STA tempLastBlastStorage
 
         LDX #$00
 bCBFC   DEX
         BNE bCBFC
-        DEC aF9
+        DEC tempLastBlastStorage
         BNE bCBFC
         RTS
 
@@ -8410,7 +8422,7 @@ bCC2E   JSR HiScoreCheckInput
         JSR SetupHiScoreScreen
         JMP DrawHiScoreScreen
 
-bCC43   STA aFA
+bCC43   STA hiScoreJoystickInput
         AND #$01
         BNE bCC67
 
@@ -8420,18 +8432,18 @@ bCC43   STA aFA
         LDA #$13
         STA currentEntryInHiScoreTable
 bCC53   LDA #$50
-        STA aF9
+        STA tempLastBlastStorage
         LDX #$00
 bCC59   DEX
         BNE bCC59
-        DEC aF9
+        DEC tempLastBlastStorage
         BNE bCC59
 
         LDA #$20
         STA (tempLoPtr),Y
 bCC64   JMP DrawCamelAtPosition
 
-bCC67   LDA aFA
+bCC67   LDA hiScoreJoystickInput
         AND #$02
         BNE bCC7E
 
@@ -8444,7 +8456,7 @@ bCC67   LDA aFA
         STA currentEntryInHiScoreTable
         BEQ bCC53
 
-bCC7E   LDA aFA
+bCC7E   LDA hiScoreJoystickInput
         AND #$10
         BNE bCC64
 
@@ -8474,6 +8486,8 @@ SetupHiScoreScreen
         STA tempHiPtr1
         CPX #$00
         BEQ bCCB5
+
+        ; Move the ptr to the position in the table given by currentEntryInHiScoreTable
 bCCA5   LDA tempLoPtr1
         CLC
         ADC #$15
@@ -8483,15 +8497,16 @@ bCCA5   LDA tempLoPtr1
         STA tempHiPtr1
         DEX
         BNE bCCA5
+
 bCCB5   LDY #$0B
 bCCB7   LDA (tempLoPtr1),Y
-        STA aF8
+        STA tempHiScoreInputStorage
         TYA
         PHA
         SEC
         SBC #$0B
         TAY
-        LDA aF8
+        LDA tempHiScoreInputStorage
         STA (currentLevelInTopPlanetsLoPtr),Y
         PLA
         TAY
