@@ -1351,7 +1351,7 @@ GetNewWaveDataForAnyDeadShips
         STA activeShipsWaveDataHiPtrArray,X
         TXA
         TAY
-        JSR UpdateAttackWaveDataPtr
+        JSR UpdateCurrentShipWaveDataPtrs
         INC currentStepsBetweenTopPlanetAttackWaves
 
 b4A1F   LDX #$08
@@ -1374,9 +1374,9 @@ b4A1F   LDX #$08
         ; Falls through
 
 ;------------------------------------------------------------------
-; UpdateAttackWaveDataPtr
+; UpdateCurrentShipWaveDataPtrs
 ;------------------------------------------------------------------
-UpdateAttackWaveDataPtr
+UpdateCurrentShipWaveDataPtrs
         LDA activeShipsWaveDataLoPtrArray,X
         STA currentShipWaveDataLoPtr
         LDA activeShipsWaveDataHiPtrArray,X
