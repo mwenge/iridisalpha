@@ -13,7 +13,7 @@ iridisalpha.prg: src/iridisalpha.asm src/bonusphase_graphics.asm
 	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/enemy_sprites.prg src/enemy_sprites.asm
 	echo "44c76416f7a4d16fac31ff99ef2d2272  bin/ia.prg" | md5sum -c
 	echo "46e893399dcf28100a9bbdeb343b7a78  bin/bonusphase_graphics.prg" | md5sum -c
-	echo "12017d91ec24ed814ccee21c16c2885a  bin/enemy_sprites.prg" | md5sum -c
+	echo "12017d91ec24ed814ccee21c16c28852  bin/enemy_sprites.prg" | md5sum -c
 	exomizer sfx sys bin/ia.prg bin/bonusphase_graphics.prg,0xe000 bin/enemy_sprites.prg,0xe830 -n -o bin/iridisalpha.prg
 
 run: iridisalpha.prg
