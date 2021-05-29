@@ -24,7 +24,7 @@ wine iridisalpha.exe
 ### Play Online
 [<img src="https://img.shields.io/badge/Latest%20Release-Play%20Online-purple.svg">](https://iridisalpha.xyz)
 
-If you just want to play the game, you can do so in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.) You might find [the game's original manual](https://github.com/mwenge/iridisalpha/tree/master/src/OriginalGameManual.md) a useful read to try and figure out what on earth is going on!
+If you just want to play the game, you can do so in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.) You might find [the game's original manual](https://github.com/mwenge/iridisalpha/blob/master/OriginalGameManual.md) a useful read to try and figure out what on earth is going on!
 
 ### C64
 [<img src="https://img.shields.io/badge/Lastest%20Release-C64-green.svg">](https://github.com/mwenge/iridisalpha/releases/tag/0.01)
