@@ -10,7 +10,7 @@
     * [`sprites.asm`](#spritesasm)
     * [`madeinfrance.asm`](#madeinfranceasm)
     * [`dna.asm`](#dnaasm)
-* [A Closer Look At [`iridisalpha.asm`]](#a-closer-look-at-iridisalphaasm)
+* [A Closer Look At `iridisalpha.asm`](#a-closer-look-at-iridisalphaasm)
   * [The Difficulty Cliff](#the-difficulty-cliff)
   * [GenPlan: The algorithm for generating the planet surfaces](#genplan-the-algorithm-for-generating-the-planet-surfaces)
   * [A Cheat for Awarding Yourself 10000 Bonus Points](#a-cheat-for-awarding-yourself-10000-bonus-points)
@@ -126,7 +126,7 @@ This is a game within the pause-mode game. Originally released on Compunet, you 
 
 <img src="https://user-images.githubusercontent.com/58846/103443219-cfab3580-4c54-11eb-8046-0f5f3bac9c79.gif" width=300>
 
-# A Closer Look At [`iridisalpha.asm`]
+# A Closer Look At `iridisalpha.asm`
 While disassembly is still in progress, this section is a collection of random notes. 
 
 ## The Difficulty Cliff
