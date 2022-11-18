@@ -3,13 +3,13 @@
 <!-- vim-markdown-toc GFM -->
 
   * [What Each File Contains](#what-each-file-contains)
-    * [[`iridisalpha.asm`]](#iridisalphaasm)
-    * [[`bonusphase.asm`]](#bonusphaseasm)
-    * [[`charset.asm`]](#charsetasm)
-    * [[`bonusphase_graphics.asm`]](#bonusphase_graphicsasm)
-    * [[`sprites.asm`]](#spritesasm)
-    * [[`madeinfrance.asm`]](#madeinfranceasm)
-    * [[`dna.asm`]](#dnaasm)
+    * [`iridisalpha.asm`](#iridisalphaasm)
+    * [`bonusphase.asm`](#bonusphaseasm)
+    * [`charset.asm`](#charsetasm)
+    * [`bonusphase_graphics.asm`](#bonusphase_graphicsasm)
+    * [`sprites.asm`](#spritesasm)
+    * [`madeinfrance.asm`](#madeinfranceasm)
+    * [`dna.asm`](#dnaasm)
 * [A Closer Look At [`iridisalpha.asm`]](#a-closer-look-at-iridisalphaasm)
   * [The Difficulty Cliff](#the-difficulty-cliff)
   * [GenPlan: The algorithm for generating the planet surfaces](#genplan-the-algorithm-for-generating-the-planet-surfaces)
@@ -29,16 +29,16 @@ characters, sprites and interupts.
 Before diving into the code, let's take a quick look at how I've broken out the source.
 
 ## What Each File Contains
-### [`iridisalpha.asm`]
+### `iridisalpha.asm`
 This file contains the source for the main game. All of the other `asm` files in this directory are included from this file, with the exception of `characterandspritedata.asm` which is compiled separately and compressed into the final `prg` file.
 
 
-### [`bonusphase.asm`]
+### `bonusphase.asm`
 This file contains the source for the game's 'Bonus Phase', which is in fact a complete mini-game in it's own right. 
 
 <img src="https://www.c64-wiki.com/images/d/dc/Iridisalphabonus2.gif" width="300">
 
-### [`charset.asm`]
+### `charset.asm`
 This file contains the character sets used in the game, including most of the characters used to construct the planet surfaces
 
 Here's what the start of the file looks like, defining the characterset (font) used for A, B and C.
@@ -77,8 +77,8 @@ p2017
                                                 ; 11000110   **   ** 
                                                 ; 01111100    *****  
 ```
-### [`bonusphase_graphics.asm`]
-### [`sprites.asm`]
+### `bonusphase_graphics.asm`
+### `sprites.asm`
 These files contain the game's sprites and some additional character set data. As `bonusphase_graphics.asm` needs to end up at adress $E000, and since it is not possible to load data directly to that address when loading a C64 binary from tape or image, our build process uses a tool called Exomizer to compress the data in `bonusphase_graphics.asm` in `iridisalpha.prg` and then decompress it to $E000 when the program is loading.
 
 The source includes a pseudo bitmap of the sprites that helps you related the data to what will ultimately be painted on screen. Here's the sprite definition of the gilby flying left from [`sprites.asm`]:
@@ -116,12 +116,12 @@ The source includes a pseudo bitmap of the sprites that helps you related the da
         .BYTE $00,$00,$00,$00,$00,$00,$00,$FF
 ```
 
-### [`madeinfrance.asm`]
+### `madeinfrance.asm`
 This is the self-contained pause-mode game, called 'Made in France' or 'MIF' for short. You can access it during game play by pressing 'F1'. This little game was originally released by Minter on Compunet, the source code for that release is available at https://github.com/mwenge/iridisalpha/tree/master/demos/mif.
 
 <img src="https://user-images.githubusercontent.com/58846/103455890-eac78500-4ce8-11eb-9d92-867c0c3ea825.gif" width=300>
 
-### [`dna.asm`]
+### `dna.asm`
 This is a game within the pause-mode game. Originally released on Compunet, you can access it from with 'Made in France' by pressing '\*'. You exit it by pressing '\*' again. his little game was also originally released by Minter on Compunet, the source code for that release is available at https://github.com/mwenge/iridisalpha/tree/master/demos/dna.
 
 <img src="https://user-images.githubusercontent.com/58846/103443219-cfab3580-4c54-11eb-8046-0f5f3bac9c79.gif" width=300>
