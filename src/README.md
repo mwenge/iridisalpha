@@ -200,6 +200,15 @@ This is clearly stacking the odds way too high against the casual player way too
 to give the novice player (and me) a chance of progressing and exploring the game I've added a build option that
 applies the following patch to the game:
 
+https://github.com/mwenge/iridisalpha/blob/36bcacfbd5de7bb363623d8ec5182a4e6db41b20/src/level_data2-easymode.diff#L1-L17
+
+This toggles off the behaviour of immediately gravitating to the player's ship and allows the player to accumulate
+energy when killing the licker ships. For me, this provides a nice balance between incrementing the difficulty a bit
+and giving the player the chance to actually make some progress. To try out the easy mode, do:
+
+```
+make runeasy
+```
 
 ## [GenPlan](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098): The algorithm for generating the planet surfaces
 
