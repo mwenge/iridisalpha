@@ -170,7 +170,7 @@ https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8
 
 This is what the licker ship data looks like:
 
-https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data2.asm#L58-L64
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data2.asm#L60-L66
 
 This is the configuration data that controls the behaviour and appearance of the licker ships. The bit that 
 defines their behaviour is in the last two bytes of the third line:
@@ -191,7 +191,7 @@ https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8
 
 The 3rd byte in this line is set to `$00`:
 
-https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data2.asm#L63
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data2.asm#L66
 
 So the licker ship data has this flag set to `$00`, so not only do the ships immediately jump on you and start sapping
 your energy, killing any of them during this level results in getting no energy back! 
