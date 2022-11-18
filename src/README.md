@@ -215,58 +215,7 @@ make runeasy
 This is the [routine](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098) Minter devoted some time to in his development diary.
 
 
-```asm
-;-------------------------------
-; GeneratePlanetSurface
-;
-; This is the routine Minter called 'GenPlan'.
-;
-; From Jeff Minter's development diary:
-; 17 February 1986
-; Redid the graphics completely, came up with some really nice looking 
-; metallic planet structures that I'll probably stick with. Started to 
-; write the GenPlan routine that'll generate random planets at will. 
-; Good to have a C64 that can generate planets in its spare time. 
-; Wrote pulsation routines for the colours; looks well good with some 
-; of the planet structures. The metallic look seems to be 'in' at the 
-; moment so this first planet will go down well. There will be five 
-; planet surface types in all, I reckon, probably do one with grass 
-; and sea a bit like 'Sheep in Space', cos I did like that one. It'll
-; be nice to have completely different planet surfaces in top and bottom
-; of the screen. The neat thing is that all the surfaces have the same
-; basic structures, all I do is fit different graphics around each one. 
-;-------------------------------
-
-GeneratePlanetSurface   
-        LDA #<planetSurfaceData
-        STA planetSurfaceDataPtrLo
-        LDA #>planetSurfaceData
-        STA planetSurfaceDataPtrHi
-
-        ; Clear down the planet surface data from $8000 to $8FFF
-        LDY #$00
-b73C6   LDA #$60
-b73C8   STA (planetSurfaceDataPtrLo),Y
-        DEY 
-        BNE b73C8
-        INC planetSurfaceDataPtrHi
-        LDA planetSurfaceDataPtrHi
-        CMP #$90
-        BNE b73C6
-
-        ; Fill $8C00 to $8CFF with a $40,$42 pattern. These are the
-        ; character values that represent 'sea' on the planet.
-        LDA #$8C
-        STA planetSurfaceDataPtrHi
-b73D9   LDA #$40
-        STA (planetSurfaceDataPtrLo),Y
-        LDA #$42
-        INY 
-        STA (planetSurfaceDataPtrLo),Y
-        DEY 
-        ; Move the pointers forward by 2 bytes
-        LDA planetSurfaceDataPtrLo
-```
+https://github.com/mwenge/iridisalpha/blob/d581c8da64a77a0cf4aa3fca9737883158868382/src/iridisalpha.asm#L6607-L6643
 
 There are five different planets in the game, each with their own unique set of textures, surfaces and structures. However the algorithm for generating the planets is the same: the difference lies solely in the character set data used to construct them.
 
