@@ -35,7 +35,7 @@
 ; Byte 32 ($20): Hi Ptr for another set of wave data for this level. 
 ; Byte 33 ($21): A flag that tells us whether to load the extra stage data for this enemy. 
 ; Byte 34: ($22): Points multiplier for hitting enemies in this level. 
-; Byte 35: ($23) The amount of energy the enemy saps from gilby.
+; Byte 35: ($23): Does hitting this enemy increase the gilby's energy? 
 ; Byte 36: ($24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
 ;
 ; Example:
