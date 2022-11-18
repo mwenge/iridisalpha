@@ -1,17 +1,21 @@
 # Iridis Alpha: Introduction to the Source Code
+<!-- vim-markdown-toc GFM -->
 
   * [What Each File Contains](#what-each-file-contains)
-    * [`iridisalpha.asm`](#iridisalphaasm)
-    * [`bonusphase.asm`](#bonusphaseasm)
-    * [`charset.asm`](#charsetasm)
-    * [`bonusphase_graphics.asm`](#bonusphase_graphicsasm)
-    * [`sprites.asm`](#spritesasm)
-    * [`madeinfrance.asm`](#madeinfranceasm)
-    * [`dna.asm`](#dnaasm)
-* [A Closer Look At `iridisalpha.asm`](#a-closer-look-at-iridisalphaasm)
+    * [[`iridisalpha.asm`]](#iridisalphaasm)
+    * [[`bonusphase.asm`]](#bonusphaseasm)
+    * [[`charset.asm`]](#charsetasm)
+    * [[`bonusphase_graphics.asm`]](#bonusphase_graphicsasm)
+    * [[`sprites.asm`]](#spritesasm)
+    * [[`madeinfrance.asm`]](#madeinfranceasm)
+    * [[`dna.asm`]](#dnaasm)
+* [A Closer Look At [`iridisalpha.asm`]](#a-closer-look-at-iridisalphaasm)
+  * [The Difficulty Cliff](#the-difficulty-cliff)
   * [GenPlan: The algorithm for generating the planet surfaces](#genplan-the-algorithm-for-generating-the-planet-surfaces)
   * [A Cheat for Awarding Yourself 10000 Bonus Points](#a-cheat-for-awarding-yourself-10000-bonus-points)
   * [Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level](#pressing-f1-during-attract-mode-allows-you-to-resume-the-game-at-a-random-level)
+
+<!-- vim-markdown-toc -->
 
 This source code is derived from [the binary](https://github.com/mwenge/iridisalpha/blob/master/orig/iridisalpha.prg) stored in the `orig` folder. This binary is the one [distributed by Minter in 2019](http://minotaurproject.co.uk/yakimg/Llamasoft_C64.zip) along with the rest of his Vic 20 and C64 games.
 
@@ -125,7 +129,7 @@ This is a game within the pause-mode game. Originally released on Compunet, you 
 # A Closer Look At [`iridisalpha.asm`]
 While disassembly is still in progress, this section is a collection of random notes. 
 
-## [The Difficulty Cliff]
+## The Difficulty Cliff
 When I first played this game as a kid I struggled with the sudden jump in difficulty you encounter 3 levels into the game.
 
 After blithely blasting through the initial waves of enemies you suddenly encounter floating dots. You shoot them, they
