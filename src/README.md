@@ -184,6 +184,22 @@ This is the place in the code where these settings are inspected to determine th
 
 https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/iridisalpha.asm#L2048-L2052
 
+There is one other piece of configured behaviour of the licker ships that makes them so difficult to get past, one
+I only noticed when writing this: hitting the licker ships results in no increase in energy!
+
+https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data.asm#L38
+
+The 3rd byte in this line is set to `$00`:
+
+https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data2.asm#L63
+
+So the licker ship data has this flag set to `$00`, so not only do the ships immediately jump on you and start sapping
+your energy, killing any of them during this level results in getting no energy back! 
+
+This is clearly stacking the odds way too high against the casual player way too soon in the game in my opinion. So
+to give the novice player (and me) a chance of progressing and exploring the game I've added a build option that
+applies the following patch to the game:
+
 
 ## [GenPlan](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098): The algorithm for generating the planet surfaces
 

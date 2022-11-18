@@ -1,0 +1,17 @@
+diff --git a/src/level_data2.asm b/src/level_data2.asm
+index 32ae5f3..221762f 100644
+--- a/src/level_data2.asm
++++ b/src/level_data2.asm
+@@ -60,10 +60,10 @@ f10F0 = $10F0
+ lickerShipWaveData = $1118
+         .BYTE $0B,LICKERSHIP,LICKERSHIP+$02,$04,LICKERSHIP_INV,LICKERSHIP_INV+$01,$00,$00
+         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
+-        .BYTE <default2ndStage,>default2ndStage,$00,$00,$02,$02,$01,$01
++        .BYTE <default2ndStage,>default2ndStage,$00,$00,$02,$02,$00,$01
+         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
+         .BYTE <nullPtr,>nullPtr,<lickerShipWaveData,>lickerShipWaveData
+-        .BYTE $00,$00,$00,$02,$00,$00,$00,$00
++        .BYTE $00,$00,$02,$02,$00,$00,$00,$00
+ planet1Level11Data = $1140
+         .BYTE $0E,$D1,$D4,$06,$E4,$E7,$03,$68
+         .BYTE $11,$00,$00,$00,$00,$00,$00,$00
