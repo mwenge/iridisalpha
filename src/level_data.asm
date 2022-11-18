@@ -58,18 +58,18 @@
 ; planet1Level3Data
 ;         .BYTE $05,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$04,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$00,$00
 ;         .BYTE $00,$00,$00,$00,$00,$00,$00,$30
-;         .BYTE <fA2F8,>fA2F8,$FA,$01,$01,$02,$00,$00
+;         .BYTE <planet1Level3Data2ndStage,>planet1Level3Data2ndStage,$FA,$01,$01,$02,$00,$00
 ;         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
 ;         .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
 ;         .BYTE $00,$00,$02,$01,$00,$04,$20,$00
-; fA2F8
+; planet1Level3Data2ndStage
 ;         .BYTE $04,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$02,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$00,$00
 ;         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-;         .BYTE <fA320,>fA320,$01,$FF,$01,$01,$00,$00
+;         .BYTE <planet1Level3Data3rdStage,>planet1Level3Data3rdStage,$01,$FF,$01,$01,$00,$00
 ;         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
 ;         .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
 ;         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
-; fA320
+; planet1Level3Data3rdStage
 ;         .BYTE $06,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$06,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$00,$00
 ;         .BYTE $00,$00,$00,$00,$00,$00,$00,$33
 ;         .BYTE <planet1Level3Data,>planet1Level3Data,$F8,$00,$01,$00,$00,$00
@@ -761,18 +761,18 @@ fA2A8
 planet1Level3Data
         .BYTE $05,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$04,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$30
-        .BYTE <fA2F8,>fA2F8,$FA,$01,$01,$02,$00,$00
+        .BYTE <planet1Level3Data2ndStage,>planet1Level3Data2ndStage,$FA,$01,$01,$02,$00,$00
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$02,$01,$00,$04,$20,$00
-fA2F8
+planet1Level3Data2ndStage
         .BYTE $04,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$02,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <fA320,>fA320,$01,$FF,$01,$01,$00,$00
+        .BYTE <planet1Level3Data3rdStage,>planet1Level3Data3rdStage,$01,$FF,$01,$01,$00,$00
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
-fA320
+planet1Level3Data3rdStage
         .BYTE $06,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$06,LICKERSHIP_SEED,LICKERSHIP_SEED+$02,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$33
         .BYTE <planet1Level3Data,>planet1Level3Data,$F8,$00,$01,$00,$00,$00
