@@ -1,23 +1,89 @@
 *=$18C8
 ; The wave data has the following structure:
-; Byte 0: Color value for the attack ship
-; Byte 1: Sprite value for the attack ship
-; Byte 2: THe 'end' sprite value fo the attack ship's animation.
-; Byte 3: The animation frame rate for the attack ship.
-; Byte 4: Alternative sprite used except every 3rd level.
-; Byte 5: Alternative animation end sprite used except every 3rd level.
-; Byte 6: Determines if the inital Y Position of the ship is random or uses a default.
-; Byte 8: Determines if the inital Y Position of the ship is random or uses a default.
-; Byte 11 ($0B): some kind of rate for attack wave 
-; Byte 14 ($0E): Has 
+; Byte 0 ($00): An index into colorsForAttackShips that applies a color value for the attack ship sprite.
+; Byte 1 ($01): Sprite value for the attack ship for the upper planet.
+; Byte 2 ($02): THe 'end' sprite value for the attack ship's animation for the upper planet.
+; Byte 3 ($03): The animation frame rate for the attack ship.
+; Byte 4 ($04): Sprite value for the attack ship for the lower planet.
+; Byte 5 ($05): THe 'end' sprite value for the attack ship's animation for the lower planet.
+; Byte 6 ($06): Determines if the inital Y Position of the ship is random or uses a default.
+; Byte 7 ($07): Determines if the inital Y Position of the ship is random or uses a default.
+; Byte 8 ($08): Default initiation Y position for the enemy. 
+; Byte 9 ($09):  Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+; Byte 10 ($0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+; Byte 11 ($0B): some kind of rate limiting for attack wave 
+; Byte 12 ($0C): 
+; Byte 13 ($0D): 
+; Byte 14 ($0E): Controls the rate at which new enemies are added? 
 ; Byte 15 ($0F): Update rate for attack wave 
-; Byte 17: Lo Ptr to the linked wave data for this wave.
-; Byte 18: Hi Ptr to the linked wave data for this wave.
-; Byte 18: X Pos movement for attack ship.
-; Byte 19: Y Pos movement for attack ship.
-; Byte 20: X Pos Frame Rate for Attack ship.
-; Bytes 25 - 32: HiLo Ptrs to other wave data
-; Byte 36: ($24) Is the ship a spinning ring?  
+; Byte 16 ($10): Lo Ptr to the linked wave data for this wave.
+; Byte 17 ($11): Hi Ptr to the linked wave data for this wave.
+; Byte 18 ($12): X Pos movement for attack ship.
+; Byte 19 ($13): Y Pos movement pattern for attack ship. An index into yPosMovementPatternForShips1
+; Byte 20 ($14): X Pos Frame Rate for Attack ship.
+; Byte 21 ($15): Y Pos Frame Rate for Attack ship.
+; Byte 22 ($16): Y Pos Frame Rate for Attack ship.
+; Byte 23 ($17): Does the enemy have the licker ship behaviour or not (i.e. sticks to the player,
+;                sapping their energy).
+; Byte 24 ($18): 
+; Byte 25 ($19): Lo Ptr for another set of wave data. 
+; Byte 26 ($1A): Hi Ptr for another set of wave data.
+; Byte 27 ($1B): Lo Ptr for another set of wave data.
+; Byte 28 ($1C): Hi Ptr for another set of wave data.
+; Byte 29 ($1D): Lo Ptr for Explosion animation. 
+; Byte 30 ($1E): Hi Ptr for Explosion animation. 
+; Byte 31 ($1F): Lo Ptr for another set of wave data for this level. 
+; Byte 32 ($20): Hi Ptr for another set of wave data for this level. 
+; Byte 33 ($21): 
+; Byte 34: ($22): Points multiplier for hitting enemies in this level. 
+; Byte 35: ($23) The amount of energy the enemy saps from gilby.
+; Byte 36: ($24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+;
+; Example:
+;
+; planet1Level1Data
+;         .BYTE $06,$A0,$A3,$03,$A0,$A3,$00,$00
+;         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
+;         .BYTE <fA078,>fA078,$06,$01,$01,$01,$00,$00
+;         .BYTE <f0000,>f0000,<f0000,>f0000
+;         .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
+;         .BYTE $00,$00,$02,$02,$00,$04,$18,$00
+; fA078
+;         .BYTE $11,$A0,$A3,$01,$A0,$A3,$00,$00
+;         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
+;         .BYTE <planet1Level1Data,>planet1Level1Data,$06,$FF,$01,$01,$00,$00
+;         .BYTE <f0000,>f0000,<f0000,>f0000
+;         .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
+;         .BYTE $00,$00,$02,$02,$00,$00,$00,$00
+;
+; planet1Level3Data
+;         .BYTE $05,$A5,$A7,$04,$A5,$A7,$00,$00
+;         .BYTE $00,$00,$00,$00,$00,$00,$00,$30
+;         .BYTE <fA2F8,>fA2F8,$FA,$01,$01,$02,$00,$00
+;         .BYTE <f0000,>f0000,<f0000,>f0000
+;         .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
+;         .BYTE $00,$00,$02,$01,$00,$04,$20,$00
+; fA2F8
+;         .BYTE $04,$A5,$A7,$02,$A5,$A7,$00,$00
+;         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
+;         .BYTE <fA320,>fA320,$01,$FF,$01,$01,$00,$00
+;         .BYTE <f0000,>f0000,<f0000,>f0000
+;         .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
+;         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
+; fA320
+;         .BYTE $06,$A5,$A7,$06,$A5,$A7,$00,$00
+;         .BYTE $00,$00,$00,$00,$00,$00,$00,$33
+;         .BYTE <planet1Level3Data,>planet1Level3Data,$F8,$00,$01,$00,$00,$00
+;         .BYTE <f0000,>f0000,<f0000,>f0000
+;         .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
+;         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
+; This data is loaded to currentShipWaveDataLoPtr/currentShipWaveDataHiPtr when it is used in the
+; game.
+
+; Sprite names. See sprites.asm and enemy_sprites.asm
+MAGIC_MUSHROOM = $2D
+INV_MAGIC_MUSHROOM = $2E
+
 attackWaveData
 f18C8
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
@@ -25,7 +91,7 @@ f18C8
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
-f18F0
+planet4Level19Data
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
@@ -47,30 +113,30 @@ f1940
 planet2Level7Data
         .BYTE $0F,$2F,$30,$00,$2F,$30,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
-        .BYTE <f1990,>f1990,$04,$00,$01,$01,$00,$01
+        .BYTE <planet2Level7Data2,>planet2Level7Data2,$04,$00,$01,$01,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$03,$02,$00,$04,$10,$00
-f1990
+planet2Level7Data2
         .BYTE $06,$2F,$30,$00,$2F,$30,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$80
         .BYTE <planet2Level7Data,>planet2Level7Data,$FC,$00,$01,$03,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$00,$08,$00,$00,$00,$00
-f19B8
+;f19B8
         .BYTE $01,$30,$31,$00,$30,$31,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$03
         .BYTE $50,$18,$80,$80,$01,$01,$00,$00
 planet4Level4Data
-        .BYTE $03,$2D,$2E,$00,$2E,$2F,$00,$00
+        .BYTE $03,MAGIC_MUSHROOM,MAGIC_MUSHROOM+$01 ,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
-        .BYTE <f19F8,>f19F8,$00,$00,$00,$01,$00,$23
+        .BYTE <planet4Level4Data2,>planet4Level4Data2,$00,$00,$00,$01,$00,$23
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$04,$00,$04,$18,$00
-f19F8
-        .BYTE $06,$2D,$2E,$00,$2E,$2F,$00,$00
+planet4Level4Data2
+        .BYTE $06,MAGIC_MUSHROOM,INV_MAGIC_MUSHROOM,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$23,$02,$03,$01,$23
         .BYTE <f0000,>f0000,<planet4Level4Data,>planet4Level4Data
@@ -88,7 +154,7 @@ f1A48
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
         .BYTE <planet4Level3Data,>planet4Level3Data,$80,$FF,$01,$01,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$08,$00,$00,$00,$00
 planet1Level9Data
         .BYTE $06,$35,$37,$03,$38,$3A,$00,$00
@@ -102,12 +168,12 @@ f1A98
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$80,$00,$01,$04,$00,$23
         .BYTE <f0000,>f0000,<planet1Level9Data,>planet1Level9Data
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$04,$03,$00,$00,$00,$00
-f1AC0
+secondExplosionAnimation
         .BYTE $09,$30,$31,$00,$30,$31,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$04
-        .BYTE <f1850,>f1850,$00,$00,$00,$00,$00,$00
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 planet3Level3Data
@@ -115,14 +181,14 @@ planet3Level3Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$03,$23,$01,$01,$00,$23
         .BYTE <f0000,>f0000,<f1B10,>f1B10
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$04,$00,$04,$10,$00
 f1B10
         .BYTE $02,$3B,$3E,$04,$3B,$3E,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$FD,$23,$01,$02,$00,$23
         .BYTE <f0000,>f0000,<f1B38,>f1B38
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$04,$00,$00,$00,$00
 f1B38
         .BYTE $0A,$3B,$3E,$0C,$3B,$3E,$00,$00
@@ -143,14 +209,14 @@ f1B88
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
         .BYTE <f1BB0,>f1BB0,$01,$20,$01,$01,$00,$00
         .BYTE <planet2Level8Data,>planet2Level8Data,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$01,$06,$00,$00,$00,$00
 f1BB0
         .BYTE $0C,$3E,$40,$04,$3E,$40,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
         .BYTE <f1B88,>f1B88,$FE,$20,$01,$01,$00,$00
         .BYTE <planet2Level8Data,>planet2Level8Data,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$01,$06,$00,$00,$00,$00
 planet2Level9Data
         .BYTE $04,$C1,$C8,$03,$D4,$DC,$00,$00
@@ -171,14 +237,14 @@ f1C28
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$F8,$00,$01,$03,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$04,$04,$00,$00,$00,$00
 planet3Level4Data
         .BYTE $06,$D3,$D4,$00,$D3,$D4,$04,$28
         .BYTE $1C,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$08,$00,$01,$03,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$04,$08,$00,$04,$18,$00
 planet3Level5Data
         .BYTE $0B,$27,$2A,$02,$27,$2A,$00,$00
@@ -190,7 +256,7 @@ planet3Level5Data
 f1CA0
         .BYTE $02,$28,$29,$00,$28,$29,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <f1850,>f1850,$00,$23,$01,$02,$01,$01
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$00,$23,$01,$02,$01,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$0C,$00,$00,$00,$00
@@ -220,28 +286,28 @@ f1D40
         .BYTE $00,$00,$00,$00,$00,$00,$00,$04
         .BYTE <f1D68,>f1D68,$00,$00,$01,$02,$01,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$05,$00,$00,$00,$00
 f1D68
         .BYTE $06,$3B,$3E,$04,$3B,$3E,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
         .BYTE <planet1Level17Data,>planet1Level17Data,$80,$80,$01,$01,$00,$00
         .BYTE <f0000,>f0000,<planet1Level17Data,>planet1Level17Data
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$05,$00,$00,$00,$00
 planet4Level6Data
         .BYTE $06,$2F,$30,$00,$2F,$30,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
         .BYTE <f1DB8,>f1DB8,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$01,$04,$00,$04,$20,$00
 f1DB8
         .BYTE $0E,$2F,$30,$00,$2F,$30,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
         .BYTE <f18C8,>f18C8,$FB,$22,$01,$02,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$00,$0C,$00,$00,$00,$00
 planet1Level6Data
         .BYTE $0A,$23,$27,$03,$23,$27,$00,$00
@@ -260,7 +326,7 @@ f1E08
 f1E30
         .BYTE $00,$E8,$EB,$01,$E8,$EB,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <f1850,>f1850,$80,$00,$01,$00,$00,$00
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$80,$00,$01,$00,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$0C,$00,$00,$00,$00
@@ -276,28 +342,28 @@ f1E80
         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
         .BYTE <f18C8,>f18C8,$00,$23,$02,$02,$01,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$03,$04,$00,$00,$00,$00
 planet3Level2Data
         .BYTE $0D,$31,$32,$00,$31,$32,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$50
         .BYTE <f1ED0,>f1ED0,$F8,$01,$01,$0C,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$05,$00,$04,$18,$00
 f1ED0
         .BYTE $0D,$32,$34,$03,$32,$34,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$08
         .BYTE <f1EF8,>f1EF8,$80,$00,$01,$01,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$01,$03,$00,$00,$00,$00
 f1EF8
         .BYTE $0D,$33,$34,$00,$33,$34,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$55
         .BYTE <planet3Level2Data,>planet3Level2Data,$08,$FF,$01,$0C,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$05,$00,$00,$00,$00
 planet3Level8Data
         .BYTE $0C,$3E,$40,$03,$3E,$40,$00,$00
@@ -325,7 +391,7 @@ planet4Level5Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$04,$23,$01,$02,$00,$23
         .BYTE <f0000,>f0000,<f1FC0,>f1FC0
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$04,$00,$04,$18,$00
 f1FC0
         .BYTE $05,$2C,$2D,$00,$2C,$2D,$00,$00
@@ -343,14 +409,14 @@ planet1Level15Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
         .BYTE <planet1Level15Data,>planet1Level15Data,$00,$00,$01,$01,$01,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f9B28,>f9B28,<f1118,>f1118
+        .BYTE <f9B28,>f9B28,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$03,$03,$00,$04,$20,$00
 f9B28
         .BYTE $11,$FC,$FF,$01,$FC,$FF,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$24,$02,$01,$80,$23
         .BYTE <f0000,>f0000,<f9B28,>f9B28
-        .BYTE <f18C8,>f18C8,<f1850,>f1850
+        .BYTE <f18C8,>f18C8,<basicExplosionAnimation,>basicExplosionAnimation
         .BYTE $00,$00,$00,$00,$01,$00,$00,$00
 planet4Level17Data
         .BYTE $00,$B4,$B8,$06,$A7,$AB,$00,$00
@@ -378,21 +444,21 @@ f9BC8
         .BYTE $00,$00,$00,$00,$00,$00,$00,$70
         .BYTE <planet1Level4Data,>planet1Level4Data,$F9,$80,$01,$80,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$00,$07,$00,$00,$00,$00
 planet5Level5Data
         .BYTE $04,$A3,$A5,$05,$A3,$A5,$05,$40
         .BYTE $9C,$00,$00,$00,$00,$00,$00,$30
         .BYTE <f9C18,>f9C18,$07,$03,$01,$01,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$02,$00,$04,$20,$00
 f9C18
         .BYTE $04,$A3,$A5,$05,$A3,$A5,$05,$40
         .BYTE $9C,$00,$00,$00,$00,$00,$00,$30
         .BYTE <planet5Level5Data,>planet5Level5Data,$08,$FD,$01,$01,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$02,$00,$00,$00,$00
 f9C40
         .BYTE $07,$A5,$A7,$03,$A5,$A7,$00,$00
@@ -406,21 +472,21 @@ planet3Level10Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$0A
         .BYTE <f9C90,>f9C90,$00,$00,$01,$02,$01,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<planet3Level10Data,>planet3Level10Data
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<planet3Level10Data,>planet3Level10Data
         .BYTE $00,$00,$03,$03,$00,$04,$20,$00
 f9C90
         .BYTE $06,$A0,$A3,$03,$A0,$A3,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$18
         .BYTE <planet3Level10Data,>planet3Level10Data,$80,$80,$80,$80,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<planet3Level10Data,>planet3Level10Data
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<planet3Level10Data,>planet3Level10Data
         .BYTE $00,$00,$03,$03,$00,$00,$00,$00
 planet4Level10Data
         .BYTE $11,$B2,$B4,$05,$B2,$B4,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
         .BYTE <f9CE0,>f9CE0,$0A,$00,$01,$02,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$00,$08,$00,$04,$20,$00
 f9CE0
         .BYTE $11,$B0,$B2,$05,$B0,$B2,$00,$00
@@ -453,7 +519,7 @@ planet4Level15Data
 f9D80
         .BYTE $01,$A7,$AB,$01,$A7,$AB,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
-        .BYTE <f1AC0,>f1AC0,$80,$00,$80,$01,$00,$01
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,$80,$00,$80,$01,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$06,$00,$00,$00,$00
@@ -490,7 +556,7 @@ f9E48
         .BYTE $00,$00,$00,$00,$00,$00,$00,$08
         .BYTE <planet3Level13Data,>planet3Level13Data,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$04,$03,$00,$00,$00,$00
 planet2Level11Data
         .BYTE $00,$A0,$A3,$01,$A0,$A3,$00,$00
@@ -532,28 +598,28 @@ planet5Level1Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$60
         .BYTE <f9F60,>f9F60,$FC,$00,$01,$02,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$01,$01,$00,$04,$18,$00
 f9F60
         .BYTE $06,$AB,$AC,$00,$AB,$AC,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
         .BYTE <planet5Level1Data,>planet5Level1Data,$06,$80,$01,$80,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
 planet4Level1Data
-        .BYTE $04,$2D,$2E,$00,$2E,$2F,$00,$00
+        .BYTE $04,MAGIC_MUSHROOM,INV_MAGIC_MUSHROOM,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$04,$23,$01,$02,$00,$23
         .BYTE <f0000,>f0000,<f9FB0,>f9FB0
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$02,$00,$04,$20,$00
 f9FB0
-        .BYTE $04,$2D,$2E,$00,$2E,$2F,$00,$00
+        .BYTE $04,MAGIC_MUSHROOM,INV_MAGIC_MUSHROOM,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$FA,$24,$01,$02,$00,$23
         .BYTE <f0000,>f0000,<planet4Level1Data,>planet4Level1Data
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$02,$00,$00,$00,$00
 planet3Level1Data
         .BYTE $10,$FC,$FF,$02,$FC,$FF,$00,$00
@@ -573,7 +639,7 @@ planet2Level1Data
 fA028
         .BYTE $11,$31,$32,$00,$31,$32,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$1C
-        .BYTE <f1850,>f1850,$00,$00,$00,$00,$00,$00
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$03,$00,$00,$00,$00
@@ -582,14 +648,14 @@ planet1Level1Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
         .BYTE <fA078,>fA078,$06,$01,$01,$01,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$02,$00,$04,$18,$00
 fA078
         .BYTE $11,$A0,$A3,$01,$A0,$A3,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$40
         .BYTE <planet1Level1Data,>planet1Level1Data,$06,$FF,$01,$01,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$02,$00,$00,$00,$00
 planet1Level7Data
         .BYTE $09,$BE,$BF,$00,$BE,$BF,$00,$00
@@ -616,7 +682,7 @@ fA118
         .BYTE $09,$BF,$C0,$00,$BF,$C0,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$00,$00,$01,$00,$23
-        .BYTE <f0000,>f0000,<f1850,>f1850
+        .BYTE <f0000,>f0000,<basicExplosionAnimation,>basicExplosionAnimation
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$04,$00,$00,$00,$00
 fA140
@@ -624,7 +690,7 @@ fA140
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$00,$00,$01,$00,$23
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f0000,>f0000,<f1850,>f1850
+        .BYTE <f0000,>f0000,<basicExplosionAnimation,>basicExplosionAnimation
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 planet1Level20Data
         .BYTE $07,$B9,$BA,$00,$B9,$BA,$00,$00
@@ -662,18 +728,18 @@ planet5Level20Data
         .BYTE <planet5Level20Data,>planet5Level20Data,<planet5Level20Data,>planet5Level20Data
         .BYTE $00,$00,$01,$01,$00,$04,$40,$00
 planet5Level2Data
-        .BYTE $11,$2D,$2E,$00,$2E,$2F,$00,$00
+        .BYTE $11,MAGIC_MUSHROOM,INV_MAGIC_MUSHROOM,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$25,$00,$01,$00,$23
         .BYTE <f0000,>f0000,<planet5Level2Data,>planet5Level2Data
         .BYTE <fA258,>fA258,<f18C8,>f18C8
         .BYTE $00,$00,$00,$08,$00,$04,$18,$00
 fA258
-        .BYTE $06,$2D,$2E,$00,$2E,$2F,$00,$00
+        .BYTE $06,MAGIC_MUSHROOM,INV_MAGIC_MUSHROOM,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$23,$01,$01,$80,$23
         .BYTE <f0000,>f0000,<planet5Level2Data,>planet5Level2Data
-        .BYTE <f1850,>f1850,<f18C8,>f18C8
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$04,$02,$00,$00,$00,$00
 planet3Level14Data
         .BYTE $08,$30,$31,$00,$30,$31,$00,$00
@@ -694,28 +760,28 @@ planet1Level3Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$30
         .BYTE <fA2F8,>fA2F8,$FA,$01,$01,$02,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1118,>f1118,<f1118,>f1118
+        .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$02,$01,$00,$04,$20,$00
 fA2F8
         .BYTE $04,$A5,$A7,$02,$A5,$A7,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
         .BYTE <fA320,>fA320,$01,$FF,$01,$01,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1118,>f1118,<f1118,>f1118
+        .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
 fA320
         .BYTE $06,$A5,$A7,$06,$A5,$A7,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$33
         .BYTE <planet1Level3Data,>planet1Level3Data,$F8,$00,$01,$00,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1118,>f1118,<f1118,>f1118
+        .BYTE <lickerShipWaveData,>lickerShipWaveData,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
 fA348
         .BYTE $03,$A7,$AB,$03,$A7,$AB,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$30
         .BYTE <planet2Level18Data,>planet2Level18Data,$80,$00,$01,$00,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$03,$02,$00,$00,$00,$00
 planet2Level18Data
         .BYTE $10,$A7,$AB,$02,$A7,$AB,$00,$00
@@ -741,7 +807,7 @@ fA3C0
 fA3E8
         .BYTE $10,$C1,$C8,$01,$D4,$DC,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$18
-        .BYTE <f1850,>f1850,$00,$23,$00,$01,$00,$23
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$00,$23,$00,$01,$00,$23
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$08,$00,$00,$00,$00
@@ -763,7 +829,7 @@ fA460
         .BYTE $06,$3B,$3E,$07,$3B,$3E,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$00,$02,$02,$01,$01
-        .BYTE <f0000,>f0000,<f1850,>f1850
+        .BYTE <f0000,>f0000,<basicExplosionAnimation,>basicExplosionAnimation
         .BYTE <f0000,>f0000,<fA460,>fA460
         .BYTE $00,$00,$00,$0C,$00,$00,$00,$00
 planet3Level18Data
@@ -777,7 +843,7 @@ fA4B0
         .BYTE $06,$A0,$A3,$01,$A0,$A3,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$22,$00,$01,$00,$23
-        .BYTE <f0000,>f0000,<f1850,>f1850
+        .BYTE <f0000,>f0000,<basicExplosionAnimation,>basicExplosionAnimation
         .BYTE <fA4B0,>fA4B0,<fA4B0,>fA4B0
         .BYTE $00,$00,$00,$05,$00,$00,$00,$00
 planet4Level12Data
@@ -804,7 +870,7 @@ planet2Level13Data
 fA550
         .BYTE $07,$FF,$00,$00,$FF,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
-        .BYTE <f1850,>f1850,$00,$00,$01,$01,$80,$80
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$00,$00,$01,$01,$80,$80
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$0C,$00,$00,$00,$00
@@ -813,49 +879,49 @@ planet2Level2Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$E9,$00,$01,$02,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f1118,>f1118
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$02,$02,$00,$04,$18,$00
 planet2Level3Data
         .BYTE $06,$B2,$B4,$05,$B2,$B4,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$17,$00,$01,$03,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f1118,>f1118
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$02,$02,$00,$04,$18,$00
 planet2Level14Data
         .BYTE $04,$B0,$B2,$05,$B0,$B2,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$E9,$00,$01,$02,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <fA618,>fA618,<f1118,>f1118
+        .BYTE <fA618,>fA618,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$02,$02,$00,$04,$18,$00
 planet2Level17Data
         .BYTE $06,$B2,$B4,$05,$B2,$B4,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$17,$00,$01,$03,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <fA640,>fA640,<f1118,>f1118
+        .BYTE <fA640,>fA640,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$02,$02,$00,$04,$18,$00
 fA618
         .BYTE $11,$B0,$B2,$01,$B0,$B2,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$18
-        .BYTE <f1850,>f1850,$E7,$00,$01,$02,$00,$00
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$E7,$00,$01,$02,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f0000,>f0000,<f1118,>f1118
+        .BYTE <f0000,>f0000,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$00,$04,$00,$00,$00,$00
 fA640
         .BYTE $11,$B0,$B2,$01,$B0,$B2,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$18
-        .BYTE <f1850,>f1850,$19,$00,$01,$02,$00,$00
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$19,$00,$01,$02,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f0000,>f0000,<f1118,>f1118
+        .BYTE <f0000,>f0000,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$00,$04,$00,$00,$00,$00
 planet4Level18Data
         .BYTE $10,$B4,$B8,$05,$F9,$FB,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$24,$02,$03,$01,$23
         .BYTE <f0000,>f0000,<planet4Level18Data,>planet4Level18Data
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$03,$02,$00,$04,$20,$00
 planet5Level7Data
         .BYTE $10,$AE,$B0,$01,$AE,$B0,$00,$00
@@ -876,14 +942,14 @@ planet1Level16Data
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$00,$02,$00,$01,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f18F0,>f18F0,<f18C8,>f18C8
+        .BYTE <planet4Level19Data,>planet4Level19Data,<f18C8,>f18C8
         .BYTE $00,$00,$00,$06,$00,$04,$18,$00
 planet1Level2Data
         .BYTE $06,$3B,$3E,$01,$3B,$3E,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$24,$02,$01,$01,$23
         .BYTE <f0000,>f0000,<planet1Level2Data,>planet1Level2Data
-        .BYTE <f1850,>f1850,<planet1Level2Data,>planet1Level2Data
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<planet1Level2Data,>planet1Level2Data
         .BYTE $00,$00,$01,$01,$00,$04,$20,$00
 planet4Level16Data
         .BYTE $07,$30,$31,$00,$30,$31,$00,$00
@@ -897,7 +963,7 @@ fA758
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1AC0,>f1AC0,<f18C8,>f18C8
+        .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<f18C8,>f18C8
         .BYTE $00,$00,$02,$01,$00,$00,$00,$00
 planet5Level13Data
         .BYTE $11,$3E,$40,$01,$3E,$40,$00,$00
@@ -914,16 +980,16 @@ fA7A8
         .BYTE <planet5Level13Data,>planet5Level13Data,<f18C8,>f18C8
         .BYTE $00,$00,$01,$01,$00,$00,$00,$00
 planet4Level11Data
-        .BYTE $0E,$2D,$2E,$00,$2E,$2F,$00,$00
+        .BYTE $0E,MAGIC_MUSHROOM,INV_MAGIC_MUSHROOM,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$E0
         .BYTE <fA7F8,>fA7F8,$00,$00,$00,$01,$00,$23
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <fA7F8,>fA7F8,<fA7F8,>fA7F8
         .BYTE $00,$00,$02,$02,$00,$04,$20,$00
 fA7F8
-        .BYTE $10,$2D,$2E,$00,$2E,$2F,$00,$00
+        .BYTE $10,MAGIC_MUSHROOM,INV_MAGIC_MUSHROOM,$00,$2E,$2F,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$14
-        .BYTE <f1850,>f1850,$00,$24,$02,$02,$01,$23
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$00,$24,$02,$02,$01,$23
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE <f0000,>f0000,<f18C8,>f18C8
         .BYTE $00,$00,$00,$0C,$00,$00,$00,$00
@@ -932,14 +998,14 @@ planet5Level14Data
         .BYTE $A8,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$FC,$00,$01,$02,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f1118,>f1118
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$03,$01,$00,$04,$60,$00
 fA848
         .BYTE $09,$FF,$00,$00,$FF,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$04,$00,$01,$02,$00,$01
         .BYTE <f0000,>f0000,<f0000,>f0000
-        .BYTE <f1850,>f1850,<f1118,>f1118
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,<lickerShipWaveData,>lickerShipWaveData
         .BYTE $00,$00,$03,$01,$00,$00,$00,$00
 planet5Level15Data
         .BYTE $10,$3B,$3E,$04,$3B,$3E,$00,$00
@@ -952,7 +1018,7 @@ fA898
         .BYTE $00,$3B,$3E,$01,$3B,$3E,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <f0000,>f0000,$00,$00,$01,$02,$80,$23
-        .BYTE <f0000,>f0000,<f1850,>f1850
+        .BYTE <f0000,>f0000,<basicExplosionAnimation,>basicExplosionAnimation
         .BYTE <f0000,>f0000,<f0000,>f0000
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 planet2Level15Data
@@ -965,7 +1031,7 @@ planet2Level15Data
 fA8E8
         .BYTE $08,$BE,$BF,$00,$BE,$BF,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <f1850,>f1850,$00,$24,$02,$02,$01,$23
+        .BYTE <basicExplosionAnimation,>basicExplosionAnimation,$00,$24,$02,$02,$01,$23
         .BYTE $00,$00,$00,$00,$00,$00,$C8
 fA907   .BYTE $18
         .BYTE $00,$00,$00,$10,$00,$00,$00,$00

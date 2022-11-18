@@ -1115,22 +1115,21 @@ planet5Level4Data = $1708
 planet4Level8Data = $1758
 planet4Level9Data = $17A8
 planet1Level5Data = $1800
-f1118 = $1118
+lickerShipWaveData = $1118
 f11B8 = $11B8
 f1398 = $1398
 f13E8 = $13E8
 f1500 = $1500
 f1800 = $1800
-f1850 = $1850
+basicExplosionAnimation = $1850
 f1878 = $1878
 f1968 = $1968
 f1A20 = $1A20
 f1A70 = $1A70
 f1AE8 = $1AE8
 
-planet4Level19Data = $18F0
 
-; A block of pointers for each planet, and a point for each of the
+; A block of pointers for each planet, and a pointer for each of the
 ; fifteen levels in each planet.
 levelDataPerPlanet
              .BYTE >planet1Level1Data,<planet1Level1Data,>planet1Level2Data,<planet1Level2Data
@@ -1230,12 +1229,12 @@ upperPlanetAttackShipYPosUpdated     .BYTE $00,$00,$00,$00,$00,$00,$00
 
 upperPlanetAttackShipYPosUpdated2    .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00
-shipsThatHaveBeenHitByABullet                                .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+shipsThatHaveBeenHitByABullet        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00
 shipsThatHaveCollidedWithGilby       .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00,$00,$00
 previousAttaWaveHiPtrTempStorage     .BYTE $04
-nextShipOffset                                .BYTE $00
+nextShipOffset                       .BYTE $00
 soundEffectInProgress                .BYTE $00,$01,$00,$01,$00,$00,$01,$00
                                      .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
                                      .BYTE $02,$80
@@ -1297,12 +1296,12 @@ b49B7   RTS
 
 topPlanetLevelDataLoPtr                       .BYTE $A0
 topPlanetLevelDataHiPtr                       .BYTE $A0
-bottomPlanetLevelDataLoPtr                      .BYTE $58
-bottomPlanetLevelDataHiPtr                      .BYTE $1E
+bottomPlanetLevelDataLoPtr                    .BYTE $58
+bottomPlanetLevelDataHiPtr                    .BYTE $1E
 enemiesKilledTopPlanetsSinceLastUpdate        .BYTE $28,$00,$00,$00
 enemiesKilledTopPlanetsSinceLastUpdatePtr     .BYTE $00
-enemiesKilledBottomPlanetsSinceLastUpdate    .BYTE $18,$00,$00,$00
-enemiesKilledBottomPlanetsSinceLastUpdatePtr .BYTE $00
+enemiesKilledBottomPlanetsSinceLastUpdate     .BYTE $18,$00,$00,$00
+enemiesKilledBottomPlanetsSinceLastUpdatePtr  .BYTE $00
 currentLevelInTopPlanets                      .BYTE $06,$02,$06,$0A
 currentLevelInTopPlanetsPtr                   .BYTE $08
 currentLevelInBottomPlanets                   .BYTE $09,$0E,$0A,$0B,$01
@@ -1392,6 +1391,9 @@ UpdateCurrentShipWaveDataPtrs
 
 ;------------------------------------------------------------------
 ; GetWaveDateForNewShip
+; Loads the wave data for the current wave from level_data.asm and level_data2.asm.
+; currentShipWaveDataLoPtr is a reference to one of the data chunks in those
+; files.
 ;------------------------------------------------------------------
 GetWaveDateForNewShip
         ; X is the index of the ship in activeShipsWaveDataLoPtrArray
@@ -1659,7 +1661,7 @@ UpdateScoresAfterHittingShipWithBullet
         TXA
         PHA
         AND #$08
-        BNE b4C5C
+        BNE BulletHitShipOnBottomPlanet
 
         ; Bullet hit a ship on the top planet.
         LDA levelEntrySequenceActive
@@ -1673,6 +1675,8 @@ UpdateScoresAfterHittingShipWithBullet
 
         LDA #$00
         STA currentTopPlanetIndex
+        ; Get the points multiplier for hitting enemies in this level
+        ; from the wave data.
 b4C42   LDY #$22
         LDA (currentShipWaveDataLoPtr),Y
         JSR CalculatePointsForByte2
@@ -1682,10 +1686,11 @@ b4C42   LDY #$22
         LDA pointsEarnedTopPlanetByte2
         ADC pointsToAddToPointsEarnedByte2
         STA pointsEarnedTopPlanetByte2
-        JMP j4C8D
+        JMP ContinueCalculatingScoreFromHit
 
         ; Bullet hit a ship on the bottom planet.
-b4C5C   LDA levelEntrySequenceActive
+BulletHitShipOnBottomPlanet
+        LDA levelEntrySequenceActive
         BNE b4C76
         LDA inAttractMode
         BNE b4C76
@@ -1706,12 +1711,11 @@ b4C76   LDY #$22
         ADC pointsToAddToPointsEarnedByte2
         STA pointsEarnedBottomPlanetByte2
 
-j4C8D
+ContinueCalculatingScoreFromHit
         JSR DrawPlanetProgressPointers
         PLA
         TAX
         LDY #$22
-
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4CB1
         LDA inAttractMode
@@ -1726,11 +1730,13 @@ j4C8D
 b4CAB   JSR UpdateBottomPlanetProgressData
         JSR IncreaseEnergyBottomOnly
 
+        ; Load the explosion animation, if there is one. For most
+        ; enemies this is the spinning rings defined by basicExplosionAnimation.
 b4CB1   LDY #$1D
         LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         DEY
-        JMP UpdatePointersAndGetWaveDataForNewLevel
+        JMP UpdateWaveDataForCurrentEnemy
         ;Returns
 
 ;------------------------------------------------------------------
@@ -1742,9 +1748,11 @@ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         BEQ JumpToGetNewShipDataFromDataStore
         LDA #$00
         STA shipsThatHaveCollidedWithGilby,X
+        ; Check if there is another set of wave data to get for this wave.
         LDY #$1F
         LDA (currentShipWaveDataLoPtr),Y
         BEQ JumpToGetNewShipDataFromDataStore
+        ; Is there a rate at which new enemies are added?
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckCollisionType
@@ -1754,6 +1762,7 @@ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         ; X is pointing to a top planet ship.
         DEC currentStepsBetweenTopPlanetAttackWaves
         JMP CheckCollisionType
+        ; Returns
 
 ;------------------------------------------------------------------
 ; JumpToGetNewShipDataFromDataStore
@@ -1772,6 +1781,8 @@ DecrementStepsThenCheckCollisionsForBottomPlanet
 ; CheckCollisionType
 ;------------------------------------------------------------------
 CheckCollisionType
+        ; Does an exploded version of the enemy allow us to warp to the
+        ; other planet?
         LDY #$24
         LDA (currentShipWaveDataLoPtr),Y
         BNE MaybeTransferToOtherPlanet
@@ -1822,9 +1833,11 @@ b4D1C   STA valueIsAlwaysZero
 ; UpdateEnergyLevelsAfterCollision
 ;------------------------------------------------------------------
 UpdateEnergyLevelsAfterCollision
+        ; Check if the enemy saps energy from the gilby?
         LDY #$23
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4D7F
+
         LDA #<shipCollidedWithGilbySound
         STA soundDataAC
         LDA #>shipCollidedWithGilbySound
@@ -1853,7 +1866,7 @@ b4D72   LDA energyLabelColorIndexTopPlanet
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexTopPlanet
 b4D7F   LDY #$1E
-        JMP UpdatePointersAndGetWaveDataForNewLevel
+        JMP UpdateWaveDataForCurrentEnemy
         ; Returns
 
 ;------------------------------------------------------------------
@@ -1868,7 +1881,7 @@ GetNewShipDataFromDataStore
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4D98
         DEY
-        JMP UpdatePointersAndGetWaveDataForNewLevel
+        JMP UpdateWaveDataForCurrentEnemy
 
 b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
         BEQ b4DAC
@@ -1878,7 +1891,7 @@ b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DAC
         DEY
-        JMP UpdatePointersAndGetWaveDataForNewLevel
+        JMP UpdateWaveDataForCurrentEnemy
 
 b4DAC   LDA joystickInput
         AND #$10
@@ -1887,7 +1900,7 @@ b4DAC   LDA joystickInput
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DBD
         DEY
-        JMP UpdatePointersAndGetWaveDataForNewLevel
+        JMP UpdateWaveDataForCurrentEnemy
 
 b4DBD   LDA updateRateForAttackShips,X
         BEQ UpdateAttackShipDataForNewShip
@@ -1906,9 +1919,12 @@ b4DD8   DEC currentStepsBetweenBottomPlanetAttackWaves
 b4DDB   LDY #$10
 
 ;------------------------------------------------------------------
-; UpdatePointersAndGetWaveDataForNewLevel
+; UpdateWaveDataForCurrentEnemy
 ;------------------------------------------------------------------
-UpdatePointersAndGetWaveDataForNewLevel
+UpdateWaveDataForCurrentEnemy
+        ; Y has been set to $10 above, so we're pulling in the pointer
+        ; to the second tranche of wave data for this level. 
+        ; Or Y has been set by the caller.
         LDA (currentShipWaveDataLoPtr),Y
         PHA
         INY
@@ -1958,11 +1974,15 @@ currentBottomPlanet .BYTE $01
 ; UpdateAttackShipDataForNewShip
 ;------------------------------------------------------------------
 UpdateAttackShipDataForNewShip
+        ; Check if the wave supports some kind of animation effect
+        ; stored as a hi/lo ptr at position $09 and $0A in its data.
+        ; FIXME: Is this actually used? Can't find the appropriate
+        ; bytes set in any of the level data.
         LDY #$0A
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4E73
+        BEQ DoMainAttackShipAnimation
         DEC someKindOfRateLimitingForAttackWaves,X
-        BNE b4E73
+        BNE DoMainAttackShipAnimation
         STA tempHiPtr3
         DEY
         LDA (currentShipWaveDataLoPtr),Y
@@ -1994,16 +2014,23 @@ UpdateAttackShipDataForNewShip
         TAX
         TYA
         STA indexForYPosMovementForUpperPlanetAttackShips,X
-        JMP b4E73
+        JMP DoMainAttackShipAnimation
 
 b4E6A   LDY #$0C
         LDA indexForActiveShipsWaveData,X
         TAX
-        JMP UpdatePointersAndGetWaveDataForNewLevel
+        JMP UpdateWaveDataForCurrentEnemy
 
-b4E73   LDY #$17
+DoMainAttackShipAnimation
+        ; Check the attack ship animation behaviour.
+        LDY #$17
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4EC7
+        BEQ NormalAttackShipAnimation
+
+        ; After being destroyed the enemy turns into a licker ship. This
+        ; section handles the sticky behaviour of licker ships where they
+        ; stick to the gilby and sap its energy.
+        ; There are two types of behaviour $01 or $23.
         CLC
         ADC gilbyVerticalPosition
         STA positionRelativeToGilby
@@ -2040,7 +2067,9 @@ b4EA6   LDA indexIntoUpperPlanetAttackShipsYPosArray,X
 b4EC0   INC yPosMovementForUpperPlanetAttackShips,X
 b4EC3   LDA indexForActiveShipsWaveData,X
         TAX
-b4EC7   LDY #$16
+
+NormalAttackShipAnimation   
+        LDY #$16
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4F05
         CLC
@@ -2103,7 +2132,7 @@ b4F3F   STA upperPlanetAttackShipsMSBXPosArray + $01,Y
         STA upperPlanetAttackShipsXPosArray + $01,Y
         PLA
         LDY #$07
-        JMP UpdatePointersAndGetWaveDataForNewLevel
+        JMP UpdateWaveDataForCurrentEnemy
 
 b4F4C   LDX #$08
         BNE b4F2D
@@ -2346,20 +2375,20 @@ controlPanelColors .BYTE BROWN,BROWN,BLACK,WHITE,WHITE,WHITE,WHITE
 
 
 ; This is the hiptr (e.g. $9200, $9000) array into the character sets for each planet.
-somePlanetDataHiPtrArray   .BYTE >planet1Charset,>planet2Charset,>planet3Charset
-                           .BYTE >planet4Charset,>planet5Charset
+planetCharsetDataHiPtrArray   .BYTE >planet1Charset,>planet2Charset,>planet3Charset
+                              .BYTE >planet4Charset,>planet5Charset
 ;------------------------------------------------------------------
 ; PerformPlanetWarp
 ;------------------------------------------------------------------
 PerformPlanetWarp
         LDX currentTopPlanetIndex
-        LDA somePlanetDataHiPtrArray,X
+        LDA planetCharsetDataHiPtrArray,X
         STA currentTopPlanetDataHiPtr
         LDA #$00
         STA currentTopPlanetDataLoPtr
 
         LDX currentBottomPlanetIndex
-        LDA somePlanetDataHiPtrArray,X
+        LDA planetCharsetDataHiPtrArray,X
         STA currentBottomPlanetDataHiPtr
         LDA #$00
         STA currentBottomPlanetDataLoPtr
@@ -4292,11 +4321,16 @@ transferToOtherPlanetSound1 .BYTE $00,$00,$20,$04,$00,$00,$00,$03
                             .BYTE $01,$00,$81,$08,$00,$00,$02,$05
                             .BYTE $01,$71,$63,$00,$00,$20,$04,$00
                             .BYTE $00,$80,$CA,$7B,$00
-fE800 = $E800
+enemySprites2 = $E800
 ;------------------------------------------------------------------
-; SwapRoutines
+; SwapTitleScreenDataAndSpriteLevelData
+; Swap data in $E800 (some enemy sprites and level data) to
+; $810, where the title screen data and logic normally lives.
+; In other words, swap a big chunk of sprite and level data
+; into the position in memory where the title screen logic lives.
+; At 'Game Over' this will get swapped back.
 ;------------------------------------------------------------------
-SwapRoutines
+SwapTitleScreenDataAndSpriteLevelData
         SEI
         LDA #$34
         STA RAM_ACCESS_MODE
@@ -4304,9 +4338,9 @@ SwapRoutines
         STA tempLoPtr1
         LDA #>LaunchCurrentProgram
         STA tempHiPtr1
-        LDA #>fE800
+        LDA #>enemySprites2
         STA tempHiPtr
-        LDA #<fE800
+        LDA #<enemySprites2
         STA tempLoPtr
 
 b63A4   LDY #$00
@@ -4332,14 +4366,15 @@ b63A6   LDA (tempLoPtr1),Y
 ; EnterMainTitleScreen ($63C5)
 ;------------------------------------------------------------------
 EnterMainTitleScreen
-        JSR SwapRoutines
+        JSR SwapTitleScreenDataAndSpriteLevelData
         JSR LaunchCurrentProgram
         SEI
         LDA #<GameSwitchAndGameOverInterruptHandler
         STA $0314    ;IRQ
         LDA #>GameSwitchAndGameOverInterruptHandler
         STA $0315    ;IRQ
-        JMP SwapRoutines
+        JMP SwapTitleScreenDataAndSpriteLevelData
+        ; Returns
 
 ;------------------------------------------------------------------
 ; DisplayGameOver
@@ -4791,12 +4826,14 @@ BonusBountyAnimateGilbyYPos
 
 txtBonus10000                      .TEXT "BONUS 10000"
 planetScrollFrameRate              .BYTE $BC
-unusedDataArray                    .BYTE $00,$06,$02,$04,$05,$03,$07,$01
-                                   .BYTE $01,$07,$03,$05,$04,$02,$06,$00
+
+colorSequenceArray2                .BYTE BLACK,BLUE,RED,PURPLE,GREEN,CYAN,YELLOW,WHITE
+                                   .BYTE WHITE,YELLOW,CYAN,GREEN,PURPLE,RED,BLUE,BLACK
 
 colorSequenceArray                 .BYTE RED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE,GRAY1
                                    .BYTE GRAY1,BLUE,PURPLE,LTBLUE,GREEN,YELLOW,ORANGE,RED
 
+colorsForAttackShips
 backgroundColorsForPlanets         .BYTE BLACK,WHITE,RED,CYAN,PURPLE,GREEN,BLUE,YELLOW
                                    .BYTE ORANGE,BROWN,LTRED,GRAY1,GRAY2,LTGREEN,LTBLUE,GRAY3
 unusedByte1                        .BYTE $04
@@ -5241,7 +5278,7 @@ b6ACA   LDA upperPlanetAttackShipsXPosArray,Y
         STX tempVarStorage
 
         LDX upperPlanetAttackShipsColorArray,Y
-        LDA backgroundColorsForPlanets,X
+        LDA colorsForAttackShips,X
         STA $D027,Y  ;Sprite 0 Color
 
         LDA upperPlanetAttackShipsSpriteValueArray,Y
@@ -6268,7 +6305,7 @@ ScrollPlanets
         LDA planetScrollFrameRate
         AND #$0F
         TAX
-        LDA unusedDataArray,X
+        LDA colorSequenceArray2,X
         STA unusedByte1
         LDA colorSequenceArray,X
         STA unusedByte2
