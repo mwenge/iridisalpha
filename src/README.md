@@ -148,7 +148,7 @@ curious to understand how it was configured and if it would be easy to dial it b
 The enemy ship behaviour for every level is defined by the data structures in `level_data.asm`. It's a 40 byte structure
 with a whole bunch of flags that specify a variety of different behaviours for each enemy type. Here's the full list:
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data.asm#L2-L39
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data.asm#L2-L39
 
 It turns out the fields that control the horrible behaviour of the licker ships are these two:
 
@@ -156,7 +156,7 @@ https://github.com/mwenge/iridisalpha/blob/47bbf493f4016aeb81f65d2f02e994f4bef60
 
 When we look at the data for level 3 on planet 1 we see that there's quite a bit to unpick here:
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data.asm#L761-L781
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data.asm#L761-L781
 
 The initial configuration of the licker ship enemy is defined in `planet1Level3Data`. This controls the behaviour
 of the ships until you first shoot them. So you can see the sprite defined for the ship is `LICKERSHIP_SEED` in this
@@ -166,32 +166,32 @@ a bullet from your gilby for the first time. What happens is the game switches t
 `lickerShipWaveData` when you first it hit with a bullet. In the earlier levels this will be just a spinning ring,
 but in this level it turns the harmless floating dots into the intensely frustrating licker ships.
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data.asm#L761-L767
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data.asm#L761-L767
 
 This is what the licker ship data looks like:
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data2.asm#L58-L64
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data2.asm#L58-L64
 
 This is the configuration data that controls the behaviour and appearance of the licker ships. The bit that 
 defines their behaviour is in the last two bytes of the third line:
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data2.asm#L63
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data2.asm#L63
 
 By setting these to `$01` we're defining two sets of behaviour. The first is to gravitate immediately towards the
 player and the second is to stick to the player as much as possible, sapping their energy.
 
 This is the place in the code where these settings are inspected to determine the behaviour:
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/iridisalpha.asm#L2048-L2052
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/iridisalpha.asm#L2048-L2052
 
 There is one other piece of configured behaviour of the licker ships that makes them so difficult to get past, one
 I only noticed when writing this: hitting the licker ships results in no increase in energy!
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data.asm#L38
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data.asm#L38
 
 The 3rd byte in this line is set to `$00`:
 
-https://github.com/mwenge/iridisalpha/blob/51d89c4b84f0bf47d760a9a9d257c25513106b76/src/level_data2.asm#L63
+https://github.com/mwenge/iridisalpha/blob/1d8c2f1f4c266d7372a3b41cfaf3ee376f2f8d17/src/level_data2.asm#L63
 
 So the licker ship data has this flag set to `$00`, so not only do the ships immediately jump on you and start sapping
 your energy, killing any of them during this level results in getting no energy back! 
