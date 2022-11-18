@@ -2127,7 +2127,8 @@ b4F01   LDA indexForActiveShipsWaveData,X
         TAX
 
 NormalAttackShipBehaviour   
-        ; Is there an initial Y position for the enemy ship?
+        ; In all the wave data this bit is never set, so the behaviour
+        ; here isn't used.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4F55
@@ -2704,7 +2705,7 @@ DecreaseEnergyStorage
         STA updateEnergyStorageInterval
 
         LDA energyLabelColorIndexTopPlanet
-        BEQ b53FB
+        BEQ UpdateEnergyStorageBottomPlanet
 
         ;Color the 'Energy' label.
         DEC energyLabelColorIndexTopPlanet
@@ -2719,20 +2720,22 @@ b53D3   STA COLOR_RAM + $034A,Y
         INC SCREEN_RAM + $0373,X
         LDA SCREEN_RAM + $0373,X
         CMP #$88
-        BNE b53FB
+        BNE UpdateEnergyStorageBottomPlanet
         LDA #$20
         STA SCREEN_RAM + $0373,X
         DEX
         STX currEnergyTop
         CPX #$FF
-        BNE b53FB
+        BNE UpdateEnergyStorageBottomPlanet
 
 GilbyDiedBecauseEnergyDepleted
         LDA #$00
         STA reasonGilbyDied ; Energy Depleted
         JMP GilbyDied
+        ; Returns
 
-b53FB   LDA energyLabelColorIndexBottomPlanet
+UpdateEnergyStorageBottomPlanet
+        LDA energyLabelColorIndexBottomPlanet
         BEQ b542B
 
         DEC energyLabelColorIndexBottomPlanet
@@ -3845,6 +3848,7 @@ EntropyKillsGilby
         LDA #$02
         STA reasonGilbyDied ; Entropy
         JMP GilbyDied
+        ; Returns
 
         BNE UpdateDisplayedEntropyStatus
 b5EA6   DEC lowerPlanetEntropyStatus
@@ -4797,13 +4801,13 @@ BonusBountyPerformAnimation
         LDX bonusGilbyAnimation + $0B
         BEQ b6725
         JSR BonusBountyAnimateGilbyXPos
-        JMP j672B
+        JMP BonusBountySkipUpdatingXPos
 
 b6725   CLC
         ADC #$70
         STA $D000,Y  ;Sprite 0 X Pos
 
-j672B
+BonusBountySkipUpdatingXPos
         LDA bonusGilbyYPos1
         LDX bonusGilbyAnimation + $0C
         BEQ b6736
@@ -5788,6 +5792,7 @@ ProcessJoystickInput
         LDA #$03
         STA reasonGilbyDied ; Hit something
         JMP GilbyDied
+        ; Returns
 
 ;------------------------------------------------------------------
 ; WarpToNextPlanet
