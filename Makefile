@@ -26,7 +26,13 @@ custom: sources
 run: iridisalpha.prg
 	$(X64) -verbose $(D64_IMAGE)
 
+runcustom: custom
+	$(X64) -verbose $(D64_IMAGE)
+
 release: iridisalpha.prg
+	wine utils/C64.exe -cd iridisalpha bin/iridisalpha.prg --joy keyboard:1
+
+customrelease: custom
 	wine utils/C64.exe -cd iridisalpha bin/iridisalpha.prg --joy keyboard:1
 
 clean:

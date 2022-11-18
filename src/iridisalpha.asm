@@ -1121,7 +1121,7 @@ f1398 = $1398
 f13E8 = $13E8
 f1500 = $1500
 f1800 = $1800
-basicExplosionAnimation = $1850
+spinningRings = $1850
 f1878 = $1878
 f1968 = $1968
 f1A20 = $1A20
@@ -1194,25 +1194,25 @@ yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
 yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
                              .BYTE $F0,$F0,$F0,$F0,$F0,$F0,$F0,$EC
 
-f0000 = $0000
+nullPtr = $0000
 ; This is a pointer table for the data for each of the 4 active ships on the
 ; top planet and the bottom planet. It gets updated as ships die and levels
 ; change.
 activeShipsWaveDataLoPtrArray = *-$02
         ; Pointers to top planet ships.
-        .BYTE <fA078,<fA078,<fA078,<fA078
-        .BYTE <f0000,<f0000 ; These two are always zero. This makes it easy
+        .BYTE <planet1Level1Data2ndStage,<planet1Level1Data2ndStage,<planet1Level1Data2ndStage,<planet1Level1Data2ndStage
+        .BYTE <nullPtr,<nullPtr ; These two are always zero. This makes it easy
                             ; to use an 'AND #$08' on the index to check
                             ; if it is pointing to a top planet ship or a 
                             ; bottom planet one.
         ; Pointers to bottom planet ships.
-        .BYTE <fA078,<fA078,<planet1Level1Data,<planet1Level1Data
+        .BYTE <planet1Level1Data2ndStage,<planet1Level1Data2ndStage,<planet1Level1Data,<planet1Level1Data
 activeShipsWaveDataHiPtrArray =*-$02
         ; Pointers to top planet ships.
-        .BYTE >fA078,>fA078,>fA078,>fA078
-        .BYTE >f0000,>f0000
+        .BYTE >planet1Level1Data2ndStage,>planet1Level1Data2ndStage,>planet1Level1Data2ndStage,>planet1Level1Data2ndStage
+        .BYTE >nullPtr,>nullPtr
         ; Pointers to bottom planet ships.
-        .BYTE >fA078,>fA078,>planet1Level1Data,>planet1Level1Data
+        .BYTE >planet1Level1Data2ndStage,>planet1Level1Data2ndStage,>planet1Level1Data,>planet1Level1Data
 
 ; This is level data, one entry for each level per planet
 indexForYPosMovementForUpperPlanetAttackShips = *-$02
@@ -1231,7 +1231,7 @@ upperPlanetAttackShipYPosUpdated2    .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00
 shipsThatHaveBeenHitByABullet        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00
-shipsThatHaveCollidedWithGilby       .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+shipHasAlreadyBeenHitByGilby       .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00,$00,$00
 previousAttaWaveHiPtrTempStorage     .BYTE $04
 nextShipOffset                       .BYTE $00
@@ -1385,7 +1385,7 @@ UpdateCurrentShipWaveDataPtrs
         STA currentShipWaveDataHiPtr
         LDA #$00
         STA updatingWaveData
-        STA shipsThatHaveCollidedWithGilby,X
+        STA shipHasAlreadyBeenHitByGilby,X
         STY previousAttaWaveHiPtrTempStorage
         ; Falls through
 
@@ -1478,6 +1478,7 @@ b4AC4   INY
         AND #$F0
         CMP #$20
         BEQ b4AD6
+        ; Y is still 19 ($13).
         LDA (currentShipWaveDataLoPtr),Y
         JMP LoadYPosForAttackShip
 
@@ -1485,6 +1486,7 @@ b4AD6   TXA
         STX temporaryStorageForXRegister
         AND #$04
         BNE b4AEC
+        ; Y is still 19 ($13).
         LDA (currentShipWaveDataLoPtr),Y
         AND #$0F
         TAX
@@ -1492,6 +1494,7 @@ b4AD6   TXA
         LDX temporaryStorageForXRegister
         JMP LoadYPosForAttackShip
 
+        ; Y is still 19 ($13).
 b4AEC   LDA (currentShipWaveDataLoPtr),Y
         AND #$0F
         TAX
@@ -1544,9 +1547,11 @@ b4B1C   LDY previousAttaWaveHiPtrTempStorage
         STA upperPlanetAttackShipsYPosArray + $01,Y
 
         STY tmpPtrLo
+        ; Byte 6 ($06): Determines if the inital Y Position of the ship is random or uses a default.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
         BNE b4B59
+        ; Byte 8 ($08): Default initiation Y position for the enemy. 
         LDY #$08
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4B59
@@ -1562,9 +1567,11 @@ b4B5A   JSR PutRandomByteInAccumulatorRegister
         STA upperPlanetAttackShipsYPosArray + $01,Y
 
         STY tmpPtrLo
+        ; Byte 6 ($06): Determines if the inital Y Position of the ship is random or uses a default.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
         BNE b4B7A
+        ; Byte 8 ($08): Default initiation Y position for the enemy. 
         LDY #$08
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4B7A
@@ -1701,6 +1708,8 @@ BulletHitShipOnBottomPlanet
 
         LDA #$00
         STA currentBottomPlanetIndex
+        ; Get the points multiplier for hitting enemies in this level
+        ; from the wave data.
 b4C76   LDY #$22
         LDA (currentShipWaveDataLoPtr),Y
         JSR CalculatePointsForByte2
@@ -1715,6 +1724,8 @@ ContinueCalculatingScoreFromHit
         JSR DrawPlanetProgressPointers
         PLA
         TAX
+        ; Get the points multiplier for hitting enemies in this level
+        ; from the wave data.
         LDY #$22
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4CB1
@@ -1731,7 +1742,7 @@ b4CAB   JSR UpdateBottomPlanetProgressData
         JSR IncreaseEnergyBottomOnly
 
         ; Load the explosion animation, if there is one. For most
-        ; enemies this is the spinning rings defined by basicExplosionAnimation.
+        ; enemies this is the spinning rings defined by spinningRings.
 b4CB1   LDY #$1D
         LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
@@ -1744,11 +1755,14 @@ b4CB1   LDY #$1D
 ;------------------------------------------------------------------
 CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         ; X is the current value in indexForActiveShipsWaveData
-        LDA shipsThatHaveCollidedWithGilby,X
+        ; We're checking if this is the first time the ship has been hit by the gilby.
+        ; If so, there may be a new state for the enemy to turn into, e.g. a licker ship
+        ; seed turning into a licker ship.
+        LDA shipHasAlreadyBeenHitByGilby,X
         BEQ JumpToGetNewShipDataFromDataStore
         LDA #$00
-        STA shipsThatHaveCollidedWithGilby,X
-        ; Check if there is another set of wave data to get for this wave.
+        STA shipHasAlreadyBeenHitByGilby,X
+        ; Check if there is another set of wave data to get for this wave when it is first hit.
         LDY #$1F
         LDA (currentShipWaveDataLoPtr),Y
         BEQ JumpToGetNewShipDataFromDataStore
@@ -1856,12 +1870,14 @@ UpdateEnergyLevelsAfterCollision
         BEQ b4D72
         LDA energyLabelColorIndexBottomPlanet
         BNE b4D7F
+        ; Y is still $23.
         LDA (currentShipWaveDataLoPtr),Y
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexBottomPlanet
         BNE b4D7F
 b4D72   LDA energyLabelColorIndexTopPlanet
         BNE b4D7F
+        ; Y is still $23.
         LDA (currentShipWaveDataLoPtr),Y
         JSR UpdateEnergyLabelColorIndexFromBounties
         STA energyLabelColorIndexTopPlanet
@@ -1877,6 +1893,7 @@ GetNewShipDataFromDataStore
         BEQ b4D98
         LDA #$00
         STA upperPlanetAttackShipYPosUpdated,X
+        ; The 2nd stage of wave data for this enemy.
         LDY #$19
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4D98
@@ -1887,6 +1904,7 @@ b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
         BEQ b4DAC
         LDA #$00
         STA upperPlanetAttackShipYPosUpdated2,X
+        ; The 3rd stage of wave data for this enemy.
         LDY #$1B
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DAC
@@ -1896,6 +1914,7 @@ b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
 b4DAC   LDA joystickInput
         AND #$10
         BNE b4DBD
+        ; Check if we should load extra stage data for this enemy.
         LDY #$21
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DBD
@@ -1906,6 +1925,7 @@ b4DBD   LDA updateRateForAttackShips,X
         BEQ UpdateAttackShipDataForNewShip
         DEC updateRateForAttackShips,X
         BNE UpdateAttackShipDataForNewShip
+        ; Controls the rate at which new enemies are added.
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DDB
@@ -1980,13 +2000,15 @@ UpdateAttackShipDataForNewShip
         ; bytes set in any of the level data.
         LDY #$0A
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ DoMainAttackShipAnimation
+        BEQ MaybeQuicklyGravitatesToGilby
         DEC someKindOfRateLimitingForAttackWaves,X
-        BNE DoMainAttackShipAnimation
+        BNE MaybeQuicklyGravitatesToGilby
         STA tempHiPtr3
         DEY
+        ; Y is now $09.
         LDA (currentShipWaveDataLoPtr),Y
         STA tempLoPtr3
+        ; $0B in the wave data defines some kind of rate limiting.
         LDY #$0B
         LDA (currentShipWaveDataLoPtr),Y
         STA someKindOfRateLimitingForAttackWaves,X
@@ -2014,22 +2036,22 @@ UpdateAttackShipDataForNewShip
         TAX
         TYA
         STA indexForYPosMovementForUpperPlanetAttackShips,X
-        JMP DoMainAttackShipAnimation
+        JMP MaybeQuicklyGravitatesToGilby
 
+        ; Load the Lo Ptr for Wave data, but this is never used.
+        ; We never here because $0A in the wave data is never set either.
 b4E6A   LDY #$0C
         LDA indexForActiveShipsWaveData,X
         TAX
         JMP UpdateWaveDataForCurrentEnemy
 
-DoMainAttackShipAnimation
-        ; Check the attack ship animation behaviour.
+MaybeQuicklyGravitatesToGilby
+        ; Does the enemy gravitate quickly towards the gilby when it is shot?
         LDY #$17
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ NormalAttackShipAnimation
+        BEQ MaybeStickyAttackShipBehaviour
 
-        ; After being destroyed the enemy turns into a licker ship. This
-        ; section handles the sticky behaviour of licker ships where they
-        ; stick to the gilby and sap its energy.
+        ; After being destroyed the enemy gravitates quickly towards the gilby.
         ; There are two types of behaviour $01 or $23.
         CLC
         ADC gilbyVerticalPosition
@@ -2039,6 +2061,7 @@ DoMainAttackShipAnimation
         LDA upperPlanetYPosFrameRateForAttackShips,X
         CMP #$01
         BNE b4EC3
+        ; Y is still $17.
         LDA (currentShipWaveDataLoPtr),Y
         CMP #$23
         BNE b4E96
@@ -2068,10 +2091,13 @@ b4EC0   INC yPosMovementForUpperPlanetAttackShips,X
 b4EC3   LDA indexForActiveShipsWaveData,X
         TAX
 
-NormalAttackShipAnimation   
+MaybeStickyAttackShipBehaviour   
+        ; Does the enemy have the stickiness behaviour?
         LDY #$16
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4F05
+        BEQ NormalAttackShipBehaviour
+
+        ; The enemy is sticky, so make it stick to the gilby.
         CLC
         ADC #$58
         STA positionRelativeToGilby
@@ -2099,9 +2125,13 @@ b4EE9   LDA upperPlanetAttackShipsXPosArray + $01,X
 b4EFE   INC xPosMovementForUpperPlanetAttackShip,X
 b4F01   LDA indexForActiveShipsWaveData,X
         TAX
-b4F05   LDY #$06
+
+NormalAttackShipBehaviour   
+        ; Is there an initial Y position for the enemy ship?
+        LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4F55
+
         DEC anotherUpdateRateForAttackShips,X
         BNE b4F55
         LDA (currentShipWaveDataLoPtr),Y
@@ -2235,6 +2265,7 @@ b4FE4   LDA indexIntoAttackWaveDataHiPtrArray,X
         LDA activeShipsWaveDataHiPtrArray,X
         STA currentShipWaveDataHiPtr
         STY tempVarStorage
+        ; Load the explosion animation for the enemy.
         LDY #$1D
         LDA (currentShipWaveDataLoPtr),Y
         LDY tempVarStorage
@@ -2316,7 +2347,7 @@ b506C   STX tempLoPtr3
         LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX
         LDA #$FF
-        STA shipsThatHaveCollidedWithGilby,X
+        STA shipHasAlreadyBeenHitByGilby,X
         LDX tempLoPtr3
 
 GoToNextShip
