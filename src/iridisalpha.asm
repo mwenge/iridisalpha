@@ -1116,17 +1116,9 @@ planet4Level8Data = $1758
 planet4Level9Data = $17A8
 planet1Level5Data = $1800
 lickerShipWaveData = $1118
-f11B8 = $11B8
-f1398 = $1398
-f13E8 = $13E8
-f1500 = $1500
-f1800 = $1800
+planet1Level8Data2ndStage = $1398
 spinningRings = $1850
-f1878 = $1878
-f1968 = $1968
-f1A20 = $1A20
-f1A70 = $1A70
-f1AE8 = $1AE8
+planet1Level5Data3rdStage = $1878
 
 
 ; A block of pointers for each planet, and a pointer for each of the

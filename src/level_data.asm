@@ -57,12 +57,14 @@ LITTLE_EYEBALL = $2F
 
 attackWaveData
 default2ndStage
+; Copied here from level_data2.asm. See default2ndStage there.
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
 planet4Level19Data
+; Copied here from level_data2.asm. See planet4Level19Data there.
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
@@ -432,7 +434,7 @@ planet4Level3Data
         .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE <f1878,>f1878
+        .BYTE <planet1Level5Data3rdStage,>planet1Level5Data3rdStage
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
         .BYTE <default2ndStage,>default2ndStage
@@ -3252,10 +3254,10 @@ cummingCock
         .BYTE <cummingCock,>cummingCock
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE <f1398,>f1398
+        .BYTE <planet1Level8Data2ndStage,>planet1Level8Data2ndStage
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
-        .BYTE <f1398,>f1398
+        .BYTE <planet1Level8Data2ndStage,>planet1Level8Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
@@ -4264,7 +4266,7 @@ flowchartArrowAsExplosion
         .BYTE <nullPtr,>nullPtr
         ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
         ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
-        .BYTE <f1500,>f1500
+        .BYTE <planet5Level10Data,>planet5Level10Data
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
         .BYTE <nullPtr,>nullPtr
@@ -4771,10 +4773,10 @@ planet3Level19Data2ndStage
         .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE <f13E8,>f13E8
+        .BYTE <planet1Level13Data,>planet1Level13Data
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
-        .BYTE <f13E8,>f13E8
+        .BYTE <planet1Level13Data,>planet1Level13Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
@@ -6343,7 +6345,7 @@ planet3Level14Data
         .BYTE $F0
         ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
         ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
-        .BYTE <f11B8,>f11B8
+        .BYTE <planet1Level12Data,>planet1Level12Data
         ; Byte 19 (Index $12): X Pos movement for attack ship.
         .BYTE $00
         ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
@@ -7430,7 +7432,7 @@ planet4Level12Data2ndStage
         .BYTE $08
         ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
         ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
-        .BYTE <f1878,>f1878
+        .BYTE <planet1Level5Data3rdStage,>planet1Level5Data3rdStage
         ; Byte 19 (Index $12): X Pos movement for attack ship.
         .BYTE $00
         ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
@@ -7451,7 +7453,7 @@ planet4Level12Data2ndStage
         .BYTE <nullPtr,>nullPtr
         ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
         ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
-        .BYTE <f1878,>f1878
+        .BYTE <planet1Level5Data3rdStage,>planet1Level5Data3rdStage
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
         .BYTE <planet4Level12Data2ndStage,>planet4Level12Data2ndStage
@@ -9491,7 +9493,7 @@ planet5Level8Data
         .BYTE <planet5Level8Data,>planet5Level8Data
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE <f1800,>f1800
+        .BYTE <planet1Level5Data,>planet1Level5Data
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
         .BYTE <default2ndStage,>default2ndStage
@@ -9785,7 +9787,7 @@ planet5Level18Data
         .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE <f1878,>f1878
+        .BYTE <planet1Level5Data3rdStage,>planet1Level5Data3rdStage
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
         .BYTE <default2ndStage,>default2ndStage
