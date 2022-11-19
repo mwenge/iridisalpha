@@ -1394,3 +1394,4 @@ planet4Level19Data = $18F0
         .BYTE <spinningRings,>spinningRings,<default2ndStage,>default2ndStage
         .BYTE $BD,$BD,$BD,$BD,$BD
 
+; vim: tabstop=2 shiftwidth=2 expandtab

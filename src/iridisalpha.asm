@@ -1915,11 +1915,15 @@ b4DAC   LDA joystickInput
         AND #$10
         BNE b4DBD
         ; Check if we should load extra stage data for this enemy.
+        ; FIXME: It it appears this is never set. If it was set it would
+        ; incorrectly expect their to be a hi/lo ptr in $19 and $20, when
+        ; there isn't.
         LDY #$21
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DBD
         DEY
         JMP UpdateWaveDataForCurrentEnemy
+        ; Returns
 
 b4DBD   LDA updateRateForAttackShips,X
         BEQ UpdateAttackShipDataForNewShip
@@ -8776,3 +8780,5 @@ pE800   SEI
         STA $DD0E    ;CIA2: CIA Control Register A
         CLI
         JMP $0835
+
+; vim: tabstop=2 shiftwidth=2 expandtab

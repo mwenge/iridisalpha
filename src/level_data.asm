@@ -9876,3 +9876,5 @@ planet3Level17Data
 fAAB0
         .BYTE $10,$FF,$00,$00,$FF,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
+
+; vim: tabstop=2 shiftwidth=2 expandtab
