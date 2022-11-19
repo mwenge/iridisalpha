@@ -1,3 +1,4 @@
+
 # Fun with the Wave Data
 
 <!-- vim-markdown-toc GFM -->
@@ -46,8 +47,11 @@ Now recompile and run:
 ```
 make runcustom
 ```
+This is the result:
 
-https://lvllvl.com/c64/?gid=b42a03c7c496e613b0dd72e16299fcfc
+![balls](https://user-images.githubusercontent.com/58846/202854123-c2120aa0-7ad3-4d59-a0c9-16a58f0a5197.gif)
+
+Try it yourself at: https://lvllvl.com/c64/?gid=b42a03c7c496e613b0dd72e16299fcfc
 
 ## Change the stickiness behaviour
 
@@ -72,6 +76,9 @@ index b847bf1..a11527a 100644
          .BYTE <nullPtr,>nullPtr
 
 ```
+This is the result:
+![gravity](https://user-images.githubusercontent.com/58846/202854235-ecd4ec98-87bb-4e09-ac3c-ff216f64a63c.gif)
 
-https://lvllvl.com/c64/?gid=e5126d21b556c22c34fe0ddb3d22ac71
+
+Try it yourself at: https://lvllvl.com/c64/?gid=e5126d21b556c22c34fe0ddb3d22ac71
 
