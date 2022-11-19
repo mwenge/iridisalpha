@@ -210,6 +210,10 @@ and giving the player the chance to actually make some progress. To try out the 
 make runeasy
 ```
 
+You can try it out here:
+
+https://lvllvl.com/c64/?gid=37124df5a665dacc3f8f3d7c868cbda2
+
 ## [GenPlan](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098): The algorithm for generating the planet surfaces
 
 This is the [routine](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098) Minter devoted some time to in his development diary.
