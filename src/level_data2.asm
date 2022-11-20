@@ -2,9 +2,9 @@
 ; $EFF0
 ; Copied to $1000 by SwapTitleScreenDataAndSpriteLevelData
 nullPtr = $0000
+planet1Level9DataSecondStage = $1A98
 secondExplosionAnimation = $1AC0
-f1A98 = $1A98
-f1E58 = $1E58
+planet1Level10Data = $1E58
 LICKERSHIP = $F7
 LICKERSHIP_INV = $FA
 
@@ -1030,7 +1030,7 @@ planet3Level9Data2ndStage = $1258
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet5Level9Data=$1280
+planet5Level9Data = $1280
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $00
@@ -1102,7 +1102,7 @@ planet5Level9Data=$1280
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$08,$00
-planet5Level9Data2ndStage=$12A8
+planet5Level9Data2ndStage = $12A8
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $02
@@ -1174,7 +1174,7 @@ planet5Level9Data2ndStage=$12A8
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet3Level12Data=$12D0
+planet3Level12Data = $12D0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $00
@@ -1246,7 +1246,7 @@ planet3Level12Data=$12D0
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$28,$00
-planet3Level12Data2ndStage=$12F8
+planet3Level12Data2ndStage = $12F8
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $0B
@@ -1318,7 +1318,7 @@ planet3Level12Data2ndStage=$12F8
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet4Level2Data=$1320
+planet4Level2Data = $1320
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $0E
@@ -1390,7 +1390,7 @@ planet4Level2Data=$1320
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$10,$00
-planet4Leve2Data2ndStage=$1348
+planet4Leve2Data2ndStage = $1348
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $0E
@@ -1462,7 +1462,7 @@ planet4Leve2Data2ndStage=$1348
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet1Level8Data=$1370
+planet1Level8Data = $1370
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -1534,7 +1534,7 @@ planet1Level8Data=$1370
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$20,$00
-planet1Level8Data2ndStage=$1398
+planet1Level8Data2ndStage = $1398
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $10
@@ -1606,7 +1606,7 @@ planet1Level8Data2ndStage=$1398
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet1Level14Data=$13C0
+planet1Level14Data = $13C0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $06
@@ -1678,7 +1678,7 @@ planet1Level14Data=$13C0
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$10,$00
-planet1Level13Data=$13E8
+planet1Level13Data = $13E8
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $0B
@@ -1750,7 +1750,7 @@ planet1Level13Data=$13E8
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$20,$00
-planet1Level13Data2ndStage=$1410
+planet1Level13Data2ndStage = $1410
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -1782,7 +1782,7 @@ planet1Level13Data2ndStage=$1410
         .BYTE $18
         ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
         ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
-        .BYTE <f1E58,>f1E58
+        .BYTE <planet1Level10Data,>planet1Level10Data
         ; Byte 19 (Index $12): X Pos movement for attack ship.
         .BYTE $00
         ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
@@ -1822,7 +1822,7 @@ planet1Level13Data2ndStage=$1410
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet4Level7Data=$1438
+planet4Level7Data = $1438
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $05
@@ -1894,7 +1894,7 @@ planet4Level7Data=$1438
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$08,$00
-planet5Level12Data=$1460
+planet5Level12Data = $1460
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $07
@@ -1966,14 +1966,14 @@ planet5Level12Data=$1460
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$08,$00
-f1488=$1488
+f1488 = $1488
         .BYTE $0B,$21,$22,$00,$DB,$DC,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$30
         .BYTE <planet5Level12Data,>planet5Level12Data,$00,$00,$00,$00,$00,$00
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-planet4Level14Data=$14B0
+planet4Level14Data = $14B0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -2045,7 +2045,7 @@ planet4Level14Data=$14B0
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$18,$00
-planet4Level14Data2ndStage=$14D8
+planet4Level14Data2ndStage = $14D8
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $00
@@ -2117,7 +2117,7 @@ planet4Level14Data2ndStage=$14D8
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet5Level10Data=$1500
+planet5Level10Data = $1500
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $08
@@ -2189,7 +2189,7 @@ planet5Level10Data=$1500
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$18,$00
-planet2Level4Data=$1528
+planet2Level4Data = $1528
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $05
@@ -2261,14 +2261,14 @@ planet2Level4Data=$1528
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$18,$00
-f1550=$1550
+f1550 = $1550
         .BYTE $11,$FC,$FF,$01,$FC,$FF,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$30
         .BYTE <planet2Level4Data,>planet2Level4Data,$00,$00,$01,$01,$01,$01
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE <secondExplosionAnimation,>secondExplosionAnimation,<default2ndStage,>default2ndStage
         .BYTE $00,$00,$02,$02,$00,$00,$00,$00
-planet5Level3Data=$1578
+planet5Level3Data = $1578
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $02
@@ -2340,7 +2340,7 @@ planet5Level3Data=$1578
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$30,$00
-planet5Level3Data2ndStage=$15A0
+planet5Level3Data2ndStage = $15A0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $02
@@ -2412,28 +2412,28 @@ planet5Level3Data2ndStage=$15A0
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-f15C8=$15C8
+f15C8 = $15C8
         .BYTE $11,$FC,$FF,$01,$FC,$FF,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$C0
         .BYTE <default2ndStage,>default2ndStage,$00,$00,$00,$00,$00,$00
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE <default2ndStage,>default2ndStage,<default2ndStage,>default2ndStage
         .BYTE $00,$00,$00,$08,$00,$00,$00,$00
-f15F0=$15F0
+f15F0 = $15F0
         .BYTE $00,$FF,$00,$00,$FF,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$00
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE <f1618,>f1618,<default2ndStage,>default2ndStage
         .BYTE $00,$00,$00,$08,$00,$04,$10,$00
-f1618=$1618
+f1618 = $1618
         .BYTE $11,$FF,$00,$00,$FF,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
         .BYTE <planet1Level13Data2ndStage,>planet1Level13Data2ndStage,$00,$00,$00,$00,$00,$00
         .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
         .BYTE <nullPtr,>nullPtr,<default2ndStage,>default2ndStage
         .BYTE $00,$00,$00,$08,$00,$00,$00,$00
-planet3Level11Data=$1640
+planet3Level11Data = $1640
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $04
@@ -2505,7 +2505,7 @@ planet3Level11Data=$1640
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$20,$00
-planet3Level11Data2ndStage=$1668
+planet3Level11Data2ndStage = $1668
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $10
@@ -2537,7 +2537,7 @@ planet3Level11Data2ndStage=$1668
         .BYTE $10
         ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
         ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
-        .BYTE <f1A98,>f1A98
+        .BYTE <planet1Level9DataSecondStage,>planet1Level9DataSecondStage
         ; Byte 19 (Index $12): X Pos movement for attack ship.
         .BYTE $00
         ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
@@ -2577,7 +2577,7 @@ planet3Level11Data2ndStage=$1668
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet5Level11Data=$1690
+planet5Level11Data = $1690
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $06
@@ -2649,7 +2649,7 @@ planet5Level11Data=$1690
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$18,$00
-planet5Level11Data2ndStage=$16B8
+planet5Level11Data2ndStage = $16B8
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -2721,7 +2721,7 @@ planet5Level11Data2ndStage=$16B8
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet5Level11Data3rdStage=$16E0
+planet5Level11Data3rdStage = $16E0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $00
@@ -2793,7 +2793,7 @@ planet5Level11Data3rdStage=$16E0
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet5Level4Data=$1708
+planet5Level4Data = $1708
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $0E
@@ -2865,7 +2865,7 @@ planet5Level4Data=$1708
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$20,$00
-planet5Level5Data2ndStage=$1730
+planet5Level5Data2ndStage = $1730
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $0A
@@ -2937,7 +2937,7 @@ planet5Level5Data2ndStage=$1730
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet4Level8Data=$1758
+planet4Level8Data = $1758
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $00
@@ -3009,7 +3009,7 @@ planet4Level8Data=$1758
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$20,$00
-planet4Level8Data2ndStage=$1780
+planet4Level8Data2ndStage = $1780
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -3081,7 +3081,7 @@ planet4Level8Data2ndStage=$1780
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet4Level9Data=$17A8
+planet4Level9Data = $17A8
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -3153,7 +3153,7 @@ planet4Level9Data=$17A8
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$20,$00
-planet4Level9Data2ndStage=$17D0
+planet4Level9Data2ndStage = $17D0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $0B
@@ -3228,7 +3228,7 @@ planet4Level9Data2ndStage=$17D0
 
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 
-planet1Level5Data=$1800
+planet1Level5Data = $1800
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -3300,7 +3300,7 @@ planet1Level5Data=$1800
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $04,$20,$00
-planet1Level5Data2ndStage=$1828
+planet1Level5Data2ndStage = $1828
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $07
@@ -3372,7 +3372,7 @@ planet1Level5Data2ndStage=$1828
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-spinningRings=$1850
+spinningRings = $1850
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $11
@@ -3444,7 +3444,7 @@ spinningRings=$1850
         .BYTE $01
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet1Level5Data3rdStage=$1878
+planet1Level5Data3rdStage = $1878
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $03
@@ -3516,7 +3516,7 @@ planet1Level5Data3rdStage=$1878
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet1Level5Data4thStage=$18A0
+planet1Level5Data4thStage = $18A0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $04
@@ -3660,7 +3660,7 @@ default2ndStage = $18C8
         .BYTE $00
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         .BYTE $00,$00,$00
-planet4Level19Data=$18F0
+planet4Level19Data = $18F0
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
         .BYTE $06
