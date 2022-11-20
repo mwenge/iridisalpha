@@ -2187,7 +2187,7 @@ UpdateAttackShipsMSBXPositionLoop
         TAX
         LDA activeShipsWaveDataHiPtrArray,X
         BNE b4FB6
-        JMP j501B
+        JMP SkipRestofMXBPositionUpdates
 
 b4FB6   LDX tempLoPtr3
         CLC
@@ -2202,7 +2202,7 @@ b4FBF   LDA upperPlanetAttackShipsXPosArray + $01,X
         EOR #$FF
 b4FCB   CMP #$08
         BMI b4FD2
-        JMP j501B
+        JMP SkipRestofMXBPositionUpdates
 
 b4FD2   LDA upperPlanetAttackShipsYPosArray + $01,X
         SEC
@@ -2211,7 +2211,7 @@ b4FD2   LDA upperPlanetAttackShipsYPosArray + $01,X
         EOR #$FF
 b4FDD   CMP #$10
         BMI b4FE4
-        JMP j501B
+        JMP SkipRestofMXBPositionUpdates
 
 b4FE4   LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX
@@ -2225,7 +2225,7 @@ b4FE4   LDA indexIntoAttackWaveDataHiPtrArray,X
         LDA (currentShipWaveDataLoPtr),Y
         LDY tempVarStorage
         CMP #$00
-        BEQ j501B
+        BEQ SkipRestofMXBPositionUpdates
 
         ; Bullet hit an attack ship
         LDA #$FF
@@ -2247,7 +2247,7 @@ b5013   LDA #$FF
         TAY
         RTS
 
-j501B
+SkipRestofMXBPositionUpdates
         LDX tempLoPtr3
         INX
         CPX #$06
