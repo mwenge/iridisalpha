@@ -99,51 +99,7 @@ LTBLUE                               = $0E
 GRAY3                                = $0F
 
 ; Some common sprite names
-STARFIELD_SPRITE                     = $C0
-LAND_GILBY1                          = $C1
-LAND_GILBY2                          = $C2
-LAND_GILBY3                          = $C3
-LAND_GILBY4                          = $C4
-LAND_GILBY5                          = $C5
-LAND_GILBY6                          = $C6
-LAND_GILBY7                          = $C7
-LAND_GILBY8                          = $C8
-LAND_GILBY9                          = $C9
-LAND_GILBY10                         = $CA
-LAND_GILBY11                         = $CB
-GILBY_TAKING_OFF1                    = $CC
-GILBY_TAKING_OFF2                    = $CD
-GILBY_TAKING_OFF3                    = $CE
-GILBY_TAKING_OFF4                    = $CF
-GILBY_TAKING_OFF5                    = $D0
-GILBY_AIRBORNE_LEFT                  = $D1
-GILBY_AIRBORNE_TURNING               = $D2
-GILBY_AIRBORNE_RIGHT                 = $D3
-LAND_GILBY_LOWERPLANET1              = $D4
-LAND_GILBY_LOWERPLANET2              = $D5
-LAND_GILBY_LOWERPLANET3              = $D6
-LAND_GILBY_LOWERPLANET4              = $D7
-LAND_GILBY_LOWERPLANET5              = $D8
-LAND_GILBY_LOWERPLANET6              = $D9
-LAND_GILBY_LOWERPLANET7              = $DA
-LAND_GILBY_LOWERPLANET8              = $DB
-LAND_GILBY_LOWERPLANET9              = $DC
-LAND_GILBY_LOWERPLANET10             = $DD
-LAND_GILBY_LOWERPLANET11             = $DE
-GILBY_TAKING_OFF_LOWERPLANET1        = $DF
-GILBY_TAKING_OFF_LOWERPLANET2        = $E0
-GILBY_TAKING_OFF_LOWERPLANET3        = $E1
-GILBY_TAKING_OFF_LOWERPLANET4        = $E2
-GILBY_TAKING_OFF_LOWERPLANET5        = $E3
-GILBY_AIRBORNE_LOWERPLANET_RIGHT     = $E4
-GILBY_AIRBORNED_TURNING_LOWER_PLANET = $E5
-GILBY_AIRBORNED_LOWERPLANET_LEFT     = $E6
-EXPLOSION_START                      = $ED
-EXPLOSION_MIDDLE                     = $EE
-EXPLOSION_END                        = $EF
-EXPLOSION1                           = $FC
-EXPLOSION2                           = $FD
-EXPLOSION3                           = $FE
+.include "sprite_names.asm"
 
 * = $0801
 ;------------------------------------------------------------------
@@ -1922,6 +1878,7 @@ b4DBD   LDA updateRateForAttackShips,X
         DEC updateRateForAttackShips,X
         BNE UpdateAttackShipDataForNewShip
         ; Controls the rate at which new enemies are added.
+        ; This is only set when the current ship data is defaultExplosion
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DDB
