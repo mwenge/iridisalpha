@@ -79,6 +79,8 @@ index b847bf1..a11527a 100644
 This is the result:
 ![gravity](https://user-images.githubusercontent.com/58846/202854235-ecd4ec98-87bb-4e09-ac3c-ff216f64a63c.gif)
 
+That's a lot of random flying about. The movement pattern isn't really designed to get near you so maybe that explains why we
+don't see the same behaviour as we do in the licker ships later on.
 
 Try it yourself at: https://lvllvl.com/c64/?gid=e5126d21b556c22c34fe0ddb3d22ac71
 
