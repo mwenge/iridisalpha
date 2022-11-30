@@ -47,11 +47,10 @@ Now recompile and run:
 ```
 make runcustom
 ```
-This is the result:
+This is the result (click to try playing it yourself):
 
-![balls](https://user-images.githubusercontent.com/58846/202854123-c2120aa0-7ad3-4d59-a0c9-16a58f0a5197.gif)
+[<img src="https://user-images.githubusercontent.com/58846/202854123-c2120aa0-7ad3-4d59-a0c9-16a58f0a5197.gif">](https://lvllvl.com/c64/?gid=b42a03c7c496e613b0dd72e16299fcfc)
 
-Try it yourself at: https://lvllvl.com/c64/?gid=b42a03c7c496e613b0dd72e16299fcfc
 
 ## Change the stickiness behaviour
 
@@ -76,11 +75,11 @@ index b847bf1..a11527a 100644
          .BYTE <nullPtr,>nullPtr
 
 ```
-This is the result:
-![gravity](https://user-images.githubusercontent.com/58846/202854235-ecd4ec98-87bb-4e09-ac3c-ff216f64a63c.gif)
+This is the result (click to play it yourself):
+
+[<img src="https://user-images.githubusercontent.com/58846/202854235-ecd4ec98-87bb-4e09-ac3c-ff216f64a63c.gif">](https://lvllvl.com/c64/?gid=e5126d21b556c22c34fe0ddb3d22ac71)
 
 That's a lot of random flying about. The movement pattern isn't really designed to get near you so maybe that explains why we
 don't see the same behaviour as we do in the licker ships later on.
 
-Try it yourself at: https://lvllvl.com/c64/?gid=e5126d21b556c22c34fe0ddb3d22ac71
 
