@@ -142,9 +142,9 @@ planet2Level7Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -214,9 +214,9 @@ planet2Level7Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -290,9 +290,9 @@ planet4Level4Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -362,9 +362,9 @@ planet4Level4Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -436,9 +436,9 @@ planet4Level3Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -508,9 +508,9 @@ planet4Level2Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -580,9 +580,9 @@ planet1Level9Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -652,9 +652,9 @@ planet1Level9DataSecondStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -724,9 +724,9 @@ secondExplosionAnimation
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -796,9 +796,9 @@ planet3Level3Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -868,9 +868,9 @@ planet3Level3Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -940,9 +940,9 @@ planet3Level3Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1012,9 +1012,9 @@ planet2Level8Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $20
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1084,9 +1084,9 @@ planet2Level8Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1156,9 +1156,9 @@ planet2Level8Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1228,9 +1228,9 @@ planet2Level9Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1300,9 +1300,9 @@ gilbyTakingOffAsExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1372,9 +1372,9 @@ gilbyLookingLeft
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1444,9 +1444,9 @@ planet3Level4Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1516,9 +1516,9 @@ planet3Level5Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1588,9 +1588,9 @@ stickyGlobeExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1660,9 +1660,9 @@ planet3Level6Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1739,9 +1739,9 @@ planet1Level17Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $05
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1811,9 +1811,9 @@ planet1Level17Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1883,9 +1883,9 @@ planet1Level17Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -1955,9 +1955,9 @@ planet4Level6Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2027,9 +2027,9 @@ planet4Level6Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2099,9 +2099,9 @@ planet1Level6Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2171,9 +2171,9 @@ planet1Level6Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2243,9 +2243,9 @@ spinningRings2ndType
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2315,9 +2315,9 @@ planet1Level10Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2387,9 +2387,9 @@ planet1Level10Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2459,9 +2459,9 @@ planet3Level2Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2531,9 +2531,9 @@ planet3Level2Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2603,9 +2603,9 @@ planet3Level2Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2675,9 +2675,9 @@ planet3Level8Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2747,9 +2747,9 @@ bubbleExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2819,9 +2819,9 @@ bubbleExplosion2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2891,9 +2891,9 @@ planet4Level5Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -2963,9 +2963,9 @@ planet4Level5Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3040,9 +3040,9 @@ planet1Level15Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3112,9 +3112,9 @@ teardropExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $01
@@ -3184,9 +3184,9 @@ planet4Level17Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3256,9 +3256,9 @@ cummingCock
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3328,9 +3328,9 @@ planet1Level4Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3400,9 +3400,9 @@ planet1Level4Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $07
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3472,9 +3472,9 @@ planet5Level5Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3544,9 +3544,9 @@ planet5Level5Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3623,9 +3623,9 @@ planet3Level10Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3695,9 +3695,9 @@ planet3Level10Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3767,9 +3767,9 @@ planet4Level10Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3839,9 +3839,9 @@ planet4Level10Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3911,9 +3911,9 @@ planet5Level6Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -3983,9 +3983,9 @@ fighterShipAsExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4055,9 +4055,9 @@ planet4Level15Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4127,9 +4127,9 @@ spinnerAsExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4199,9 +4199,9 @@ planet2Level10Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4271,9 +4271,9 @@ flowchartArrowAsExplosion
         .BYTE $60
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4343,9 +4343,9 @@ planet3Level13Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4415,9 +4415,9 @@ lickerShipAsExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4487,9 +4487,9 @@ planet3Level13Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4559,9 +4559,9 @@ planet2Level11Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4631,9 +4631,9 @@ planet2Level11Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4703,9 +4703,9 @@ planet3Level19Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4775,9 +4775,9 @@ planet3Level19Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4847,9 +4847,9 @@ planet3Level19Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4919,9 +4919,9 @@ planet5Level1Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -4991,9 +4991,9 @@ planet5Level1Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5063,9 +5063,9 @@ planet4Level1Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5135,9 +5135,9 @@ planet4Level1Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5215,9 +5215,9 @@ planet2Level1Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5287,9 +5287,9 @@ pinAsExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5359,9 +5359,9 @@ planet1Level1Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5431,9 +5431,9 @@ planet1Level1Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5505,9 +5505,9 @@ planet1Level7Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5577,9 +5577,9 @@ planet1Level7Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5649,9 +5649,9 @@ planet1Level7Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5721,9 +5721,9 @@ barExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5794,9 +5794,9 @@ copticExplosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5866,9 +5866,9 @@ planet1Level20Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -5938,9 +5938,9 @@ planet2Level20Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6010,9 +6010,9 @@ planet3Level20Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6082,9 +6082,9 @@ planet4Level20Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $05
@@ -6154,9 +6154,9 @@ planet5Level20Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6226,9 +6226,9 @@ planet5Level2Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6298,9 +6298,9 @@ planet5Level2Explosion
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6370,9 +6370,9 @@ planet3Level14Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6442,9 +6442,9 @@ planet3Level14Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6514,9 +6514,9 @@ planet1Level3Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6586,9 +6586,9 @@ planet1Level3Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6658,9 +6658,9 @@ planet1Level3Data3rdStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6730,9 +6730,9 @@ planet2Level18Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6802,9 +6802,9 @@ planet2Level18Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6874,9 +6874,9 @@ planet2Level19Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -6953,9 +6953,9 @@ planet2Level19Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7025,9 +7025,9 @@ planet2Level12Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE CAMEL
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7097,9 +7097,9 @@ planet3Level15Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7169,9 +7169,9 @@ planet3Level15Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7241,9 +7241,9 @@ planet3Level18Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7313,9 +7313,9 @@ planet3Level18Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7385,9 +7385,9 @@ planet4Level12Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7457,9 +7457,9 @@ planet4Level12Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7529,9 +7529,9 @@ planet2Level13Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7601,9 +7601,9 @@ planet2Level13Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7673,9 +7673,9 @@ planet2Level2Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7745,9 +7745,9 @@ planet2Level3Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7817,9 +7817,9 @@ planet2Level14Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7889,9 +7889,9 @@ planet2Level17Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -7961,9 +7961,9 @@ planet2Level14Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8033,9 +8033,9 @@ planet2Level17Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8105,9 +8105,9 @@ planet4Level18Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8177,9 +8177,9 @@ planet5Level7Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8249,9 +8249,9 @@ planet5Level7Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8321,9 +8321,9 @@ planet1Level16Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8393,9 +8393,9 @@ planet1Level2Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8465,9 +8465,9 @@ planet4Level16Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8537,9 +8537,9 @@ planet4Level16Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8609,9 +8609,9 @@ planet5Level13Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $20
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8681,9 +8681,9 @@ planet5Level13Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8753,9 +8753,9 @@ planet4Level11Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8825,9 +8825,9 @@ planet4Level11Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8897,9 +8897,9 @@ planet5Level14Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -8976,9 +8976,9 @@ planet5Level15Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $06
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9048,9 +9048,9 @@ planet5Level15Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9120,9 +9120,9 @@ planet2Level15Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9201,9 +9201,9 @@ planet3Level16Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9274,9 +9274,9 @@ planet1Level18Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9346,9 +9346,9 @@ planet1Level18Data2ndStage
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9419,9 +9419,9 @@ planet1Level19Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9492,9 +9492,9 @@ planet5Level8Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9564,9 +9564,9 @@ planet4Level13Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9637,9 +9637,9 @@ planet5Level17Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9711,9 +9711,9 @@ planet2Level16Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9785,9 +9785,9 @@ planet5Level18Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
@@ -9857,9 +9857,9 @@ planet3Level17Data
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
         .BYTE $00
-        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
+        ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
-        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
+        ; Byte 36: (Index $23): Does colliding with this enemy decrease the gilby's energy?
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00

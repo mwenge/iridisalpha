@@ -964,8 +964,8 @@ p4003   LDA #<MainControlLoopInterruptHandler
         STA planetTextureSecondFromBottomLayerPtr
         STA unusedVariable4
         STA unusedVariable5
-        STA energyLabelColorIndexTopPlanet
-        STA energyLabelColorIndexBottomPlanet
+        STA amountToDecreaseEnergyByTopPlanet
+        STA amountToDecreaseEnergyByBottomPlanet
         STA gilbyHasJustDied
         STA bonusPhaseEarned
         STA bonusPhaseCounter
@@ -1816,19 +1816,19 @@ UpdateEnergyLevelsAfterCollision
         STA currentGilbySpeed
         LDA valueIsAlwaysZero
         BEQ b4D72
-        LDA energyLabelColorIndexBottomPlanet
+        LDA amountToDecreaseEnergyByBottomPlanet
         BNE b4D7F
         ; Y is still $23.
         LDA (currentShipWaveDataLoPtr),Y
-        JSR UpdateEnergyLabelColorIndexFromBounties
-        STA energyLabelColorIndexBottomPlanet
+        JSR AugmentAmountToDecreaseEnergyByBountiesEarned
+        STA amountToDecreaseEnergyByBottomPlanet
         BNE b4D7F
-b4D72   LDA energyLabelColorIndexTopPlanet
+b4D72   LDA amountToDecreaseEnergyByTopPlanet
         BNE b4D7F
         ; Y is still $23.
         LDA (currentShipWaveDataLoPtr),Y
-        JSR UpdateEnergyLabelColorIndexFromBounties
-        STA energyLabelColorIndexTopPlanet
+        JSR AugmentAmountToDecreaseEnergyByBountiesEarned
+        STA amountToDecreaseEnergyByTopPlanet
 b4D7F   LDY #$1E
         JMP UpdateWaveDataForCurrentEnemy
         ; Returns
@@ -2647,8 +2647,8 @@ b53B3   RTS
 currEnergyTop                     .BYTE $03
 currEnergyBottom                  .BYTE $03
 currCoreEnergyLevel               .BYTE $00
-energyLabelColorIndexTopPlanet    .BYTE $00
-energyLabelColorIndexBottomPlanet .BYTE $00
+amountToDecreaseEnergyByTopPlanet    .BYTE $00
+amountToDecreaseEnergyByBottomPlanet .BYTE $00
 ;------------------------------------------------------------------
 ; DecreaseEnergyStorage
 ;------------------------------------------------------------------
@@ -2658,12 +2658,12 @@ DecreaseEnergyStorage
         LDA #$04
         STA updateEnergyStorageInterval
 
-        LDA energyLabelColorIndexTopPlanet
+        LDA amountToDecreaseEnergyByTopPlanet
         BEQ UpdateEnergyStorageBottomPlanet
 
         ;Color the 'Energy' label.
-        DEC energyLabelColorIndexTopPlanet
-        LDX energyLabelColorIndexTopPlanet
+        DEC amountToDecreaseEnergyByTopPlanet
+        LDX amountToDecreaseEnergyByTopPlanet
         LDA energyLabelColors,X
         LDY #$04
 b53D3   STA COLOR_RAM + $034A,Y
@@ -2689,11 +2689,11 @@ GilbyDiedBecauseEnergyDepleted
         ; Returns
 
 UpdateEnergyStorageBottomPlanet
-        LDA energyLabelColorIndexBottomPlanet
+        LDA amountToDecreaseEnergyByBottomPlanet
         BEQ b542B
 
-        DEC energyLabelColorIndexBottomPlanet
-        LDX energyLabelColorIndexBottomPlanet
+        DEC amountToDecreaseEnergyByBottomPlanet
+        LDX amountToDecreaseEnergyByBottomPlanet
 
         LDA energyLabelColors,X
         LDY #$04
@@ -2756,7 +2756,11 @@ DepleteEnergyBottom
 b547B   LDX temporaryStorageForXRegister
         RTS
 
-b547F   LDA #$01
+;------------------------------------------------------------------
+; GilbyDiesFromExcessEnergy
+;------------------------------------------------------------------
+GilbyDiesFromExcessEnergy
+        LDA #$01
         STA reasonGilbyDied ; Overload (too much energy)
         JMP GilbyDied
 
@@ -2775,7 +2779,7 @@ IncreaseEnergyTop
         INX
         STX currEnergyTop
         CPX #$08
-        BEQ b547F
+        BEQ GilbyDiesFromExcessEnergy
         LDA #$87
         STA SCREEN_RAM + $0373,X
         BNE b547B
@@ -2795,7 +2799,7 @@ IncreaseEnergyBottom
         INX
         STX currEnergyBottom
         CPX #$08
-        BEQ b547F
+        BEQ GilbyDiesFromExcessEnergy
         LDA #$87
         STA SCREEN_RAM + $039B,X
         BNE b547B
@@ -3253,19 +3257,19 @@ b57CB   LDA currentBottomPlanet
         RTS
 
 ;------------------------------------------------------------------
-; UpdateEnergyLabelColorIndexFromBounties
+; AugmentAmountToDecreaseEnergyByBountiesEarned
 ;------------------------------------------------------------------
-UpdateEnergyLabelColorIndexFromBounties
+AugmentAmountToDecreaseEnergyByBountiesEarned
         STY tempStorageForYRegister
         LDY bonusBountiesEarned
         CLC
-        ADC energyLabelColorIndexOffsetArray,Y
+        ADC amountToDecreaseEnergyByOffsetArray,Y
         LDY tempStorageForYRegister
         RTS
 
 tempStorageForYRegister          .BYTE $23
-energyLabelColorIndexOffsetArray .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
-                                 .BYTE $50
+amountToDecreaseEnergyByOffsetArray .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
+                                    .BYTE $50
 ;------------------------------------------------------------------
 ; GilbyDied
 ;------------------------------------------------------------------
@@ -5454,7 +5458,7 @@ UpdateGilbyPositionAndColor
         STA $D001    ;Sprite 0 Y Pos
         LDX currEnergyTop
         LDA energyLevelToGilbyColorMap,X
-        LDX energyLabelColorIndexTopPlanet
+        LDX amountToDecreaseEnergyByTopPlanet
         BEQ b6C1A
         LDA processJoystickFrameRate
 b6C1A   LDY valueIsAlwaysZero
@@ -5604,7 +5608,7 @@ b6D07   LDX currentPlanetBackgroundColor1
         ; Update the color of the lower planet gilby to match its energy level
         LDX currEnergyBottom
         LDA energyLevelToGilbyColorMap,X
-        LDX energyLabelColorIndexBottomPlanet
+        LDX amountToDecreaseEnergyByBottomPlanet
         BEQ b6D2C
 
         LDA processJoystickFrameRate
