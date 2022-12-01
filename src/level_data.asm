@@ -148,8 +148,12 @@ planet2Level7Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level7Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -220,8 +224,12 @@ planet2Level7Data2ndStage
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 ;f19B8
         .BYTE $01,$30,$31,$00,$30,$31,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$03
@@ -296,8 +304,12 @@ planet4Level4Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level4Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -368,8 +380,12 @@ planet4Level4Data2ndStage
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 LITTLE_DART=$31
 planet4Level3Data
@@ -442,8 +458,12 @@ planet4Level3Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level2Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -514,8 +534,12 @@ planet4Level2Data2ndStage
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level9Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -586,8 +610,12 @@ planet1Level9Data
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level9DataSecondStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -658,8 +686,12 @@ planet1Level9DataSecondStage
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 secondExplosionAnimation
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -730,8 +762,12 @@ secondExplosionAnimation
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level3Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -802,8 +838,12 @@ planet3Level3Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level3Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -874,8 +914,12 @@ planet3Level3Data2ndStage
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level3Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -946,8 +990,12 @@ planet3Level3Data3rdStage
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level8Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1018,8 +1066,12 @@ planet2Level8Data
         .BYTE $20
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level8Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1090,8 +1142,12 @@ planet2Level8Data2ndStage
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level8Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1162,8 +1218,12 @@ planet2Level8Data3rdStage
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level9Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1234,8 +1294,12 @@ planet2Level9Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 gilbyTakingOffAsExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1306,8 +1370,12 @@ gilbyTakingOffAsExplosion
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 gilbyLookingLeft
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1378,8 +1446,12 @@ gilbyLookingLeft
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level4Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1450,8 +1522,12 @@ planet3Level4Data
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level5Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1522,8 +1598,12 @@ planet3Level5Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 stickyGlobeExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1594,8 +1674,12 @@ stickyGlobeExplosion
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level6Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1666,8 +1750,12 @@ planet3Level6Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 f1CF0
         .BYTE $0F,$E7,$E8,$00,$E7,$E8,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
@@ -1745,8 +1833,12 @@ planet1Level17Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level17Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1817,8 +1909,12 @@ planet1Level17Data2ndStage
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level17Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1889,8 +1985,12 @@ planet1Level17Data3rdStage
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level6Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -1961,8 +2061,12 @@ planet4Level6Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level6Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2033,8 +2137,12 @@ planet4Level6Data2ndStage
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level6Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2105,8 +2213,12 @@ planet1Level6Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level6Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2177,8 +2289,12 @@ planet1Level6Data2ndStage
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 spinningRings2ndType
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2249,8 +2365,12 @@ spinningRings2ndType
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level10Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2321,8 +2441,12 @@ planet1Level10Data
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level10Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2393,8 +2517,12 @@ planet1Level10Data2ndStage
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level2Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2465,8 +2593,12 @@ planet3Level2Data
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level2Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2537,8 +2669,12 @@ planet3Level2Data2ndStage
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level2Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2609,8 +2745,12 @@ planet3Level2Data3rdStage
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level8Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2681,8 +2821,12 @@ planet3Level8Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 bubbleExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2753,8 +2897,12 @@ bubbleExplosion
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 bubbleExplosion2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2825,8 +2973,12 @@ bubbleExplosion2ndStage
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level5Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2897,8 +3049,12 @@ planet4Level5Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level5Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -2969,8 +3125,12 @@ planet4Level5Data2ndStage
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -3046,8 +3206,12 @@ planet1Level15Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 teardropExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3118,8 +3282,12 @@ teardropExplosion
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $01
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level17Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3190,8 +3358,12 @@ planet4Level17Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 cummingCock
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3262,8 +3434,12 @@ cummingCock
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level4Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3334,8 +3510,12 @@ planet1Level4Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level4Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3406,8 +3586,12 @@ planet1Level4Data2ndStage
         .BYTE $07
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level5Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3478,8 +3662,12 @@ planet5Level5Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level5Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3550,8 +3738,12 @@ planet5Level5Data2ndStage
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 f9C40
         .BYTE $07,FLYING_DOT1,FLYING_DOT1+$02,$03,FLYING_DOT1,FLYING_DOT1+$02,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
@@ -3629,8 +3821,12 @@ planet3Level10Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level10Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3701,8 +3897,12 @@ planet3Level10Data2ndStage
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level10Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3773,8 +3973,12 @@ planet4Level10Data
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level10Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3845,8 +4049,12 @@ planet4Level10Data2ndStage
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level6Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3917,8 +4125,12 @@ planet5Level6Data
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 fighterShipAsExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3989,8 +4201,12 @@ fighterShipAsExplosion
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level15Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4061,8 +4277,12 @@ planet4Level15Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALL_BALL1 + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $28
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 spinnerAsExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4133,8 +4353,12 @@ spinnerAsExplosion
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level10Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4205,8 +4429,12 @@ planet2Level10Data
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 flowchartArrowAsExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4277,8 +4505,12 @@ flowchartArrowAsExplosion
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level13Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4349,8 +4581,12 @@ planet3Level13Data
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 lickerShipAsExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4421,8 +4657,12 @@ lickerShipAsExplosion
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level13Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4493,8 +4733,12 @@ planet3Level13Data3rdStage
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level11Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4565,8 +4809,12 @@ planet2Level11Data
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level11Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4637,8 +4885,12 @@ planet2Level11Data2ndStage
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level19Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4709,8 +4961,12 @@ planet3Level19Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level19Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4781,8 +5037,12 @@ planet3Level19Data2ndStage
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level19Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4853,8 +5113,12 @@ planet3Level19Data3rdStage
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level1Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4925,8 +5189,12 @@ planet5Level1Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level1Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4997,8 +5265,12 @@ planet5Level1Data2ndStage
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level1Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5069,8 +5341,12 @@ planet4Level1Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level1Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5141,8 +5417,12 @@ planet4Level1Data2ndStage
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level1Data
         .BYTE $10,$FC,$FF,$02,$FC,$FF,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
@@ -5221,8 +5501,12 @@ planet2Level1Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 pinAsExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5293,8 +5577,12 @@ pinAsExplosion
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level1Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5365,8 +5653,12 @@ planet1Level1Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level1Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5437,8 +5729,12 @@ planet1Level1Data2ndStage
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 FLAG_BAR=$BE
 planet1Level7Data
@@ -5511,8 +5807,12 @@ planet1Level7Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALL_BALL1 + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $28
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level7Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5583,8 +5883,12 @@ planet1Level7Data2ndStage
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level7Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5655,8 +5959,12 @@ planet1Level7Data3rdStage
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 barExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5727,8 +6035,12 @@ barExplosion
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 copticExplosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -5800,8 +6112,12 @@ copticExplosion
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level20Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5872,8 +6188,12 @@ planet1Level20Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$40,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $40
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level20Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -5944,8 +6264,12 @@ planet2Level20Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$40,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $40
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level20Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6016,8 +6340,12 @@ planet3Level20Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$40,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $40
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level20Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6088,8 +6416,12 @@ planet4Level20Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $05
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $05,$05,$05
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $05
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $05
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $05
 planet5Level20Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6160,8 +6492,12 @@ planet5Level20Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$40,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $40
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level2Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6232,8 +6568,12 @@ planet5Level2Data
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level2Explosion
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6304,8 +6644,12 @@ planet5Level2Explosion
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level14Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6376,8 +6720,12 @@ planet3Level14Data
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level14Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6448,8 +6796,12 @@ planet3Level14Data2ndStage
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level3Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6520,8 +6872,12 @@ planet1Level3Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level3Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6592,8 +6948,12 @@ planet1Level3Data2ndStage
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level3Data3rdStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6664,8 +7024,12 @@ planet1Level3Data3rdStage
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level18Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6736,8 +7100,12 @@ planet2Level18Data2ndStage
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level18Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6808,8 +7176,12 @@ planet2Level18Data
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level19Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -6880,8 +7252,12 @@ planet2Level19Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,WINGED_BALL3 + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $38
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 fA3C0
         .BYTE $0A,$C1,$C8,$04,$D4,$DC,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -6959,8 +7335,12 @@ planet2Level19Data2ndStage
         .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level12Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7031,8 +7411,12 @@ planet2Level12Data
         .BYTE CAMEL
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALLBALL_AGAIN + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $30
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level15Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7103,8 +7487,12 @@ planet3Level15Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALL_BALL1 + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $28
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level15Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7175,8 +7563,12 @@ planet3Level15Data2ndStage
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level18Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7247,8 +7639,12 @@ planet3Level18Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level18Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7319,8 +7715,12 @@ planet3Level18Data2ndStage
         .BYTE $05
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level12Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7391,8 +7791,12 @@ planet4Level12Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALLBALL_AGAIN + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $30
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level12Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7463,8 +7867,12 @@ planet4Level12Data2ndStage
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level13Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7535,8 +7943,12 @@ planet2Level13Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$40,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $40
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level13Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7607,8 +8019,12 @@ planet2Level13Data2ndStage
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level2Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7679,8 +8095,12 @@ planet2Level2Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level3Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7751,8 +8171,12 @@ planet2Level3Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level14Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7823,8 +8247,12 @@ planet2Level14Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level17Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7895,8 +8323,12 @@ planet2Level17Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level14Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7967,8 +8399,12 @@ planet2Level14Data2ndStage
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level17Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8039,8 +8475,12 @@ planet2Level17Data2ndStage
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level18Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8111,8 +8551,12 @@ planet4Level18Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level7Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8183,8 +8627,12 @@ planet5Level7Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level7Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8255,8 +8703,12 @@ planet5Level7Data2ndStage
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level16Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8327,8 +8779,12 @@ planet1Level16Data
         .BYTE $06
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$18,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $18
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level2Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8399,8 +8855,12 @@ planet1Level2Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level16Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8471,8 +8931,12 @@ planet4Level16Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALLBALL_AGAIN + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $30
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level16Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8543,8 +9007,12 @@ planet4Level16Data2ndStage
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level13Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8615,8 +9083,12 @@ planet5Level13Data
         .BYTE $20
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,FLYING_BAR2 + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $C0
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level13Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8687,8 +9159,12 @@ planet5Level13Data2ndStage
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level11Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8759,8 +9235,12 @@ planet4Level11Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level11Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8831,8 +9311,12 @@ planet4Level11Data2ndStage
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level14Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -8903,8 +9387,12 @@ planet5Level14Data
         .BYTE $01
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$60,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $60
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 fA848
         .BYTE $09,$FF,$00,$00,$FF,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -8982,8 +9470,12 @@ planet5Level15Data
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level15Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -9054,8 +9546,12 @@ planet5Level15Data2ndStage
         .BYTE $00
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level15Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -9126,8 +9622,12 @@ planet2Level15Data
         .BYTE $02
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level15Data2ndStage
         .BYTE $08,FLAG_BAR,FLAG_BAR+$01,$00,FLAG_BAR,FLAG_BAR+$01,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$20
@@ -9207,8 +9707,12 @@ planet3Level16Data
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$10,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $10
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 planet1Level18Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -9280,8 +9784,12 @@ planet1Level18Data
         .BYTE $03
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level18Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -9352,8 +9860,12 @@ planet1Level18Data2ndStage
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $00,$00,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 planet1Level19Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -9425,8 +9937,12 @@ planet1Level19Data
         .BYTE $04
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$20,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $20
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 planet5Level8Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -9498,8 +10014,12 @@ planet5Level8Data
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALLBALL_AGAIN + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $30
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet4Level13Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -9570,8 +10090,12 @@ planet4Level13Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$40,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $40
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 planet5Level17Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -9643,8 +10167,12 @@ planet5Level17Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALLBALL_AGAIN + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $30
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 WINGBALL=$35
 planet2Level16Data
@@ -9717,8 +10245,12 @@ planet2Level16Data
         .BYTE $10
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALLBALL_AGAIN + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $30
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 LITTLE_OTHER_EYEBALL=$27
 planet5Level18Data
@@ -9791,8 +10323,12 @@ planet5Level18Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,$40,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $40
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level17Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -9863,10 +10399,15 @@ planet3Level17Data
         .BYTE $0C
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
         .BYTE $00
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        .BYTE $04,SMALLBALL_AGAIN + $01,$00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $04
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $30
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 fAAB0
         .BYTE $10,$FF,$00,$00,$FF,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
 
 ; vim: tabstop=2 shiftwidth=2 expandtab
+

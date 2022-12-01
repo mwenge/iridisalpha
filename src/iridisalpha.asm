@@ -1374,14 +1374,18 @@ GetWaveDateForNewShip
         TXA
         TAY
         LDX orderForUpdatingPositionOfAttackShips,Y
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
         LDY #$01
         LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpritesLoadedFromBackingData,X
 
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
         LDY #$02
         LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpriteAnimationEnd,X
 
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
         LDY #$03
         LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipAnimationFrameRate,X
@@ -1714,6 +1718,7 @@ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         LDY #$1F
         LDA (currentShipWaveDataLoPtr),Y
         BEQ JumpToGetNewShipDataFromDataStore
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         ; Is there a rate at which new enemies are added?
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
