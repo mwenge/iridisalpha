@@ -941,4 +941,4 @@ aEF00
         .BYTE $C0,$00,$FF,$00,$00,$00,$00,$00
         ;End of Sprites
 
-.include "level_data2.asm"
+.include "../level_data/level_data2.asm"

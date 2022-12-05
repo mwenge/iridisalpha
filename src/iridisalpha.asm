@@ -99,7 +99,7 @@ LTBLUE                               = $0E
 GRAY3                                = $0F
 
 ; Some common sprite names
-.include "sprite_names.asm"
+.include "graphics/sprite_names.asm"
 
 *=$0801
 ;------------------------------------------------------------------
@@ -916,8 +916,8 @@ srcOfRandomBytes   =*+$01
 
 
 *=$2000
-.include "charset.asm"
-.include "sprites.asm"
+.include "graphics/charset.asm"
+.include "graphics/sprites.asm"
 
 difficultySelected   =*+$01
 ;------------------------------------------------------------------
@@ -8002,9 +8002,9 @@ b7F01   LDA randomJoystickInput
         STA joystickInput
         RTS
 
-.include "planet_surface.asm"
-.include "planet_textures.asm"
-.include "level_data.asm"
+.include "graphics/planet_surface.asm"
+.include "graphics/planet_textures.asm"
+.include "level_data/level_data.asm"
 
 *=$AAC0
 currentBonusBounty    .BYTE $F0

@@ -1,7 +1,7 @@
 ; Level data.
 ; $EFF0
 ; Copied to $1000 by SwapTitleScreenDataAndSpriteLevelData
-.include "sprite_names.asm"
+.include "../graphics/sprite_names.asm"
 nullPtr = $0000
 planet1Level9DataSecondStage = $1A98
 secondExplosionAnimation = $1AC0
