@@ -104,7 +104,7 @@ planet2Level7Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -140,7 +140,7 @@ planet2Level7Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -180,7 +180,7 @@ planet2Level7Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $80
@@ -216,7 +216,7 @@ planet2Level7Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -260,7 +260,7 @@ planet4Level4Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -296,7 +296,7 @@ planet4Level4Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -336,7 +336,7 @@ planet4Level4Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -372,7 +372,7 @@ planet4Level4Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -414,7 +414,7 @@ planet4Level3Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $60
@@ -450,7 +450,7 @@ planet4Level3Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -490,7 +490,7 @@ planet4Level2Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -526,7 +526,7 @@ planet4Level2Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -566,7 +566,7 @@ planet1Level9Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $0C
@@ -602,7 +602,7 @@ planet1Level9Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -642,7 +642,7 @@ planet1Level9DataSecondStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -678,7 +678,7 @@ planet1Level9DataSecondStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -718,7 +718,7 @@ secondExplosionAnimation
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $04
@@ -754,7 +754,7 @@ secondExplosionAnimation
         .BYTE $00,$00
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -794,7 +794,7 @@ planet3Level3Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -830,7 +830,7 @@ planet3Level3Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -870,7 +870,7 @@ planet3Level3Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -906,7 +906,7 @@ planet3Level3Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -946,7 +946,7 @@ planet3Level3Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -982,7 +982,7 @@ planet3Level3Data3rdStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -1022,7 +1022,7 @@ planet2Level8Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $60
@@ -1058,7 +1058,7 @@ planet2Level8Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -1098,7 +1098,7 @@ planet2Level8Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -1134,7 +1134,7 @@ planet2Level8Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -1174,7 +1174,7 @@ planet2Level8Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -1210,7 +1210,7 @@ planet2Level8Data3rdStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -1250,7 +1250,7 @@ planet2Level9Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -1286,7 +1286,7 @@ planet2Level9Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -1326,7 +1326,7 @@ gilbyTakingOffAsExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $08
@@ -1362,7 +1362,7 @@ gilbyTakingOffAsExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -1402,7 +1402,7 @@ gilbyLookingLeft
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -1438,7 +1438,7 @@ gilbyLookingLeft
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -1478,7 +1478,7 @@ planet3Level4Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -1514,7 +1514,7 @@ planet3Level4Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -1554,7 +1554,7 @@ planet3Level5Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -1590,7 +1590,7 @@ planet3Level5Data
         .BYTE <planet3Level5Data,>planet3Level5Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -1630,7 +1630,7 @@ stickyGlobeExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -1666,7 +1666,7 @@ stickyGlobeExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -1706,7 +1706,7 @@ planet3Level6Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -1742,7 +1742,7 @@ planet3Level6Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -1789,7 +1789,7 @@ planet1Level17Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -1825,7 +1825,7 @@ planet1Level17Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $05
@@ -1865,7 +1865,7 @@ planet1Level17Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $04
@@ -1901,7 +1901,7 @@ planet1Level17Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -1941,7 +1941,7 @@ planet1Level17Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -1977,7 +1977,7 @@ planet1Level17Data3rdStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -2017,7 +2017,7 @@ planet4Level6Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -2053,7 +2053,7 @@ planet4Level6Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -2093,7 +2093,7 @@ planet4Level6Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -2129,7 +2129,7 @@ planet4Level6Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -2169,7 +2169,7 @@ planet1Level6Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $03
@@ -2205,7 +2205,7 @@ planet1Level6Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -2245,7 +2245,7 @@ planet1Level6Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $50
@@ -2281,7 +2281,7 @@ planet1Level6Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -2321,7 +2321,7 @@ spinningRings2ndType
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -2357,7 +2357,7 @@ spinningRings2ndType
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -2397,7 +2397,7 @@ planet1Level10Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $80
@@ -2433,7 +2433,7 @@ planet1Level10Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -2473,7 +2473,7 @@ planet1Level10Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -2509,7 +2509,7 @@ planet1Level10Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -2549,7 +2549,7 @@ planet3Level2Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $50
@@ -2585,7 +2585,7 @@ planet3Level2Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -2625,7 +2625,7 @@ planet3Level2Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $08
@@ -2661,7 +2661,7 @@ planet3Level2Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -2701,7 +2701,7 @@ planet3Level2Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $55
@@ -2737,7 +2737,7 @@ planet3Level2Data3rdStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -2777,7 +2777,7 @@ planet3Level8Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -2813,7 +2813,7 @@ planet3Level8Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -2853,7 +2853,7 @@ bubbleExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -2889,7 +2889,7 @@ bubbleExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -2929,7 +2929,7 @@ bubbleExplosion2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $18
@@ -2965,7 +2965,7 @@ bubbleExplosion2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -3005,7 +3005,7 @@ planet4Level5Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -3041,7 +3041,7 @@ planet4Level5Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -3081,7 +3081,7 @@ planet4Level5Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -3117,7 +3117,7 @@ planet4Level5Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -3162,7 +3162,7 @@ planet1Level15Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -3198,7 +3198,7 @@ planet1Level15Data
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -3238,7 +3238,7 @@ teardropExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -3274,7 +3274,7 @@ teardropExplosion
         .BYTE <spinningRings,>spinningRings
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -3314,7 +3314,7 @@ planet4Level17Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -3350,7 +3350,7 @@ planet4Level17Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -3390,7 +3390,7 @@ cummingCock
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -3426,7 +3426,7 @@ cummingCock
         .BYTE <planet1Level8Data2ndStage,>planet1Level8Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -3466,7 +3466,7 @@ planet1Level4Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $60
@@ -3502,7 +3502,7 @@ planet1Level4Data
         .BYTE <planet1Level4Data2ndStage,>planet1Level4Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -3542,7 +3542,7 @@ planet1Level4Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $70
@@ -3578,7 +3578,7 @@ planet1Level4Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -3618,7 +3618,7 @@ planet5Level5Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $30
@@ -3654,7 +3654,7 @@ planet5Level5Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -3694,7 +3694,7 @@ planet5Level5Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $30
@@ -3730,7 +3730,7 @@ planet5Level5Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -3777,7 +3777,7 @@ planet3Level10Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $0A
@@ -3813,7 +3813,7 @@ planet3Level10Data
         .BYTE <planet3Level10Data,>planet3Level10Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -3853,7 +3853,7 @@ planet3Level10Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $18
@@ -3889,7 +3889,7 @@ planet3Level10Data2ndStage
         .BYTE <planet3Level10Data,>planet3Level10Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -3929,7 +3929,7 @@ planet4Level10Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -3965,7 +3965,7 @@ planet4Level10Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4005,7 +4005,7 @@ planet4Level10Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $30
@@ -4041,7 +4041,7 @@ planet4Level10Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -4081,7 +4081,7 @@ planet5Level6Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -4117,7 +4117,7 @@ planet5Level6Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4157,7 +4157,7 @@ fighterShipAsExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -4193,7 +4193,7 @@ fighterShipAsExplosion
         .BYTE <nullPtr,>nullPtr
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4233,7 +4233,7 @@ planet4Level15Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -4269,7 +4269,7 @@ planet4Level15Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -4309,7 +4309,7 @@ spinnerAsExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -4345,7 +4345,7 @@ spinnerAsExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4385,7 +4385,7 @@ planet2Level10Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -4421,7 +4421,7 @@ planet2Level10Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4461,7 +4461,7 @@ flowchartArrowAsExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -4497,7 +4497,7 @@ flowchartArrowAsExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $60
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4537,7 +4537,7 @@ planet3Level13Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -4573,7 +4573,7 @@ planet3Level13Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4613,7 +4613,7 @@ lickerShipAsExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -4649,7 +4649,7 @@ lickerShipAsExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4689,7 +4689,7 @@ planet3Level13Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $08
@@ -4725,7 +4725,7 @@ planet3Level13Data3rdStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -4765,7 +4765,7 @@ planet2Level11Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -4801,7 +4801,7 @@ planet2Level11Data
         .BYTE <planet2Level11Data2ndStage,>planet2Level11Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4841,7 +4841,7 @@ planet2Level11Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $30
@@ -4877,7 +4877,7 @@ planet2Level11Data2ndStage
         .BYTE <nullPtr,>nullPtr
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4917,7 +4917,7 @@ planet3Level19Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -4953,7 +4953,7 @@ planet3Level19Data
         .BYTE <planet4Level17Data,>planet4Level17Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -4993,7 +4993,7 @@ planet3Level19Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -5029,7 +5029,7 @@ planet3Level19Data2ndStage
         .BYTE <planet1Level13Data,>planet1Level13Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -5069,7 +5069,7 @@ planet3Level19Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -5105,7 +5105,7 @@ planet3Level19Data3rdStage
         .BYTE <planet1Level4Data,>planet1Level4Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -5145,7 +5145,7 @@ planet5Level1Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $60
@@ -5181,7 +5181,7 @@ planet5Level1Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -5221,7 +5221,7 @@ planet5Level1Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -5257,7 +5257,7 @@ planet5Level1Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -5297,7 +5297,7 @@ planet4Level1Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -5333,7 +5333,7 @@ planet4Level1Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -5373,7 +5373,7 @@ planet4Level1Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -5409,7 +5409,7 @@ planet4Level1Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -5457,7 +5457,7 @@ planet2Level1Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $08
@@ -5493,7 +5493,7 @@ planet2Level1Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -5533,7 +5533,7 @@ pinAsExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $1C
@@ -5569,7 +5569,7 @@ pinAsExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -5609,7 +5609,7 @@ planet1Level1Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -5645,7 +5645,7 @@ planet1Level1Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -5685,7 +5685,7 @@ planet1Level1Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $40
@@ -5721,7 +5721,7 @@ planet1Level1Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -5763,7 +5763,7 @@ planet1Level7Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $50
@@ -5799,7 +5799,7 @@ planet1Level7Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -5839,7 +5839,7 @@ planet1Level7Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -5875,7 +5875,7 @@ planet1Level7Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -5915,7 +5915,7 @@ planet1Level7Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -5951,7 +5951,7 @@ planet1Level7Data3rdStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -5991,7 +5991,7 @@ barExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6027,7 +6027,7 @@ barExplosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -6068,7 +6068,7 @@ copticExplosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6104,7 +6104,7 @@ copticExplosion
         .BYTE <spinningRings,>spinningRings
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -6144,7 +6144,7 @@ planet1Level20Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6180,7 +6180,7 @@ planet1Level20Data
         .BYTE <planet1Level20Data,>planet1Level20Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -6220,7 +6220,7 @@ planet2Level20Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6256,7 +6256,7 @@ planet2Level20Data
         .BYTE <planet2Level20Data,>planet2Level20Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -6296,7 +6296,7 @@ planet3Level20Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6332,7 +6332,7 @@ planet3Level20Data
         .BYTE <planet3Level20Data,>planet3Level20Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -6372,7 +6372,7 @@ planet4Level20Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6408,7 +6408,7 @@ planet4Level20Data
         .BYTE <planet4Level20Data,>planet4Level20Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -6448,7 +6448,7 @@ planet5Level20Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6484,7 +6484,7 @@ planet5Level20Data
         .BYTE <planet5Level20Data,>planet5Level20Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -6524,7 +6524,7 @@ planet5Level2Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6560,7 +6560,7 @@ planet5Level2Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -6600,7 +6600,7 @@ planet5Level2Explosion
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -6636,7 +6636,7 @@ planet5Level2Explosion
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -6676,7 +6676,7 @@ planet3Level14Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $F0
@@ -6712,7 +6712,7 @@ planet3Level14Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -6752,7 +6752,7 @@ planet3Level14Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $04
@@ -6788,7 +6788,7 @@ planet3Level14Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -6828,7 +6828,7 @@ planet1Level3Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $30
@@ -6864,7 +6864,7 @@ planet1Level3Data
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -6904,7 +6904,7 @@ planet1Level3Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -6940,7 +6940,7 @@ planet1Level3Data2ndStage
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -6980,7 +6980,7 @@ planet1Level3Data3rdStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $33
@@ -7016,7 +7016,7 @@ planet1Level3Data3rdStage
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -7056,7 +7056,7 @@ planet2Level18Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $30
@@ -7092,7 +7092,7 @@ planet2Level18Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -7132,7 +7132,7 @@ planet2Level18Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $08
@@ -7168,7 +7168,7 @@ planet2Level18Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -7208,7 +7208,7 @@ planet2Level19Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7244,7 +7244,7 @@ planet2Level19Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -7291,7 +7291,7 @@ planet2Level19Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $18
@@ -7327,7 +7327,7 @@ planet2Level19Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -7367,7 +7367,7 @@ planet2Level12Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7403,7 +7403,7 @@ planet2Level12Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -7443,7 +7443,7 @@ planet3Level15Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7479,7 +7479,7 @@ planet3Level15Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -7519,7 +7519,7 @@ planet3Level15Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7555,7 +7555,7 @@ planet3Level15Data2ndStage
         .BYTE <planet3Level15Data2ndStage,>planet3Level15Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -7595,7 +7595,7 @@ planet3Level18Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7631,7 +7631,7 @@ planet3Level18Data
         .BYTE <planet3Level18Data2ndStage,>planet3Level18Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $04
@@ -7671,7 +7671,7 @@ planet3Level18Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7707,7 +7707,7 @@ planet3Level18Data2ndStage
         .BYTE <planet3Level18Data2ndStage,>planet3Level18Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -7747,7 +7747,7 @@ planet4Level12Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7783,7 +7783,7 @@ planet4Level12Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -7823,7 +7823,7 @@ planet4Level12Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $08
@@ -7859,7 +7859,7 @@ planet4Level12Data2ndStage
         .BYTE <planet4Level12Data2ndStage,>planet4Level12Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -7899,7 +7899,7 @@ planet2Level13Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -7935,7 +7935,7 @@ planet2Level13Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -7975,7 +7975,7 @@ planet2Level13Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $10
@@ -8011,7 +8011,7 @@ planet2Level13Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -8051,7 +8051,7 @@ planet2Level2Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8087,7 +8087,7 @@ planet2Level2Data
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -8127,7 +8127,7 @@ planet2Level3Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8163,7 +8163,7 @@ planet2Level3Data
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -8203,7 +8203,7 @@ planet2Level14Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8239,7 +8239,7 @@ planet2Level14Data
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -8279,7 +8279,7 @@ planet2Level17Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8315,7 +8315,7 @@ planet2Level17Data
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -8355,7 +8355,7 @@ planet2Level14Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $18
@@ -8391,7 +8391,7 @@ planet2Level14Data2ndStage
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -8431,7 +8431,7 @@ planet2Level17Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $18
@@ -8467,7 +8467,7 @@ planet2Level17Data2ndStage
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -8507,7 +8507,7 @@ planet4Level18Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8543,7 +8543,7 @@ planet4Level18Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -8583,7 +8583,7 @@ planet5Level7Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8619,7 +8619,7 @@ planet5Level7Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -8659,7 +8659,7 @@ planet5Level7Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8695,7 +8695,7 @@ planet5Level7Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -8735,7 +8735,7 @@ planet1Level16Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8771,7 +8771,7 @@ planet1Level16Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -8811,7 +8811,7 @@ planet1Level2Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8847,7 +8847,7 @@ planet1Level2Data
         .BYTE <planet1Level2Data,>planet1Level2Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -8887,7 +8887,7 @@ planet4Level16Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8923,7 +8923,7 @@ planet4Level16Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -8963,7 +8963,7 @@ planet4Level16Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -8999,7 +8999,7 @@ planet4Level16Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -9039,7 +9039,7 @@ planet5Level13Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -9075,7 +9075,7 @@ planet5Level13Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -9115,7 +9115,7 @@ planet5Level13Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $03
@@ -9151,7 +9151,7 @@ planet5Level13Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $01
@@ -9191,7 +9191,7 @@ planet4Level11Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $E0
@@ -9227,7 +9227,7 @@ planet4Level11Data
         .BYTE <planet4Level11Data2ndStage,>planet4Level11Data2ndStage
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $02
@@ -9267,7 +9267,7 @@ planet4Level11Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $14
@@ -9303,7 +9303,7 @@ planet4Level11Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -9343,7 +9343,7 @@ planet5Level14Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -9379,7 +9379,7 @@ planet5Level14Data
         .BYTE <lickerShipWaveData,>lickerShipWaveData
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -9426,7 +9426,7 @@ planet5Level15Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -9462,7 +9462,7 @@ planet5Level15Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $06
@@ -9502,7 +9502,7 @@ planet5Level15Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -9538,7 +9538,7 @@ planet5Level15Data2ndStage
         .BYTE <nullPtr,>nullPtr
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -9578,7 +9578,7 @@ planet2Level15Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -9614,7 +9614,7 @@ planet2Level15Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $03
@@ -9663,7 +9663,7 @@ planet3Level16Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $C0
@@ -9699,7 +9699,7 @@ planet3Level16Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -9740,7 +9740,7 @@ planet1Level18Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -9776,7 +9776,7 @@ planet1Level18Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -9816,7 +9816,7 @@ planet1Level18Data2ndStage
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -9852,7 +9852,7 @@ planet1Level18Data2ndStage
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -9893,7 +9893,7 @@ planet1Level19Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $20
@@ -9929,7 +9929,7 @@ planet1Level19Data
         .BYTE <planet5Level6Data,>planet5Level6Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -9970,7 +9970,7 @@ planet5Level8Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -10006,7 +10006,7 @@ planet5Level8Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -10046,7 +10046,7 @@ planet4Level13Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -10082,7 +10082,7 @@ planet4Level13Data
         .BYTE <planet5Level5Data,>planet5Level5Data
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -10123,7 +10123,7 @@ planet5Level17Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -10159,7 +10159,7 @@ planet5Level17Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -10201,7 +10201,7 @@ planet2Level16Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -10237,7 +10237,7 @@ planet2Level16Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -10279,7 +10279,7 @@ planet5Level18Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $30
@@ -10315,7 +10315,7 @@ planet5Level18Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00
@@ -10355,7 +10355,7 @@ planet3Level17Data
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
         .BYTE $00,$00
-        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
+        ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
         .BYTE $00
@@ -10391,7 +10391,7 @@ planet3Level17Data
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
-        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
+        ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
         .BYTE $00
         ; Byte 35 (Index $22)): Does destroying this enemy increase the gilby's energy?.
         .BYTE $00

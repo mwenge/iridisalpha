@@ -1240,7 +1240,9 @@ b49B2   LDA #$00
         RTS
 
 b49B5   LDA #$FF
-b49B7   RTS
+
+ReturnEarly
+        RTS
 
 topPlanetLevelDataLoPtr                       .BYTE $A0
 topPlanetLevelDataHiPtr                       .BYTE $A0
@@ -1306,11 +1308,11 @@ GetNewWaveDataForAnyDeadShips
 
 b4A1F   LDX #$08
         JSR SetXToIndexOfShipThatNeedsReplacing
-        BEQ b49B7 ; Skips updating waves for bottom planet.
+        BEQ ReturnEarly ; Skips updating waves for bottom planet.
 
         LDA bottomPlanetStepsBetweenAttackWaveUpdates
         CMP currentStepsBetweenBottomPlanetAttackWaves
-        BEQ b49B7 ; Skips updating waves for bottom planet.
+        BEQ ReturnEarly ; Skips updating waves for bottom planet.
 
         LDA bottomPlanetLevelDataLoPtr
         STA activeShipsWaveDataLoPtrArray,X
@@ -1869,7 +1871,7 @@ b4DAC   LDA joystickInput
         BNE b4DBD
         ; Check if we should load extra stage data for this enemy.
         ; FIXME: It it appears this is never set. If it was set it would
-        ; incorrectly expect their to be a hi/lo ptr in $19 and $20, when
+        ; incorrectly expect their to be a hi/lo ptr in $20 and $21, when
         ; there isn't.
         LDY #$21
         LDA (currentShipWaveDataLoPtr),Y
@@ -3034,6 +3036,8 @@ b55FF   LDA currentLevelInCurrentPlanet
         BEQ b5628
         BNE b562A
 
+        ; Byte 39: (Index $26) Number of ships in wave.
+        ; Y is $26
 b5628   LDA (levelDataPtrLo),Y
 b562A   STA enemiesKilledTopPlanetsSinceLastUpdate,X
         LDA enemiesKilledTopPlanetSinceLastUpdate
@@ -3041,6 +3045,7 @@ b562A   STA enemiesKilledTopPlanetsSinceLastUpdate,X
         LDA enemiesKilledTopPlanetsSinceLastUpdate,X
         STA enemiesKilledTopPlanetSinceLastUpdate
 b5638   DEY
+        ; Byte 38: (Index $25) Number of waves in data.
         LDA (levelDataPtrLo),Y
         STA topPlanetStepsBetweenAttackWaveUpdates
         LDA #$00
