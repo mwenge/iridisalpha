@@ -3645,7 +3645,7 @@ levelRestartSound2 .BYTE $00,$00,$0F,$18,$00,$00,$00,$0F
                    .BYTE $81,$05,$00,$00,$00,$00,$10,$08
                    .BYTE $00,$00,$00,$10,$0F,$00,$00,$00
                    .BYTE $11,$0B,$00,$00,$00,$11,$12,$02
-                   .BYTE $08,$02,$02,$08,$00,$0F,$02,$02
+f5C85              .BYTE $08,$02,$02,$08,$00,$0F,$02,$02
                    .BYTE $0F,$01,$00,$81,$08,$00,$00,$18
                    .BYTE $05,$01,$4E,$5C,$00,$00,$10,$0B
                    .BYTE $00,$00,$00,$10,$12,$00,$00,$80
@@ -3715,14 +3715,15 @@ planetWarpSoundEffect  .BYTE $00,$00
                        .BYTE $00,$03,$08,$00,$00,$00,$03,$0F
                        .BYTE $00,$00,$00,$21,$0B,$00,$00,$00
                        .BYTE $08,$0E,$00,$00,$00,$00,$07,$00
-                       .BYTE $00,$00,$21,$12,$01,$18,$05,$00
+f5D65                  .BYTE $00,$00,$21,$12,$01,$18,$05,$00
                        .BYTE $65,$5D,$00,$00,$20,$0B,$00,$00
                        .BYTE $00,$20,$12,$00,$00,$80,$CA,$7B
                        .BYTE $00
 planetWarpSoundEffect2 .BYTE $00,$00,$0F,$05,$00,$00,$00,$00
                        .BYTE $06,$00,$00,$00,$00,$01,$00,$00
-                       .BYTE $00,$11,$04,$02,$01,$01,$64,$01
-                       .BYTE $01,$00,$81,$08,$00,$00,$01,$01
+                       .BYTE $00,$11,$04,$02
+f5D92                  .BYTE $01,$01,$64,$01,$01
+f5D97                  .BYTE $00,$81,$08,$00,$00,$01,$01
                        .BYTE $18,$01,$01,$18,$05,$01,$8D,$5D
                        .BYTE $00,$00,$10,$04,$00,$00,$80,$CA
                        .BYTE $7B,$00
@@ -7449,20 +7450,22 @@ soundData7E          .BYTE $00,$94,$00,$00,$11,$0F,$00,$00
                      .BYTE $03,$00,$00,$21,$0F,$00,$08,$03
                      .BYTE $00,$00,$21,$0F,$00,$00,$00,$00
                      .BYTE $02,$00,$00,$00,$00,$00,$00,$00
-soundData9E          .BYTE $92
-soundData9F          .BYTE $5D,$85,$5C
+soundData9E          .BYTE <f5D92
+soundData9F          .BYTE >f5D92
+soundData9A          .BYTE <f5C85
+soundData9B          .BYTE >f5C85
 soundDataA2          .BYTE $02,$00
 soundDataA4          .BYTE $00,$00
 soundDataA6          .BYTE $02
 soundDataA7          .BYTE $18
 soundDataA8          .BYTE $05
 soundDataA9          .BYTE $00
-soundDataAA          .BYTE $65
-soundDataAB          .BYTE $5D
-soundDataAC          .BYTE $97
-soundDataAD          .BYTE $5D
-soundDataAE          .BYTE $65
-soundDataAF          .BYTE $5D
+soundDataAA          .BYTE <f5D65
+soundDataAB          .BYTE >f5D65
+soundDataAC          .BYTE <f5D97
+soundDataAD          .BYTE >f5D97
+soundDataAE          .BYTE <f5D65
+soundDataAF          .BYTE >f5D65
 ;------------------------------------------------------------------
 ; PlaySoundEffects
 ;------------------------------------------------------------------
