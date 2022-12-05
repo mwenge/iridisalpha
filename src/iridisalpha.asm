@@ -101,7 +101,7 @@ GRAY3                                = $0F
 ; Some common sprite names
 .include "sprite_names.asm"
 
-* = $0801
+*=$0801
 ;------------------------------------------------------------------
 ; SYS 16384 ($4000)
 ; This launches the program from address $4000, i.e. MainControlLoop.

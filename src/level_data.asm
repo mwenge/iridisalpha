@@ -3135,7 +3135,7 @@ planet4Level5Data2ndStage
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$83
-*= $9B00
+*=$9B00
 planet1Level15Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
