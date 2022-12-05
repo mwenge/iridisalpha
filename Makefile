@@ -21,17 +21,6 @@ check: sources
 iridisalpha.prg: check
 	exomizer sfx sys bin/ia.prg bin/bonusphase_graphics.prg,0xe000 bin/enemy_sprites.prg,0xe830 -n -o bin/iridisalpha.prg
 
-easymodepatch:
-	patch src/level_data2.asm -o src/level_data2-patched.asm -i src/easymode/level_data2-easymode.diff
-	patch src/enemy_sprites.asm -o src/enemy_sprites-easymode.asm -i src/easymode/enemy_sprites-easymode.diff
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/ia.prg -L bin/list-co1.txt -l bin/labels.txt src/iridisalpha.asm
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/bonusphase_graphics.prg src/bonusphase_graphics.asm
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/enemy_sprites-easymode.prg src/enemy_sprites-easymode.asm
-
-easymode: easymodepatch
-	exomizer sfx sys bin/ia.prg bin/bonusphase_graphics.prg,0xe000 bin/enemy_sprites-easymode.prg,0xe830 \
-		-n -o bin/iridisalpha-easy.prg
-
 custom: sources
 	exomizer sfx sys bin/ia.prg bin/bonusphase_graphics.prg,0xe000 bin/enemy_sprites.prg,0xe830 -n -o bin/iridisalpha.prg
 
@@ -39,9 +28,6 @@ run: iridisalpha.prg
 	$(X64) -verbose $(D64_IMAGE)
 
 runcustom: custom
-	$(X64) -verbose $(D64_IMAGE)
-
-runeasy: easymode
 	$(X64) -verbose $(D64_IMAGE)
 
 release: iridisalpha.prg
