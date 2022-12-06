@@ -660,30 +660,44 @@ b0D26   LDA lastBlastScore,X
 .include "dna.asm"
 
 
-; Data seeding generated music in title screen
-titleMusicHiBytes   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C
-                    .BYTE $0D,$0E,$0E,$0F,$10,$11,$12,$13
-                    .BYTE $15,$16,$17,$19,$1A,$1C,$1D,$1F
-                    .BYTE $21,$23,$25,$27,$2A,$2C,$2F,$32
-                    .BYTE $35,$38,$3B,$3F,$43,$47,$4B,$4F
-                    .BYTE $54,$59,$5E,$64,$6A,$70,$77,$7E
-                    .BYTE $86,$8E,$96,$9F,$A8,$B3,$BD,$C8
-                    .BYTE $D4,$E1,$EE,$FD
-titleMusicLowBytes  .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F
-                    .BYTE $4E,$18,$EF,$D2,$C3,$C3,$D1,$EF
-                    .BYTE $1F,$60,$B5,$1E,$9C,$31,$DF,$A5
-                    .BYTE $87,$86,$A2,$DF,$3E,$C1,$6B,$3C
-                    .BYTE $39,$63,$BE,$4B,$0F,$0C,$45,$BF
-                    .BYTE $7D,$83,$D6,$79,$73,$C7,$7C,$97
-                    .BYTE $1E,$18,$8B,$7E,$FA,$06,$AC,$F3
-                    .BYTE $E6,$8F,$F8,$2E
+; This is the frequency table containing all the 'notes' from 
+; octaves 4 to 8. It's very similar to:
+;  http://codebase.c64.org/doku.php?id=base:ntsc_frequency_table
+; The 16 bit value you get from feeding the lo and hi bytes into 
+; the SID registers (see PlayNoteVoice1 and PlayNoteVoice2) plays
+; the appropriate note. Each 16 bit value is based off a choice of
+; based frequency. This is usually 440hz, but not here. 
+
+                    ;      C   C#  D   D#  E   F   F#  G   G#  A   A#  B
+titleMusicHiBytes   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C,$0D,$0E,$0E,$0F  ; 4
+                    .BYTE $10,$11,$12,$13,$15,$16,$17,$19,$1A,$1C,$1D,$1F  ; 5
+                    .BYTE $21,$23,$25,$27,$2A,$2C,$2F,$32,$35,$38,$3B,$3F  ; 6
+                    .BYTE $43,$47,$4B,$4F,$54,$59,$5E,$64,$6A,$70,$77,$7E  ; 7
+                    .BYTE $86,$8E,$96,$9F,$A8,$B3,$BD,$C8,$D4,$E1,$EE,$FD  ; 8
+
+                    ;      C   C#  D   D#  E   F   F#  G   G#  A   A#  B
+titleMusicLowBytes  .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F,$4E,$18,$EF,$D2  ; 4
+                    .BYTE $C3,$C3,$D1,$EF,$1F,$60,$B5,$1E,$9C,$31,$DF,$A5  ; 5
+                    .BYTE $87,$86,$A2,$DF,$3E,$C1,$6B,$3C,$39,$63,$BE,$4B  ; 6
+                    .BYTE $0F,$0C,$45,$BF,$7D,$83,$D6,$79,$73,$C7,$7C,$97  ; 7
+                    .BYTE $1E,$18,$8B,$7E,$FA,$06,$AC,$F3,$E6,$8F,$F8,$2E  ; 8
+
+; This seeds the title music. Playing around with these first four bytes
+; alters the first few seconds of the title music. THe routine for the
+; title music uses these 4 bytes to determine the notes to play.
+; This arrays is periodically replenished from titleMusicSeedArray by
+; UpdateMusicCountersAndTitleMusicSeedArray.
 titleMusicNoteArray .BYTE $00,$07,$0C,$07
+
+; These variables are used to choose a value from titleMusicNoteArray, 
+; mutate it, and then use that as an index into titleMusicHiBytes/titleMusicLowBytes
+; which gives PlayNoteVoice1/2/3 a note to play.
 titleMusicNote3     .BYTE $01
-titleMusicNote4     .BYTE $01
+intervalForTitleMusicVoice2     .BYTE $01
 titleMusicNote5     .BYTE $25
 titleMusicNote6     .BYTE $85
 titleMusicNote7     .BYTE $00
-titleMusicNote8     .BYTE $01
+titleMusicOffsetToMusicNoteArrayForVoice2     .BYTE $01
 titleMusicNote9     .BYTE $02
 titleMusicNoteA     .BYTE $02
 titleMusicNoteB     .BYTE $0E
@@ -693,12 +707,12 @@ titleMusicNoteD     .BYTE $0E
 ; PlayTitleScreenMusic
 ;------------------------------------------------------------------
 PlayTitleScreenMusic
-        DEC MusicCounterOne
+        DEC musicCounterOne
         BEQ b1504
         RTS
 
-b1504   LDA MusicCounterTwo
-        STA MusicCounterOne
+b1504   LDA musicCounterTwo
+        STA musicCounterOne
         DEC titleMusicNote6
         BNE b152C
         LDA #$C0
@@ -712,7 +726,7 @@ b1504   LDA MusicCounterTwo
         AND #$03
         STA titleMusicNoteA
         BNE b152C
-        JSR UpdateMusicCounters
+        JSR UpdateMusicCountersAndTitleMusicSeedArray
 b152C   DEC titleMusicNote5
         BNE b154E
         LDA #$30
@@ -728,11 +742,11 @@ b152C   DEC titleMusicNote5
         TXA
         AND #$03
         STA titleMusicNote9
-b154E   DEC titleMusicNote4
+b154E   DEC intervalForTitleMusicVoice2
         BNE b1570
         LDA #$0C
-        STA titleMusicNote4
-        LDX titleMusicNote8
+        STA intervalForTitleMusicVoice2
+        LDX titleMusicOffsetToMusicNoteArrayForVoice2
         LDA titleMusicNoteArray,X
         CLC
         ADC titleMusicNoteB
@@ -742,7 +756,7 @@ b154E   DEC titleMusicNote4
         INX
         TXA
         AND #$03
-        STA titleMusicNote8
+        STA titleMusicOffsetToMusicNoteArrayForVoice2
 b1570   DEC titleMusicNote3
         BNE b158F
         LDA #$03
@@ -810,6 +824,8 @@ SetUpMainSound
         STA $D414    ;Voice 3: Sustain / Release Cycle Control
         RTS
 
+; This is used to replenish titleMusicNoteArray with seed valuse
+; for the procedurally generated title screen music.
 titleMusicSeedArray .BYTE $00,$03,$06,$08,$00,$0C,$04,$08
                     .BYTE $00,$07,$00,$05,$05,$00,$00,$05
                     .BYTE $00,$06,$09,$05,$02,$04,$03,$04
@@ -819,9 +835,9 @@ titleMusicSeedArray .BYTE $00,$03,$06,$08,$00,$0C,$04,$08
                     .BYTE $04,$07,$00,$0C,$07,$08,$0A,$08
                     .BYTE $0C,$00,$0C,$03,$0C,$03,$07,$00
 ;------------------------------------------------------------------
-; UpdateMusicCounters
+; UpdateMusicCountersAndTitleMusicSeedArray
 ;------------------------------------------------------------------
-UpdateMusicCounters
+UpdateMusicCountersAndTitleMusicSeedArray
         JSR PutRandomByteInAccumulator
         AND #$0F
         BEQ b1630
@@ -831,6 +847,9 @@ b162A   CLC
         ADC #$04
         DEX
         BNE b162A
+
+        ; Fill titleMusicNoteArray with the next four bytes from
+        ; titleMusicSeedArray.
 b1630   TAY
         LDX #$00
 b1633   LDA titleMusicSeedArray,Y
@@ -839,16 +858,17 @@ b1633   LDA titleMusicSeedArray,Y
         INX
         CPX #$04
         BNE b1633
+
         JSR PutRandomByteInAccumulator
         AND #$03
         CLC
         ADC #$01
-        STA MusicCounterOne
-        STA MusicCounterTwo
+        STA musicCounterOne
+        STA musicCounterTwo
         RTS
 
-MusicCounterOne               .BYTE $01
-MusicCounterTwo               .BYTE $01
+musicCounterOne               .BYTE $01
+musicCounterTwo               .BYTE $01
 titleScreenSpriteCycleCounter .BYTE $04
 ;------------------------------------------------------------------
 ; TitleScreenCheckInput
@@ -1611,9 +1631,9 @@ UpdateScoresAfterHittingShipWithBullet
         STA shipsThatHaveBeenHitByABullet,X
 
         LDA #<newPlanetSound
-        STA soundDataAE
+        STA secondarySoundEffectLoPtr
         LDA #>newPlanetSound
-        STA soundDataAF
+        STA secondarySoundEffectHiPtr
         JSR ResetSoundDataPtr2
         LDA #$1C
         STA soundEffectInProgress
@@ -1774,16 +1794,16 @@ MaybeTransferToOtherPlanet
         BNE b4D0D
         JSR ResetSoundDataPtr1
         LDA #<transferToOtherPlanetSound1
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>transferToOtherPlanetSound1
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
         LDA #$08
         BNE b4D1C
 b4D0D   JSR ResetSoundDataPtr1
         LDA #<transferToOtherPlanetSound2
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>transferToOtherPlanetSound2
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
 
         LDA #$00
 b4D1C   STA valueIsAlwaysZero
@@ -1808,9 +1828,9 @@ UpdateEnergyLevelsAfterCollision
         BEQ b4D7F
 
         LDA #<shipCollidedWithGilbySound
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>shipCollidedWithGilbySound
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
         JSR ResetSoundDataPtr1
         LDA #$0E
         STA gilbyExploding
@@ -2415,13 +2435,13 @@ b5208   LDA #EXPLOSION_START
         JSR ResetSoundDataPtr2
 
         LDA #<planetWarpSoundEffect
-        STA soundDataAE
+        STA secondarySoundEffectLoPtr
         LDA #>planetWarpSoundEffect
-        STA soundDataAF
+        STA secondarySoundEffectHiPtr
         LDA #<planetWarpSoundEffect2
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>planetWarpSoundEffect2
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
         ;Fall through
 
 ;------------------------------------------------------------------
@@ -3203,17 +3223,20 @@ CheckProgressInPlanet
         LDA inAttractMode
         BNE b5751
         LDA #$13
-b575C   CMP currentLevelInTopPlanets,X
+b575C   
+        CMP currentLevelInTopPlanets,X
         BNE b5767
         DEX
         BPL b575C
         INC bonusAwarded
-b5767   LDA bonusBountiesEarned
+b5767   
+        LDA bonusBountiesEarned
         BNE b5751
         LDX oldTopPlanetIndex
         LDY currentTopPlanet
         LDX #$00
-b5774   LDA enemiesKilledBottomPlanetsSinceLastUpdatePtr,Y
+b5774   
+        LDA enemiesKilledBottomPlanetsSinceLastUpdatePtr,Y
         CMP everyThirdLevelInPlanet,X
         BMI b578E
         INX
@@ -3306,9 +3329,9 @@ b5807   LDA #$FC
         LDA #$03
         STA starFieldInitialStateArray - $01
         LDA #<gilbyDiedSoundSequence
-        STA soundDataAE
+        STA secondarySoundEffectLoPtr
         LDA #>gilbyDiedSoundSequence
-        STA soundDataAF
+        STA secondarySoundEffectHiPtr
         JSR ResetSoundDataPtr2
         LDX #$23
         RTS
@@ -3444,13 +3467,13 @@ b596E   LDA #$C0 ; Starfield sprite
         STA levelEntrySequenceActive
         STA entryLevelSequenceCounter
         LDA #<levelRestartSound1
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>levelRestartSound1
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
         LDA #<levelRestartSound2
-        STA soundDataAE
+        STA secondarySoundEffectLoPtr
         LDA #>levelRestartSound2
-        STA soundDataAF
+        STA secondarySoundEffectHiPtr
         LDA #$00
         STA $D015    ;Sprite display Enable
         JSR ResetSoundDataPtr1
@@ -5498,7 +5521,7 @@ PerformMainGameUpdate
         JSR ScrollStarfieldAndThenPlanets
         JSR AnimateGilbySpriteMovement
         JSR PerformMainGameProcessing
-        JSR ProcessJoystickInput
+        JSR CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
         JSR PerformGilbyLandingOrJumpingAnimation
         JSR AlsoPerformGilbyLandingOrJumpingAnimation
         JSR MaybeDrawLevelEntrySequence
@@ -5726,9 +5749,9 @@ processJoystickFrameRate     .BYTE $01
 gilbyIsOverLand              .BYTE $01
 
 ;------------------------------------------------------------------
-; ProcessJoystickInput
+; CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
 ;------------------------------------------------------------------
-ProcessJoystickInput
+CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
         ; Find reasons for gilby not to die because he hit something.
         LDA spriteCollidedWithBackground
         BEQ CheckJoystickInput
@@ -5914,9 +5937,9 @@ JoystickPushedUpWhileLandGilbyAirborneOverSea
 
         ; Gilby is on the ground
         LDA #<pushedUpWhileOverSea
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>pushedUpWhileOverSea
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
         LDA #$FA
         STA gilbyLandingJumpingAnimationYPosOffset
         DEC gilbyVerticalPosition
@@ -6010,9 +6033,9 @@ JoystickPushedUpWhileOnLand
         LDA #$FA
         STA gilbyLandingJumpingAnimationYPosOffset
         LDA #<soundGilbyJumpOnLand
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>soundGilbyJumpOnLand
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
         JSR ResetSoundDataPtr1
         DEC gilbyVerticalPosition
 b703A   RTS
@@ -6067,9 +6090,9 @@ MaybePreviousActionWasSomething
         CMP #$6D
         BNE b707D
         LDA #<gilbyWalkingSound
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>gilbyWalkingSound
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
         JMP b6FB7
 
 b7099   JSR ResetGilbyIsLanding
@@ -6950,9 +6973,9 @@ b75E3   LDA backupGilbySpriteIndex
         CMP #$6D
         BNE b7601
         LDA #<gilbyWalkingSound
-        STA soundDataAC
+        STA currentSoundEffectLoPtr
         LDA #>gilbyWalkingSound
-        STA soundDataAD
+        STA currentSoundEffectHiPtr
 b7601   LDX gilbySpriteIndex
         LDA gilbySprites,X
         STA currentGilbySprite
@@ -7067,9 +7090,9 @@ b76A8   LDA #$B5
         BNE b76DF
 
         LDA #<bulletSoundEffect
-        STA soundDataAE
+        STA secondarySoundEffectLoPtr
         LDA #>bulletSoundEffect
-        STA soundDataAF
+        STA secondarySoundEffectHiPtr
 
 b76DF   LDA previousJoystickAction
         CMP #ALREADY_AIRBORNE
@@ -7080,9 +7103,9 @@ b76DF   LDA previousJoystickAction
         BNE b76F8
         JSR ResetSoundDataPtr2
         LDA #<airborneBulletSoundEffect
-        STA soundDataAE
+        STA secondarySoundEffectLoPtr
         LDA #>airborneBulletSoundEffect
-        STA soundDataAF
+        STA secondarySoundEffectHiPtr
 
 b76F8   LDA gilbyVerticalPosition
         CLC
@@ -7347,9 +7370,9 @@ oldTopPlanetIndex          .BYTE $00
 currentBottomPlanetIndex   .BYTE $00
 oldBottomPlanetIndex       .BYTE $00
 qPressedToQuitGame         .BYTE $00
-backgroundColor1ForPlanets .BYTE $09,$0B,$07,$0E,$0D
-backgroundColor2ForPlanets .BYTE $0E,$10,$01,$07,$10
-surfaceColorsForPlanets    .BYTE $0D,$09,$0A,$0C,$0A,$01,$01
+backgroundColor1ForPlanets .BYTE BROWN,GRAY1,YELLOW,LTBLUE,LTGREEN
+backgroundColor2ForPlanets .BYTE LTBLUE,$10,WHITE,YELLOW,$10
+surfaceColorsForPlanets    .BYTE LTGREEN,BROWN,LTRED,GRAY2,LTRED,WHITE,WHITE
 entryLevelSequenceCounter  .BYTE $A5
 levelEntrySequenceActive   .BYTE $01
 
@@ -7429,9 +7452,9 @@ b7939   STA upperPlanetAttackShipsSpriteValueArray,X
         STA lowerPlanetGilbyBulletMSBXPosValue
         JSR ResetSoundDataPtr2
         LDA #<levelEntrySound
-        STA soundDataAE
+        STA secondarySoundEffectLoPtr
         LDA #>levelEntrySound
-        STA soundDataAF
+        STA secondarySoundEffectHiPtr
         LDA #$30
         STA soundEffectInProgress
         LDA lowerPlanetActivated
@@ -7462,10 +7485,10 @@ soundDataA8          .BYTE $05
 soundDataA9          .BYTE $00
 soundDataAA          .BYTE <f5D65
 soundDataAB          .BYTE >f5D65
-soundDataAC          .BYTE <f5D97
-soundDataAD          .BYTE >f5D97
-soundDataAE          .BYTE <f5D65
-soundDataAF          .BYTE >f5D65
+currentSoundEffectLoPtr          .BYTE <f5D97
+currentSoundEffectHiPtr          .BYTE >f5D97
+secondarySoundEffectLoPtr          .BYTE <f5D65
+secondarySoundEffectHiPtr          .BYTE >f5D65
 ;------------------------------------------------------------------
 ; PlaySoundEffects
 ;------------------------------------------------------------------
@@ -7475,16 +7498,16 @@ PlaySoundEffects
         LDA soundEffectInProgress
         BEQ b79BD
         DEC soundEffectInProgress
-b79BD   LDA soundDataAC
+b79BD   LDA currentSoundEffectLoPtr
         STA soundTmpLoPtr
-        LDA soundDataAD
+        LDA currentSoundEffectHiPtr
         STA soundTmpHiPtr
         JSR PlaySound1
         LDA #$02
         STA soundDataA6
-        LDA soundDataAE
+        LDA secondarySoundEffectLoPtr
         STA soundTmpLoPtr
-        LDA soundDataAF
+        LDA secondarySoundEffectHiPtr
         STA soundTmpHiPtr
         ;Falls through
 
@@ -7529,11 +7552,11 @@ PlaySound2
         ADC #$05
         STA soundTmpLoPtr
         LDX soundDataA6
-        STA soundDataAC,X
+        STA currentSoundEffectLoPtr,X
         LDA soundTmpHiPtr
         ADC #$00
         STA soundTmpHiPtr
-        STA soundDataAD,X
+        STA currentSoundEffectHiPtr,X
         RTS
 
 b7A28   AND #$80
@@ -7596,9 +7619,9 @@ j7A9C
         BEQ b7AB4
         LDA soundDataAA
         LDX soundDataA6
-        STA soundDataAC,X
+        STA currentSoundEffectLoPtr,X
         LDA soundDataAB
-        STA soundDataAD,X
+        STA currentSoundEffectHiPtr,X
         RTS
 
 b7AB4   JMP PlaySound2
@@ -7617,9 +7640,9 @@ j7AC8
         BNE b7ADF
         LDX soundDataA6
         LDA soundDataA9
-        STA soundDataAC,X
+        STA currentSoundEffectLoPtr,X
         LDA soundDataAA
-        STA soundDataAD,X
+        STA currentSoundEffectHiPtr,X
         RTS
 
 b7ADF   CMP #$81
@@ -7900,10 +7923,10 @@ xPosMovementForUpperPlanetAttackShip              .BYTE $06,$06,$06,$06
 xPosMovementForLowerPlanetAttackShip              .BYTE $06,$06,$06,$06
 yPosMovementForUpperPlanetAttackShips             .BYTE $FF,$FF,$FF,$FF
 yPosMovementForLowerPlanetAttackShips             .BYTE $00,$00,$01,$01
-upperPlanetAttackShipSpritesLoadedFromBackingData .BYTE $ED,$ED,$ED,$ED
-lowerPlanetAttackShipSpritesLoadedFromBackingData .BYTE $ED,$ED,$ED,$ED
-upperPlanetAttackShipSpriteAnimationEnd           .BYTE $F0,$F0,$F0,$F0
-lowerPlanetAttackShipSpriteAnimationEnd           .BYTE $F0,$F0,$F0,$F0
+upperPlanetAttackShipSpritesLoadedFromBackingData .BYTE EXPLOSION_START,EXPLOSION_START,EXPLOSION_START,EXPLOSION_START
+lowerPlanetAttackShipSpritesLoadedFromBackingData .BYTE EXPLOSION_START,EXPLOSION_START,EXPLOSION_START,EXPLOSION_START
+upperPlanetAttackShipSpriteAnimationEnd           .BYTE BLANK_SPRITE,BLANK_SPRITE,BLANK_SPRITE,BLANK_SPRITE
+lowerPlanetAttackShipSpriteAnimationEnd           .BYTE BLANK_SPRITE,BLANK_SPRITE,BLANK_SPRITE,BLANK_SPRITE
 upperPlanetAttackShipAnimationFrameRate           .BYTE $01,$01,$01,$01
 lowerPlanetAttackShipAnimationFrameRate           .BYTE $01,$01,$01,$01
 upperPlanetAttackShipInitialFrameRate             .BYTE $03,$03,$03,$03
