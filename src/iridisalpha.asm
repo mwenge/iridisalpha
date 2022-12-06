@@ -2385,7 +2385,7 @@ PerformPlanetWarp
         STA currentBottomPlanetDataHiPtr
         LDA #$00
         STA currentBottomPlanetDataLoPtr
-        JSR InitializeSomeGameStorage
+        JSR WriteInitialWarpStateToScreen
 
         LDA shouldResetPlanetEntropy
         BNE b51F7
@@ -2509,63 +2509,63 @@ UpdateControlPanelColor
 
 controlPanelColorDoesntNeedUpdating   .BYTE $00
 
-planetStoragePtrLo = $46
-planetStoragePtrHi = $47
+screenTmpPtrLo = $46
+screenTmpPtrHi = $47
 ;------------------------------------------------------------------
-; InitializeSomeGameStorage
+; WriteInitialWarpStateToScreen
 ; Writes storage for top and bottom planets to $0763 and $07B3
 ;------------------------------------------------------------------
-InitializeSomeGameStorage
-        LDA #$07
-        STA planetStoragePtrHi ; Actually the hi ptr here
-        LDA #$63
-        STA planetStoragePtrLo ; Actually the lo ptr here
+WriteInitialWarpStateToScreen
+        LDA #>SCREEN_RAM + $0363
+        STA screenTmpPtrHi ; Actually the hi ptr here
+        LDA #<SCREEN_RAM + $0363
+        STA screenTmpPtrLo ; Actually the lo ptr here
 
         ; For the top planet
         LDX currentTopPlanetIndex
-        JSR InitSomeGameStorage
+        JSR UpdateWarpStateOnScreen
 
         ; For the bottom planet
-        LDA #$B3
-        STA planetStoragePtrLo
+        LDA #<SCREEN_RAM + $03B3
+        STA screenTmpPtrLo
         LDX currentBottomPlanetIndex
 
 ;------------------------------------------------------------------
-; InitSomeGameStorage
+; UpdateWarpStateOnScreen
 ;------------------------------------------------------------------
-InitSomeGameStorage
+UpdateWarpStateOnScreen
         TXA
         ASL
         ASL
         CLC
         ADC #$9A
         LDY #$00
-        STA (planetStoragePtrLo),Y
+        STA (screenTmpPtrLo),Y
         LDY #$28
         CLC
         ADC #$01
-        STA (planetStoragePtrLo),Y
+        STA (screenTmpPtrLo),Y
         LDY #$01
         CLC
         ADC #$01
-        STA (planetStoragePtrLo),Y
+        STA (screenTmpPtrLo),Y
         LDY #$29
         CLC
         ADC #$01
-        STA (planetStoragePtrLo),Y
+        STA (screenTmpPtrLo),Y
         LDA #$DB
-        STA planetStoragePtrHi
+        STA screenTmpPtrHi
         LDA somethingStorageForPlanets,X
         LDY #$00
-        STA (planetStoragePtrLo),Y
+        STA (screenTmpPtrLo),Y
         INY
-        STA (planetStoragePtrLo),Y
+        STA (screenTmpPtrLo),Y
         LDY #$28
-        STA (planetStoragePtrLo),Y
+        STA (screenTmpPtrLo),Y
         INY
-        STA (planetStoragePtrLo),Y
-        LDA #$07
-        STA planetStoragePtrHi
+        STA (screenTmpPtrLo),Y
+        LDA #>SCREEN_RAM + $0300
+        STA screenTmpPtrHi
         RTS
 
 somethingStorageForPlanets   .BYTE $07,$04,$0E,$08,$0A
