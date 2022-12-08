@@ -1170,9 +1170,11 @@ activeShipsWaveDataLoPtrArray = *-$02
         ; Pointers to top planet ships.
         .BYTE <planet1Level1Data2ndStage,<planet1Level1Data2ndStage,<planet1Level1Data2ndStage,<planet1Level1Data2ndStage
         .BYTE <nullPtr,<nullPtr ; These two are always zero. This makes it easy
-                            ; to use an 'AND #$08' on the index to check
-                            ; if it is pointing to a top planet ship or a 
-                            ; bottom planet one.
+                                ; to use an 'AND #$08' on the index to check
+                                ; if it is pointing to a top planet ship or a 
+                                ; bottom planet one. Note that the array actually starts two bytes
+                                ; ahead of the first value ('= *-$02' above). THis means the first 4 are
+                                ; reference with index 2,3,4,5 rather than 0,1,2,3.
         ; Pointers to bottom planet ships.
         .BYTE <planet1Level1Data2ndStage,<planet1Level1Data2ndStage,<planet1Level1Data,<planet1Level1Data
 activeShipsWaveDataHiPtrArray =*-$02
