@@ -7393,6 +7393,7 @@ KeyWasPressed
         ; countdown so that it exits it nearly immediately.
         LDY #$02
         STY attractModeCountdown
+        RTS
 b787C   LDY levelRestartInProgress
         BNE ReturnEarlyFromKeyboardCheck
         LDY gilbyHasJustDied
