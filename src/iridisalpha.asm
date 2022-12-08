@@ -1006,6 +1006,7 @@ p4003   LDA #<MainControlLoopInterruptHandler
         LDA #$0F
         STA $D418    ;Select Filter Mode and Volume
         JSR ClearPlanetTextureCharsets
+        JSR InitializeActiveShipArray
         JMP PrepareToLaunchIridisAlpha
 
 ;------------------------------------------------------------------
@@ -8876,5 +8877,21 @@ pE800   SEI
         STA $DD0E    ;CIA2: CIA Control Register A
         CLI
         JMP $0835
+
+;------------------------------------------------------------------
+; InitializeActiveShipArray
+;------------------------------------------------------------------
+InitializeActiveShipArray
+        LDX #$00
+InitializeActiveShipLoop
+        LDA <planet1Level1Data
+        STA activeShipsWaveDataLoPtrArray,X
+        LDA >planet1Level1Data
+        STA activeShipsWaveDataHiPtrArray,X
+        INX
+        CPX #$10
+        BNE InitializeActiveShipLoop
+        RTS
+
 
 ; vim: tabstop=2 shiftwidth=2 expandtab
