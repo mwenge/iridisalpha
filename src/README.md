@@ -214,6 +214,32 @@ You can try it out here:
 
 https://lvllvl.com/c64/?gid=37124df5a665dacc3f8f3d7c868cbda2
 
+## Bug: Ships from the last level in the previous game show up when you start a new game
+
+When you start a new game, enemies from the previous game show up in the first wave. For most people starting out this
+will take the form of a few residual 'licker ships' zapping them just as they're getting started.
+
+This bug happens because the 'wave' data isn't cleared down when a new game starts. So whatever is in there from the previous
+game gets used until they're flushed out by being killed and replaced with the level's proper enemy data.
+
+This isn't a problem for the first game after Iridis Alpha is loaded because the first level's data is hardcoded in there:
+
+https://github.com/mwenge/iridisalpha/blob/3763f48e81772c7d99b86e9d54aa8a2f2784e982/src/iridisalpha.asm#L1166-L1187
+
+The fix is simple enough, we initialize the active wave data stored in `activeShipsWaveDataLoPtrArray` and `activeShipsWaveDataHiPtrArray`
+with the first level's data whenever we start a new game. 
+
+https://github.com/mwenge/iridisalpha/blob/3763f48e81772c7d99b86e9d54aa8a2f2784e982/src/iridisalpha.asm#L1005-L1011
+
+https://github.com/mwenge/iridisalpha/blob/3763f48e81772c7d99b86e9d54aa8a2f2784e982/src/iridisalpha.asm#L8881-L8894
+
+You can try out the bugfixed version of Iridis Alpha by doing the following:
+
+```sh
+git checkout bugfixes
+make runcustom
+```
+
 ## [GenPlan](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098): The algorithm for generating the planet surfaces
 
 This is the [routine](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098) Minter devoted some time to in his development diary.
