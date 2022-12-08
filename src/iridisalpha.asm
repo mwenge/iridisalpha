@@ -222,7 +222,7 @@ ExitTitleLoop
 
         ;Wait for key to be released
 b08E7   LDA lastKeyPressed
-        CMP #$40
+        CMP #$40 ; $40 means no key was pressed
         BNE b08E7
         RTS
 
@@ -875,7 +875,7 @@ titleScreenSpriteCycleCounter .BYTE $04
 ;------------------------------------------------------------------
 TitleScreenCheckInput
         LDA lastKeyPressed
-        CMP #$40
+        CMP #$40 ; $40 means no key was pressed
         BNE b1658
         RTS
 
@@ -910,7 +910,7 @@ b167D   LDA txtHard,X
 LoopUntilKeyReleased
         ; Wait to release key.
         LDA lastKeyPressed
-        CMP #$40
+        CMP #$40 ; $40 means no key was pressed
         BNE LoopUntilKeyReleased
 ReturnFromCheckInput   RTS
 
@@ -1663,7 +1663,7 @@ UpdateScoresAfterHittingShipWithBullet
         ; Bullet hit a ship on the top planet.
         LDA levelEntrySequenceActive
         BNE b4C42
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE b4C42
         INC currentTopPlanetIndex
         LDA currentTopPlanetIndex
@@ -1689,7 +1689,7 @@ b4C42   LDY #$22
 BulletHitShipOnBottomPlanet
         LDA levelEntrySequenceActive
         BNE b4C76
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE b4C76
         INC currentBottomPlanetIndex
         LDA currentBottomPlanetIndex
@@ -1719,7 +1719,7 @@ ContinueCalculatingScoreFromHit
         LDY #$22
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4CB1
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE b4CB1
         TXA
         AND #$08
@@ -2173,9 +2173,9 @@ b4F55   RTS
 
 b4F56   RTS
 
-valueIsAlwaysZero   .BYTE $00
-currentAttackShipXPos   .BYTE $00
-currentAttackShipYPos   .BYTE $00,$00
+valueIsAlwaysZero     .BYTE $00
+currentAttackShipXPos .BYTE $00
+currentAttackShipYPos .BYTE $00,$00
 ;------------------------------------------------------------------
 ; UpdateAttackShipsPosition
 ;------------------------------------------------------------------
@@ -2308,7 +2308,7 @@ DetectAttackShipCollisionWithGilby
         LDY #$00
         LDA levelEntrySequenceActive
         BNE b5029
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE b5029
         LDA valueIsAlwaysZero
         BEQ b503C
@@ -3237,7 +3237,7 @@ pointsToAddToPointsEarnedByte2   .BYTE $00
 ;------------------------------------------------------------------
 CheckProgressInPlanet
         LDX #$09
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE b5751
         LDA #$13
 b575C   
@@ -3328,7 +3328,7 @@ GilbyDied
         STA gilbyHasJustDied
         LDA levelRestartInProgress
         BNE b5833
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE b5833
 
         LDX #$00
@@ -5121,7 +5121,7 @@ bonusAwarded   .BYTE $00
 ; PrepareToRunGame
 ;------------------------------------------------------------------
 PrepareToRunGame
-        LDA inAttractMode
+        LDA attractModeCountdown
         BEQ b6932
         JSR SelectRandomPlanetsForAttractMode
 b6932   LDA #$00
@@ -5145,7 +5145,7 @@ BeginRunningGame
         ; Start the game if in attract mode or
         ; normal mode, otherwise show hiscore
         ; screen.
-        LDA inAttractMode
+        LDA attractModeCountdown
         BEQ StartTheGame
         CMP #$01
         BNE StartTheGame
@@ -5277,7 +5277,7 @@ b6A3E   JMP BeginRunningGame
 EnterPauseMode
         ; Wait for the player to release the key
         LDA lastKeyPressed
-        CMP #$40
+        CMP #$40 ; $40 means no key was pressed
         BNE EnterPauseMode
 
         LDA #$00
@@ -5819,7 +5819,7 @@ CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
         BNE CheckJoystickInput
         LDA gilbyHasJustDied
         BNE CheckJoystickInput
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE CheckJoystickInput
 
         ; Check if we're flying through a warp gate.
@@ -5873,15 +5873,15 @@ b6E8E   LDA $DC00    ;CIA1: Data Port Register A
         BEQ b6EA4
 
         ; Any joystick input aborts attract mode
-        LDA inAttractMode
+        LDA attractModeCountdown
         BEQ b6EA4
         LDA #$02
-        STA inAttractMode
+        STA attractModeCountdown
 
 b6EA4   JSR GenerateJoystickInputForAttractMode
-        LDA inAttractMode
+        LDA attractModeCountdown
         BEQ b6EAF
-        DEC inAttractMode
+        DEC attractModeCountdown
 b6EAF   LDA #$02
         STA processJoystickFrameRate
         LDA #$00
@@ -6286,6 +6286,7 @@ AnimateGilbyMovement
 joystickInput          .BYTE $09
 previousJoystickAction .BYTE $04
 gilbyAnimationTYpe     .BYTE $02
+
 HORIZONTAL_MOVEMENT = $01
 LAUNCHED_INTO_AIR   = $02
 LANDED              = $03
@@ -7375,38 +7376,45 @@ f1WasPressed   .BYTE $00
 ;------------------------------------------------------------------
 CheckKeyboardInGame
         LDA lastKeyPressed
-        CMP #$40
-        BNE b786D
+        CMP #$40 ; $40 means no key was pressed
+        BNE KeyWasPressed
         LDA #$00
         STA f1WasPressed
-b786C   RTS
+ReturnEarlyFromKeyboardCheck   
+        RTS
 
-b786D   LDY f1WasPressed
-        BNE b786C
-        LDY inAttractMode
+KeyWasPressed   
+        LDY f1WasPressed
+        BNE ReturnEarlyFromKeyboardCheck
+        LDY attractModeCountdown
         BEQ b787C
+        ; If a key is pressed during attract mode, accelerate the
+        ; countdown so that it exits it nearly immediately.
         LDY #$02
-        STY inAttractMode
+        STY attractModeCountdown
 b787C   LDY levelRestartInProgress
-        BNE b786C
+        BNE ReturnEarlyFromKeyboardCheck
         LDY gilbyHasJustDied
-        BNE b786C
+        BNE ReturnEarlyFromKeyboardCheck
 
         CMP #$3E ; Q pressed, to quit game
-        BNE b788E
+        BNE CheckF1Pressed
 
         ; Q was pressed, get ready to quit game.
         INC qPressedToQuitGame
         RTS
 
-b788E   CMP #$04 ; F1 Pressed
-        BNE b7899
+CheckF1Pressed   
+        CMP #$04 ; F1 Pressed
+        BNE CheckSpacePressed
         INC f1WasPressed
         INC pauseModeSelected
-b7898   RTS
+ReturnFromKeyboardCheck   
+        RTS
 
-b7899   CMP #$3C ; Space pressed
-        BNE b78A1
+CheckSpacePressed   
+        CMP #$3C ; Space pressed
+        BNE CheckYPressed
         INC progressDisplaySelected
         RTS
 
@@ -7414,11 +7422,12 @@ b7899   CMP #$3C ; Space pressed
         ; pressing Y at any time, as long as '1C' is the
         ; first character in the hiscore table. Not sure
         ; what this hack is for, testing?
-b78A1   CMP #$19 ; Y Pressed
-        BNE b7898
+CheckYPressed   
+        CMP #$19 ; Y Pressed
+        BNE ReturnFromKeyboardCheck
         LDA canAwardBonus
         CMP #$1C
-        BNE b7898
+        BNE ReturnFromKeyboardCheck
         INC bonusAwarded
         RTS
 
@@ -8078,13 +8087,13 @@ DetectGameOrAttractMode
         LDA #$01
         STA lowerPlanetActivated
         LDA #$00
-        STA inAttractMode
+        STA attractModeCountdown
         RTS
 
 b7EB8   LDA #$00
         STA lowerPlanetActivated
         LDA #$FF
-        STA inAttractMode
+        STA attractModeCountdown
         RTS
 
 ;------------------------------------------------------------------
@@ -8111,14 +8120,18 @@ b7EC5   JSR PutRandomByteInAccumulatorRegister
         STA currentBottomPlanetIndex
         RTS
 
-inAttractMode              .BYTE $AD
+; When attract mode is selected this gets set to $FF and gets 
+; decremented every time a random joystick input is selected.
+; When it reaches zero the main game loop will default to the
+; high score screen.
+attractModeCountdown       .BYTE $AD
 randomJoystickInputCounter .BYTE $09
 randomJoystickInput        .BYTE $09
 ;------------------------------------------------------------------
 ; GenerateJoystickInputForAttractMode
 ;------------------------------------------------------------------
 GenerateJoystickInputForAttractMode
-        LDA inAttractMode
+        LDA attractModeCountdown
         BNE b7EEA
         RTS
 
@@ -8526,7 +8539,7 @@ bCBC4   LDA hiScoreJoystickInput
         LDA hiScoreTableInputName - $0A,Y
         CLC
         ADC #$01
-        CMP #$40
+        CMP #$40 ; $40 means no key was pressed
         BNE bCBD6
         LDA #$00
 bCBD6   STA hiScoreTableInputName - $0A,Y

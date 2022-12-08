@@ -37,17 +37,24 @@ Minter games when the screen needs to be cleared:
         ;Clear screen
         LDX #$00
         LDA #$20 ; The space character
-b4129   STA SCREEN_RAM,X ; SCREEN_RAM = $0400
+ClearScreenLoop   
+        STA SCREEN_RAM,X ; SCREEN_RAM = $0400
         STA SCREEN_RAM + $0100,X
         STA SCREEN_RAM + $0200,X
         STA SCREEN_RAM + $02F8,X
         DEX 
-        BNE b4129 ; Loop until X = 0
+        BNE ClearScreenLoop ; Loop until X = 0
 ```
 
 Note that the technique here is to start X at 00 and keep looping until
 decrementing X reaches 00 again. This makes the loop 256 iterations long,
 covering each of the 4 256-byte segments of the screen RAM.
+
+Not also the idiom of `BNE ClearScreenLoop`. What this is doing is inspecting
+the value of `A` (the 'accumulator' register) and if it's not zero it jumps back
+to the code at ClearScreenLoop. This check is effecting the looping instruction.
+The way to think of `BNE ClearScreenLoop` is as 'if A is not equal to zero then
+jump to ClearScreenLoop'. As soon as `A` contains a non-zero value it will stop looping.
 
 ### Drawing characters and colors on the screen
 How do we draw characters (and add color to them). Let's take the stripes behind the title name
