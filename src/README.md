@@ -12,9 +12,10 @@
     * [`dna.asm`](#dnaasm)
 * [A Closer Look At `iridisalpha.asm`](#a-closer-look-at-iridisalphaasm)
   * [The Difficulty Cliff](#the-difficulty-cliff)
+  * [Bug: Ships from the last level in the previous game show up when you start a new game](#bug-ships-from-the-last-level-in-the-previous-game-show-up-when-you-start-a-new-game)
   * [GenPlan: The algorithm for generating the planet surfaces](#genplan-the-algorithm-for-generating-the-planet-surfaces)
   * [A Cheat for Awarding Yourself 10000 Bonus Points](#a-cheat-for-awarding-yourself-10000-bonus-points)
-  * [Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level](#pressing-f1-during-attract-mode-allows-you-to-resume-the-game-at-a-random-level)
+  * [Bug: Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level](#bug-pressing-f1-during-attract-mode-allows-you-to-resume-the-game-at-a-random-level)
 
 <!-- vim-markdown-toc -->
 This source code is derived from [the binary](https://github.com/mwenge/iridisalpha/blob/master/orig/iridisalpha.prg) stored in the `orig` folder. This binary is the one [distributed by Minter in 2019](http://minotaurproject.co.uk/yakimg/Llamasoft_C64.zip) along with the rest of his Vic 20 and C64 games.
@@ -213,6 +214,32 @@ make runeasy
 You can try it out here:
 
 https://lvllvl.com/c64/?gid=37124df5a665dacc3f8f3d7c868cbda2
+
+## Bug: Ships from the last level in the previous game show up when you start a new game
+
+When you start a new game, enemies from the previous game show up in the first wave. For most people starting out this
+will take the form of a few residual 'licker ships' zapping them just as they're getting started.
+
+This bug happens because the 'wave' data isn't cleared down when a new game starts. So whatever is in there from the previous
+game gets used until they're flushed out by being killed and replaced with the level's proper enemy data.
+
+This isn't a problem for the first game after Iridis Alpha is loaded because the first level's data is hardcoded in there:
+
+https://github.com/mwenge/iridisalpha/blob/3763f48e81772c7d99b86e9d54aa8a2f2784e982/src/iridisalpha.asm#L1166-L1187
+
+The fix is simple enough, we initialize the active wave data stored in `activeShipsWaveDataLoPtrArray` and `activeShipsWaveDataHiPtrArray`
+with the first level's data whenever we start a new game. 
+
+https://github.com/mwenge/iridisalpha/blob/3763f48e81772c7d99b86e9d54aa8a2f2784e982/src/iridisalpha.asm#L1005-L1011
+
+https://github.com/mwenge/iridisalpha/blob/3763f48e81772c7d99b86e9d54aa8a2f2784e982/src/iridisalpha.asm#L8881-L8894
+
+You can try out the bugfixed version of Iridis Alpha by doing the following:
+
+```sh
+git checkout bugfixes
+make runcustom
+```
 
 ## [GenPlan](https://github.com/mwenge/iridisalpha/blob/4250b80a10adb10fa21703395c681743314853c2/src/iridisalpha.asm#L6098): The algorithm for generating the planet surfaces
 
@@ -419,49 +446,13 @@ Here's the hack in action, we can press Y at any time to give ourselves a bonus 
 
 I'm guessing this was used for testing the animation routine and left in as an Easter egg.
 
-## Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level
+## Bug: Pressing F1 during Attract Mode Allows You to Resume the Game at a Random Level
 
 After a minute or two in the title screen, the game enters 'Attract Mode' and plays a random level on autopilot for a few seconds. If you press F1 during this play you enter the 'Made in France' pause-mode mini game. If you press F1 again you can now start playing the level 'Attract Mode' selected at random.
 
 This is because the `CheckKeyboardInGame` routine doesn't try to prevent you from entering 'Pause Mode' while Attract Mode is running:
 
-```asm
-f1WasPressed   .BYTE $00
-;-------------------------------
-; CheckKeyboardInGame
-;-------------------------------
-CheckKeyboardInGame   
-        LDA lastKeyPressed
-        CMP #$40
-        BNE b786D
-        LDA #$00
-        STA f1WasPressed
-b786C   RTS 
-
-b786D   LDY f1WasPressed
-        BNE b786C
-        LDY inAttractMode
-        BEQ b787C
-        LDY #$02
-        STY inAttractMode
-b787C   LDY levelRestartInProgress
-        BNE b786C
-        LDY gilbyHasJustDied
-        BNE b786C
-
-        CMP #$3E ; Q pressed, to quit game
-        BNE b788E
-
-        ; Q was pressed, get ready to quit game.
-        INC qPressedToQuitGame
-        RTS 
-
-b788E   CMP #$04 ; F1 Pressed
-        BNE b7899
-        INC f1WasPressed
-        INC pauseModeSelected
-b7898   RTS 
-```
+https://github.com/mwenge/iridisalpha/blob/8c28bb4a3de73ab5a8277125c3842846e9634e77/src/iridisalpha.asm#L7372-L7423
 
 Here's the cheat in action:
 
