@@ -70,9 +70,9 @@ bAB49   LDA #$00
         LDX #$28
 bAB66   LDA txtStandByEnterBonusPhase,X
         AND #$3F
-        STA SCREEN_RAM + $0167,X
+        STA SCREEN_RAM + LINE8_COL39,X
         LDA #$01
-        STA COLOR_RAM + $0167,X
+        STA COLOR_RAM + LINE8_COL39,X
         DEX 
         BNE bAB66
         CLI 
@@ -264,7 +264,7 @@ bAD33   DEY
         LDA fAD78,Y
 
         LDX #$28
-bAD41   STA COLOR_RAM + $0167,X
+bAD41   STA COLOR_RAM + LINE8_COL39,X
         DEX 
         BNE bAD41
         DEC aAD77
@@ -272,7 +272,7 @@ bAD41   STA COLOR_RAM + $0167,X
 
         LDX #$28
         LDA #$20
-bAD50   STA SCREEN_RAM + $0167,X
+bAD50   STA SCREEN_RAM + LINE8_COL39,X
         DEX 
         BNE bAD50
 
@@ -403,9 +403,9 @@ ClearScreen
         LDX #$00
         LDA #$20
 bAE2F   STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $02F8,X
+        STA SCREEN_RAM + LINE6_COL16,X
+        STA SCREEN_RAM + LINE12_COL32,X
+        STA SCREEN_RAM + LINE19_COL0,X
         DEX 
         BNE bAE2F
         RTS 
@@ -512,7 +512,7 @@ bAEE8   LDA (planetPtrLo2),Y
         LDA fAFB4,Y
         STA SCREEN_RAM,X
         LDA fAFE6,Y
-        STA SCREEN_RAM + $0001,X
+        STA SCREEN_RAM + LINE0_COL1,X
         LDY mapOffsetTemp
         INX 
         INX 
@@ -532,42 +532,42 @@ bAF12   RTS
 ;-------------------------------------------------------
 BonusRoundScrollDown   
         LDX #$28
-bAF15   LDA SCREEN_RAM + $02A7,X
-        STA SCREEN_RAM + $02CF,X
-        LDA SCREEN_RAM + $027F,X
-        STA SCREEN_RAM + $02A7,X
-        LDA SCREEN_RAM + $0257,X
-        STA SCREEN_RAM + $027F,X
-        LDA SCREEN_RAM + $022F,X
-        STA SCREEN_RAM + $0257,X
-        LDA SCREEN_RAM + $0207,X
-        STA SCREEN_RAM + $022F,X
-        LDA SCREEN_RAM + $01DF,X
-        STA SCREEN_RAM + $0207,X
-        LDA SCREEN_RAM + $01B7,X
-        STA SCREEN_RAM + $01DF,X
-        LDA SCREEN_RAM + $018F,X
-        STA SCREEN_RAM + $01B7,X
-        LDA SCREEN_RAM + $0167,X
-        STA SCREEN_RAM + $018F,X
-        LDA SCREEN_RAM + $013F,X
-        STA SCREEN_RAM + $0167,X
-        LDA SCREEN_RAM + $0117,X
-        STA SCREEN_RAM + $013F,X
-        LDA SCREEN_RAM + $00EF,X
-        STA SCREEN_RAM + $0117,X
-        LDA SCREEN_RAM + $00C7,X
-        STA SCREEN_RAM + $00EF,X
-        LDA SCREEN_RAM + $009F,X
-        STA SCREEN_RAM + $00C7,X
-        LDA SCREEN_RAM + $0077,X
-        STA SCREEN_RAM + $009F,X
-        LDA SCREEN_RAM + $004F,X
-        STA SCREEN_RAM + $0077,X
-        LDA SCREEN_RAM + $0027,X
-        STA SCREEN_RAM + $004F,X
+bAF15   LDA SCREEN_RAM + LINE16_COL39,X
+        STA SCREEN_RAM + LINE17_COL39,X
+        LDA SCREEN_RAM + LINE15_COL39,X
+        STA SCREEN_RAM + LINE16_COL39,X
+        LDA SCREEN_RAM + LINE14_COL39,X
+        STA SCREEN_RAM + LINE15_COL39,X
+        LDA SCREEN_RAM + LINE13_COL39,X
+        STA SCREEN_RAM + LINE14_COL39,X
+        LDA SCREEN_RAM + LINE12_COL39,X
+        STA SCREEN_RAM + LINE13_COL39,X
+        LDA SCREEN_RAM + LINE11_COL39,X
+        STA SCREEN_RAM + LINE12_COL39,X
+        LDA SCREEN_RAM + LINE10_COL39,X
+        STA SCREEN_RAM + LINE11_COL39,X
+        LDA SCREEN_RAM + LINE9_COL39,X
+        STA SCREEN_RAM + LINE10_COL39,X
+        LDA SCREEN_RAM + LINE8_COL39,X
+        STA SCREEN_RAM + LINE9_COL39,X
+        LDA SCREEN_RAM + LINE7_COL39,X
+        STA SCREEN_RAM + LINE8_COL39,X
+        LDA SCREEN_RAM + LINE6_COL39,X
+        STA SCREEN_RAM + LINE7_COL39,X
+        LDA SCREEN_RAM + LINE5_COL39,X
+        STA SCREEN_RAM + LINE6_COL39,X
+        LDA SCREEN_RAM + LINE4_COL39,X
+        STA SCREEN_RAM + LINE5_COL39,X
+        LDA SCREEN_RAM + LINE3_COL39,X
+        STA SCREEN_RAM + LINE4_COL39,X
+        LDA SCREEN_RAM + LINE2_COL39,X
+        STA SCREEN_RAM + LINE3_COL39,X
+        LDA SCREEN_RAM + LINE1_COL39,X
+        STA SCREEN_RAM + LINE2_COL39,X
+        LDA SCREEN_RAM + LINE0_COL39,X
+        STA SCREEN_RAM + LINE1_COL39,X
         LDA SCREEN_RAM - $01,X
-        STA SCREEN_RAM + $0027,X
+        STA SCREEN_RAM + LINE0_COL39,X
         DEX 
         BNE bAF15
         RTS 
@@ -596,10 +596,10 @@ bAF99   LDA $D010    ;Sprites 0-7 MSB of X coordinate
 ;-------------------------------------------------------
 ChangeColorOfCharactersToAccumulator   
         LDX #$00
-bAFA4   STA COLOR_RAM + $0000,X
-        STA COLOR_RAM + $0100,X
-        STA COLOR_RAM + $0200,X
-        STA COLOR_RAM + $0300,X
+bAFA4   STA COLOR_RAM + LINE0_COL0,X
+        STA COLOR_RAM + LINE6_COL16,X
+        STA COLOR_RAM + LINE12_COL32,X
+        STA COLOR_RAM + LINE19_COL8,X
         DEX 
         BNE bAFA4
         RTS 
@@ -722,9 +722,9 @@ bB2D5   LDA (planetPtrLo2),Y
         ADC aAEBC
         TAY 
         LDA fAFB4,Y
-        STA SCREEN_RAM + $02D0,X
+        STA SCREEN_RAM + LINE18_COL0,X
         LDA fAFE6,Y
-        STA SCREEN_RAM + $02D1,X
+        STA SCREEN_RAM + LINE18_COL1,X
         LDY mapOffsetTemp
         INX 
         INX 
@@ -749,42 +749,42 @@ bB310   RTS
 ;-------------------------------------------------------
 BonusRoundScrollUp   
         LDX #$28
-bB313   LDA SCREEN_RAM + $0027,X
+bB313   LDA SCREEN_RAM + LINE0_COL39,X
         STA SCREEN_RAM - $01,X
-        LDA SCREEN_RAM + $004F,X
-        STA SCREEN_RAM + $0027,X
-        LDA SCREEN_RAM + $0077,X
-        STA SCREEN_RAM + $004F,X
-        LDA SCREEN_RAM + $009F,X
-        STA SCREEN_RAM + $0077,X
-        LDA SCREEN_RAM + $00C7,X
-        STA SCREEN_RAM + $009F,X
-        LDA SCREEN_RAM + $00EF,X
-        STA SCREEN_RAM + $00C7,X
-        LDA SCREEN_RAM + $0117,X
-        STA SCREEN_RAM + $00EF,X
-        LDA SCREEN_RAM + $013F,X
-        STA SCREEN_RAM + $0117,X
-        LDA SCREEN_RAM + $0167,X
-        STA SCREEN_RAM + $013F,X
-        LDA SCREEN_RAM + $018F,X
-        STA SCREEN_RAM + $0167,X
-        LDA SCREEN_RAM + $01B7,X
-        STA SCREEN_RAM + $018F,X
-        LDA SCREEN_RAM + $01DF,X
-        STA SCREEN_RAM + $01B7,X
-        LDA SCREEN_RAM + $0207,X
-        STA SCREEN_RAM + $01DF,X
-        LDA SCREEN_RAM + $022F,X
-        STA SCREEN_RAM + $0207,X
-        LDA SCREEN_RAM + $0257,X
-        STA SCREEN_RAM + $022F,X
-        LDA SCREEN_RAM + $027F,X
-        STA SCREEN_RAM + $0257,X
-        LDA SCREEN_RAM + $02A7,X
-        STA SCREEN_RAM + $027F,X
-        LDA SCREEN_RAM + $02CF,X
-        STA SCREEN_RAM + $02A7,X
+        LDA SCREEN_RAM + LINE1_COL39,X
+        STA SCREEN_RAM + LINE0_COL39,X
+        LDA SCREEN_RAM + LINE2_COL39,X
+        STA SCREEN_RAM + LINE1_COL39,X
+        LDA SCREEN_RAM + LINE3_COL39,X
+        STA SCREEN_RAM + LINE2_COL39,X
+        LDA SCREEN_RAM + LINE4_COL39,X
+        STA SCREEN_RAM + LINE3_COL39,X
+        LDA SCREEN_RAM + LINE5_COL39,X
+        STA SCREEN_RAM + LINE4_COL39,X
+        LDA SCREEN_RAM + LINE6_COL39,X
+        STA SCREEN_RAM + LINE5_COL39,X
+        LDA SCREEN_RAM + LINE7_COL39,X
+        STA SCREEN_RAM + LINE6_COL39,X
+        LDA SCREEN_RAM + LINE8_COL39,X
+        STA SCREEN_RAM + LINE7_COL39,X
+        LDA SCREEN_RAM + LINE9_COL39,X
+        STA SCREEN_RAM + LINE8_COL39,X
+        LDA SCREEN_RAM + LINE10_COL39,X
+        STA SCREEN_RAM + LINE9_COL39,X
+        LDA SCREEN_RAM + LINE11_COL39,X
+        STA SCREEN_RAM + LINE10_COL39,X
+        LDA SCREEN_RAM + LINE12_COL39,X
+        STA SCREEN_RAM + LINE11_COL39,X
+        LDA SCREEN_RAM + LINE13_COL39,X
+        STA SCREEN_RAM + LINE12_COL39,X
+        LDA SCREEN_RAM + LINE14_COL39,X
+        STA SCREEN_RAM + LINE13_COL39,X
+        LDA SCREEN_RAM + LINE15_COL39,X
+        STA SCREEN_RAM + LINE14_COL39,X
+        LDA SCREEN_RAM + LINE16_COL39,X
+        STA SCREEN_RAM + LINE15_COL39,X
+        LDA SCREEN_RAM + LINE17_COL39,X
+        STA SCREEN_RAM + LINE16_COL39,X
         DEX 
         BNE bB313
         RTS 
@@ -2150,14 +2150,14 @@ bC07E   LDA fBFAA,X
         STA $D40B    ;Voice 2: Control Register
         LDA txtBonusBounty,Y
         AND #$3F
-        STA SCREEN_RAM + $02D0,Y
+        STA SCREEN_RAM + LINE18_COL0,Y
         LDA #$01
-        STA COLOR_RAM + $02D0,Y
+        STA COLOR_RAM + LINE18_COL0,Y
         DEY 
         BPL bC07C
         LDX #$06
 bC0B5   LDA currentBonusBountyPtr,X
-        STA SCREEN_RAM + $02E6,X
+        STA SCREEN_RAM + LINE18_COL22,X
         DEX 
         BPL bC0B5
         CLI 
@@ -2314,9 +2314,9 @@ BonusRoundDrawTimerBonus
         LDX #$0A
 bC1F9   LDA txtTimeBonus,X
         AND #$3F
-        STA SCREEN_RAM + $023E,X
+        STA SCREEN_RAM + LINE14_COL14,X
         LDA #$07
-        STA COLOR_RAM + $023E,X
+        STA COLOR_RAM + LINE14_COL14,X
         DEX 
         BPL bC1F9
 
@@ -2346,12 +2346,12 @@ bC21D   DEY
 BP_IncrementBonusBountyScore   
         TXA 
         PHA 
-bC22B   INC SCREEN_RAM + $02E5,X
-        LDA SCREEN_RAM + $02E5,X
+bC22B   INC SCREEN_RAM + LINE18_COL21,X
+        LDA SCREEN_RAM + LINE18_COL21,X
         CMP #$3A
         BNE bC23D
         LDA #$30
-        STA SCREEN_RAM + $02E5,X
+        STA SCREEN_RAM + LINE18_COL21,X
         DEX 
         BNE bC22B
 bC23D   PLA 
@@ -2369,9 +2369,9 @@ BonusRoundDrawIBallBonus
         LDX #$0A
 bC251   LDA txtIBallBonus,X
         AND #$3F
-        STA SCREEN_RAM + $023E,X
+        STA SCREEN_RAM + LINE14_COL14,X
         LDA #$04
-        STA COLOR_RAM + $023E,X
+        STA COLOR_RAM + LINE14_COL14,X
         DEX 
         BPL bC251
         LDA aC24E
@@ -2392,7 +2392,7 @@ bC27A   DEY
         BNE bC26B
 bC285   LDA #$28
         LDX #$06
-bC289   LDA SCREEN_RAM + $02E6,X
+bC289   LDA SCREEN_RAM + LINE18_COL22,X
         STA currentBonusBountyPtr,X
         DEX 
         BPL bC289
@@ -3031,3 +3031,4 @@ bC7A3   LDX bpBackgroundColorArrayIndex1
         .BYTE $88,$20,$7C,$CD,$85,$0B,$A5,$AE
         .BYTE $E5,$0B,$C8,$20,$7C,$CD,$85,$0B
         .BYTE $A5,$AF
+

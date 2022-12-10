@@ -64,9 +64,9 @@ b4109   LDA planetPtrLo
         LDX #$00
         LDA #$20
 b4129   STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $02F8,X
+        STA SCREEN_RAM + LINE6_COL16,X
+        STA SCREEN_RAM + LINE12_COL32,X
+        STA SCREEN_RAM + LINE19_COL0,X
         DEX 
         BNE b4129
 
@@ -896,11 +896,11 @@ b4728   TXA
         BPL b4704
         RTS 
 
-progressBarChars   .BYTE $65,$65,$54,$47,$42,$5D,$48,$59
-        .BYTE $67
-soundControl1   .BYTE $00
-soundControl2   .BYTE $00
-soundToPlay   .BYTE $C0,$40,$E0,$10
+progressBarChars .BYTE $65,$65,$54,$47,$42,$5D,$48,$59
+                 .BYTE $67
+soundControl1    .BYTE $00
+soundControl2    .BYTE $00
+soundToPlay      .BYTE $C0,$40,$E0,$10
 ;------------------------------------------------------------------------
 ; MIF_PlaySound
 ;------------------------------------------------------------------------
@@ -936,3 +936,4 @@ b475A   LDA soundControl2
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
         RTS 
+

@@ -85,13 +85,13 @@ DNA_ClearScreenMain
         LDX #$00
 b0D9C   LDA #$20
         STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $0300,X
+        STA SCREEN_RAM + LINE6_COL16,X
+        STA SCREEN_RAM + LINE12_COL32,X
+        STA SCREEN_RAM + LINE19_COL8,X
         LDA #$0E
-        STA COLOR_RAM + $0000,X
-        STA COLOR_RAM + $0100,X
-        STA COLOR_RAM + $0200,X
+        STA COLOR_RAM + LINE0_COL0,X
+        STA COLOR_RAM + LINE6_COL16,X
+        STA COLOR_RAM + LINE12_COL32,X
         STA $DB00,X
         DEX 
         BNE b0D9C
@@ -674,37 +674,37 @@ DNA_DrawTitleScreen
         LDX #$07
 b1205   LDA sideBarTxt1,X
         AND #$3F
-        STA SCREEN_RAM + $0048,X
+        STA SCREEN_RAM + LINE1_COL32,X
         LDA sideBarTxt2,X
         AND #$3F
-        STA SCREEN_RAM + $0070,X
+        STA SCREEN_RAM + LINE2_COL32,X
         LDA sideBarText3,X
         AND #$3F
-        STA SCREEN_RAM + $00C0,X
+        STA SCREEN_RAM + LINE4_COL32,X
         LDA sideBarTxt4,X
         AND #$3F
-        STA SCREEN_RAM + $0110,X
+        STA SCREEN_RAM + LINE6_COL32,X
         LDA sideBarText5,X
         AND #$3F
-        STA SCREEN_RAM + $0138,X
+        STA SCREEN_RAM + LINE7_COL32,X
         LDA sideBarTxt6,X
         AND #$3F
-        STA SCREEN_RAM + $0188,X
+        STA SCREEN_RAM + LINE9_COL32,X
         LDA sideBarTxt7,X
         AND #$3F
-        STA SCREEN_RAM + $01B0,X
+        STA SCREEN_RAM + LINE10_COL32,X
         LDA sideBarTxt8,X
         AND #$3F
-        STA SCREEN_RAM + $0200,X
+        STA SCREEN_RAM + LINE12_COL32,X
         LDA sideBarTxt9,X
         AND #$3F
-        STA SCREEN_RAM + $0228,X
+        STA SCREEN_RAM + LINE13_COL32,X
         LDA sideBarTxt10,X
         AND #$3F
-        STA SCREEN_RAM + $02C8,X
+        STA SCREEN_RAM + LINE17_COL32,X
         LDA sideBarTxt11,X
         AND #$3F
-        STA SCREEN_RAM + $02F0,X
+        STA SCREEN_RAM + LINE18_COL32,X
         DEX 
         BNE b1205
         JMP DNA_DrawCreditsText
@@ -731,57 +731,57 @@ DNA_UpdateDisplayedSettings
         JSR DNA_DrawTitleScreen
 
 b12D6   LDA #$20
-        STA SCREEN_RAM + $0116
-        STA SCREEN_RAM + $0206
+        STA SCREEN_RAM + LINE6_COL38
+        STA SCREEN_RAM + LINE12_COL38
 
         LDA dnaWave1Frequency
         AND #$10
         BEQ b12EA
         LDA #$31
-        STA SCREEN_RAM + $0116
+        STA SCREEN_RAM + LINE6_COL38
 
 b12EA   LDA dnaWave1Frequency
         AND #$0F
         TAX 
         LDA sideBarTxt12,X
         AND #$3F
-        STA SCREEN_RAM + $0117
+        STA SCREEN_RAM + LINE6_COL39
 
         LDA dnaWave2Frequency
         AND #$10
         BEQ b1304
         LDA #$31
-        STA SCREEN_RAM + $0206
+        STA SCREEN_RAM + LINE12_COL38
 
 b1304   LDA dnaWave2Frequency
         AND #$0F
         TAX 
         LDA sideBarTxt12,X
         AND #$3F
-        STA SCREEN_RAM + $0207
+        STA SCREEN_RAM + LINE12_COL39
 
         LDX dnaCurrentSpeed
         LDA sideBarTxt12,X
         AND #$3F
-        STA SCREEN_RAM + $004F
+        STA SCREEN_RAM + LINE1_COL39
 
         LDX dnaCurrentPhase
         LDA sideBarTxt12,X
         AND #$3F
-        STA SCREEN_RAM + $02CF
+        STA SCREEN_RAM + LINE17_COL39
 
         LDA dnaWave2Enabled
         BNE b1336
         LDA #$06
-        STA SCREEN_RAM + $01B2
-        STA SCREEN_RAM + $01B3
+        STA SCREEN_RAM + LINE10_COL34
+        STA SCREEN_RAM + LINE10_COL35
 
         RTS 
 
 b1336   LDA #<p200E
-        STA SCREEN_RAM + $01B2
+        STA SCREEN_RAM + LINE10_COL34
         LDA #>p200E
-        STA SCREEN_RAM + $01B3
+        STA SCREEN_RAM + LINE10_COL35
         RTS 
 
 END_SENTINEL = $FF
@@ -819,25 +819,26 @@ DNA_DrawCreditsText
         LDX #$19
 b143B   LDA titleTextLine1 - $01,X
         AND #$3F
-        STA SCREEN_RAM + $002B,X
+        STA SCREEN_RAM + LINE1_COL3,X
         LDA titleTextLine2,X
         AND #$3F
-        STA SCREEN_RAM + $00A3,X
+        STA SCREEN_RAM + LINE4_COL3,X
         LDA titleTextLine3,X
         AND #$3F
-        STA SCREEN_RAM + $011B,X
+        STA SCREEN_RAM + LINE7_COL3,X
         LDA titleTextLine4,X
         AND #$3F
-        STA SCREEN_RAM + $020B,X
+        STA SCREEN_RAM + LINE13_COL3,X
         LDA titleTextLine5,X
         AND #$3F
-        STA SCREEN_RAM + $025B,X
+        STA SCREEN_RAM + LINE15_COL3,X
         LDA titleTextLine6,X
         AND #$3F
-        STA SCREEN_RAM + $034B,X
+        STA SCREEN_RAM + LINE21_COL3,X
         LDA titleTextLine7,X
         AND #$3F
-        STA SCREEN_RAM + $039B,X
+        STA SCREEN_RAM + LINE23_COL3,X
         DEX 
         BNE b143B
         RTS 
+

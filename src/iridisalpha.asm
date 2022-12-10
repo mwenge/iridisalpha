@@ -81,8 +81,6 @@ Sprite5Ptr                              = $07FD
 Sprite6Ptr                              = $07FE
 Sprite7PtrStarField                     = $07FF
 
-; Some common sprite names
-.include "graphics/sprite_names.asm"
 .include "constants.asm"
 
 *=$0801
