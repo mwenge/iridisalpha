@@ -81,25 +81,9 @@ Sprite5Ptr                              = $07FD
 Sprite6Ptr                              = $07FE
 Sprite7PtrStarField                     = $07FF
 
-BLACK                                = $00
-WHITE                                = $01
-RED                                  = $02
-CYAN                                 = $03
-PURPLE                               = $04
-GREEN                                = $05
-BLUE                                 = $06
-YELLOW                               = $07
-ORANGE                               = $08
-BROWN                                = $09
-LTRED                                = $0A
-GRAY1                                = $0B
-GRAY2                                = $0C
-LTGREEN                              = $0D
-LTBLUE                               = $0E
-GRAY3                                = $0F
-
 ; Some common sprite names
 .include "graphics/sprite_names.asm"
+.include "constants.asm"
 
 *=$0801
 ;------------------------------------------------------------------
@@ -4096,17 +4080,20 @@ b606F   LDY xPosSecondLevelSurfaceInactivePlanet,X
         BNE b606F
         RTS
 
+; The *-$01 is because the array index starts at 1 rather than 0.
 xPosSecondLevelSurfaceInactivePlanet =*-$01
                                      .BYTE $00,$01,$02,$03,$28,$29,$2A,$2B
-                                     .BYTE $50,$51,$52,$53,$78,$79,$7A
-secondLevelSurfaceDataInactivePlanet .BYTE $7B,$30,$32,$38,$3A,$31,$33,$39
-                                     .BYTE $3B,$34,$36,$3C,$3E,$35,$37,$3D
-surfaceDataInactiveLowerPlanet       .BYTE $3F,$01,$03
+                                     .BYTE $50,$51,$52,$53,$78,$79,$7A,$7B
+secondLevelSurfaceDataInactivePlanet =*-$01 
+                                     .BYTE $30,$32,$38,$3A,$31,$33,$39,$3B
+                                     .BYTE $34,$36,$3C,$3E,$35,$37,$3D,$3F
+surfaceDataInactiveLowerPlanet =*-$01       
                                      .BYTE $01,$03,$01,$03,$01,$03,$01,$03
                                      .BYTE $01,$03,$01,$03,$01,$03,$01,$03
                                      .BYTE $01,$03,$01,$03,$01,$03,$01,$03
-                                     .BYTE $01,$03,$01,$03,$1D,$1F,$00,$02
-                                     .BYTE $00,$02,$00,$02,$00,$02
+                                     .BYTE $01,$03,$01,$03,$01,$03,$1D,$1F
+                                     .BYTE $00,$02,$00,$02,$00,$02,$00,$02
+
 textForInactiveLowerPlanet           .TEXT "  WARP GATE       GILBY   CORE  NOT-CORE"
 progressDisplaySelected              .BYTE $00
 ;------------------------------------------------------------------
