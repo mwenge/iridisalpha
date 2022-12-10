@@ -236,9 +236,9 @@ ClearEntireScreen
         LDX #$00
         LDA #$20
 b08FF   STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $02F8,X
+        STA SCREEN_RAM + LINE6_COL16,X
+        STA SCREEN_RAM + LINE12_COL32,X
+        STA SCREEN_RAM + LINE19_COL0,X
         DEX
         BNE b08FF
         RTS
@@ -368,27 +368,27 @@ DrawStripesBehindTitle
         LDA #$00
         STA shouldUpdateTitleScreenColors
 b0A78   LDA #RED
-        STA COLOR_RAM + $0077,X
+        STA COLOR_RAM + LINE2_COL39,X
         LDA #ORANGE
-        STA COLOR_RAM + $009F,X
+        STA COLOR_RAM + LINE3_COL39,X
         LDA #YELLOW
-        STA COLOR_RAM + $00C7,X
+        STA COLOR_RAM + LINE4_COL39,X
         LDA #GREEN
-        STA COLOR_RAM + $00EF,X
+        STA COLOR_RAM + LINE5_COL39,X
         LDA #LTBLUE
-        STA COLOR_RAM + $0117,X
+        STA COLOR_RAM + LINE6_COL39,X
         LDA #PURPLE
-        STA COLOR_RAM + $013F,X
+        STA COLOR_RAM + LINE7_COL39,X
         LDA #BLUE
-        STA COLOR_RAM + $0167,X
+        STA COLOR_RAM + LINE8_COL39,X
         LDA #$00 ; Stripe character
-        STA SCREEN_RAM + $0077,X
-        STA SCREEN_RAM + $009F,X
-        STA SCREEN_RAM + $00C7,X
-        STA SCREEN_RAM + $00EF,X
-        STA SCREEN_RAM + $0117,X
-        STA SCREEN_RAM + $013F,X
-        STA SCREEN_RAM + $0167,X
+        STA SCREEN_RAM + LINE2_COL39,X
+        STA SCREEN_RAM + LINE3_COL39,X
+        STA SCREEN_RAM + LINE4_COL39,X
+        STA SCREEN_RAM + LINE5_COL39,X
+        STA SCREEN_RAM + LINE6_COL39,X
+        STA SCREEN_RAM + LINE7_COL39,X
+        STA SCREEN_RAM + LINE8_COL39,X
         DEX
         BNE b0A78
 
@@ -411,7 +411,7 @@ UpdateGilbysInTitleAnimation
 
         LDX #$06
 b0AD0   LDA titleScreenBottomRightCharArray,X
-        STA SCREEN_RAM + $03F7,X
+        STA SCREEN_RAM + LINE25_COL15,X
         TXA
         ASL
         TAY
@@ -608,31 +608,31 @@ DrawTitleScreenText
         LDX #$28
 b0CE8   LDA titleScreenTextLine1 - $01,X
         AND #$3F
-        STA SCREEN_RAM + $01DF,X
+        STA SCREEN_RAM + LINE11_COL39,X
         LDA titleScreenTextLine2 - $01,X
         AND #$3F
-        STA SCREEN_RAM + $022F,X
+        STA SCREEN_RAM + LINE13_COL39,X
         LDA titleScreenTextLine3 - $01,X
         AND #$3F
-        STA SCREEN_RAM + $027F,X
+        STA SCREEN_RAM + LINE15_COL39,X
         LDA titleScreenTextLine4 - $01,X
         AND #$3F
-        STA SCREEN_RAM + $02CF,X
+        STA SCREEN_RAM + LINE17_COL39,X
         LDA titleScreenTextLine5 - $01,X
         AND #$3F
-        STA SCREEN_RAM + $031F,X
+        STA SCREEN_RAM + LINE19_COL39,X
 
         LDA #GRAY2
-        STA COLOR_RAM + $01DF,X
-        STA COLOR_RAM + $022F,X
-        STA COLOR_RAM + $027F,X
-        STA COLOR_RAM + $02CF,X
-        STA COLOR_RAM + $031F,X
+        STA COLOR_RAM + LINE11_COL39,X
+        STA COLOR_RAM + LINE13_COL39,X
+        STA COLOR_RAM + LINE15_COL39,X
+        STA COLOR_RAM + LINE17_COL39,X
+        STA COLOR_RAM + LINE19_COL39,X
         DEX
         BNE b0CE8
         LDX #$06
 b0D26   LDA lastBlastScore,X
-        STA SCREEN_RAM + $032F,X
+        STA SCREEN_RAM + LINE20_COL15,X
         DEX
         BPL b0D26
         RTS
@@ -878,7 +878,7 @@ b1658   LDY #$00
         LDX #$03
 b166D   LDA txtEasy,X
         AND #$3F
-        STA SCREEN_RAM + $0344,X
+        STA SCREEN_RAM + LINE20_COL36,X
         DEX
         BPL b166D
         JMP LoopUntilKeyReleased
@@ -887,7 +887,7 @@ b166D   LDA txtEasy,X
 b167B   LDX #$03
 b167D   LDA txtHard,X
         AND #$3F
-        STA SCREEN_RAM + $0344,X
+        STA SCREEN_RAM + LINE20_COL36,X
         DEX
         BPL b167D
 
@@ -932,11 +932,11 @@ MainControlLoop
         LDA #$00
         SEI
 p4003   LDA #<MainControlLoopInterruptHandler
-        STA $0318    ;NMI
+        STA $318    ;NMI
         LDA #>MainControlLoopInterruptHandler
-        STA $0319    ;NMI
+        STA $319    ;NMI
         LDA #$80
-        STA $0291
+        STA LINE16_COL17
         LDX #$F8
         TXS
         LDA #$01
@@ -1146,7 +1146,7 @@ yPosMovementPatternForShips1 .BYTE $01,$02,$04,$08,$0A,$0C,$0E,$10
 yPosMovementPatternForShips2 .BYTE $FF,$FE,$FC,$F9,$F7,$F5,$F3,$F1
                              .BYTE $F0,$F0,$F0,$F0,$F0,$F0,$F0,$EC
 
-nullPtr = $0000
+nullPtr = LINE0_COL0
 ; This is a pointer table for the data for each of the 4 active ships on the
 ; top planet and the bottom planet. It gets updated as ships die and levels
 ; change.
@@ -2450,19 +2450,19 @@ b5208   LDA #EXPLOSION_START
 DrawPlanetProgressPointers
         LDX #$0A
         LDA #$20
-b523C   STA SCREEN_RAM + $0365,X
-        STA SCREEN_RAM + $03DD,X
+b523C   STA SCREEN_RAM + LINE21_COL29,X
+        STA SCREEN_RAM + LINE24_COL29,X
         DEX
         BNE b523C
 
         LDX currentTopPlanetIndex
         LDY planetProgressPointersOffsets,X
         LDA #$98 ; Top world progress pointer
-        STA SCREEN_RAM + $0365,Y
+        STA SCREEN_RAM + LINE21_COL29,Y
         LDX currentBottomPlanetIndex
         LDY planetProgressPointersOffsets,X
         LDA #$99 ; Bottom world progress pointer
-        STA SCREEN_RAM + $03DD,Y
+        STA SCREEN_RAM + LINE24_COL29,Y
         RTS
 
                               .BYTE $02,$02,$02,$03,$04,$05,$06,$07
@@ -2493,7 +2493,7 @@ RestoreControlPanelColors
 
         LDX #$A0
 b5298   LDA controlPanelColors - $01,X
-        STA COLOR_RAM + $0347,X
+        STA COLOR_RAM + LINE20_COL39,X
         DEX
         BNE b5298
 
@@ -2510,7 +2510,7 @@ b52A7   LDA controlPanelIsGrey
 ResetControlPanelToGrey
         LDX #$A0
         LDA #GRAY1
-b52B6   STA COLOR_RAM + $0347,X
+b52B6   STA COLOR_RAM + LINE20_COL39,X
         DEX
         BNE b52B6
         LDA #$01
@@ -2536,9 +2536,9 @@ screenTmpPtrHi = $47
 ; Writes storage for top and bottom planets to $0763 and $07B3
 ;------------------------------------------------------------------
 WriteInitialWarpStateToScreen
-        LDA #>SCREEN_RAM + $0363
+        LDA #>SCREEN_RAM + LINE21_COL27
         STA screenTmpPtrHi ; Actually the hi ptr here
-        LDA #<SCREEN_RAM + $0363
+        LDA #<SCREEN_RAM + LINE21_COL27
         STA screenTmpPtrLo ; Actually the lo ptr here
 
         ; For the top planet
@@ -2546,7 +2546,7 @@ WriteInitialWarpStateToScreen
         JSR UpdateWarpStateOnScreen
 
         ; For the bottom planet
-        LDA #<SCREEN_RAM + $03B3
+        LDA #<SCREEN_RAM + LINE23_COL27
         STA screenTmpPtrLo
         LDX currentBottomPlanetIndex
 
@@ -2584,7 +2584,7 @@ UpdateWarpStateOnScreen
         STA (screenTmpPtrLo),Y
         INY
         STA (screenTmpPtrLo),Y
-        LDA #>SCREEN_RAM + $0300
+        LDA #>SCREEN_RAM + LINE19_COL8
         STA screenTmpPtrHi
         RTS
 
@@ -2605,12 +2605,12 @@ UpdateScores
 
         ; Update the top planet score
 b532F   LDX #$06
-b5331   INC SCREEN_RAM + $0354,X
-        LDA SCREEN_RAM + $0354,X
+b5331   INC SCREEN_RAM + LINE21_COL12,X
+        LDA SCREEN_RAM + LINE21_COL12,X
         CMP #$3A
         BNE b5343
         LDA #$30
-        STA SCREEN_RAM + $0354,X
+        STA SCREEN_RAM + LINE21_COL12,X
         DEX
         BNE b5331
 
@@ -2627,12 +2627,12 @@ b5350   LDA pointsEarnedBottomPlanetByte2
 
         ; Update the bottom planet score.
 b535A   LDX #$06
-b535C   INC SCREEN_RAM + $03CC,X
-        LDA SCREEN_RAM + $03CC,X
+b535C   INC SCREEN_RAM + LINE24_COL12,X
+        LDA SCREEN_RAM + LINE24_COL12,X
         CMP #$3A
         BNE b536E
         LDA #$30
-        STA SCREEN_RAM + $03CC,X
+        STA SCREEN_RAM + LINE24_COL12,X
         DEX
         BNE b535C
 b536E   DEC pointsEarnedBottomPlanetByte1
@@ -2650,26 +2650,26 @@ InitializeEnergyBars
         STX currEnergyTop
         STX currEnergyBottom
 b5384   LDA #$80 ; Char for energy bars
-        STA SCREEN_RAM + $0373,X
-        STA SCREEN_RAM + $039B,X
+        STA SCREEN_RAM + LINE22_COL3,X
+        STA SCREEN_RAM + LINE23_COL3,X
         LDA #$20
-        STA SCREEN_RAM + $0377,X
-        STA SCREEN_RAM + $039F,X
+        STA SCREEN_RAM + LINE22_COL7,X
+        STA SCREEN_RAM + LINE23_COL7,X
         DEX
         CPX #$FF
         BNE b5384
 
-        STA SCREEN_RAM + $037B
-        STA SCREEN_RAM + $03A3
+        STA SCREEN_RAM + LINE22_COL11
+        STA SCREEN_RAM + LINE23_COL11
         LDA #$00
         STA currCoreEnergyLevel
         LDX #$0E
         LDA #$20
-b53A8   STA SCREEN_RAM + $03A4,X
+b53A8   STA SCREEN_RAM + LINE23_COL12,X
         DEX
         BNE b53A8
         LDA #$87
-        STA SCREEN_RAM + $03A5
+        STA SCREEN_RAM + LINE23_COL13
 b53B3   RTS
 
 currEnergyTop                        .BYTE $03
@@ -2694,17 +2694,17 @@ DecreaseEnergyStorage
         LDX amountToDecreaseEnergyByTopPlanet
         LDA energyLabelColors,X
         LDY #$04
-b53D3   STA COLOR_RAM + $034A,Y
+b53D3   STA COLOR_RAM + LINE21_COL2,Y
         DEY
         BNE b53D3
 
         LDX currEnergyTop
-        INC SCREEN_RAM + $0373,X
-        LDA SCREEN_RAM + $0373,X
+        INC SCREEN_RAM + LINE22_COL3,X
+        LDA SCREEN_RAM + LINE22_COL3,X
         CMP #$88
         BNE UpdateEnergyStorageBottomPlanet
         LDA #$20
-        STA SCREEN_RAM + $0373,X
+        STA SCREEN_RAM + LINE22_COL3,X
         DEX
         STX currEnergyTop
         CPX #$FF
@@ -2725,17 +2725,17 @@ UpdateEnergyStorageBottomPlanet
 
         LDA energyLabelColors,X
         LDY #$04
-b540B   STA COLOR_RAM + $03C2,Y
+b540B   STA COLOR_RAM + LINE24_COL2,Y
         DEY
         BNE b540B
 
         LDX currEnergyBottom
-        INC SCREEN_RAM + $039B,X
-        LDA SCREEN_RAM + $039B,X
+        INC SCREEN_RAM + LINE23_COL3,X
+        LDA SCREEN_RAM + LINE23_COL3,X
         CMP #$88
         BNE b542B
         LDA #$20
-        STA SCREEN_RAM + $039B,X
+        STA SCREEN_RAM + LINE23_COL3,X
         DEX
         STX currEnergyBottom
         CPX #$FF
@@ -2753,12 +2753,12 @@ updateEnergyStorageInterval .BYTE $01
 DepleteEnergyTop
         STX temporaryStorageForXRegister
         LDX currEnergyTop
-        INC SCREEN_RAM + $0373,X
-        LDA SCREEN_RAM + $0373,X
+        INC SCREEN_RAM + LINE22_COL3,X
+        LDA SCREEN_RAM + LINE22_COL3,X
         CMP #$88
         BNE b547B
         LDA #$20
-        STA SCREEN_RAM + $0373,X
+        STA SCREEN_RAM + LINE22_COL3,X
         DEX
         STX currEnergyTop
         CPX #$FF
@@ -2771,12 +2771,12 @@ b545B   JMP GilbyDiedBecauseEnergyDepleted
 DepleteEnergyBottom
         STX temporaryStorageForXRegister
         LDX currEnergyBottom
-        INC SCREEN_RAM + $039B,X
-        LDA SCREEN_RAM + $039B,X
+        INC SCREEN_RAM + LINE23_COL3,X
+        LDA SCREEN_RAM + LINE23_COL3,X
         CMP #$88
         BNE b547B
         LDA #$20
-        STA SCREEN_RAM + $039B,X
+        STA SCREEN_RAM + LINE23_COL3,X
         DEX
         STX currEnergyBottom
         CMP #$FF
@@ -2798,18 +2798,18 @@ GilbyDiesFromExcessEnergy
 IncreaseEnergyTop
         STX temporaryStorageForXRegister
         LDX currEnergyTop
-        DEC SCREEN_RAM + $0373,X
-        LDA SCREEN_RAM + $0373,X
+        DEC SCREEN_RAM + LINE22_COL3,X
+        LDA SCREEN_RAM + LINE22_COL3,X
         CMP #$7F
         BNE b547B
         LDA #$80
-        STA SCREEN_RAM + $0373,X
+        STA SCREEN_RAM + LINE22_COL3,X
         INX
         STX currEnergyTop
         CPX #$08
         BEQ GilbyDiesFromExcessEnergy
         LDA #$87
-        STA SCREEN_RAM + $0373,X
+        STA SCREEN_RAM + LINE22_COL3,X
         BNE b547B
 
 ;------------------------------------------------------------------
@@ -2818,18 +2818,18 @@ IncreaseEnergyTop
 IncreaseEnergyBottom
         STX temporaryStorageForXRegister
         LDX currEnergyBottom
-        DEC SCREEN_RAM + $039B,X
-        LDA SCREEN_RAM + $039B,X
+        DEC SCREEN_RAM + LINE23_COL3,X
+        LDA SCREEN_RAM + LINE23_COL3,X
         CMP #$7F
         BNE b547B
         LDA #$80
-        STA SCREEN_RAM + $039B,X
+        STA SCREEN_RAM + LINE23_COL3,X
         INX
         STX currEnergyBottom
         CPX #$08
         BEQ GilbyDiesFromExcessEnergy
         LDA #$87
-        STA SCREEN_RAM + $039B,X
+        STA SCREEN_RAM + LINE23_COL3,X
         BNE b547B
 
 ;------------------------------------------------------------------
@@ -2842,20 +2842,20 @@ UpdateCoreEnergyLevel
         INX
         STX currCoreEnergyLevel
         LDA #$87
-        STA SCREEN_RAM + $03A5
-b54DF   DEC SCREEN_RAM + $03A5,X
-        LDA SCREEN_RAM + $03A5,X
+        STA SCREEN_RAM + LINE23_COL13
+b54DF   DEC SCREEN_RAM + LINE23_COL13,X
+        LDA SCREEN_RAM + LINE23_COL13,X
         CMP #$7F
         BNE b5508
         LDA #$80
-        STA SCREEN_RAM + $03A5,X
+        STA SCREEN_RAM + LINE23_COL13,X
         INX
         CPX #$0E
         BEQ b54FC
 
 j54F3
         LDA #$87
-        STA SCREEN_RAM + $03A5,X
+        STA SCREEN_RAM + LINE23_COL13,X
         STX currCoreEnergyLevel
         RTS
 
@@ -2875,12 +2875,12 @@ IncreaseCoreEnergyLevel
         LDX currCoreEnergyLevel
         CPX #$FF
         BEQ b5528
-        INC SCREEN_RAM + $03A5,X
-        LDA SCREEN_RAM + $03A5,X
+        INC SCREEN_RAM + LINE23_COL13,X
+        LDA SCREEN_RAM + LINE23_COL13,X
         CMP #$88
         BNE b5508
         LDA #$20
-        STA SCREEN_RAM + $03A5,X
+        STA SCREEN_RAM + LINE23_COL13,X
         DEX
         STX currCoreEnergyLevel
         CPX #$FF
@@ -2963,19 +2963,19 @@ UpdateLevelText
         BNE b55BD
 
         LDA #$30
-        STA SCREEN_RAM + $0360
-        STA SCREEN_RAM + $0361
+        STA SCREEN_RAM + LINE21_COL24
+        STA SCREEN_RAM + LINE21_COL25
         LDX currentLevelInCurrentPlanet
         BEQ b55B6
 
         ; Update the current level (top planet)
-b55A1   INC SCREEN_RAM + $0361
-        LDA SCREEN_RAM + $0361
+b55A1   INC SCREEN_RAM + LINE21_COL25
+        LDA SCREEN_RAM + LINE21_COL25
         CMP #$3A
         BNE b55B3
         LDA #$30
-        STA SCREEN_RAM + $0361
-        INC SCREEN_RAM + $0360
+        STA SCREEN_RAM + LINE21_COL25
+        INC SCREEN_RAM + LINE21_COL24
 b55B3   DEX
         BNE b55A1
 
@@ -2986,18 +2986,18 @@ b55B6   LDA oldTopPlanetIndex
 
         ; Update the current level (bottom planet)
 b55BD   LDA #$30
-        STA SCREEN_RAM + $03D8
-        STA SCREEN_RAM + $03D9
+        STA SCREEN_RAM + LINE24_COL24
+        STA SCREEN_RAM + LINE24_COL25
         LDX currentLevelInCurrentPlanet
         BEQ b55DF
 
-b55CA   INC SCREEN_RAM + $03D9
-        LDA SCREEN_RAM + $03D9
+b55CA   INC SCREEN_RAM + LINE24_COL25
+        LDA SCREEN_RAM + LINE24_COL25
         CMP #$3A
         BNE b55DC
         LDA #$30
-        STA SCREEN_RAM + $03D9
-        INC SCREEN_RAM + $03D8
+        STA SCREEN_RAM + LINE24_COL25
+        INC SCREEN_RAM + LINE24_COL24
 b55DC   DEX
         BNE b55CA
 b55DF   LDA oldBottomPlanetIndex
@@ -3560,7 +3560,7 @@ b5A1E   JSR PutRandomByteInAccumulatorRegister
         LDX #$14
 b5A29   LDA txtGilbiesLeft,X
         AND #$3F
-        STA SCREEN_RAM + $00F8,X
+        STA SCREEN_RAM + LINE6_COL8,X
         DEX
         BNE b5A29
 
@@ -3570,7 +3570,7 @@ b5A29   LDA txtGilbiesLeft,X
         LDA gilbiesLeft
         CLC
         ADC #$31
-        STA SCREEN_RAM + $0109
+        STA SCREEN_RAM + LINE6_COL25
 
         ; Get a random number between 0 and 7
         JSR PutRandomByteInAccumulatorRegister
@@ -3610,7 +3610,7 @@ b5A67   LDA tmpPtrZp47 ; Random byte picked by PutRandomByteInAccumulatorRegiste
 
 b5A6D   LDA (tmpPtrLo),Y
         AND #$3F
-        STA SCREEN_RAM + $00A9,Y
+        STA SCREEN_RAM + LINE4_COL9,Y
         INY
         CPY #$14
         BNE b5A6D
@@ -3618,7 +3618,7 @@ b5A6D   LDA (tmpPtrLo),Y
 
 b5A7A   LDA (tmpPtrLo),Y
         AND #$3F
-        STA SCREEN_RAM + $0149,Y
+        STA SCREEN_RAM + LINE8_COL9,Y
         INY
         CPY #$14
         BNE b5A7A
@@ -3641,14 +3641,14 @@ ClearScreen3
         LDX #$00
 b5A98   LDA #$20
         STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $0248,X
+        STA SCREEN_RAM + LINE6_COL16,X
+        STA SCREEN_RAM + LINE12_COL32,X
+        STA SCREEN_RAM + LINE14_COL24,X
         LDA #WHITE
-        STA COLOR_RAM + $0000,X
-        STA COLOR_RAM + $0100,X
-        STA COLOR_RAM + $0200,X
-        STA COLOR_RAM + $0248,X
+        STA COLOR_RAM + LINE0_COL0,X
+        STA COLOR_RAM + LINE6_COL16,X
+        STA COLOR_RAM + LINE12_COL32,X
+        STA COLOR_RAM + LINE14_COL24,X
         DEX
         BNE b5A98
         RTS
@@ -3798,9 +3798,9 @@ f5DD8                  .BYTE $00,$00,$40,$0F,$02
 ;------------------------------------------------------------------
 UpdateDisplayedScoringRate
         LDA #$23
-        STA SCREEN_RAM + $0387
+        STA SCREEN_RAM + LINE22_COL23
         LDA #WHITE
-        STA COLOR_RAM + $0387
+        STA COLOR_RAM + LINE22_COL23
         LDA currentGilbySpeed
         BPL b5E14
         EOR #$FF
@@ -3812,9 +3812,9 @@ b5E14   TAX
         LDA scoringRateToScoreMap,Y
         CLC
         ADC #$30
-        STA SCREEN_RAM + $0388
+        STA SCREEN_RAM + LINE22_COL24
         LDA scoreColors,Y
-        STA COLOR_RAM + $0388
+        STA COLOR_RAM + LINE22_COL24
         STY lastRegisteredScoringRate
         RTS
 
@@ -3895,19 +3895,19 @@ UpdateDisplayedEntropyStatus
         SBC upperPlanetEntropyStatus
         TAY
         LDA mapPlanetEntropyToColor,Y
-        STA COLOR_RAM + $0348
-        STA COLOR_RAM + $0349
-        STA COLOR_RAM + $0370
-        STA COLOR_RAM + $0371
+        STA COLOR_RAM + LINE21_COL0
+        STA COLOR_RAM + LINE21_COL1
+        STA COLOR_RAM + LINE22_COL0
+        STA COLOR_RAM + LINE22_COL1
         LDA #$08
         SEC
         SBC lowerPlanetEntropyStatus
         TAY
         LDA mapPlanetEntropyToColor,Y
-        STA COLOR_RAM + $0398
-        STA COLOR_RAM + $0399
-        STA COLOR_RAM + $03C0
-        STA COLOR_RAM + $03C1
+        STA COLOR_RAM + LINE23_COL0
+        STA COLOR_RAM + LINE23_COL1
+        STA COLOR_RAM + LINE24_COL0
+        STA COLOR_RAM + LINE24_COL1
         JMP ReturnFromSub
 
         .FILL 5,$C0
@@ -3937,9 +3937,9 @@ b5F0D   JSR UpdateEnemiesLeftStorage
         DEC enemiesKilledTopPlanetSinceLastUpdate
         BNE b5F0D
         LDA txtEnemiesLeftCol1
-        STA SCREEN_RAM + $034F
+        STA SCREEN_RAM + LINE21_COL7
         LDA txtEnemiesLeftCol2
-        STA SCREEN_RAM + $0350
+        STA SCREEN_RAM + LINE21_COL8
 
 b5F21   LDA currentGilbySpeed
         BNE b5F28
@@ -3948,8 +3948,8 @@ b5F21   LDA currentGilbySpeed
 b5F28   PHA
         TAY
         LDA colorSequenceArray,Y
-        STA COLOR_RAM + $034F
-        STA COLOR_RAM + $0350
+        STA COLOR_RAM + LINE21_COL7
+        STA COLOR_RAM + LINE21_COL8
 
         LDA lowerPlanetActivated
         BEQ b5F3A
@@ -3967,14 +3967,14 @@ b5F47   JSR UpdateEnemiesLeftStorage
         DEC enemiesKilledBottomPlanetSinceLastUpdate
         BNE b5F47
         LDA txtEnemiesLeftCol1
-        STA SCREEN_RAM + $03C7
+        STA SCREEN_RAM + LINE24_COL7
         LDA txtEnemiesLeftCol2
-        STA SCREEN_RAM + $03C8
+        STA SCREEN_RAM + LINE24_COL8
 b5F5B   PLA
         TAY
         LDA colorSequenceArray,Y
-        STA COLOR_RAM + $03C7
-        STA COLOR_RAM + $03C8
+        STA COLOR_RAM + LINE24_COL7
+        STA COLOR_RAM + LINE24_COL8
         RTS
 
 ;------------------------------------------------------------------
@@ -4027,7 +4027,7 @@ statusBarDetailStorage =*-$01
 ;------------------------------------------------------------------
 StoreStatusBarDetail
         LDX #$A0
-b6032   LDA SCREEN_RAM + $0347,X
+b6032   LDA SCREEN_RAM + LINE20_COL39,X
         STA statusBarDetailStorage,X
         DEX
         BNE b6032
@@ -4039,7 +4039,7 @@ b6032   LDA SCREEN_RAM + $0347,X
 DrawStatusBarDetail
         LDX #$A0
 b603E   LDA statusBarDetailStorage,X
-        STA SCREEN_RAM + $0347,X
+        STA SCREEN_RAM + LINE20_COL39,X
         DEX
         BNE b603E
 b6047   RTS
@@ -4056,9 +4056,9 @@ DrawLowerPlanetWhileInactive
         LDX #$28
 b604F   LDA textForInactiveLowerPlanet - $01,X
         AND #$3F
-        STA SCREEN_RAM + $02F7,X
+        STA SCREEN_RAM + LINE18_COL39,X
         LDA #WHITE
-        STA COLOR_RAM + $02F7,X
+        STA COLOR_RAM + LINE18_COL39,X
         DEX
         BNE b604F
 
@@ -4066,7 +4066,7 @@ b604F   LDA textForInactiveLowerPlanet - $01,X
 b6061   LDA surfaceDataInactiveLowerPlanet,X
         CLC
         ADC #$40
-        STA SCREEN_RAM + $0257,X
+        STA SCREEN_RAM + LINE14_COL39,X
         DEX
         BNE b6061
 
@@ -4075,7 +4075,7 @@ b606F   LDY xPosSecondLevelSurfaceInactivePlanet,X
         LDA secondLevelSurfaceDataInactivePlanet,X
         CLC
         ADC #$40
-        STA SCREEN_RAM + $01E4,Y
+        STA SCREEN_RAM + LINE12_COL4,Y
         DEX
         BNE b606F
         RTS
@@ -4152,21 +4152,21 @@ b6132   LDY currentLevelInTopPlanets,X
         LDX #$27
 b6148   LDA txtGilbiesLeftBonusBounty,X
         AND #$3F
-        STA SCREEN_RAM + $02F8,X
+        STA SCREEN_RAM + LINE19_COL0,X
         LDA #YELLOW
-        STA COLOR_RAM + $02F8,X
+        STA COLOR_RAM + LINE19_COL0,X
         DEX
         BPL b6148
 
         LDX #$06
 b615A   LDA currentBonusBountyPtr,X
-        STA SCREEN_RAM + $0319,X
+        STA SCREEN_RAM + LINE19_COL33,X
         DEX
         BNE b615A
         LDA gilbiesLeft
         CLC
         ADC #$31
-        STA SCREEN_RAM + $0305
+        STA SCREEN_RAM + LINE19_COL13
         RTS
 
 txtGilbiesLeftBonusBounty   .TEXT "GILBIES LEFT 0: BONUS BOUNTY NOW 0000000"
@@ -4234,9 +4234,9 @@ ShowProgressScreen
         LDX #$28
 b61FE   LDA txtProgressStatusLine1 - $01,X
         AND #$3F
-        STA SCREEN_RAM + $0257,X
+        STA SCREEN_RAM + LINE14_COL39,X
         LDA #WHITE
-        STA COLOR_RAM + $0257,X
+        STA COLOR_RAM + LINE14_COL39,X
         DEX
         BNE b61FE
 
@@ -4255,9 +4255,9 @@ b6217   DEY
         LDX #$28
 b6223   LDA txtProgressStatusLine2,X
         AND #$3F
-        STA SCREEN_RAM + $02A7,X
+        STA SCREEN_RAM + LINE16_COL39,X
         LDA #YELLOW
-        STA COLOR_RAM + $02A7,X
+        STA COLOR_RAM + LINE16_COL39,X
         DEX
         BNE b6223
 
@@ -4438,9 +4438,9 @@ EnterMainTitleScreen
         JSR LaunchCurrentProgram
         SEI
         LDA #<GameSwitchAndGameOverInterruptHandler
-        STA $0314    ;IRQ
+        STA $314    ;IRQ
         LDA #>GameSwitchAndGameOverInterruptHandler
-        STA $0315    ;IRQ
+        STA $315    ;IRQ
         JMP SwapTitleScreenDataAndSpriteLevelData
         ; Returns
 
@@ -4450,9 +4450,9 @@ EnterMainTitleScreen
 DisplayGameOver
         SEI
         LDA #<GameSwitchAndGameOverInterruptHandler
-        STA $0314    ;IRQ
+        STA $314    ;IRQ
         LDA #>GameSwitchAndGameOverInterruptHandler
-        STA $0315    ;IRQ
+        STA $315    ;IRQ
         CLI
         LDA #$00
         STA $D020    ;Border Color
@@ -4467,18 +4467,18 @@ DisplayGameOver
         LDX #$0A
 b63FA   LDA txtGameOver,X
         AND #$3F
-        STA SCREEN_RAM + $00BD,X
+        STA SCREEN_RAM + LINE4_COL29,X
         LDA txtFinalScore,X
         AND #$3F
-        STA SCREEN_RAM + $010D,X
+        STA SCREEN_RAM + LINE6_COL29,X
         LDA txtFinalScoreValue,X
         AND #$3F
-        STA SCREEN_RAM + $015D,X
+        STA SCREEN_RAM + LINE8_COL29,X
         LDA #WHITE
-        STA COLOR_RAM + $00BD,X
-        STA COLOR_RAM + $010D,X
+        STA COLOR_RAM + LINE4_COL29,X
+        STA COLOR_RAM + LINE6_COL29,X
         LDA #PURPLE
-        STA COLOR_RAM + $015D,X
+        STA COLOR_RAM + LINE8_COL29,X
         DEX
         BPL b63FA
 
@@ -4496,9 +4496,9 @@ AnimateFinalScoreTally
         STA tempLoPtr
         LDA #$05
         STA tempHiPtr
-        LDA #<SCREEN_RAM + $0354
+        LDA #<SCREEN_RAM + LINE21_COL12
         STA tempLoPtr1
-        LDA #>SCREEN_RAM + $0354
+        LDA #>SCREEN_RAM + LINE21_COL12
         STA tempHiPtr1
         JSR IncrementFinalScoreTally
         LDA #$CC
@@ -4584,9 +4584,9 @@ b64F0   CLC
 b64F6   TAX
 b64F7   LDA txtReasonGilbyDied,X
         AND #$3F
-        STA SCREEN_RAM + $02B7,Y
+        STA SCREEN_RAM + LINE17_COL15,Y
         LDA #RED
-        STA COLOR_RAM + $02B7,Y
+        STA COLOR_RAM + LINE17_COL15,Y
         INY
         INX
         CPY #$0A
@@ -4656,9 +4656,9 @@ b6595   LDA #$C1
         LDX #$0A
 b65A5   LDA txtBonus10000,X
         AND #$3F
-        STA SCREEN_RAM + $019F,X
+        STA SCREEN_RAM + LINE10_COL15,X
         LDA #YELLOW
-        STA COLOR_RAM + $019F,X
+        STA COLOR_RAM + LINE10_COL15,X
         DEX
         BPL b65A5
 
@@ -5056,9 +5056,9 @@ SetupSpritesAndSound
         BNE b68DF
 
 b68D2   LDA #$00
-        STA SCREEN_RAM + $01B7,X
+        STA SCREEN_RAM + LINE10_COL39,X
         LDA #PURPLE
-        STA COLOR_RAM + $01B7,X
+        STA COLOR_RAM + LINE10_COL39,X
         DEX
         BNE b68D2
 
@@ -5437,9 +5437,9 @@ ClearGameViewPort
         LDX #$00
         LDA #$20
 b6B63   STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $02F8,X
+        STA SCREEN_RAM + LINE6_COL16,X
+        STA SCREEN_RAM + LINE12_COL32,X
+        STA SCREEN_RAM + LINE19_COL0,X
         DEX
         BNE b6B63
         RTS
@@ -5810,7 +5810,7 @@ CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
         BNE CheckJoystickInput
 
         ; Check if we're flying through a warp gate.
-        LDA SCREEN_RAM + $01A4
+        LDA SCREEN_RAM + LINE10_COL20
         CMP #$77
         BEQ WarpToNextPlanet
         CMP #$7D
@@ -5875,7 +5875,7 @@ b6EAF   LDA #$02
         STA gilbyIsOverLand
 
         ; Check whether the gilby is on land or not.
-        LDA SCREEN_RAM + $01A4
+        LDA SCREEN_RAM + LINE10_COL20
         CMP #$41
         BEQ b6EC4
         CMP #$43
@@ -6329,13 +6329,13 @@ DrawPlanetSurfaces
         ; Only need to draw the upper planet
         LDX #$27
 b71CB   LDA (planetTextureTopLayerPtr),Y
-        STA SCREEN_RAM + $0118,Y
+        STA SCREEN_RAM + LINE7_COL0,Y
         LDA (planetTextureSecondFromTopLayerPtr),Y
-        STA SCREEN_RAM + $0140,Y
+        STA SCREEN_RAM + LINE8_COL0,Y
         LDA (planetTextureSecondFromBottomLayerPtr),Y
-        STA SCREEN_RAM + $0168,Y
+        STA SCREEN_RAM + LINE9_COL0,Y
         LDA (planetTextureBottomLayerPtr),Y
-        STA SCREEN_RAM + $0190,Y
+        STA SCREEN_RAM + LINE10_COL0,Y
         INY
         DEX
         CPY #$28
@@ -6346,21 +6346,21 @@ b71CB   LDA (planetTextureTopLayerPtr),Y
         ; planet is a mirror image of the top.
 b71E6   LDX #$27
 b71E8   LDA (planetTextureTopLayerPtr),Y
-        STA SCREEN_RAM + $0118,Y
+        STA SCREEN_RAM + LINE7_COL0,Y
         ORA #$C0
-        STA SCREEN_RAM + $0258,X
+        STA SCREEN_RAM + LINE15_COL0,X
         LDA (planetTextureSecondFromTopLayerPtr),Y
-        STA SCREEN_RAM + $0140,Y
+        STA SCREEN_RAM + LINE8_COL0,Y
         ORA #$C0
-        STA SCREEN_RAM + $0230,X
+        STA SCREEN_RAM + LINE14_COL0,X
         LDA (planetTextureSecondFromBottomLayerPtr),Y
-        STA SCREEN_RAM + $0168,Y
+        STA SCREEN_RAM + LINE9_COL0,Y
         ORA #$C0
-        STA SCREEN_RAM + $0208,X
+        STA SCREEN_RAM + LINE13_COL0,X
         LDA (planetTextureBottomLayerPtr),Y
-        STA SCREEN_RAM + $0190,Y
+        STA SCREEN_RAM + LINE10_COL0,Y
         ORA #$C0
-        STA SCREEN_RAM + $01E0,X
+        STA SCREEN_RAM + LINE12_COL0,X
         INY
         DEX
         CPY #$28
@@ -6546,10 +6546,10 @@ PutRandomByteInAccumulatorRegister
 ;------------------------------------------------------------------
 UpdateTopPlanetSurfaceColor
         LDX #$28
-b731F   STA COLOR_RAM + $0117,X
-        STA COLOR_RAM + $013F,X
-        STA COLOR_RAM + $0167,X
-        STA COLOR_RAM + $018F,X
+b731F   STA COLOR_RAM + LINE6_COL39,X
+        STA COLOR_RAM + LINE7_COL39,X
+        STA COLOR_RAM + LINE8_COL39,X
+        STA COLOR_RAM + LINE9_COL39,X
         DEX
         BNE b731F
         RTS
@@ -6559,10 +6559,10 @@ b731F   STA COLOR_RAM + $0117,X
 ;------------------------------------------------------------------
 UpdateBottomPlanetSurfaceColor
         LDX #$28
-b7331   STA COLOR_RAM + $01DF,X
-        STA COLOR_RAM + $0207,X
-        STA COLOR_RAM + $022F,X
-        STA COLOR_RAM + $0257,X
+b7331   STA COLOR_RAM + LINE11_COL39,X
+        STA COLOR_RAM + LINE12_COL39,X
+        STA COLOR_RAM + LINE13_COL39,X
+        STA COLOR_RAM + LINE14_COL39,X
         DEX
         BNE b7331
         RTS
@@ -7350,9 +7350,9 @@ b7845   STA lowerPlanetAttackShip2MSBXPosValue,X
 DrawControlPanel
         LDX #$A0
 b7850   LDA controlPanelData,X
-        STA SCREEN_RAM + $0347,X
+        STA SCREEN_RAM + LINE20_COL39,X
         LDA controlPanelColors - $01,X
-        STA COLOR_RAM + $0347,X
+        STA COLOR_RAM + LINE20_COL39,X
         DEX
         BNE b7850
         RTS
@@ -8370,30 +8370,30 @@ ClearScreenDrawHiScoreScreenText
         LDX #$00
 bCA9F   LDA #$20
         STA SCREEN_RAM,X
-        STA SCREEN_RAM + $0100,X
-        STA SCREEN_RAM + $0200,X
-        STA SCREEN_RAM + $0247,X
+        STA SCREEN_RAM + LINE6_COL16,X
+        STA SCREEN_RAM + LINE12_COL32,X
+        STA SCREEN_RAM + LINE14_COL23,X
         LDA #WHITE
-        STA COLOR_RAM + $0000,X
-        STA COLOR_RAM + $0100,X
-        STA COLOR_RAM + $0200,X
-        STA COLOR_RAM + $0247,X
+        STA COLOR_RAM + LINE0_COL0,X
+        STA COLOR_RAM + LINE6_COL16,X
+        STA COLOR_RAM + LINE12_COL32,X
+        STA COLOR_RAM + LINE14_COL23,X
         DEX
         BNE bCA9F
 
         LDX #$27
 bCAC0   LDA txtHiScorLine1,X
         AND #$3F
-        STA SCREEN_RAM + $0028,X
+        STA SCREEN_RAM + LINE1_COL0,X
         LDA txtHiScorLine4,X
         AND #$3F
-        STA SCREEN_RAM + $0258,X
+        STA SCREEN_RAM + LINE15_COL0,X
         DEX
         BPL bCAC0
 
         LDX #$06
 bCAD5   LDA lastBlastScore,X
-        STA SCREEN_RAM + $0279,X
+        STA SCREEN_RAM + LINE15_COL33,X
         DEX
         BPL bCAD5
 
@@ -8467,7 +8467,7 @@ bCB60   PLA
         LDX #$27
 bCB68   LDA txtHiScorLine2,X
         AND #$3F
-        STA SCREEN_RAM + $02D0,X
+        STA SCREEN_RAM + LINE18_COL0,X
         DEX
         BPL bCB68
 
@@ -8571,7 +8571,7 @@ DisplayHiScoreScreen
         LDX #$27
 bCC10   LDA txtHiScorLine3,X
         AND #$3F
-        STA SCREEN_RAM + $02D0,X
+        STA SCREEN_RAM + LINE18_COL0,X
         DEX
         BPL bCC10
 
@@ -8700,7 +8700,7 @@ bCCB7   LDA (tempLoPtr1),Y
         LDX #$27
 bCCE0   LDA gameCompletionText,X
         AND #$3F
-        STA SCREEN_RAM + $02F8,X
+        STA SCREEN_RAM + LINE19_COL0,X
         DEX
         BPL bCCE0
         BMI UpdateDisplayedHiScore
@@ -8716,16 +8716,16 @@ UpdateDisplayedHiScore
         LDX #$00
 bCD19   LDA (tempLoPtr1),Y
         AND #$3F
-        STA SCREEN_RAM + $0312,X
+        STA SCREEN_RAM + LINE19_COL26,X
         INY
         INX
         CPX #$04
         BNE bCD19
         LDY #$06
 bCD28   LDA (tempLoPtr1),Y
-        STA SCREEN_RAM + $00E7,Y
+        STA SCREEN_RAM + LINE5_COL31,Y
         LDA #PURPLE
-        STA COLOR_RAM + $00E7,Y
+        STA COLOR_RAM + LINE5_COL31,Y
         DEY
         BPL bCD28
 bCD35   LDA lastKeyPressed
@@ -8768,11 +8768,11 @@ bCD59   LDA #$01
 bCD6E   LDX #$00
         LDY currHiScoreColorSeq1
 bCD73   LDA hiScoreColorSequence,Y
-        STA COLOR_RAM + $00A0,X
-        STA COLOR_RAM + $00F0,X
-        STA COLOR_RAM + $0140,X
-        STA COLOR_RAM + $0190,X
-        STA COLOR_RAM + $01E0,X
+        STA COLOR_RAM + LINE4_COL0,X
+        STA COLOR_RAM + LINE6_COL0,X
+        STA COLOR_RAM + LINE8_COL0,X
+        STA COLOR_RAM + LINE10_COL0,X
+        STA COLOR_RAM + LINE12_COL0,X
         INX
         INY
         CPY #$28
@@ -8783,11 +8783,11 @@ bCD8D   CPX #$28
         LDY currHiScoreColorSeq2
         LDX #$00
 bCD96   LDA hiScoreColorSequence2,Y
-        STA COLOR_RAM + $00C8,X
-        STA COLOR_RAM + $0118,X
-        STA COLOR_RAM + $0168,X
-        STA COLOR_RAM + $01B8,X
-        STA COLOR_RAM + $0208,X
+        STA COLOR_RAM + LINE5_COL0,X
+        STA COLOR_RAM + LINE7_COL0,X
+        STA COLOR_RAM + LINE9_COL0,X
+        STA COLOR_RAM + LINE11_COL0,X
+        STA COLOR_RAM + LINE13_COL0,X
         INX
         INY
         CPY #$28
@@ -8878,3 +8878,4 @@ pE800   SEI
         JMP $0835
 
 ; vim: tabstop=2 shiftwidth=2 expandtab
+
