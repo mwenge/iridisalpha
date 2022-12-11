@@ -966,12 +966,12 @@ p4003   LDA #<MainControlLoopInterruptHandler
         STA planetTextureSecondFromBottomLayerPtr
         STA unusedVariable4
         STA unusedVariable5
-        STA amountToDecreaseEnergyByTopPlanet
-        STA amountToDecreaseEnergyByBottomPlanet
+        STA extraAmountToDecreaseEnergyByTopPlanet
+        STA extraAmountToDecreaseEnergyByBottomPlanet
         STA gilbyHasJustDied
         STA bonusPhaseEarned
         STA bonusPhaseCounter
-        STA valueIsAlwaysZero
+        STA setToZeroIfOnUpperPlanet
 
         ; Point at the planet data for the first planet.
         ; The planet data starts at $8000. Each planet
@@ -1781,32 +1781,41 @@ CheckCollisionType
 ;------------------------------------------------------------------
 MaybeTransferToOtherPlanet
         LDA joystickInput
-        AND #$10
+        AND #JOYSTICK_FIRE
         BEQ JumpToGetNewShipDataFromDataStore
 
         ; Fire not pressed while passing through explosion ring so can
         ; transfer to other planet
         LDA lowerPlanetActivated
         BNE JumpToGetNewShipDataFromDataStore
-        LDA valueIsAlwaysZero
-        BNE b4D0D
 
+        LDA setToZeroIfOnUpperPlanet
+        BNE TransferToTheUpperPlanet ; BNE, so branch if setToZeroIfOnUpperPlanet is not $00.
+
+        ; Transfer to the lower planet.
         JSR ResetSoundDataPtr1
-        LDA #<transferToOtherPlanetSoundEffect1
+        LDA #<transferToLowerPlanetSoundEffect
         STA currentSoundEffectLoPtr
-        LDA #>transferToOtherPlanetSoundEffect1
+        LDA #>transferToLowerPlanetSoundEffect
         STA currentSoundEffectHiPtr
+
+        ; We're setting setToZeroIfOnUpperPlanet to $08 here to 
+        ; indicate we're now on the lower planet.
         LDA #$08
-        BNE b4D1C
+        BNE InitializeStateAfterPlanetTransfer
 
-b4D0D   JSR ResetSoundDataPtr1
-        LDA #<transferToOtherPlanetSoundEffect2
+TransferToTheUpperPlanet   
+        JSR ResetSoundDataPtr1
+        LDA #<transferToUpperPlanetSoundEffect
         STA currentSoundEffectLoPtr
-        LDA #>transferToOtherPlanetSoundEffect2
+        LDA #>transferToUpperPlanetSoundEffect
         STA currentSoundEffectHiPtr
 
+        ; We're setting setToZeroIfOnUpperPlanet to $00 here to 
+        ; indicate we're now on the upper planet.
         LDA #$00
-b4D1C   STA valueIsAlwaysZero
+InitializeStateAfterPlanetTransfer   
+        STA setToZeroIfOnUpperPlanet
         LDA #$00
         STA currentEntropy
         LDA #$08
@@ -1841,23 +1850,25 @@ UpdateEnergyLevelsAfterCollision
         CLC
         ADC #$01
         STA currentGilbySpeed
-        LDA valueIsAlwaysZero
-        BEQ b4D72
 
-        LDA amountToDecreaseEnergyByBottomPlanet
+        LDA setToZeroIfOnUpperPlanet
+        BEQ EnergyUpdateTopPlanet
+
+        LDA extraAmountToDecreaseEnergyByBottomPlanet
         BNE b4D7F
         ; Y is still $23.
         LDA (currentShipWaveDataLoPtr),Y
         JSR AugmentAmountToDecreaseEnergyByBountiesEarned
-        STA amountToDecreaseEnergyByBottomPlanet
+        STA extraAmountToDecreaseEnergyByBottomPlanet
         BNE b4D7F
 
-b4D72   LDA amountToDecreaseEnergyByTopPlanet
+EnergyUpdateTopPlanet   
+        LDA extraAmountToDecreaseEnergyByTopPlanet
         BNE b4D7F
         ; Y is still $23.
         LDA (currentShipWaveDataLoPtr),Y
         JSR AugmentAmountToDecreaseEnergyByBountiesEarned
-        STA amountToDecreaseEnergyByTopPlanet
+        STA extraAmountToDecreaseEnergyByTopPlanet
 b4D7F   LDY #$1E
         JMP UpdateWaveDataForCurrentEnemy
         ; Returns
@@ -2036,7 +2047,7 @@ MaybeQuicklyGravitatesToGilby
         ; After being destroyed the enemy gravitates quickly towards the gilby.
         ; There are two types of behaviour $01 or $23.
         CLC
-        ADC gilbyVerticalPosition
+        ADC gilbyVerticalPositionUpperPlanet
         STA positionRelativeToGilby
         LDA orderForUpdatingPositionOfAttackShips,X
         TAX
@@ -2159,22 +2170,27 @@ b4F55   RTS
 
 b4F56   RTS
 
-valueIsAlwaysZero     .BYTE $00
-currentAttackShipXPos .BYTE $00
-currentAttackShipYPos .BYTE $00,$00
+setToZeroIfOnUpperPlanet .BYTE $00
+currentAttackShipXPos    .BYTE $00
+currentAttackShipYPos    .BYTE $00,$00
 ;------------------------------------------------------------------
 ; UpdateAttackShipsPosition
 ;------------------------------------------------------------------
 UpdateAttackShipsPosition
-        LDA valueIsAlwaysZero
+        LDA setToZeroIfOnUpperPlanet
         TAY
-        AND #$08
-        BEQ b4F65
+        AND #$08 ; Checks if we're on the lower planet.
+        BEQ DontAdjustForLowerPlanet
+
+        ; Decrement Y twice if setToZeroIfOnUpperPlanet has an $08.
+        ; i.e. we are on the lower planet.
         DEY
         DEY
-b4F65   LDA upperPlanetAttackShipsMSBXPosArray + $01,Y
+
+DontAdjustForLowerPlanet   
+        LDA upperPlanetAttackShipsMSBXPosArray + $01,Y
         BMI b4F89
-        LDY valueIsAlwaysZero
+        LDY setToZeroIfOnUpperPlanet
         LDA upperPlanetAttackShipsMSBXPosArray + $01,Y
         CLC
         BEQ b4F74
@@ -2280,12 +2296,13 @@ SkipRestofMXBPositionUpdates
         LDX tempLoPtr3
         INX
         CPX #$06
-        BEQ b5029
+        BEQ CollisionReturnEarly
         CPX #$0E
-        BEQ b5029
+        BEQ CollisionReturnEarly
         JMP UpdateAttackShipsMSBXPositionLoop
 
-b5029   RTS
+CollisionReturnEarly   
+        RTS
 
 ;------------------------------------------------------------------
 ; DetectAttackShipCollisionWithGilby
@@ -2293,15 +2310,21 @@ b5029   RTS
 DetectAttackShipCollisionWithGilby
         LDY #$00
         LDA levelEntrySequenceActive
-        BNE b5029
+        BNE CollisionReturnEarly
         LDA attractModeCountdown
-        BNE b5029
-        LDA valueIsAlwaysZero
+        BNE CollisionReturnEarly
+
+        LDA setToZeroIfOnUpperPlanet
         BEQ b503C
+
+        ; Incrememnt Y if on lower planet.
         INY
-b503C   LDX valueIsAlwaysZero
+
+b503C   LDX setToZeroIfOnUpperPlanet
+        ; X is now $00 if on upper planet, $08 if on lower planet.
         INX
         INX
+        ; X is now $02 if on upper planet, $10 if on lower planet.
 
 CheckCollisionsLoop
         CLC
@@ -2320,19 +2343,22 @@ b5053   CMP #$08
 
 b505A   LDA upperPlanetAttackShipsYPosArray + $01,X
         SEC
-        SBC gilbyVerticalPosition,Y
+        ; Y is set to $01 above if we are on the lower planet, so this
+        ; will reference gilbyVerticalPositionLowerPlanet.
+        SBC gilbyVerticalPositionUpperPlanet,Y
         BPL b5065
         EOR #$FF
 b5065   CMP #$08
         BMI b506C
         JMP GoToNextShip
 
-b506C   STX tempLoPtr3
+tempXStorage = tempLoPtr3
+b506C   STX tempXStorage
         LDA indexIntoAttackWaveDataHiPtrArray,X
         TAX
         LDA #$FF
         STA shipHasAlreadyBeenHitByGilby,X
-        LDX tempLoPtr3
+        LDX tempXStorage
 
 GoToNextShip
         INX
@@ -2482,7 +2508,7 @@ planetProgressPointersOffsets .BYTE $01,$03,$05,$07,$09
 ; UpdateControlPanelColors
 ;------------------------------------------------------------------
 UpdateControlPanelColors
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         CMP #$50
         BMI b52A7
         LDA #$01
@@ -2677,8 +2703,8 @@ b53B3   RTS
 currEnergyTop                        .BYTE $03
 currEnergyBottom                     .BYTE $03
 currCoreEnergyLevel                  .BYTE $00
-amountToDecreaseEnergyByTopPlanet    .BYTE $00
-amountToDecreaseEnergyByBottomPlanet .BYTE $00
+extraAmountToDecreaseEnergyByTopPlanet    .BYTE $00
+extraAmountToDecreaseEnergyByBottomPlanet .BYTE $00
 ;------------------------------------------------------------------
 ; DecreaseEnergyStorage
 ;------------------------------------------------------------------
@@ -2688,12 +2714,12 @@ DecreaseEnergyStorage
         LDA #$04
         STA updateEnergyStorageInterval
 
-        LDA amountToDecreaseEnergyByTopPlanet
+        LDA extraAmountToDecreaseEnergyByTopPlanet
         BEQ UpdateEnergyStorageBottomPlanet
 
         ;Color the 'Energy' label.
-        DEC amountToDecreaseEnergyByTopPlanet
-        LDX amountToDecreaseEnergyByTopPlanet
+        DEC extraAmountToDecreaseEnergyByTopPlanet
+        LDX extraAmountToDecreaseEnergyByTopPlanet
         LDA energyLabelColors,X
         LDY #$04
 b53D3   STA COLOR_RAM + LINE21_COL2,Y
@@ -2719,11 +2745,11 @@ GilbyDiedBecauseEnergyDepleted
         ; Returns
 
 UpdateEnergyStorageBottomPlanet
-        LDA amountToDecreaseEnergyByBottomPlanet
+        LDA extraAmountToDecreaseEnergyByBottomPlanet
         BEQ b542B
 
-        DEC amountToDecreaseEnergyByBottomPlanet
-        LDX amountToDecreaseEnergyByBottomPlanet
+        DEC extraAmountToDecreaseEnergyByBottomPlanet
+        LDX extraAmountToDecreaseEnergyByBottomPlanet
 
         LDA energyLabelColors,X
         LDY #$04
@@ -3373,7 +3399,7 @@ ExplosionLoop
         LDA mapPlanetEntropyToColor,Y
         STA upperPlanetGilbyBulletColor,X
         STA lowerPlanetGilbyBulletColor,X
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         STA upperPlanetGilbyBulletYPos,X
         EOR #$FF
         CLC
@@ -3712,7 +3738,7 @@ initialColorForFlashEffect   .BYTE $02,$00
 ;------------------------------------------------------------------
 DrawLevelEntryAndWarpGilbyAnimation
         LDX #$00
-b5CCB   LDA gilbyVerticalPosition
+b5CCB   LDA gilbyVerticalPositionUpperPlanet
         STA upperPlanetAttackShipsYPosArray + $01,X
         EOR #$FF
         CLC
@@ -3829,48 +3855,57 @@ scoreColors           .BYTE BLUE,PURPLE,GREEN,YELLOW,WHITE
 
 lastRegisteredScoringRate   .BYTE $01
 ;------------------------------------------------------------------
-; UpdatePlanetEntropyStatus
+; InitializePlanetEntropyStatus
 ;------------------------------------------------------------------
-UpdatePlanetEntropyStatus
+InitializePlanetEntropyStatus
         LDA lowerPlanetActivated
         BEQ b5E5D
         JMP ReturnFromSub
 
-b5E5D   LDA valueIsAlwaysZero
-        BEQ b5E69
+b5E5D   LDA setToZeroIfOnUpperPlanet
+        BEQ UpperPlanetInitializePlanetEntropyStatus
 
+        ; Initialize the entropy on the lower planet if that's
+        ; where we are.
         LDA #$08
         STA lowerPlanetEntropyStatus
-        BNE b5E6E
+        BNE SkipToUpdateEntropy
 
-b5E69   LDA #$08
+UpperPlanetInitializePlanetEntropyStatus   
+        LDA #$08
         STA upperPlanetEntropyStatus
-b5E6E   DEC entropyUpdateRate
+
+SkipToUpdateEntropy   
+        DEC entropyUpdateRate
         BEQ MaybeUpdateDisplayedEntropy
         BNE UpdateDisplayedEntropyStatus
 
 entropyUpdateRate        .BYTE $A3
 upperPlanetEntropyStatus .BYTE $08
 lowerPlanetEntropyStatus .BYTE $08
-entroyDisplayUpdateRate  .BYTE $23
+entropyDisplayUpdateRate  .BYTE $23
 
 ;------------------------------------------------------------------
 ; MaybeUpdateDisplayedEntropy
 ;------------------------------------------------------------------
 MaybeUpdateDisplayedEntropy
-        DEC entroyDisplayUpdateRate
+        DEC entropyDisplayUpdateRate
         BNE UpdateDisplayedEntropyStatus
         LDA #$10
-        STA entroyDisplayUpdateRate
+        STA entropyDisplayUpdateRate
         LDA #$00
         STA currentEntropy
-        LDA valueIsAlwaysZero
-        BEQ b5EA6
+
+        ; We update the entropy of the planet we're not on. So if
+        ; we're on the upper planet we update the entropy of the lower.
+        LDA setToZeroIfOnUpperPlanet
+        BEQ UpdateLowerPlanetEntropy
+
         DEC upperPlanetEntropyStatus
         BNE b5E95
         INC currentEntropy
 b5E95   LDA upperPlanetEntropyStatus
-        CMP #$FF
+        CMP #$FF ; Decremented past zero?
         BNE UpdateDisplayedEntropyStatus
 
 EntropyKillsGilby
@@ -3879,8 +3914,11 @@ EntropyKillsGilby
         JMP GilbyDied
         ; Returns
 
+        ; Not reached.
         BNE UpdateDisplayedEntropyStatus
-b5EA6   DEC lowerPlanetEntropyStatus
+
+UpdateLowerPlanetEntropy   
+        DEC lowerPlanetEntropyStatus
         BNE b5EAE
         INC currentEntropy
 b5EAE   LDA lowerPlanetEntropyStatus
@@ -4375,7 +4413,7 @@ b62D2   JSR PlaySoundEffects
 txtProgressStatusLine1 .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
 txtProgressStatusLine2 .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READY"
 
-transferToOtherPlanetSoundEffect2 .BYTE $00,$00,$20,$04,$00
+transferToUpperPlanetSoundEffect  .BYTE $00,$00,$20,$04,$00
                                   .BYTE $00,$00,$03,$02,$00
                                   .BYTE $00,$00,$21,$04,$00
 f6344                             .BYTE $00,$00,$60,$01,$02
@@ -4384,7 +4422,8 @@ f6344                             .BYTE $00,$00,$60,$01,$02
                                   .BYTE $02,$05,$01,<f6344,>f6344
                                   .BYTE $00,$00,$20,$04,$00
                                   .BYTE $00,$80,<f7BCA,>f7BCA,$00
-transferToOtherPlanetSoundEffect1 .BYTE $00,$00,$20,$04,$00
+transferToLowerPlanetSoundEffect
+                                  .BYTE $00,$00,$20,$04,$00
                                   .BYTE $00,$00,$03,$02,$00
                                   .BYTE $00,$00,$21,$04,$00
 f6371                             .BYTE $00,$00,$A0,$01,$02
@@ -5231,7 +5270,7 @@ b69F0   LDA #$00
         JMP SetUpGameScreen
 
 b6A02   JSR UpdateEnemiesLeft
-        JSR UpdatePlanetEntropyStatus
+        JSR InitializePlanetEntropyStatus
         JSR UpdateDisplayedScoringRate
         LDA levelRestartInProgress
         BEQ b6A1C
@@ -5533,16 +5572,17 @@ UpdateGilbyPositionAndColor
         LDA currentGilbySprite
         STA Sprite0Ptr
         STA previousGilbySprite
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         STA $D001    ;Sprite 0 Y Pos
         LDX currEnergyTop
         LDA energyLevelToGilbyColorMap,X
-        LDX amountToDecreaseEnergyByTopPlanet
+        LDX extraAmountToDecreaseEnergyByTopPlanet
         BEQ b6C1A
         LDA processJoystickFrameRate
-b6C1A   LDY valueIsAlwaysZero
+b6C1A   LDY setToZeroIfOnUpperPlanet
         BEQ b6C21
-        LDA #$0B
+        ; Set the color of the lower planet gilby to grey.
+        LDA #GRAY1
 b6C21   STA $D027    ;Sprite 0 Color
 b6C24   RTS
 
@@ -5665,10 +5705,10 @@ DrawLowerPlanet
         ; Draw the lower planet gilby
         LDA #$FF
         SEC
-        SBC gilbyVerticalPosition
+        SBC gilbyVerticalPositionUpperPlanet
         ADC #$07
         STA $D001    ;Sprite 0 Y Pos
-        STA unusedLandingVariable
+        STA gilbyVerticalPositionLowerPlanet
         LDA currentGilbySprite
         CLC
         ADC #$13 ; Converts the gilby sprite to the lower planet version
@@ -5687,14 +5727,16 @@ b6D07   LDX currentPlanetBackgroundColor1
         ; Update the color of the lower planet gilby to match its energy level
         LDX currEnergyBottom
         LDA energyLevelToGilbyColorMap,X
-        LDX amountToDecreaseEnergyByBottomPlanet
+        LDX extraAmountToDecreaseEnergyByBottomPlanet
         BEQ b6D2C
 
         LDA processJoystickFrameRate
-b6D2C   LDY valueIsAlwaysZero
+
+b6D2C   LDY setToZeroIfOnUpperPlanet
         BNE b6D33
 
-        LDA #$0B
+        ; Set the color of the lower planet gilby to grey.
+        LDA #GRAY1
 b6D33   STA $D027    ;Sprite 0 Color (lower planet gilby)
 
 ;------------------------------------------------------------------
@@ -5888,10 +5930,10 @@ b6EAF   LDA #$02
 b6EC4   LDA #$01
         STA gilbyIsOverLand
 
-b6EC9   LDA valueIsAlwaysZero
-        BEQ b6EF6
+b6EC9   LDA setToZeroIfOnUpperPlanet
+        BEQ JoystickNormalMode
 
-        ; Reverses the joystick input if valueIsAlwaysZero is set.
+        ; Reverses the joystick input if we're on the lower planet. 
         LDA joystickInput
         AND #$10
         STA tempVarStorage
@@ -5912,7 +5954,8 @@ b6EEF   ORA tempLoPtr3
         ORA tempVarStorage
         STA joystickInput
 
-b6EF6   LDA levelEntrySequenceActive
+JoystickNormalMode   
+        LDA levelEntrySequenceActive
         BNE b6E8D
 
         LDA previousJoystickAction
@@ -5976,7 +6019,7 @@ b6F54   LDA joystickInput
 ;------------------------------------------------------------------
 JoystickPushedUpWhileLandGilbyAirborneOverSea
         ; Joystick pushed up
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         CMP #$6D
         BNE b6F98
 
@@ -5987,7 +6030,7 @@ JoystickPushedUpWhileLandGilbyAirborneOverSea
         STA currentSoundEffectHiPtr
         LDA #$FA
         STA gilbyLandingJumpingAnimationYPosOffset
-        DEC gilbyVerticalPosition
+        DEC gilbyVerticalPositionUpperPlanet
         LDA #$11
         STA backupGilbySpriteIndex
         STA gilbySpriteIndex
@@ -6072,7 +6115,7 @@ j700F
 ; JoystickPushedUpWhileOnLand
 ;------------------------------------------------------------------
 JoystickPushedUpWhileOnLand
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         CMP #$6D
         BNE b703A
         LDA #$FA
@@ -6082,7 +6125,7 @@ JoystickPushedUpWhileOnLand
         LDA #>soundGilbyJumpOnLand
         STA currentSoundEffectHiPtr
         JSR ResetSoundDataPtr1
-        DEC gilbyVerticalPosition
+        DEC gilbyVerticalPositionUpperPlanet
 b703A   RTS
 
 ;------------------------------------------------------------------
@@ -6131,7 +6174,7 @@ MaybePreviousActionWasSomething
         CMP #LANDED ; Looks at previousJoystickAction
         BNE RightJoystickPressedWithPreviousAction
         JSR ProcessFireButtonPressed
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         CMP #$6D
         BNE b707D
         LDA #<gilbyWalkingSound
@@ -6296,29 +6339,29 @@ b7180   RTS
 b7181   LDA joystickInput
         AND #$01
         BNE b71A4
-        DEC gilbyVerticalPosition
-        DEC gilbyVerticalPosition
-        LDA gilbyVerticalPosition
+        DEC gilbyVerticalPositionUpperPlanet
+        DEC gilbyVerticalPositionUpperPlanet
+        LDA gilbyVerticalPositionUpperPlanet
         AND #$FE
         CMP #$30
         BNE b719D
-        INC gilbyVerticalPosition
-        INC gilbyVerticalPosition
-b719D   LDA gilbyVerticalPosition
+        INC gilbyVerticalPositionUpperPlanet
+        INC gilbyVerticalPositionUpperPlanet
+b719D   LDA gilbyVerticalPositionUpperPlanet
         STA $D001    ;Sprite 0 Y Pos
         RTS
 
 b71A4   LDA joystickInput
         AND #$02
         BNE b7180
-        INC gilbyVerticalPosition
-        INC gilbyVerticalPosition
-        LDA gilbyVerticalPosition
+        INC gilbyVerticalPositionUpperPlanet
+        INC gilbyVerticalPositionUpperPlanet
+        LDA gilbyVerticalPositionUpperPlanet
         AND #$F0
         CMP #$70
         BNE b719D
-        DEC gilbyVerticalPosition
-        DEC gilbyVerticalPosition
+        DEC gilbyVerticalPositionUpperPlanet
+        DEC gilbyVerticalPositionUpperPlanet
         BNE b719D
         ;Fall through?
 
@@ -7018,7 +7061,7 @@ b75E3   LDA backupGilbySpriteIndex
         LDA previousJoystickAction
         CMP #HORIZONTAL_MOVEMENT
         BNE b7601
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         CMP #$6D
         BNE b7601
         LDA #<gilbyWalkingSound
@@ -7031,8 +7074,8 @@ b7601   LDX gilbySpriteIndex
         RTS
 
 gilbyLandingJumpingAnimationYPosOffset .BYTE $01
-gilbyVerticalPosition                  .BYTE $3F
-unusedLandingVariable                  .BYTE $CA
+gilbyVerticalPositionUpperPlanet                  .BYTE $3F
+gilbyVerticalPositionLowerPlanet                  .BYTE $CA
 gilbyLandingFrameRate                  .BYTE $01
 gilbyJumpingAndLandingFrameRate        .BYTE $03
 ;------------------------------------------------------------------
@@ -7049,7 +7092,7 @@ b761B   LDA #$02
         STA gilbyLandingFrameRate
         LDA gilbyIsLanding
         BEQ b761A
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         CMP #$6D
         BEQ b761A
         DEC gilbyJumpingAndLandingFrameRate
@@ -7058,13 +7101,13 @@ b761B   LDA #$02
 GilbyLandingLoop
         CLC
         ADC gilbyLandingJumpingAnimationYPosOffset
-        STA gilbyVerticalPosition
+        STA gilbyVerticalPositionUpperPlanet
         AND #$F0
         CMP #$70
         BNE b7643
         LDA #$6D
-        STA gilbyVerticalPosition
-b7643   LDA gilbyVerticalPosition
+        STA gilbyVerticalPositionUpperPlanet
+b7643   LDA gilbyVerticalPositionUpperPlanet
         STA $D001    ;Sprite 0 Y Pos
         RTS
 
@@ -7074,11 +7117,11 @@ b764A   LDA #$03
         LDA gilbyLandingJumpingAnimationYPosOffset
         CMP #$08
         BEQ b765F
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         JMP GilbyLandingLoop
 
 b765F   DEC gilbyLandingJumpingAnimationYPosOffset
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         JMP GilbyLandingLoop
 
 bulletDirectionArray .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -7122,7 +7165,7 @@ b76A8   LDA #$B5
         STA upperPlanetGilbyBulletXPos,X
         LDA #$00
         STA upperPlanetGilbyBulletMSBXPosValue,X
-        LDA gilbyVerticalPosition
+        LDA gilbyVerticalPositionUpperPlanet
         CLC
         ADC #$04
         STA upperPlanetGilbyBulletYPos,X
@@ -7156,7 +7199,7 @@ b76DF   LDA previousJoystickAction
         LDA #>airborneBulletSoundEffect
         STA secondarySoundEffectHiPtr
 
-b76F8   LDA gilbyVerticalPosition
+b76F8   LDA gilbyVerticalPositionUpperPlanet
         CLC
         ADC #$06
         STA upperPlanetGilbyBulletYPos,X
