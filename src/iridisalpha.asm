@@ -1790,6 +1790,7 @@ MaybeTransferToOtherPlanet
         BNE JumpToGetNewShipDataFromDataStore
         LDA valueIsAlwaysZero
         BNE b4D0D
+
         JSR ResetSoundDataPtr1
         LDA #<transferToOtherPlanetSoundEffect1
         STA currentSoundEffectLoPtr
@@ -1797,6 +1798,7 @@ MaybeTransferToOtherPlanet
         STA currentSoundEffectHiPtr
         LDA #$08
         BNE b4D1C
+
 b4D0D   JSR ResetSoundDataPtr1
         LDA #<transferToOtherPlanetSoundEffect2
         STA currentSoundEffectLoPtr
@@ -1841,6 +1843,7 @@ UpdateEnergyLevelsAfterCollision
         STA currentGilbySpeed
         LDA valueIsAlwaysZero
         BEQ b4D72
+
         LDA amountToDecreaseEnergyByBottomPlanet
         BNE b4D7F
         ; Y is still $23.
@@ -1848,6 +1851,7 @@ UpdateEnergyLevelsAfterCollision
         JSR AugmentAmountToDecreaseEnergyByBountiesEarned
         STA amountToDecreaseEnergyByBottomPlanet
         BNE b4D7F
+
 b4D72   LDA amountToDecreaseEnergyByTopPlanet
         BNE b4D7F
         ; Y is still $23.
@@ -3834,9 +3838,11 @@ UpdatePlanetEntropyStatus
 
 b5E5D   LDA valueIsAlwaysZero
         BEQ b5E69
+
         LDA #$08
         STA lowerPlanetEntropyStatus
         BNE b5E6E
+
 b5E69   LDA #$08
         STA upperPlanetEntropyStatus
 b5E6E   DEC entropyUpdateRate
@@ -5918,7 +5924,7 @@ b6F03
 
         ;Check if joystick pushed to left.
         LDA joystickInput
-        AND #$04
+        AND #JOYSTICK_LEFT
         BNE b6F2E
 
         ; Joystick pushed to left
@@ -5938,7 +5944,7 @@ b6F03
 
         ;Check if joystick pushed to right.
 b6F2E   LDA joystickInput
-        AND #$08
+        AND #JOYSTICK_RIGHT
         BNE b6F54
 
         ; Joystick pushed to right
@@ -5957,7 +5963,7 @@ b6F2E   LDA joystickInput
 
         ;Check if joystick pushed down.
 b6F54   LDA joystickInput
-        AND #$01
+        AND #JOYSTICK_UP
         BNE b6F98
 
         ; Joystick pushed up
@@ -7382,7 +7388,7 @@ b787C   LDY levelRestartInProgress
         LDY gilbyHasJustDied
         BNE ReturnEarlyFromKeyboardCheck
 
-        CMP #$3E ; Q pressed, to quit game
+        CMP #KEY_Q ; Q pressed, to quit game
         BNE CheckF1Pressed
 
         ; Q was pressed, get ready to quit game.
@@ -7390,7 +7396,7 @@ b787C   LDY levelRestartInProgress
         RTS
 
 CheckF1Pressed   
-        CMP #$04 ; F1 Pressed
+        CMP #KEY_F1_F2 ; F1 Pressed
         BNE CheckSpacePressed
         INC f1WasPressed
         INC pauseModeSelected
@@ -7398,7 +7404,7 @@ ReturnFromKeyboardCheck
         RTS
 
 CheckSpacePressed   
-        CMP #$3C ; Space pressed
+        CMP #KEY_SPACE ; Space pressed
         BNE CheckYPressed
         INC progressDisplaySelected
         RTS
@@ -7408,7 +7414,7 @@ CheckSpacePressed
         ; first character in the hiscore table. Not sure
         ; what this hack is for, testing?
 CheckYPressed   
-        CMP #$19 ; Y Pressed
+        CMP #KEY_Y ; Y Pressed
         BNE ReturnFromKeyboardCheck
         LDA canAwardBonus
         CMP #$1C
