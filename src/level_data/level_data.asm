@@ -64,19 +64,158 @@ planet4Level19Data
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $00,$00,$02,$08,$00,$04,$0C,$00
-f1918
-        .BYTE $09,$2C,$2D,$00,$2C,$2D,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE $40,$19,$00,$23,$02,$02,$01,$23
-        .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
-        .BYTE <f1940,>f1940,<f1940,>f1940
-        .BYTE $00,$00,$00,$02,$00,$00,$00,$00
-f1940
-        .BYTE $05,$E8,$EC,$01,$E8,$EC,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$10
-        .BYTE $00,$00,$80,$80,$01,$01,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+planet4Level19Additional
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $09
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE LOZENGE,LOZENGE+$01
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $00
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE LOZENGE,LOZENGE+$01
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $20
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE $40,$19
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $00
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $23
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $01
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $23
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE <planet4Level19Additional2ndWave,>planet4Level19Additional2ndWave
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+        .BYTE <planet4Level19Additional2ndWave,>planet4Level19Additional2ndWave
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $00
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $02
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
+planet4Level19Additional2ndWave
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $05
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE SPINNING_RING1,SPINNING_RING4 + $01
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $01
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE SPINNING_RING1,SPINNING_RING4 + $01
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $10
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE $00,$00
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $80
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $80
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $01
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $01
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $00
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $00
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE $00,$00
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE $00,$00
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE $00,$00
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+        .BYTE $00,$00
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $00
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $00
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 
 planet2Level7Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -1469,7 +1608,7 @@ planet3Level4Data
         .BYTE $04
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $28,$1C
+        .BYTE <gilbyLookingLeft,>gilbyLookingLeft
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
         .BYTE $00,$00
@@ -1697,7 +1836,7 @@ planet3Level6Data
         .BYTE $04
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $F0,$1C
+        .BYTE <planet3Level6Additional,>planet3Level6Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
         .BYTE $00,$00
@@ -1756,13 +1895,82 @@ planet3Level6Data
         .BYTE $10
         ; Byte 40: (Index $27) Unused bytes.
         .BYTE $00
-f1CF0
-        .BYTE $0F,$E7,$E8,$00,$E7,$E8,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <nullPtr,>nullPtr,$FC,$23,$01,$02,$00,$23
-        .BYTE <nullPtr,>nullPtr,<defaultExplosion,>defaultExplosion
-        .BYTE <defaultExplosion,>defaultExplosion,<defaultExplosion,>defaultExplosion
-        .BYTE $00,$00,$00,$04,$00,$00,$00,$00
+planet3Level6Additional
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $0F
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE SMALLDOT,SMALLDOT+$01
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $00
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE SMALLDOT,SMALLDOT+$01
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $20
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $FC
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $23
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $01
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $00
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $23
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE <defaultExplosion,>defaultExplosion
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE <defaultExplosion,>defaultExplosion
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+        .BYTE <defaultExplosion,>defaultExplosion
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $00
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $04
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet1Level17Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -3609,7 +3817,7 @@ planet5Level5Data
         .BYTE $05
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $40,$9C
+        .BYTE <planet5Level5Additional,>planet5Level5Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
         .BYTE $00,$00
@@ -3685,7 +3893,7 @@ planet5Level5Data2ndStage
         .BYTE $05
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $40,$9C
+        .BYTE <planet5Level5Additional,>planet5Level5Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
         .BYTE $00,$00
@@ -3744,13 +3952,82 @@ planet5Level5Data2ndStage
         .BYTE $00
         ; Byte 40: (Index $27) Unused bytes.
         .BYTE $00
-f9C40
-        .BYTE $07,FLYING_DOT1,FLYING_DOT1+$02,$03,FLYING_DOT1,FLYING_DOT1+$02,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <nullPtr,>nullPtr,$FE,$00,$01,$00,$00,$00
-        .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
-        .BYTE <defaultExplosion,>defaultExplosion,<defaultExplosion,>defaultExplosion
-        .BYTE $00,$00,$00,$04,$00,$00,$00,$00
+planet5Level5Additional
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $07
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE FLYING_DOT1,FLYING_DOT1+$02
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $03
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE FLYING_DOT1,FLYING_DOT1+$02
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $20
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $FE
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $00
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $01
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $00
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $00
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $00
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE <defaultExplosion,>defaultExplosion
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+        .BYTE <defaultExplosion,>defaultExplosion
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $00
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $04
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet3Level10Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -4148,7 +4425,7 @@ fighterShipAsExplosion
         .BYTE $01
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $68,$9C
+        .BYTE <planet3Level10Data,>planet3Level10Data
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
         .BYTE $00,$00
@@ -5424,13 +5701,82 @@ planet4Level1Data2ndStage
         ; Byte 40: (Index $27) Unused bytes.
         .BYTE $00
 planet3Level1Data
-        .BYTE $10,$FC,$FF,$02,$FC,$FF,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <planet3Level1Data,>planet3Level1Data,$00,$00,$02,$02,$01,$01
-        .BYTE $00,$00,$00,$00,$50,$18,$C8
-pieceOfPlanetData
-        .BYTE $18
-        .BYTE $00,$00,$01,$01,$53,$41,$56,$2A
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $10
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE $FC,$FF
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $02
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE $FC,$FF
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $20
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE <planet3Level1Data,>planet3Level1Data
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $00
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $00
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $01
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $01
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE $00,$00
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE $00,$00
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE $50,$18
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+pieceOfPlanetData=*+$01
+        .BYTE <defaultExplosion,>defaultExplosion
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $01
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $01
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $53
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $41
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $56
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $2A
 planet2Level1Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -7199,7 +7545,7 @@ planet2Level19Data
         .BYTE $0C
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $C0,$A3
+        .BYTE <landGilbyAsEnemy,>landGilbyAsEnemy
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
         .BYTE $00,$00
@@ -7258,13 +7604,82 @@ planet2Level19Data
         .BYTE $38
         ; Byte 40: (Index $27) Unused bytes.
         .BYTE $00
-fA3C0
-        .BYTE $0A,$C1,$C8,$04,$D4,$DC,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE <nullPtr,>nullPtr,$FB,$24,$01,$02,$00,$23
-        .BYTE <nullPtr,>nullPtr,<fA3C0,>fA3C0
-        .BYTE <planet2Level19Data2ndStage,>planet2Level19Data2ndStage,<planet2Level19Data,>planet2Level19Data
-        .BYTE $00,$00,$04,$02,$00,$00,$00,$00
+landGilbyAsEnemy
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $0A
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE LAND_GILBY1,LAND_GILBY8
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $04
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE LAND_GILBY_LOWERPLANET1,LAND_GILBY_LOWERPLANET9
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $00
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $FB
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $24
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $01
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $00
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $23
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE <landGilbyAsEnemy,>landGilbyAsEnemy
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE <planet2Level19Data2ndStage,>planet2Level19Data2ndStage
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+        .BYTE <planet2Level19Data,>planet2Level19Data
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $04
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $02
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet2Level19Data2ndStage
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -9334,7 +9749,7 @@ planet5Level14Data
         .BYTE $06
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $48,$A8
+        .BYTE <llamaWaveData,>llamaWaveData
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
         .BYTE $00,$00
@@ -9393,13 +9808,82 @@ planet5Level14Data
         .BYTE $60
         ; Byte 40: (Index $27) Unused bytes.
         .BYTE $00
-fA848
-        .BYTE $09,$FF,$00,$00,$FF,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE <nullPtr,>nullPtr,$04,$00,$01,$02,$00,$01
-        .BYTE <nullPtr,>nullPtr,<nullPtr,>nullPtr
-        .BYTE <spinningRings,>spinningRings,<lickerShipWaveData,>lickerShipWaveData
-        .BYTE $00,$00,$03,$01,$00,$00,$00,$00
+llamaWaveData
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $09
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE LLAMA,$00
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $00
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE LLAMA,$00
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $00
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $04
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $00
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $01
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $00
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $01
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE <nullPtr,>nullPtr
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE <spinningRings,>spinningRings
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+        .BYTE <lickerShipWaveData,>lickerShipWaveData
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $03
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $01
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
 planet5Level15Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -9629,14 +10113,87 @@ planet2Level15Data
         ; Byte 40: (Index $27) Unused bytes.
         .BYTE $00
 planet2Level15Data2ndStage
-        .BYTE $08,FLAG_BAR,FLAG_BAR+$01,$00,FLAG_BAR,FLAG_BAR+$01,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$20
-        .BYTE <spinningRings,>spinningRings,$00,$24,$02,$02,$01,$23
-        .BYTE $00,$00,$00,$00,$00,$00,$C8
-fA907   .BYTE $18
-        .BYTE $00,$00,$00,$10,$00,$00,$00,$00
+        ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
+        ; color value for the ship sprite.
+        .BYTE $08
+        ; Byte 2 (Index $01): Sprite value for the attack ship for the upper planet.
+        ; Byte 3 (Index $02): The 'end' sprite value for the attack ship's animation
+        ; for the upper planet.
+        .BYTE FLAG_BAR,FLAG_BAR+$01
+        ; Byte 4 (Index $03): The animation frame rate for the attack ship.
+        .BYTE $00
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
+        .BYTE FLAG_BAR,FLAG_BAR+$01
+        ; Byte 7 (Index $06): Whether a specific attack behaviour is used.
+        .BYTE $00
+        ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
+        ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
+        .BYTE $00,$00
+        ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
+        ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
+        .BYTE $00,$00
+        ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
+        .BYTE $00
+        ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
+        ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
+        .BYTE $00,$00
+        ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
+        .BYTE $00
+        ; Byte 16 (Index $0F): Update rate for attack wave 
+        .BYTE $20
+        ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
+        ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
+        .BYTE <spinningRings,>spinningRings
+        ; Byte 19 (Index $12): X Pos movement for attack ship.
+        .BYTE $00
+        ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
+        ; An index into yPosMovementPatternForShips1
+        .BYTE $24
+        ; Byte 21 (Index $14): X Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 22 (Index $15): Y Pos Frame Rate for Attack ship.
+        .BYTE $02
+        ; Byte 23 (Index $16): Stickiness factor, does the enemy stick to the player
+        ; sapping their energy if they're near them?
+        .BYTE $01
+        ; Byte 24 (Index $17): Does the enemy gravitate quickly toward the player when its
+        ; been shot? (Typical lickership behaviour) 
+        .BYTE $23
+        ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
+        ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
+        .BYTE $00,$00
+        ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
+        ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
+        .BYTE $00,$00
+        ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
+        ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
+        .BYTE $00,$00
+        ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
+        ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
+        ; fA907 used to live here (at $18).
+        .BYTE <defaultExplosion,>defaultExplosion
+        ; Byte 33 (Index $20): Unused.
+        .BYTE $00
+        ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
+        .BYTE $00
+        ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level. 
+        .BYTE $00
+        ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy? 
+        .BYTE $10
+        ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?  
+        .BYTE $00
+        ; Byte 38: (Index $25) Number of waves in data.
+        .BYTE $00
+        ; Byte 39: (Index $26) Number of ships in wave.
+        .BYTE $00
+        ; Byte 40: (Index $27) Unused bytes.
+        .BYTE $00
+
+        ; fA910
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+
 planet3Level16Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -10410,4 +10967,5 @@ fAAB0
         .BYTE $00,$00,$00,$00,$00,$00,$00,$10
 
 ; vim: tabstop=2 shiftwidth=2 expandtab
+
 

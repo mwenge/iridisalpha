@@ -66,7 +66,8 @@ planet1Level1Data2ndStage
 """
 s = ''.join(sys.stdin.readlines())
 bs = [b.strip() for b in re.split("[ ,\n]", s) if b and "BYTE" not in b]
-seps = ["planet","second","gilby","sticky","spinning","bubble","teardrop","cumming"
+seps = ["f9C40","fA3C0","fA848","f1168", "f1190","f1488","f1550","f15C8", "f15F0", "f1618",
+        "f1CF0","f1918", "f1940","planet","second","gilby","sticky","spinning","bubble","teardrop","cumming"
         ,"spinner","fighter","flowchart","licker","pin","piece", "bar", "coptic","default"]
 for i,b in enumerate(bs):
     if not any([b.startswith(k) for k in seps]):

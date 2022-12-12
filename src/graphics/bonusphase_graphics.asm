@@ -1013,16 +1013,15 @@ startofBonusPhaseSprites
         .BYTE $A0,$02,$AA,$80,$00,$2A,$00,$FF
         ; End of Sprite Data
 
-        .BYTE $FF,$00,$FF,$00,$FF
-        .BYTE $00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
-        .BYTE $FF,$00,$FF,$00,$00,$00,$5E,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
+        .BYTE $FF,$00,$FF,$00,$FF,$00,$00,$00
+        .BYTE $5E,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
@@ -1053,7 +1052,8 @@ startofBonusPhaseSprites
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
-        .BYTE $FF,$00,$FF,$00,$00,$00,$5E,$00
+        .BYTE $FF,$00,$FF,$00,$FF,$00,$00,$00
+        .BYTE $5E,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
@@ -1084,8 +1084,9 @@ startofBonusPhaseSprites
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
+        .BYTE $FF,$00,$FF,$00,$FF,$00,$00,$00
+        .BYTE $5E,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
-        .BYTE $FF,$00,$FF,$00,$00,$00,$5E,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
@@ -1108,13 +1109,12 @@ startofBonusPhaseSprites
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
         .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
-        .BYTE $FF,$00,$FF,$00,$FF,$00,$FF,$00
-        .BYTE $FF,$00,$FF,$00,$FF,$00
 
+MainControlLoop = $4000
 pE800   SEI 
-        LDA #>$4000
+        LDA #>MainControlLoop
         STA $0319    ;NMI
-        LDA #<$4000
+        LDA #<MainControlLoop
         STA $0318    ;NMI
         LDA #$10
         STA $DD04    ;CIA2: Timer A: Low-Byte

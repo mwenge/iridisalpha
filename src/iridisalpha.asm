@@ -105,11 +105,14 @@ LaunchCurrentProgram
         STA $D021    ;Background Color 0
         STA f7PressedOrTimedOutToAttractMode
         STA unusedVariable2
+
         LDA mifDNAPauseModeActive
-        BEQ b082F
+        BEQ DNANotActive
+
         JMP LaunchDNA
 
-b082F   LDX #$F8
+DNANotActive   
+        LDX #$F8
         JSR SetUpMainSound
         LDA #$7F
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
@@ -531,30 +534,36 @@ titleScreenGilbiesYPosOffsetArray .BYTE $FC,$FB,$FA,$F9,$08,$07,$06
 ;------------------------------------------------------------------
 TitleScreenUpdateSpritePositions
         LDX #$00
-b0BC3   LDA titleScreenGilbiesYPosARray,X
+TitleScreenUpdateSpritesLoop   
+        LDA titleScreenGilbiesYPosARray,X
         SEC
         SBC titleScreenGilbiesYPosOffsetArray,X
         STA titleScreenGilbiesYPosARray,X
         DEC titleScreenGilbiesYPosOffsetArray,X
         LDA titleScreenGilbiesYPosOffsetArray,X
         CMP #$F8
-        BNE b0BE1
+        BNE DontResetTitleSpritesYPos
         LDA #$08
         STA titleScreenGilbiesYPosOffsetArray,X
         LDA #$D0
         STA titleScreenGilbiesYPosARray,X
-b0BE1   INC titleScreenGilbiesXPosArray,X
+
+DontResetTitleSpritesYPos
+        INC titleScreenGilbiesXPosArray,X
         LDA titleScreenGilbiesXPosArray,X
         CMP #$C0
-        BNE b0BF0
+        BNE DontResetTitleSpritesXPos
+
         LDA #$08
         STA titleScreenGilbiesXPosArray,X
-b0BF0   INX
+
+DontResetTitleSpritesXPos   
+        INX
         CPX #$07
-        BNE b0BC3
+        BNE TitleScreenUpdateSpritesLoop
 
         DEC titleScreenSpriteCycleCounter
-        BNE b0C0E
+        BNE ReturnFromTitleScreenUpdateSprites
 
         LDA #$04
         STA titleScreenSpriteCycleCounter
@@ -567,12 +576,13 @@ b0BF0   INX
         ; animated effect as it bounces along the screen.
         INC currentTitleScreenGilbySpriteValue
         LDA currentTitleScreenGilbySpriteValue
-        CMP #$C8
-        BNE b0C0E
-        LDA #$C1
+        CMP #LAND_GILBY8
+        BNE ReturnFromTitleScreenUpdateSprites
+        LDA #LAND_GILBY1
         STA currentTitleScreenGilbySpriteValue
 
-b0C0E   RTS
+ReturnFromTitleScreenUpdateSprites   
+        RTS
 
 .enc "petscii"  ;define an ascii->petscii encoding
         .cdef "  ", $20  ;characters
@@ -604,20 +614,21 @@ titleScreenTextLine5               .TEXT "LAST GILBY HIT 0000000; MODE IS NOW EA
 ;------------------------------------------------------------------
 DrawTitleScreenText
         LDX #$28
-b0CE8   LDA titleScreenTextLine1 - $01,X
-        AND #$3F
+DrawTitleTextLoop   
+        LDA titleScreenTextLine1 - $01,X
+        AND #ASCII_BITMASK
         STA SCREEN_RAM + LINE11_COL39,X
         LDA titleScreenTextLine2 - $01,X
-        AND #$3F
+        AND #ASCII_BITMASK
         STA SCREEN_RAM + LINE13_COL39,X
         LDA titleScreenTextLine3 - $01,X
-        AND #$3F
+        AND #ASCII_BITMASK
         STA SCREEN_RAM + LINE15_COL39,X
         LDA titleScreenTextLine4 - $01,X
-        AND #$3F
+        AND #ASCII_BITMASK
         STA SCREEN_RAM + LINE17_COL39,X
         LDA titleScreenTextLine5 - $01,X
-        AND #$3F
+        AND #ASCII_BITMASK
         STA SCREEN_RAM + LINE19_COL39,X
 
         LDA #GRAY2
@@ -627,12 +638,14 @@ b0CE8   LDA titleScreenTextLine1 - $01,X
         STA COLOR_RAM + LINE17_COL39,X
         STA COLOR_RAM + LINE19_COL39,X
         DEX
-        BNE b0CE8
+        BNE DrawTitleTextLoop
+
         LDX #$06
-b0D26   LDA lastBlastScore,X
+LoadLastScoreLoop   
+        LDA lastBlastScore,X
         STA SCREEN_RAM + LINE20_COL15,X
         DEX
-        BPL b0D26
+        BPL LoadLastScoreLoop
         RTS
 
 ;------------------------------------------------------------------
@@ -1237,27 +1250,29 @@ shipCollidedWithGilbySound  .BYTE $00,$00,$0F,$05,$00
 ;------------------------------------------------------------------
 SetXToIndexOfShipThatNeedsReplacing
         LDA activeShipsWaveDataHiPtrArray,X
-        BEQ b49B5
+        BEQ FoundOneSoReturn
         LDA levelEntrySequenceActive
-        BNE b49B2
+        BNE ReturnFromSearchingForShips
         INX
 
         ; Have we tried all the top planet ships without finding one
         ; that is dead (i.e. pointer set to zeros) and needs replacing?
         CPX #$06
-        BEQ b49B2
+        BEQ ReturnFromSearchingForShips
         ; Have we tried all the bottom planet ships without finding one
         ; that is dead (i.e. pointer set to zeros) and needs replacing?
         CPX #$0C
-        BEQ b49B2
+        BEQ ReturnFromSearchingForShips
 
         ; Keep checking.
         BNE SetXToIndexOfShipThatNeedsReplacing
 
-b49B2   LDA #$00
+ReturnFromSearchingForShips   
+        LDA #$00
         RTS
 
-b49B5   LDA #$FF
+FoundOneSoReturn   
+        LDA #$FF
 
 ReturnEarly
         RTS
@@ -1700,26 +1715,35 @@ ContinueCalculatingScoreFromHit
         ; from the wave data.
         LDY #$22
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4CB1
+        BEQ LoadExplosionAnimation
         LDA attractModeCountdown
-        BNE b4CB1
+        BNE LoadExplosionAnimation
+
+        ; Are we on the bottom planet?
         TXA
         AND #$08
-        BNE b4CAB
+        BNE UpdateProgressBottomPlanet
+
+        ; We're on the top planet.
         JSR IncreaseEnergyTopOnly
         JSR UpdateTopPlanetProgressData
-        JMP b4CB1
+        JMP LoadExplosionAnimation
 
-b4CAB   JSR UpdateBottomPlanetProgressData
+UpdateProgressBottomPlanet   
+        JSR UpdateBottomPlanetProgressData
         JSR IncreaseEnergyBottomOnly
 
         ; Load the explosion animation, if there is one. For most
         ; enemies this is the spinning rings defined by spinningRings.
-b4CB1   LDY #$1D
+LoadExplosionAnimation   
+        LDY #$1D
         LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
+        ; There's a Hi Ptr for the explosion animation, so decrement
+        ; Y to point it at the Lo Ptr and load the ptrs as the new
+        ; wave data for the enemy.
         DEY
-        JMP UpdateWaveDataForCurrentEnemy
+        JMP UpdateWaveDataPointersForCurrentEnemy
         ;Returns
 
 ;------------------------------------------------------------------
@@ -1732,20 +1756,25 @@ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         ; seed turning into a licker ship.
         LDA shipHasAlreadyBeenHitByGilby,X
         BEQ JumpToGetNewShipDataFromDataStore
+
         LDA #$00
         STA shipHasAlreadyBeenHitByGilby,X
+
         ; Check if there is another set of wave data to get for this wave when it is first hit.
         LDY #$1F
         LDA (currentShipWaveDataLoPtr),Y
         BEQ JumpToGetNewShipDataFromDataStore
+
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         ; Is there a rate at which new enemies are added?
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
         BEQ CheckCollisionType
+
         TXA
         AND #$08 ; Is X pointing to lower planet ships?
         BNE DecrementStepsThenCheckCollisionsForBottomPlanet
+
         ; X is pointing to a top planet ship.
         DEC currentStepsBetweenTopPlanetAttackWaves
         JMP CheckCollisionType
@@ -1802,6 +1831,8 @@ MaybeTransferToOtherPlanet
         ; We're setting setToZeroIfOnUpperPlanet to $08 here to 
         ; indicate we're now on the lower planet.
         LDA #$08
+        ; We always branch to InitializeStateAfterPlanetTransfer
+        ; since A is always $08 here.
         BNE InitializeStateAfterPlanetTransfer
 
 TransferToTheUpperPlanet   
@@ -1870,7 +1901,7 @@ EnergyUpdateTopPlanet
         JSR AugmentAmountToDecreaseEnergyByBountiesEarned
         STA extraAmountToDecreaseEnergyByTopPlanet
 b4D7F   LDY #$1E
-        JMP UpdateWaveDataForCurrentEnemy
+        JMP UpdateWaveDataPointersForCurrentEnemy
         ; Returns
 
 ;------------------------------------------------------------------
@@ -1886,7 +1917,7 @@ GetNewShipDataFromDataStore
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4D98
         DEY
-        JMP UpdateWaveDataForCurrentEnemy
+        JMP UpdateWaveDataPointersForCurrentEnemy
 
 b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
         BEQ b4DAC
@@ -1897,7 +1928,7 @@ b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DAC
         DEY
-        JMP UpdateWaveDataForCurrentEnemy
+        JMP UpdateWaveDataPointersForCurrentEnemy
 
 b4DAC   LDA joystickInput
         AND #$10
@@ -1910,7 +1941,7 @@ b4DAC   LDA joystickInput
         LDA (currentShipWaveDataLoPtr),Y
         BEQ b4DBD
         DEY
-        JMP UpdateWaveDataForCurrentEnemy
+        JMP UpdateWaveDataPointersForCurrentEnemy
         ; Returns
 
 b4DBD   LDA updateRateForAttackShips,X
@@ -1921,28 +1952,39 @@ b4DBD   LDA updateRateForAttackShips,X
         ; This is only set when the current ship data is defaultExplosion
         LDY #$0E
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4DDB
+        BEQ UpdatePointersToWaveDataWhenFirstHit
+
+        ; Are we on the top or bottom planet?
         TXA
         AND #$08
-        BNE b4DD8
+        BNE NewShipDataForBottomPlanet
+
+        ; We're on the top planet.
         DEC currentStepsBetweenTopPlanetAttackWaves
-        JMP b4DDB
+        JMP UpdatePointersToWaveDataWhenFirstHit
 
-b4DD8   DEC currentStepsBetweenBottomPlanetAttackWaves
-b4DDB   LDY #$10
+NewShipDataForBottomPlanet   
+        DEC currentStepsBetweenBottomPlanetAttackWaves
 
-;------------------------------------------------------------------
-; UpdateWaveDataForCurrentEnemy
-;------------------------------------------------------------------
-UpdateWaveDataForCurrentEnemy
+UpdatePointersToWaveDataWhenFirstHit   
+        LDY #$10
         ; Y has been set to $10 above, so we're pulling in the pointer
         ; to the second tranche of wave data for this level. 
         ; Or Y has been set by the caller.
+
+;------------------------------------------------------------------
+; UpdateWaveDataPointersForCurrentEnemy
+;------------------------------------------------------------------
+UpdateWaveDataPointersForCurrentEnemy
         LDA (currentShipWaveDataLoPtr),Y
         PHA
         INY
         LDA (currentShipWaveDataLoPtr),Y
+
+        ; If we have a nullPtr then there's no wave data to get
+        ; so the enemy ship can be cleared out and we can return.
         BEQ ClearDeadShipFromLevelData
+
         STA activeShipsWaveDataHiPtrArray,X
         STA currentShipWaveDataHiPtr
         PLA
@@ -1978,10 +2020,10 @@ ClearDeadShipFromLevelData
         PLA
         RTS
 
-positionRelativeToGilby               .BYTE $00
-updatingWaveData    .BYTE $00
-currentTopPlanet    .BYTE $01
-currentBottomPlanet .BYTE $01
+positionRelativeToGilby .BYTE $00
+updatingWaveData        .BYTE $00
+currentTopPlanet        .BYTE $01
+currentBottomPlanet     .BYTE $01
 
 ;------------------------------------------------------------------
 ; UpdateAttackShipDataForNewShip
@@ -2036,7 +2078,7 @@ UpdateAttackShipDataForNewShip
 b4E6A   LDY #$0C
         LDA indexForActiveShipsWaveData,X
         TAX
-        JMP UpdateWaveDataForCurrentEnemy
+        JMP UpdateWaveDataPointersForCurrentEnemy
 
 MaybeQuicklyGravitatesToGilby
         ; Does the enemy gravitate quickly towards the gilby when it is shot?
@@ -2125,10 +2167,10 @@ NormalAttackShipBehaviour
         ; FIXME: understand the intended behaviour here.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4F55
+        BEQ EarlyReturnFromAttackShipBehaviour
 
         DEC anotherUpdateRateForAttackShips,X
-        BNE b4F55
+        BNE EarlyReturnFromAttackShipBehaviour
         LDA (currentShipWaveDataLoPtr),Y
         STA anotherUpdateRateForAttackShips,X
         TXA
@@ -2140,12 +2182,17 @@ NormalAttackShipBehaviour
         PHA
         LDA upperPlanetAttackShipsYPosArray + $01,Y
         PHA
+
+        ; Are we on the top or bottom planet?
         TXA
         AND #$08
-        BNE b4F4C
+        BNE LowerPlanetAttackShipBehaviour
+
+        ; We're on the upper planet.
         LDX #$02
-b4F2D   JSR SetXToIndexOfShipThatNeedsReplacing
-        BEQ b4F50
+ProcessAttackShipBehaviour   
+        JSR SetXToIndexOfShipThatNeedsReplacing
+        BEQ ResetAndReturnFromAttackShipBehaviour
         LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
         PLA
         STA upperPlanetAttackShipsYPosArray + $01,Y
@@ -2157,18 +2204,24 @@ b4F3F   STA upperPlanetAttackShipsMSBXPosArray + $01,Y
         STA upperPlanetAttackShipsXPosArray + $01,Y
         PLA
         LDY #$07
-        JMP UpdateWaveDataForCurrentEnemy
+        JMP UpdateWaveDataPointersForCurrentEnemy
 
-b4F4C   LDX #$08
-        BNE b4F2D
-b4F50   PLA
+LowerPlanetAttackShipBehaviour   
+        LDX #$08
+        BNE ProcessAttackShipBehaviour
+
+ResetAndReturnFromAttackShipBehaviour   
+        PLA
         PLA
         PLA
         PLA
         TAX
-b4F55   RTS
 
-b4F56   RTS
+EarlyReturnFromAttackShipBehaviour   
+        RTS
+
+EarlyReturnFromAttackShipsPosition   
+        RTS
 
 setToZeroIfOnUpperPlanet .BYTE $00
 currentAttackShipXPos    .BYTE $00
@@ -2204,7 +2257,7 @@ b4F74   LDA upperPlanetAttackShipsXPosArray + $01,Y
         STA nextShipOffset
         JSR UpdateAttackShipsMSBXPosition
 b4F89   LDA upperPlanetAttackShipsMSBXPosArray + $02,Y
-        BMI b4F56
+        BMI EarlyReturnFromAttackShipsPosition
         CLC
         BEQ b4F92
         SEC
@@ -2496,8 +2549,11 @@ b523C   STA SCREEN_RAM + LINE21_COL29,X
                               .BYTE $02,$02,$02,$03,$04,$05,$06,$07
                               .BYTE $08,$30,$30,$30,$20,$18,$10,$0C
                               .BYTE $0A,$06,$04,$02
+
 dataToResetOnPlanet           .BYTE $01,$00,$00,$01,$01,$00,$04,$20
+
                               .BYTE $00
+
 shouldResetPlanetEntropy      .BYTE $00,$08,$08
 unusedVariable1               .BYTE $00
 unusedVariable3               .BYTE $00
@@ -3138,7 +3194,7 @@ UpdateTopPlanetProgressData
         LDA enemiesKilledTopPlanetsSinceLastUpdate,X
         STA enemiesKilledTopPlanetSinceLastUpdate
 b568C   LDA enemiesKilledTopPlanetsSinceLastUpdate,X
-        BNE b56B9
+        BNE ReturnFromPlanetProgress
         INC currentLevelInTopPlanets,X
         LDA currentLevelInTopPlanets,X
         CMP #$14
@@ -3154,7 +3210,8 @@ b569E   LDA #$04
         STA updateLevelForBottomPlanet
         JSR CheckProgressInPlanet
         JSR UpdateLevelText
-b56B9   LDX temporaryStorageForXRegister
+ReturnFromPlanetProgress   
+        LDX temporaryStorageForXRegister
         RTS
 
 ;------------------------------------------------------------------
@@ -3169,7 +3226,7 @@ UpdateBottomPlanetProgressData
         LDA enemiesKilledBottomPlanetsSinceLastUpdate,X
         STA enemiesKilledBottomPlanetSinceLastUpdate
 b56D1   LDA enemiesKilledBottomPlanetsSinceLastUpdate,X
-        BNE b56B9
+        BNE ReturnFromPlanetProgress
         INC currentLevelInBottomPlanets,X
         LDA currentLevelInBottomPlanets,X
         CMP #$14
@@ -3185,7 +3242,7 @@ b56E3   LDA #$04
         STA updateLevelForBottomPlanet
         JSR CheckProgressInPlanet
         JSR UpdateLevelText
-        JMP b56B9
+        JMP ReturnFromPlanetProgress
 
 ;------------------------------------------------------------------
 ; InitializePlanetProgressArrays
@@ -3339,19 +3396,20 @@ GilbyDied
         LDA #$01
         STA gilbyHasJustDied
         LDA levelRestartInProgress
-        BNE b5833
+        BNE ReturnEarlyFromGilbyDied
         LDA attractModeCountdown
-        BNE b5833
+        BNE ReturnEarlyFromGilbyDied
 
         LDX #$00
-b5807   LDA #$FC
+InitializeGilbyExplosion   
+        LDA #TEARDROP_EXPLOSION1
         STA explosionSprite
         LDA #$00
         STA gilbyExplosionColorIndex
         STA explosionXPosOffset1,X
         INX
         CPX #$03
-        BNE b5807
+        BNE InitializeGilbyExplosion
 
         LDA #$01
         STA gilbyExploding
@@ -3365,7 +3423,8 @@ b5807   LDA #$FC
         LDX #$23
         RTS
 
-b5833   RTS
+ReturnEarlyFromGilbyDied   
+        RTS
 
 mapPlanetEntropyToColor  .BYTE WHITE,YELLOW,CYAN,GREEN,PURPLE
 explosionXPosOffSet      .BYTE $02,$06,$00
@@ -3377,10 +3436,11 @@ gilbyExplosionColorIndex .BYTE $08
 ;------------------------------------------------------------------
 ProcessGilbyExplosion
         LDA gilbyExploding
-        BEQ b5847
+        BEQ GilbyIsExploding
         RTS
 
-b5847   LDA #$F0
+GilbyIsExploding   
+        LDA #$F0
         STA Sprite0Ptr
         INC explosionXPosOffset1
         INC explosionXPosOffset1 + $01
@@ -3434,12 +3494,15 @@ CheckAndLoop
 
         INC explosionSprite
         LDA explosionSprite
-        CMP #$FF
-        BNE b58C9
-        LDA #$FC
+        CMP #TEARDROP_EXPLOSION1 + $03
+        BNE ExplosionSpriteStillAnimating
+
+        LDA #TEARDROP_EXPLOSION1
         STA explosionSprite
-b58C9   DEC explosionInProgress
-        BNE b58E8
+
+ExplosionSpriteStillAnimating   
+        DEC explosionInProgress
+        BNE ReturnFromGilbyExplosion
         LDA #$0A
         STA explosionInProgress
         INC gilbyExplosionColorIndex
@@ -3448,10 +3511,11 @@ b58C9   DEC explosionInProgress
         LDY #$02
         STY starFieldInitialStateArray - $01
         CMP #$08
-        BNE b58E8
+        BNE ReturnFromGilbyExplosion
         JMP SetUpLevelRestart
 
-b58E8   RTS
+ReturnFromGilbyExplosion   
+        RTS
 
 explosionInProgress    .BYTE $0A
 gilbyDiedSoundEffect   .BYTE $00,$00,$0F,$0C,$00
@@ -3495,24 +3559,34 @@ b596E   LDA #$C0 ; Starfield sprite
 
         LDA #$01
         STA levelRestartInProgress
+
         JSR SetUpGilbySprite
+
         LDA oldTopPlanetIndex
         STA currentTopPlanetIndex
+
         LDA oldBottomPlanetIndex
         STA currentBottomPlanetIndex
+
         JSR PerformPlanetWarp
+
         LDA #$01
         STA levelEntrySequenceActive
         STA entryLevelSequenceCounter
+
         LDA #<levelRestartSoundEffect1
         STA currentSoundEffectLoPtr
+
         LDA #>levelRestartSoundEffect1
         STA currentSoundEffectHiPtr
+
         LDA #<levelRestartSoundEffect2
         STA secondarySoundEffectLoPtr
+
         LDA #>levelRestartSoundEffect2
         STA secondarySoundEffectHiPtr
-        LDA #$00
+
+        LDA #NO_SPRITES
         STA $D015    ;Sprite display Enable
         JSR ResetSoundDataPtr1
         JMP ResetSoundDataPtr2
@@ -3969,50 +4043,62 @@ txtEnemiesLeftCol2                       .BYTE $30
 ; UpdateEnemiesLeft
 ;------------------------------------------------------------------
 UpdateEnemiesLeft
-        LDA #$30
+        LDA #ZERO
         STA txtEnemiesLeftCol1
         STA txtEnemiesLeftCol2
         LDA enemiesKilledTopPlanetSinceLastUpdate
-        BEQ b5F21
+        BEQ UpdateSpeedometer
 
-b5F0D   JSR UpdateEnemiesLeftStorage
+UpdateEnemiesLeftDisplayUpperPlanet   
+        JSR UpdateEnemiesLeftStorage
         DEC enemiesKilledTopPlanetSinceLastUpdate
-        BNE b5F0D
+        BNE UpdateEnemiesLeftDisplayUpperPlanet
         LDA txtEnemiesLeftCol1
         STA SCREEN_RAM + LINE21_COL7
         LDA txtEnemiesLeftCol2
         STA SCREEN_RAM + LINE21_COL8
 
-b5F21   LDA currentGilbySpeed
-        BNE b5F28
+UpdateSpeedometer   
+        LDA currentGilbySpeed
+        BNE GilbyIsMoving
 
         LDA #$01
-b5F28   PHA
+        ; Update speedomoter
+GilbyIsMoving   
+        ; Push the current speed onto the stack so we can use it
+        ; when updating the lower planet.
+        PHA
         TAY
         LDA colorSequenceArray,Y
         STA COLOR_RAM + LINE21_COL7
         STA COLOR_RAM + LINE21_COL8
 
         LDA lowerPlanetActivated
-        BEQ b5F3A
+        BEQ UpdateEnemiesLeftTextLowerPlanet
 
         ; No lower planet, so return early.
         PLA
         RTS
 
-b5F3A   LDA #$30
+UpdateEnemiesLeftTextLowerPlanet   
+        LDA #ZERO
         STA txtEnemiesLeftCol1
         STA txtEnemiesLeftCol2
         LDA enemiesKilledBottomPlanetSinceLastUpdate
-        BEQ b5F5B
-b5F47   JSR UpdateEnemiesLeftStorage
+        BEQ UpdateSpeedometerLowerPlanet
+
+UpdateEnemiesLeftDisplayLowerPlanet   
+        JSR UpdateEnemiesLeftStorage
         DEC enemiesKilledBottomPlanetSinceLastUpdate
-        BNE b5F47
+        BNE UpdateEnemiesLeftDisplayLowerPlanet
         LDA txtEnemiesLeftCol1
         STA SCREEN_RAM + LINE24_COL7
         LDA txtEnemiesLeftCol2
         STA SCREEN_RAM + LINE24_COL8
-b5F5B   PLA
+
+UpdateSpeedometerLowerPlanet   
+        ; Pull the speed from the stack from when we checked it above.
+        PLA
         TAY
         LDA colorSequenceArray,Y
         STA COLOR_RAM + LINE24_COL7
@@ -5273,7 +5359,7 @@ b6A02   JSR UpdateEnemiesLeft
         JSR InitializePlanetEntropyStatus
         JSR UpdateDisplayedScoringRate
         LDA levelRestartInProgress
-        BEQ b6A1C
+        BEQ LevelRestartNotInProgress
 
 ;------------------------------------------------------------------
 ; EnterMainControlLoop
@@ -5284,25 +5370,30 @@ EnterMainControlLoop
         JSR PlayerKilled
         JMP SetUpGameScreen
 
-b6A1C   LDA controlPanelColorDoesntNeedUpdating
-        BEQ b6A24
+LevelRestartNotInProgress   
+        LDA controlPanelColorDoesntNeedUpdating
+        BEQ ControlPanelColorDoesNotNeedUpdating
         JSR UpdateControlPanelColor
-b6A24   LDA qPressedToQuitGame
-        BEQ b6A31
+
+ControlPanelColorDoesNotNeedUpdating   
+        LDA qPressedToQuitGame
+        BEQ GameNotQuit
 
         ; Player has pressed Q to quit game.
         LDA #$00
         STA qPressedToQuitGame
         JMP MainControlLoop
 
-b6A31   JSR UpdateScores
+GameNotQuit   
+        JSR UpdateScores
         LDA gilbyHasJustDied
-        BNE b6A3E
+        BNE GilbyHasNotDied
 
         LDA pauseModeSelected
         BNE EnterPauseMode
 
-b6A3E   JMP BeginRunningGame
+GilbyHasNotDied   
+        JMP BeginRunningGame
 
 EnterPauseMode
         ; Wait for the player to release the key
@@ -5310,6 +5401,7 @@ EnterPauseMode
         CMP #$40 ; $40 means no key was pressed
         BNE EnterPauseMode
 
+        ; Start up the Made In France pause mode.
         LDA #$00
         STA $D015    ;Sprite display Enable
         LDA #$80
@@ -5340,7 +5432,7 @@ SetUpGameScreen
         STA $D018    ;VIC Memory Control Register
         LDA #$01
         STA controlPanelColorDoesntNeedUpdating
-        LDA #$FF
+        LDA #$FF     ; All sprites.
         STA $D015    ;Sprite display Enable
         LDA #$80
         STA $D404    ;Voice 1: Control Register
@@ -5356,13 +5448,16 @@ SetUpGameScreen
         STA currentBottomPlanetIndex
         JSR PerformPlanetWarp
         JSR DrawStatusBarDetail
+
         LDX #$03
-b6AB3   LDA upperPlanetAttackShipSpritesLoadedFromBackingData,X
+InitializeEnemySpritesLoop   
+        LDA upperPlanetAttackShipSpritesLoadedFromBackingData,X
         STA upperPlanetAttackShip3SpriteValue,X
         LDA lowerPlanetAttackShipSpritesLoadedFromBackingData,X
         STA lowerPlanetAttackShip3SpriteValue,X
         DEX
-        BNE b6AB3
+        BNE InitializeEnemySpritesLoop
+
         JMP BeginRunningGame
 
 previousGilbySprite   .BYTE $D3
@@ -6133,7 +6228,7 @@ b703A   RTS
 ;------------------------------------------------------------------
 MaybePreviousActionWasToLaunchIntoAir
         CMP #LAUNCHED_INTO_AIR ; Looks at previousJoystickAction
-        BNE MaybePreviousActionWasSomething
+        BNE MaybePreviousActionWasToLand
 
         JSR ProcessFireButtonPressed
         LDA gilbyAnimationTYpe
@@ -6168,11 +6263,12 @@ LandGilby
 b707D   RTS
 
 ;------------------------------------------------------------------
-; MaybePreviousActionWasSomething
+; MaybePreviousActionWasToLand
 ;------------------------------------------------------------------
-MaybePreviousActionWasSomething
+MaybePreviousActionWasToLand
         CMP #LANDED ; Looks at previousJoystickAction
         BNE RightJoystickPressedWithPreviousAction
+
         JSR ProcessFireButtonPressed
         LDA gilbyVerticalPositionUpperPlanet
         CMP #$6D
@@ -6320,12 +6416,6 @@ AnimateGilbyMovement
 joystickInput          .BYTE $09
 previousJoystickAction .BYTE $04
 gilbyAnimationTYpe     .BYTE $02
-
-HORIZONTAL_MOVEMENT = $01
-LAUNCHED_INTO_AIR   = $02
-LANDED              = $03
-ALREADY_AIRBORNE    = $04
-
 
 ;------------------------------------------------------------------
 ; AlsoPerformGilbyLandingOrJumpingAnimation
@@ -7286,11 +7376,13 @@ upperPlanetGilbyBulletNextYPosArray   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 UpdateBulletPositions
         LDX #$00
         LDA gilbyHasJustDied
-        BEQ b7794
-b7793   RTS
+        BEQ UpdateNextBullet
+UpdateBulletReturnEarly   
+        RTS
 
-b7794   LDA levelEntrySequenceActive
-        BNE b7793
+UpdateNextBullet   
+        LDA levelEntrySequenceActive
+        BNE UpdateBulletReturnEarly
         LDA upperPlanetGilbyBulletMSBXPosValue,X
         CMP #$FF
         BEQ b77A9
@@ -7298,7 +7390,7 @@ b7794   LDA levelEntrySequenceActive
         JSR CheckBulletPositions
         JMP UpdateBulletSpriteAndReturnIfRequired
 
-b77A9   LDA #$F0
+b77A9   LDA #BLANK_SPRITE
         STA upperPlanetGilbyBulletSpriteValue,X
 ;------------------------------------------------------------------
 ; UpdateBulletSpriteAndReturnIfRequired
@@ -7306,13 +7398,14 @@ b77A9   LDA #$F0
 UpdateBulletSpriteAndReturnIfRequired
         INX
         CPX #$08
-        BEQ b77BC
+        BEQ JumpToUpdateBulletSpriteAndReturn
         CPX #$02
-        BNE b7794
+        BNE UpdateNextBullet
         LDX #$06
-        JMP b7794
+        JMP UpdateNextBullet
 
-b77BC   JMP UpdateBulletSpriteAndReturn
+JumpToUpdateBulletSpriteAndReturn   
+        JMP UpdateBulletSpriteAndReturn
 
 upperPlanetBulletYPosUpdateCounterArray   .BYTE $03,$03,$03,$03,$03,$03,$03,$03
 ;------------------------------------------------------------------
@@ -7320,8 +7413,10 @@ upperPlanetBulletYPosUpdateCounterArray   .BYTE $03,$03,$03,$03,$03,$03,$03,$03
 ;------------------------------------------------------------------
 UpdateUpperPlanetBulletPosition
         LDA upperPlanetGilbyBulletSpriteValue,X
-        CMP #$EC
-        BEQ b780E
+        CMP #LASER_BULLET
+        BEQ ReturnEarlyFromBullet
+
+        ; There's a bullet to update.
         LDA upperPlanetGilbyBulletYPos,X
         CLC
         ADC upperPlanetGilbyBulletNextYPosArray,X
@@ -7336,7 +7431,7 @@ b77E5   LDA upperPlanetGilbyBulletYPos,X
         CMP #$78
         BEQ b77F2
         CMP #$88
-        BNE b780E
+        BNE ReturnEarlyFromBullet
 b77F2   LDA #$FF
         STA upperPlanetGilbyBulletMSBXPosValue,X
         JSR ResetUpperPlanetBullet
@@ -7354,7 +7449,8 @@ ResetUpperPlanetBullet
         STA upperPlanetGilbyBulletXPos,X
         LDA #$00
         STA upperPlanetGilbyBulletYPos,X
-b780E   RTS
+ReturnEarlyFromBullet   
+        RTS
 
 ;------------------------------------------------------------------
 ; UpdateBulletSpriteAndReturn
@@ -7864,6 +7960,7 @@ airborneBulletSoundEffect .BYTE $00,$00,$00,$0C,$00
                           .BYTE $00,$00,$80,$0B,$00
                           .BYTE $00,$00,$80,$12,$00
                           .BYTE $00,$80,<f7BCA,>f7BCA,$00
+
 borderFlashControl2       .BYTE $02
 borderFlashControl1       .BYTE $01
 currentEntropy            .BYTE $00
@@ -8281,9 +8378,9 @@ InitAndDisplayHiScoreScreen
 ;------------------------------------------------------------------
 DrawHiScoreScreen
         SEI
-        LDA #<HiScoreScreeInterruptHandler
+        LDA #<HiScoreScreenInterruptHandler
         STA $0314    ;IRQ
-        LDA #>HiScoreScreeInterruptHandler
+        LDA #>HiScoreScreenInterruptHandler
         STA $0315    ;IRQ
         CLI
         LDA #$00
@@ -8554,10 +8651,15 @@ GetHiScoreScreenInput
         STA (tempLoPtr1),Y
         PLA
         TAY
+
+        ; Get Joystick input.
         LDA $DC00    ;CIA1: Data Port Register A
         STA hiScoreJoystickInput
-        AND #$04
-        BNE bCBC4
+
+        ; Check joystick left
+        AND #JOYSTICK_LEFT
+        BNE CheckHiScoreJoystickRight
+
         LDA hiScoreTableInputName - $0A,Y
         SEC
         SBC #$01
@@ -8565,20 +8667,21 @@ GetHiScoreScreenInput
         BNE bCBBC
 bCBBC   STA hiScoreTableInputName - $0A,Y
         LDA #$3F
-        JMP jCBD9
+        JMP HiScoreSpinBeforeNextInput
 
-bCBC4   LDA hiScoreJoystickInput
-        AND #$08
-        BNE bCBE9
+CheckHiScoreJoystickRight   
+        LDA hiScoreJoystickInput
+        AND #JOYSTICK_RIGHT
+        BNE CheckHiScoreFire
         LDA hiScoreTableInputName - $0A,Y
         CLC
         ADC #$01
-        CMP #$40 ; $40 means no key was pressed
+        CMP #NO_KEY_PRESSED ; $40 means no key was pressed
         BNE bCBD6
         LDA #$00
 bCBD6   STA hiScoreTableInputName - $0A,Y
 
-jCBD9
+HiScoreSpinBeforeNextInput
         LDA #$50
         STA tempLastBlastStorage
         LDX #$00
@@ -8588,12 +8691,13 @@ bCBDF   DEX
         BNE bCBDF
         JMP GetHiScoreScreenInput
 
-bCBE9   LDA hiScoreJoystickInput
-        AND #$10
+CheckHiScoreFire   
+        LDA hiScoreJoystickInput
+        AND #JOYSTICK_FIRE
         BNE GetHiScoreScreenInput
 
 bCBEF   LDA $DC00    ;CIA1: Data Port Register A
-        AND #$10
+        AND #JOYSTICK_FIRE
         BEQ bCBEF
 
         LDA #$C0
@@ -8789,10 +8893,10 @@ bCD41   LDA lastKeyPressed
 
 hiScoreScreenUpdateRate   .BYTE $01
 ;------------------------------------------------------------------
-; HiScoreScreeInterruptHandler
+; HiScoreScreenInterruptHandler
 ; Paints the color effects on the hi-score screen
 ;------------------------------------------------------------------
-HiScoreScreeInterruptHandler
+HiScoreScreenInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE bCD59
@@ -8907,9 +9011,9 @@ HiScoreStopSounds
 
 
 pE800   SEI
-        LDA #>$4000
+        LDA #>MainControlLoop
         STA $0319    ;NMI
-        LDA #<$4000
+        LDA #<MainControlLoop
         STA $0318    ;NMI
         LDA #$10
         STA $DD04    ;CIA2: Timer A: Low-Byte
