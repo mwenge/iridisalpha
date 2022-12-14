@@ -150,7 +150,7 @@ InitializeSpritesAndInterruptsForTitleScreen
         STA $D027    ;Sprite 0 Color
         LDA #$FF
         STA $D015    ;Sprite display Enable
-        LDA #$C0
+        LDA #STARFIELD_SPRITE
         STA Sprite7PtrStarField
         LDA #$80
         STA $D01B    ;Sprite to Background Display Priority
@@ -368,7 +368,8 @@ DrawStripesBehindTitle
         LDX #$28
         LDA #$00
         STA shouldUpdateTitleScreenColors
-b0A78   LDA #RED
+DrawStripesLoop   
+        LDA #RED
         STA COLOR_RAM + LINE2_COL39,X
         LDA #ORANGE
         STA COLOR_RAM + LINE3_COL39,X
@@ -391,7 +392,7 @@ b0A78   LDA #RED
         STA SCREEN_RAM + LINE7_COL39,X
         STA SCREEN_RAM + LINE8_COL39,X
         DEX
-        BNE b0A78
+        BNE DrawStripesLoop
 
         LDX #$06
 b0AB7   LDA titleScreenStarfieldColorsArray,X
@@ -1298,21 +1299,23 @@ currentStepsBetweenBottomPlanetAttackWaves    .BYTE $00
 ;------------------------------------------------------------------
 PerformMainGameProcessing
         LDA levelEntrySequenceActive
-        BNE b49F5
+        BNE MainGameProcReturnEarly
         LDA gilbyHasJustDied
-        BEQ b49E1
+        BEQ MainGameGilbyAlive
 
         JMP ProcessGilbyExplosion
         ;Returns
 
-b49E1   JSR PerformMainAttackWaveProcessing
+MainGameGilbyAlive   
+        JSR PerformMainAttackWaveProcessing
         JSR UpdateAttackShipsPosition
         JSR DetectAttackShipCollisionWithGilby
         JSR DecreaseEnergyStorage
         JSR UpdateCoreEnergyValues
         DEC gameSequenceCounter
         BEQ GetNewWaveDataForAnyDeadShips
-b49F5   RTS
+mainGameProcReturnEarly   
+        RTS
 
 gameSequenceCounter   .BYTE $14
 
@@ -1585,30 +1588,33 @@ indexIntoAttackWaveDataHiPtrArray              .BYTE $00,$00,$02,$03,$04,$05,$00
 PerformMainAttackWaveProcessing
         LDY #$00
         LDA pauseModeSelected
-        BEQ b4BC7
+        BEQ UpdateEnemyStateLoop
         RTS
 
         ; This loop updates the state of each of the 8 attack ships
         ; that are active at any one time tracked by activeShipsWaveDataLoPtrArray. It's 4 for the
         ; top planet, and 4 for the bottom planet. 
-b4BC7   LDX indexForActiveShipsWaveData,Y
+UpdateEnemyStateLoop   
+        LDX indexForActiveShipsWaveData,Y
         LDA activeShipsWaveDataHiPtrArray,X
         ; When there is no ship (anymore) for an entry its pointer will be zeroes.
-        BEQ b4BD6
+        BEQ NoShipToUpdate
         STY tempVarStorage
         JSR ProcessAttackWaveDataForActiveShip
         LDY tempVarStorage
-b4BD6   INY
+NoShipToUpdate   
+        INY
         CPY #$08
-        BNE b4BC7
+        BNE UpdateEnemyStateLoop
 
         LDA hasEnteredNewLevel
-        BEQ b4BEB
+        BEQ ReturnFromMainWave
         LDA #$00
         STA currentStepsBetweenTopPlanetAttackWaves
         STA currentStepsBetweenBottomPlanetAttackWaves
         STA hasEnteredNewLevel
-b4BEB   RTS
+ReturnFromMainWave   
+        RTS
 
 ;------------------------------------------------------------------
 ; ProcessAttackWaveDataForActiveShip
@@ -1619,7 +1625,7 @@ ProcessAttackWaveDataForActiveShip
         LDA activeShipsWaveDataLoPtrArray,X
         STA currentShipWaveDataLoPtr
         LDA hasEnteredNewLevel
-        BEQ b4C03
+        BEQ StillOnSameLevel
 
         ; We've entered a new level.
         ; Get the wave data from the wave data store and return
@@ -1631,7 +1637,8 @@ ProcessAttackWaveDataForActiveShip
         ; Returns
 
 
-b4C03   LDA shipsThatHaveBeenHitByABullet,X
+StillOnSameLevel   
+        LDA shipsThatHaveBeenHitByABullet,X
         BNE UpdateScoresAfterHittingShipWithBullet
         JMP CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         ; Returns
@@ -1658,20 +1665,23 @@ UpdateScoresAfterHittingShipWithBullet
         BNE BulletHitShipOnBottomPlanet
 
         ; Bullet hit a ship on the top planet.
+
+        ; Hitting the warp gate increments the planet for warp.
         LDA levelEntrySequenceActive
-        BNE b4C42
+        BNE AddPointsForHittingEnemy
         LDA attractModeCountdown
-        BNE b4C42
-        INC currentTopPlanetIndex
-        LDA currentTopPlanetIndex
+        BNE AddPointsForHittingEnemy
+        INC topPlanetPointerIndex
+        LDA topPlanetPointerIndex
         CMP currentTopPlanet
-        BNE b4C42
+        BNE AddPointsForHittingEnemy
 
         LDA #$00
-        STA currentTopPlanetIndex
+        STA topPlanetPointerIndex
         ; Get the points multiplier for hitting enemies in this level
         ; from the wave data.
-b4C42   LDY #$22
+AddPointsForHittingEnemy   
+        LDY #$22
         LDA (currentShipWaveDataLoPtr),Y
         JSR CalculatePointsForByte2
         CLC
@@ -1684,20 +1694,22 @@ b4C42   LDY #$22
 
         ; Bullet hit a ship on the bottom planet.
 BulletHitShipOnBottomPlanet
+        ; Hitting the warp gate increments the planet for warp.
         LDA levelEntrySequenceActive
-        BNE b4C76
+        BNE AddPointsForHittingEnemyLowerPlanet
         LDA attractModeCountdown
-        BNE b4C76
-        INC currentBottomPlanetIndex
-        LDA currentBottomPlanetIndex
+        BNE AddPointsForHittingEnemyLowerPlanet
+        INC bottomPlanetPointerIndex
+        LDA bottomPlanetPointerIndex
         CMP currentBottomPlanet
-        BNE b4C76
+        BNE AddPointsForHittingEnemyLowerPlanet
 
         LDA #$00
-        STA currentBottomPlanetIndex
+        STA bottomPlanetPointerIndex
         ; Get the points multiplier for hitting enemies in this level
         ; from the wave data.
-b4C76   LDY #$22
+AddPointsForHittingEnemyLowerPlanet   
+        LDY #$22
         LDA (currentShipWaveDataLoPtr),Y
         JSR CalculatePointsForByte2
         CLC
@@ -2475,13 +2487,13 @@ planetCharsetDataHiPtrArray   .BYTE >planet1Charset,>planet2Charset,>planet3Char
 ; PerformPlanetWarp
 ;------------------------------------------------------------------
 PerformPlanetWarp
-        LDX currentTopPlanetIndex
+        LDX topPlanetPointerIndex
         LDA planetCharsetDataHiPtrArray,X
         STA currentTopPlanetDataHiPtr
         LDA #$00
         STA currentTopPlanetDataLoPtr
 
-        LDX currentBottomPlanetIndex
+        LDX bottomPlanetPointerIndex
         LDA planetCharsetDataHiPtrArray,X
         STA currentBottomPlanetDataHiPtr
         LDA #$00
@@ -2495,9 +2507,9 @@ PerformPlanetWarp
         STA upperPlanetEntropyStatus
         STA lowerPlanetEntropyStatus
 
-b51F7   LDA currentTopPlanetIndex
+b51F7   LDA topPlanetPointerIndex
         STA oldTopPlanetIndex
-        LDA currentBottomPlanetIndex
+        LDA bottomPlanetPointerIndex
         STA oldBottomPlanetIndex
         JSR MapPlanetProgressToLevelText
 
@@ -2536,11 +2548,11 @@ b523C   STA SCREEN_RAM + LINE21_COL29,X
         DEX
         BNE b523C
 
-        LDX currentTopPlanetIndex
+        LDX topPlanetPointerIndex
         LDY planetProgressPointersOffsets,X
         LDA #$98 ; Top world progress pointer
         STA SCREEN_RAM + LINE21_COL29,Y
-        LDX currentBottomPlanetIndex
+        LDX bottomPlanetPointerIndex
         LDY planetProgressPointersOffsets,X
         LDA #$99 ; Bottom world progress pointer
         STA SCREEN_RAM + LINE24_COL29,Y
@@ -2626,13 +2638,13 @@ WriteInitialWarpStateToScreen
         STA screenTmpPtrLo ; Actually the lo ptr here
 
         ; For the top planet
-        LDX currentTopPlanetIndex
+        LDX topPlanetPointerIndex
         JSR UpdateWarpStateOnScreen
 
         ; For the bottom planet
         LDA #<SCREEN_RAM + LINE23_COL27
         STA screenTmpPtrLo
-        LDX currentBottomPlanetIndex
+        LDX bottomPlanetPointerIndex
 
 ;------------------------------------------------------------------
 ; UpdateWarpStateOnScreen
@@ -3262,14 +3274,14 @@ b5705   STA bottomPlanetLevelDataHiPtr,X
 ; MapPlanetProgressToLevelText
 ;------------------------------------------------------------------
 MapPlanetProgressToLevelText
-        LDX currentTopPlanetIndex
+        LDX topPlanetPointerIndex
         LDA currentLevelInTopPlanets,X
         STA currentLevelInCurrentPlanet
         LDA #$00
         STA updateLevelForBottomPlanet
         JSR UpdateLevelText
         INC updateLevelForBottomPlanet
-        LDX currentBottomPlanetIndex
+        LDX bottomPlanetPointerIndex
         LDA currentLevelInBottomPlanets,X
         STA currentLevelInCurrentPlanet
         JMP UpdateLevelText
@@ -3563,10 +3575,10 @@ b596E   LDA #$C0 ; Starfield sprite
         JSR SetUpGilbySprite
 
         LDA oldTopPlanetIndex
-        STA currentTopPlanetIndex
+        STA topPlanetPointerIndex
 
         LDA oldBottomPlanetIndex
-        STA currentBottomPlanetIndex
+        STA bottomPlanetPointerIndex
 
         JSR PerformPlanetWarp
 
@@ -5100,12 +5112,13 @@ b6812   STA starFieldSprite - $01,Y
 ;------------------------------------------------------------------
 DrawParallaxOfStarfieldInGilbyDirection
         LDX currentGilbySpeed
-        BPL b6822
+        BPL GilbyHasSpeed
         TXA
         EOR #$FF
         TAX
         INX
-b6822   LDA starfieldSpriteAnimationData,X
+GilbyHasSpeed   
+        LDA starfieldSpriteAnimationData,X
         STA starFieldSprite
         STA starFieldSprite + $03
         STA starFieldSprite + $12
@@ -5146,7 +5159,7 @@ SetupSpritesAndSound
         SEI
         STA $D015    ;Sprite display Enable
         STA $D01C    ;Sprites Multi-Color Mode Select
-        LDA #$C0 ; Star field sprite at $3000
+        LDA #STARFIELD_SPRITE ; Star field sprite at $3000
         STA Sprite7PtrStarField
         LDA #$00
         STA $D017    ;Sprites Expand 2x Vertical (Y)
@@ -5154,9 +5167,9 @@ SetupSpritesAndSound
         STA gilbyHasJustDied
         STA levelRestartInProgress
         LDA oldTopPlanetIndex
-        STA currentTopPlanetIndex
+        STA topPlanetPointerIndex
         LDA oldBottomPlanetIndex
-        STA currentBottomPlanetIndex
+        STA bottomPlanetPointerIndex
         LDA #$80
         STA $D01B    ;Sprite to Background Display Priority
         STA $D404    ;Voice 1: Control Register
@@ -5182,16 +5195,18 @@ SetupSpritesAndSound
         JSR DrawLowerPlanetWhileInactive
         LDX #$28
         LDA lowerPlanetActivated
-        BNE b68DF
+        BNE ReturnFromSetUpSprites
 
-b68D2   LDA #$00
+ClearSurfaceLoop   
+        LDA #$00
         STA SCREEN_RAM + LINE10_COL39,X
         LDA #PURPLE
         STA COLOR_RAM + LINE10_COL39,X
         DEX
-        BNE b68D2
+        BNE ClearSurfaceLoop
 
-b68DF   RTS
+ReturnFromSetUpSprites   
+        RTS
 
 ;------------------------------------------------------------------
 ; InitializeSprites
@@ -5443,9 +5458,9 @@ SetUpGameScreen
         JSR ClearScreen3
         JSR SetupSpritesAndSound
         LDA oldTopPlanetIndex
-        STA currentTopPlanetIndex
+        STA topPlanetPointerIndex
         LDA oldBottomPlanetIndex
-        STA currentBottomPlanetIndex
+        STA bottomPlanetPointerIndex
         JSR PerformPlanetWarp
         JSR DrawStatusBarDetail
 
@@ -5924,6 +5939,9 @@ b6E0B   DEX
 
 planetScrollSpeed            .BYTE $02
 currentGilbySpeed            .BYTE $EA
+; These bytes update the starFieldSprite on the fly in
+; DrawParallaxOfStarfieldInGilbyDirection. This creates a parallax
+; effect.
 starfieldSpriteAnimationData .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
                              .BYTE $F0,$F0,$F0,$F0,$F8,$F8,$F8,$F8
                              .BYTE $FC,$FC,$FC,$FC,$FE,$FE,$FE,$FF
@@ -7164,8 +7182,8 @@ b7601   LDX gilbySpriteIndex
         RTS
 
 gilbyLandingJumpingAnimationYPosOffset .BYTE $01
-gilbyVerticalPositionUpperPlanet                  .BYTE $3F
-gilbyVerticalPositionLowerPlanet                  .BYTE $CA
+gilbyVerticalPositionUpperPlanet       .BYTE $3F
+gilbyVerticalPositionLowerPlanet       .BYTE $CA
 gilbyLandingFrameRate                  .BYTE $01
 gilbyJumpingAndLandingFrameRate        .BYTE $03
 ;------------------------------------------------------------------
@@ -7561,9 +7579,9 @@ CheckYPressed
         INC bonusAwarded
         RTS
 
-currentTopPlanetIndex      .BYTE $00
+topPlanetPointerIndex      .BYTE $00
 oldTopPlanetIndex          .BYTE $00
-currentBottomPlanetIndex   .BYTE $00
+bottomPlanetPointerIndex   .BYTE $00
 oldBottomPlanetIndex       .BYTE $00
 qPressedToQuitGame         .BYTE $00
 backgroundColor1ForPlanets .BYTE BROWN,GRAY1,YELLOW,LTBLUE,LTGREEN
@@ -7610,7 +7628,7 @@ b78CE   LDX entryLevelSequenceCounter
 ; SetUpPlanets
 ;------------------------------------------------------------------
 SetUpPlanets
-        LDX currentTopPlanetIndex
+        LDX topPlanetPointerIndex
         LDA backgroundColor1ForPlanets,X
         STA currentPlanetBackgroundClr1
         LDA backgroundColor2ForPlanets,X
@@ -7619,7 +7637,7 @@ SetUpPlanets
         LDA surfaceColorsForPlanets,X
         JSR UpdateTopPlanetSurfaceColor
 
-        LDX currentBottomPlanetIndex
+        LDX bottomPlanetPointerIndex
         LDA backgroundColor1ForPlanets,X
         STA currentPlanetBackgroundColor1
 
@@ -7655,7 +7673,7 @@ b7939   STA upperPlanetAttackShipsSpriteValueArray,X
         STA soundEffectInProgress
         LDA lowerPlanetActivated
         BEQ b797C
-        LDX currentTopPlanetIndex
+        LDX topPlanetPointerIndex
         LDA backgroundColor1ForPlanets,X
         STA currentPlanetBackgroundColor1
         LDA backgroundColor2ForPlanets,X
@@ -8243,12 +8261,12 @@ b7EC5   JSR PutRandomByteInAccumulatorRegister
         ; Select a random planet between 0 and 4
         JSR PutRandomByteInAccumulatorRegister
         AND #$03
-        STA currentTopPlanetIndex
+        STA topPlanetPointerIndex
 
         ; Select a random planet between 0 and 4
         JSR PutRandomByteInAccumulatorRegister
         AND #$03
-        STA currentBottomPlanetIndex
+        STA bottomPlanetPointerIndex
         RTS
 
 ; When attract mode is selected this gets set to $FF and gets 
@@ -8454,7 +8472,7 @@ StoreLastBlastInTable
         STA tempLoPtr1
         LDA #>ptrLastScoreInTable
         STA tempHiPtr1
-        JMP StoreLastBlasScoreInTable
+        JMP StoreLastBlastScoreInTable
 
 bCA51   LDA #<ptrSecondLastScoreInTable
         STA tempLoPtr1
@@ -8481,7 +8499,7 @@ bCA5B   LDA (tempLoPtr1),Y
         INC lastBlastCounter
         LDA lastBlastCounter
         CMP lastBlastScoreLength
-        BEQ StoreLastBlasScoreInTable
+        BEQ StoreLastBlastScoreInTable
         LDA tempLoPtr1
         SEC
         SBC #$15
@@ -8492,9 +8510,9 @@ bCA5B   LDA (tempLoPtr1),Y
         JMP StoreScoreLoop
 
 ;------------------------------------------------------------------
-; StoreLastBlasScoreInTable
+; StoreLastBlastScoreInTable
 ;------------------------------------------------------------------
-StoreLastBlasScoreInTable
+StoreLastBlastScoreInTable
         LDA #$01
         STA storedLastBlastScore
         LDY #$14

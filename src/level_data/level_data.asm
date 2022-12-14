@@ -63,7 +63,7 @@ planet4Level19Data
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
         .BYTE $BD,$BD,$BD,$BD,$BD,$BD,$BD,$BD
-        .BYTE $00,$00,$02,$08,$00,$04,$0C,$00
+        .BYTE <nullPtr,>nullPtr,$02,$08,$00,$04,$0C,$00
 planet4Level19Additional
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
         ; color value for the ship sprite.
@@ -81,15 +81,15 @@ planet4Level19Additional
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -157,22 +157,22 @@ planet4Level19Additional2ndWave
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
         .BYTE $10
         ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
         ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 19 (Index $12): X Pos movement for attack ship.
         .BYTE $80
         ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
@@ -190,16 +190,16 @@ planet4Level19Additional2ndWave
         .BYTE $00
         ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
         ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
         ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
@@ -234,15 +234,15 @@ planet2Level7Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -310,15 +310,15 @@ planet2Level7Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -371,7 +371,7 @@ planet2Level7Data2ndStage
         .BYTE $00
 ;f19B8
         .BYTE $01,$30,$31,$00,$30,$31,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$03
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$03
         .BYTE $50,$18,$80,$80,$01,$01,$00,$00
 planet4Level4Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -390,15 +390,15 @@ planet4Level4Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -466,15 +466,15 @@ planet4Level4Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -544,15 +544,15 @@ planet4Level3Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -620,15 +620,15 @@ planet4Level2Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -696,15 +696,15 @@ planet1Level9Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -772,15 +772,15 @@ planet1Level9DataSecondStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -848,15 +848,15 @@ secondExplosionAnimation
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -881,16 +881,16 @@ secondExplosionAnimation
         .BYTE $00
         ; Byte 25 (Index $18): Lo Ptr for another set of wave data.
         ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
         ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation.
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level.
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
         ; Byte 34 (Index $21): Unused, see GetNewShipDataFromDataStore.
@@ -924,15 +924,15 @@ planet3Level3Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1000,15 +1000,15 @@ planet3Level3Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1076,15 +1076,15 @@ planet3Level3Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1152,15 +1152,15 @@ planet2Level8Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1228,15 +1228,15 @@ planet2Level8Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1304,15 +1304,15 @@ planet2Level8Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1380,15 +1380,15 @@ planet2Level9Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1456,15 +1456,15 @@ gilbyTakingOffAsExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1532,15 +1532,15 @@ gilbyLookingLeft
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1611,12 +1611,12 @@ planet3Level4Data
         .BYTE <gilbyLookingLeft,>gilbyLookingLeft
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1684,15 +1684,15 @@ planet3Level5Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1760,15 +1760,15 @@ stickyGlobeExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1839,12 +1839,12 @@ planet3Level6Data
         .BYTE <planet3Level6Additional,>planet3Level6Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1912,15 +1912,15 @@ planet3Level6Additional
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -1988,15 +1988,15 @@ planet1Level17Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2064,15 +2064,15 @@ planet1Level17Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2140,15 +2140,15 @@ planet1Level17Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2216,15 +2216,15 @@ planet4Level6Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2292,15 +2292,15 @@ planet4Level6Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2368,15 +2368,15 @@ planet1Level6Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2444,15 +2444,15 @@ planet1Level6Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2520,15 +2520,15 @@ spinningRings2ndType
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2596,15 +2596,15 @@ planet1Level10Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2672,15 +2672,15 @@ planet1Level10Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2748,15 +2748,15 @@ planet3Level2Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2824,15 +2824,15 @@ planet3Level2Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2900,15 +2900,15 @@ planet3Level2Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2976,15 +2976,15 @@ planet3Level8Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3052,15 +3052,15 @@ bubbleExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3128,15 +3128,15 @@ bubbleExplosion2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3204,15 +3204,15 @@ planet4Level5Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3280,15 +3280,15 @@ planet4Level5Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3340,9 +3340,9 @@ planet4Level5Data2ndStage
         ; Byte 40: (Index $27) Unused bytes.
         .BYTE $00
 
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$83
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$00
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$00
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$83
 *=$9B00
 planet1Level15Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -3361,15 +3361,15 @@ planet1Level15Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3437,15 +3437,15 @@ teardropExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3513,15 +3513,15 @@ planet4Level17Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3589,15 +3589,15 @@ cummingCock
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3665,15 +3665,15 @@ planet1Level4Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3741,15 +3741,15 @@ planet1Level4Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3820,12 +3820,12 @@ planet5Level5Data
         .BYTE <planet5Level5Additional,>planet5Level5Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3896,12 +3896,12 @@ planet5Level5Data2ndStage
         .BYTE <planet5Level5Additional,>planet5Level5Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3969,15 +3969,15 @@ planet5Level5Additional
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -4045,15 +4045,15 @@ planet3Level10Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4121,15 +4121,15 @@ planet3Level10Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4197,15 +4197,15 @@ planet4Level10Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4273,15 +4273,15 @@ planet4Level10Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4349,15 +4349,15 @@ planet5Level6Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4428,12 +4428,12 @@ fighterShipAsExplosion
         .BYTE <planet3Level10Data,>planet3Level10Data
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4501,15 +4501,15 @@ planet4Level15Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4577,15 +4577,15 @@ spinnerAsExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4653,15 +4653,15 @@ planet2Level10Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4729,15 +4729,15 @@ flowchartArrowAsExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4805,15 +4805,15 @@ planet3Level13Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4881,15 +4881,15 @@ lickerShipAsExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4957,15 +4957,15 @@ planet3Level13Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5033,15 +5033,15 @@ planet2Level11Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5109,15 +5109,15 @@ planet2Level11Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5185,15 +5185,15 @@ planet3Level19Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5261,15 +5261,15 @@ planet3Level19Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5337,15 +5337,15 @@ planet3Level19Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5413,15 +5413,15 @@ planet5Level1Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5489,15 +5489,15 @@ planet5Level1Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5565,15 +5565,15 @@ planet4Level1Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5641,15 +5641,15 @@ planet4Level1Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5717,15 +5717,15 @@ planet3Level1Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -5750,10 +5750,10 @@ planet3Level1Data
         .BYTE $01
         ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
         ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
         ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
         .BYTE $50,$18
@@ -5794,15 +5794,15 @@ planet2Level1Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5870,15 +5870,15 @@ pinAsExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -5946,15 +5946,15 @@ planet1Level1Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6022,15 +6022,15 @@ planet1Level1Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6100,15 +6100,15 @@ planet1Level7Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6176,15 +6176,15 @@ planet1Level7Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6252,15 +6252,15 @@ planet1Level7Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6328,15 +6328,15 @@ barExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6405,15 +6405,15 @@ copticExplosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6481,15 +6481,15 @@ planet1Level20Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6557,15 +6557,15 @@ planet2Level20Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6633,15 +6633,15 @@ planet3Level20Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6709,15 +6709,15 @@ planet4Level20Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6785,15 +6785,15 @@ planet5Level20Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6861,15 +6861,15 @@ planet5Level2Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -6937,15 +6937,15 @@ planet5Level2Explosion
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7013,15 +7013,15 @@ planet3Level14Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7089,15 +7089,15 @@ planet3Level14Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7165,15 +7165,15 @@ planet1Level3Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7241,15 +7241,15 @@ planet1Level3Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7317,15 +7317,15 @@ planet1Level3Data3rdStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7393,15 +7393,15 @@ planet2Level18Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7469,15 +7469,15 @@ planet2Level18Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7548,12 +7548,12 @@ planet2Level19Data
         .BYTE <landGilbyAsEnemy,>landGilbyAsEnemy
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7621,15 +7621,15 @@ landGilbyAsEnemy
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -7697,15 +7697,15 @@ planet2Level19Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7773,15 +7773,15 @@ planet2Level12Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7849,15 +7849,15 @@ planet3Level15Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -7925,15 +7925,15 @@ planet3Level15Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8001,15 +8001,15 @@ planet3Level18Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8077,15 +8077,15 @@ planet3Level18Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8153,15 +8153,15 @@ planet4Level12Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8229,15 +8229,15 @@ planet4Level12Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8305,15 +8305,15 @@ planet2Level13Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8381,15 +8381,15 @@ planet2Level13Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8457,15 +8457,15 @@ planet2Level2Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8533,15 +8533,15 @@ planet2Level3Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8609,15 +8609,15 @@ planet2Level14Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8685,15 +8685,15 @@ planet2Level17Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8761,15 +8761,15 @@ planet2Level14Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8837,15 +8837,15 @@ planet2Level17Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8913,15 +8913,15 @@ planet4Level18Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -8989,15 +8989,15 @@ planet5Level7Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9065,15 +9065,15 @@ planet5Level7Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9141,15 +9141,15 @@ planet1Level16Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9217,15 +9217,15 @@ planet1Level2Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9293,15 +9293,15 @@ planet4Level16Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9369,15 +9369,15 @@ planet4Level16Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9445,15 +9445,15 @@ planet5Level13Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9521,15 +9521,15 @@ planet5Level13Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9597,15 +9597,15 @@ planet4Level11Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9673,15 +9673,15 @@ planet4Level11Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9752,12 +9752,12 @@ planet5Level14Data
         .BYTE <llamaWaveData,>llamaWaveData
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9825,15 +9825,15 @@ llamaWaveData
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -9901,15 +9901,15 @@ planet5Level15Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -9977,15 +9977,15 @@ planet5Level15Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10053,15 +10053,15 @@ planet2Level15Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10129,15 +10129,15 @@ planet2Level15Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -10162,13 +10162,13 @@ planet2Level15Data2ndStage
         .BYTE $23
         ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
         ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
         ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
         ; fA907 used to live here (at $18).
@@ -10191,8 +10191,8 @@ planet2Level15Data2ndStage
         .BYTE $00
 
         ; fA910
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$00
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$00
 
 planet3Level16Data
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -10211,15 +10211,15 @@ planet3Level16Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10288,15 +10288,15 @@ planet1Level18Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10364,15 +10364,15 @@ planet1Level18Data2ndStage
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10441,15 +10441,15 @@ planet1Level19Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10518,15 +10518,15 @@ planet5Level8Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10594,15 +10594,15 @@ planet4Level13Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10671,15 +10671,15 @@ planet5Level17Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10749,15 +10749,15 @@ planet2Level16Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10827,15 +10827,15 @@ planet5Level18Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10903,15 +10903,15 @@ planet3Level17Data
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Unused, see GetNewShipDataFromDataStore
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -10964,7 +10964,7 @@ planet3Level17Data
         .BYTE $00
 fAAB0
         .BYTE $10,$FF,$00,$00,$FF,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$10
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$10
 
 ; vim: tabstop=2 shiftwidth=2 expandtab
 

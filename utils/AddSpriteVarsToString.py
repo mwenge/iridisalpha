@@ -8,10 +8,9 @@ charmap = {l[17:20].strip().upper():l[22:].strip()
              if "SPRITE" in l and l[22:].strip() != ""}
 
 s = """
-upperPlanetAttackShipSpritesLoadedFromBackingData .BYTE $ED,$ED,$ED,$ED
-lowerPlanetAttackShipSpritesLoadedFromBackingData .BYTE $ED,$ED,$ED,$ED
-upperPlanetAttackShipSpriteAnimationEnd           .BYTE $F0,$F0,$F0,$F0
-lowerPlanetAttackShipSpriteAnimationEnd           .BYTE $F0,$F0,$F0,$F0
+starfieldSpriteAnimationData .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
+                             .BYTE $F0,$F0,$F0,$F0,$F8,$F8,$F8,$F8
+                             .BYTE $FC,$FC,$FC,$FC,$FE,$FE,$FE,$FF
 """
 ls = re.split("([, \n])", s)
 

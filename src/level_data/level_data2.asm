@@ -25,15 +25,15 @@ planet2Level5Data = $1000
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -102,15 +102,15 @@ planet2Level5Data2ndStage = $1028
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -179,15 +179,15 @@ planet2Level5Data3rdStage = $1050
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -212,16 +212,16 @@ planet2Level5Data3rdStage = $1050
         .BYTE $00
         ; Byte 25 (Index $18): Lo Ptr for another set of wave data. 
         ; Byte 26 (Index $19): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 27 (Index $1A): Lo Ptr for another set of wave data.
         ; Byte 28 (Index $1B): Hi Ptr for another set of wave data.
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 29 (Index $1C): Lo Ptr for Explosion animation. 
         ; Byte 30 (Index $1D): Hi Ptr for Explosion animation. 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level. 
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level. 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 33 (Index $20): Unused.
         .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy. 
@@ -255,15 +255,15 @@ planet3Level7Data = $1078
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -331,15 +331,15 @@ planet3Level7Data2ndStage = $10A0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -407,15 +407,15 @@ planet2Level6Data = $10C8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -483,15 +483,15 @@ planet2Level6Data2ndStage = $10F0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -559,15 +559,15 @@ lickerShipWaveData = $1118
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -638,12 +638,12 @@ planet1Level11Data = $1140
         .BYTE <smallDotWaveData,>smallDotWaveData
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -714,12 +714,12 @@ smallDotWaveData = $1168
         .BYTE <smallDot2WaveData,>smallDot2WaveData
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -787,15 +787,15 @@ smallDot2WaveData = $1190
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -863,15 +863,15 @@ planet1Level12Data = $11B8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -940,15 +940,15 @@ planet1Level2Data2ndStage = $11E0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1016,15 +1016,15 @@ planet1Level12Data3rdStage = $1208
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1092,15 +1092,15 @@ planet3Level9Data = $1230
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1168,15 +1168,15 @@ planet3Level9Data2ndStage = $1258
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1244,15 +1244,15 @@ planet5Level9Data = $1280
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1320,15 +1320,15 @@ planet5Level9Data2ndStage = $12A8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1397,15 +1397,15 @@ planet3Level12Data = $12D0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1473,15 +1473,15 @@ planet3Level12Data2ndStage = $12F8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1549,15 +1549,15 @@ planet4Level2Data = $1320
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1625,15 +1625,15 @@ planet4Leve2Data2ndStage = $1348
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1701,15 +1701,15 @@ planet1Level8Data = $1370
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1777,15 +1777,15 @@ planet1Level8Data2ndStage = $1398
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1856,12 +1856,12 @@ planet1Level14Data = $13C0
         .BYTE <planet1Level8Data,>planet1Level8Data
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -1929,15 +1929,15 @@ planet1Level13Data = $13E8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2005,15 +2005,15 @@ planet1Level13Data2ndStage = $1410
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2081,15 +2081,15 @@ planet4Level7Data = $1438
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2157,15 +2157,15 @@ planet5Level12Data = $1460
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2233,15 +2233,15 @@ f1488 = $1488
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -2309,15 +2309,15 @@ planet4Level14Data = $14B0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2385,15 +2385,15 @@ planet4Level14Data2ndStage = $14D8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2461,15 +2461,15 @@ planet5Level10Data = $1500
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2537,15 +2537,15 @@ planet2Level4Data = $1528
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2613,15 +2613,15 @@ f1550 = $1550
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -2692,12 +2692,12 @@ planet5Level3Data = $1578
         .BYTE <planet5Level3Additional,>planet5Level3Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2768,12 +2768,12 @@ planet5Level3Data2ndStage = $15A0
         .BYTE <planet5Level3Additional,>planet5Level3Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -2841,15 +2841,15 @@ planet5Level3Additional = $15C8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -2917,15 +2917,15 @@ unusedLlamaWaveData = $15F0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -2993,15 +2993,15 @@ llamaExplosionData = $1618
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?) 
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave 
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used). 
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added? 
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave 
@@ -3069,15 +3069,15 @@ planet3Level11Data = $1640
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3145,15 +3145,15 @@ planet3Level11Data2ndStage = $1668
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3221,15 +3221,15 @@ planet5Level11Data = $1690
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3297,15 +3297,15 @@ planet5Level11Data2ndStage = $16B8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3373,15 +3373,15 @@ planet5Level11Data3rdStage = $16E0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3449,15 +3449,15 @@ planet5Level4Data = $1708
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3525,15 +3525,15 @@ planet5Level5Data2ndStage = $1730
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3601,15 +3601,15 @@ planet4Level8Data = $1758
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3677,15 +3677,15 @@ planet4Level8Data2ndStage = $1780
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3753,15 +3753,15 @@ planet4Level9Data = $17A8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3829,15 +3829,15 @@ planet4Level9Data2ndStage = $17D0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3890,7 +3890,7 @@ planet4Level9Data2ndStage = $17D0
         .BYTE $00
 
 
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+        .BYTE <nullPtr,>nullPtr,$00,$00,$00,$00,$00,$00
 
 planet1Level5Data = $1800
         ; Byte 1 (Index $00): An index into colorsForAttackShips that applies a
@@ -3909,15 +3909,15 @@ planet1Level5Data = $1800
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -3985,15 +3985,15 @@ planet1Level5Data2ndStage = $1828
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4062,15 +4062,15 @@ spinningRings = $1850
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4138,15 +4138,15 @@ planet1Level5Data3rdStage = $1878
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4214,15 +4214,15 @@ planet1Level5Data4thStage = $18A0
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4290,15 +4290,15 @@ defaultExplosion = $18C8
         .BYTE $00
         ; Byte 8 (Index $07): Lo Ptr for an unused attack behaviour
         ; Byte 9 (Index $08): Hi Ptr for an unused attack behaviour
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $01
         ; Byte 16 (Index $0F): Update rate for attack wave
@@ -4371,12 +4371,12 @@ planet4Level19Data = $18F0
         .BYTE <planet4Level19Additional,>planet4Level19Additional
         ; Byte 10 (Index $09): Lo Ptr for an animation effect? (Doesn't seem to be used?)
         ; Byte 11 (Index $0A): Hi Ptr for an animation effect (Doesn't seem to be used?)?
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 12 (Index $0B): some kind of rate limiting for attack wave
         .BYTE $00
         ; Byte 13 (Index $0C): Lo Ptr for a stage in wave data (never used).
         ; Byte 14 (Index $0D): Hi Ptr for a stage in wave data (never used).
-        .BYTE $00,$00
+        .BYTE <nullPtr,>nullPtr
         ; Byte 15 (Index $0E): Controls the rate at which new enemies are added?
         .BYTE $00
         ; Byte 16 (Index $0F): Update rate for attack wave
