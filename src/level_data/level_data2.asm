@@ -4412,15 +4412,15 @@ planet4Level19Data = $18F0
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level.
         .BYTE <defaultExplosion,>defaultExplosion
         ; Byte 33 (Index $20): Unused.
-        .BYTE ATARI_ST
+        .BYTE $BD
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
-        .BYTE ATARI_ST
+        .BYTE $BD
         ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
-        .BYTE ATARI_ST
+        .BYTE $BD
         ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
-        .BYTE ATARI_ST
+        .BYTE $BD
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
-        .BYTE ATARI_ST
+        .BYTE $BD
         ; Byte 38-40: (Index $25-$27) Unused bytes.
         ; The last 3 bytes are already there at planet4Level19Data
         ; Byte 38: (Index $25) Number of waves in data.

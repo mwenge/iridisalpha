@@ -2174,8 +2174,6 @@ b4F01   LDA indexForActiveShipsWaveData,X
         TAX
 
 NormalAttackShipBehaviour   
-        ; In all the wave data this bit is never set, so the behaviour
-        ; here isn't used.
         ; FIXME: understand the intended behaviour here.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y

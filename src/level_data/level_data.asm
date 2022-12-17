@@ -47,6 +47,7 @@
 ; 
 ; This data is loaded to currentShipWaveDataLoPtr/currentShipWaveDataHiPtr when it is used in the
 ; game.
+; See GetWaveDateForNewShip also.
 
 
 attackWaveData
