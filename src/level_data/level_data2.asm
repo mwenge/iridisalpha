@@ -4411,23 +4411,23 @@ planet4Level19Data = $18F0
         ; Byte 31 (Index $1E): Lo Ptr for another set of wave data for this level.
         ; Byte 32 (Index $1F): Hi Ptr for another set of wave data for this level.
         .BYTE <defaultExplosion,>defaultExplosion
+        ; These bytes aren't actually copied in. They're already there at 
+        ; planet4Level19Data
         ; Byte 33 (Index $20): Unused.
-        .BYTE $BD
+        .BYTE $00
         ; Byte 34 (Index $21): Whether to load the extra stage data for this enemy.
-        .BYTE $BD
+        .BYTE $00
         ; Byte 35 (Index $22)): Points multiplier for hitting enemies in this level.
-        .BYTE $BD
+        .BYTE $02
         ; Byte 36: (Index $23): Does hitting this enemy increase the gilby's energy?
-        .BYTE $BD
+        .BYTE $08
         ; Byte 37: (Index $24) Is the ship a spinning ring, i.e. does it allow the gilby to warp?
-        .BYTE $BD
-        ; Byte 38-40: (Index $25-$27) Unused bytes.
-        ; The last 3 bytes are already there at planet4Level19Data
+        .BYTE $00
         ; Byte 38: (Index $25) Number of waves in data.
-        ;.BYTE $04
+        .BYTE $04
         ; Byte 39: (Index $26) Number of ships in wave.
-        ;.BYTE $0C
+        .BYTE $0C
         ; Byte 40: (Index $27) Unused bytes.
-        ;.BYTE $00
+        .BYTE $00
 
 ; vim: tabstop=2 shiftwidth=2 expandtab
