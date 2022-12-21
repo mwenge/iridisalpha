@@ -146,6 +146,7 @@ InitializeSpritesAndInterruptsForTitleScreen
         AND #$E7
         ORA #$08
         STA $D016    ;VIC Control Register 2
+
         LDA #$01
         STA $D027    ;Sprite 0 Color
         LDA #$FF
@@ -297,9 +298,11 @@ b095D   LDA $D010    ;Sprites 0-7 MSB of X coordinate
         TAX
         LDA titleScreenStarfieldColorsArray,X
         STA $D02E    ;Sprite 7 Color
+
         LDA $D016    ;VIC Control Register 2
         AND #$F8
         STA $D016    ;VIC Control Register 2
+
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
@@ -1187,7 +1190,7 @@ someKindOfRateLimitingForAttackWaves .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00
 updateRateForAttackShips             .BYTE $00,$00,$02,$02,$02,$02,$00,$00
                                      .BYTE $02,$02
-anotherUpdateRateForAttackShips      .BYTE $02,$02,$00,$00,$00,$00,$FF,$FF
+rateForSwitchingToAlternateEnemy      .BYTE $02,$02,$00,$00,$00,$00,$FF,$FF
                                      .BYTE $00,$00
 
 upperPlanetAttackShipYPosUpdated     .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -1199,7 +1202,7 @@ shipsThatHaveBeenHitByABullet        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00
 shipHasAlreadyBeenHitByGilby         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                      .BYTE $00,$00,$00,$00
-previousAttaWaveHiPtrTempStorage     .BYTE $04
+previousAttackShipIndex     .BYTE $04
 nextShipOffset                       .BYTE $00
 soundEffectInProgress                .BYTE $00,$01,$00,$01,$00,$00,$01,$00
                                      .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
@@ -1372,24 +1375,26 @@ UpdateCurrentShipWaveDataPtrs
         LDA #$00
         STA updatingWaveData
         STA shipHasAlreadyBeenHitByGilby,X
-        STY previousAttaWaveHiPtrTempStorage
+        ; Y contains the index of the previous enemy ship.
+        STY previousAttackShipIndex
         ; Falls through
 
 ;------------------------------------------------------------------
-; GetWaveDateForNewShip
+; GetWaveDataForNewShip
 ; Loads the wave data for the current wave from level_data.asm and level_data2.asm.
 ; currentShipWaveDataLoPtr is a reference to one of the data chunks in those
 ; files.
 ;------------------------------------------------------------------
-GetWaveDateForNewShip
+GetWaveDataForNewShip
         ; X is the index of the ship in activeShipsWaveDataLoPtrArray
         LDY #$00
         LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipsColorArray + $01,X
 
+        ; Byte 7 ($06): Usually an update rate for the attack ships.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
-        STA anotherUpdateRateForAttackShips,X
+        STA rateForSwitchingToAlternateEnemy,X
 
         LDY #$0B
         LDA (currentShipWaveDataLoPtr),Y
@@ -1429,19 +1434,21 @@ GetWaveDateForNewShip
         STA upperPlanetAttackShipAnimationFrameRate,X
         STA upperPlanetAttackShipInitialFrameRate,X
 
-        ; Check if the level is a multiple of 3, if it's not
-        ; we'll fall through and load some alternative sprites.
+        ; Check if we're on the upper planet.
         TXA
         AND #$04
-        BEQ b4AB9
+        BEQ WaveDataOnUpperPlanet
 
+        ; We're on the lower planet. 
         INY
         ; Y is now 4
+        ; Byte 5 (Index $04): Sprite value for the attack ship for the lower planet.
         LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpritesLoadedFromBackingData,X
 
         INY
         ; Y is now 5
+        ; Byte 6 (Index $05): The 'end' sprite value for the ship's lower planet animation.
         LDA (currentShipWaveDataLoPtr),Y
         STA upperPlanetAttackShipSpriteAnimationEnd,X
 
@@ -1452,31 +1459,38 @@ GetWaveDateForNewShip
         LDA upperPlanetAttackShipSpritesLoadedFromBackingData,X
         STA upperPlanetAttackShipsSpriteValueArray + $01,Y
 
-        ; Load the x-pos movement for the attack ship.
-b4AB9   LDY #$12
+WaveDataOnUpperPlanet   
+        ; Y is now 18 ($12) - Byte 19 in the wave data
+        ; which is the x-pos movement for the attack ship.
+        LDY #$12
         LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
-        BEQ b4AC4
+        ; Ignore if the upper bit is set.
+        BEQ GetYPosMovement
         STA xPosMovementForUpperPlanetAttackShip,X
 
-b4AC4   INY
-        ; Y is now 19 ($13). This has the Y-Pos movement for the
+GetYPosMovement   
+        INY
+        ; Y is now 19 ($13) - Byte 20. This has the Y-Pos movement for the
         ; attack ship.
         LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
-        BEQ b4AFA
+        ; Ignore if the upper bit is set.
+        BEQ GetXPosFrameRate
         AND #$F0
         CMP #$20
         BEQ b4AD6
-        ; Y is still 19 ($13).
+        ; Y is still 19 ($13) - Byte 20.
+        ; This has the Y-Pos movement for the attack ship.
         LDA (currentShipWaveDataLoPtr),Y
         JMP LoadYPosForAttackShip
 
 b4AD6   TXA
         STX temporaryStorageForXRegister
         AND #$04
-        BNE b4AEC
-        ; Y is still 19 ($13).
+        BNE LowerBitOfYPosSet
+        ; Y is still 19 ($13) - Byte 20.
+        ; This has the Y-Pos movement for the attack ship.
         LDA (currentShipWaveDataLoPtr),Y
         AND #$0F
         TAX
@@ -1484,8 +1498,10 @@ b4AD6   TXA
         LDX temporaryStorageForXRegister
         JMP LoadYPosForAttackShip
 
-        ; Y is still 19 ($13).
-b4AEC   LDA (currentShipWaveDataLoPtr),Y
+        ; Y is still 19 ($13) - Byte 20.
+        ; This has the Y-Pos movement for the attack ship.
+LowerBitOfYPosSet   
+        LDA (currentShipWaveDataLoPtr),Y
         AND #$0F
         TAX
         LDA yPosMovementPatternForShips1,X
@@ -1494,30 +1510,41 @@ b4AEC   LDA (currentShipWaveDataLoPtr),Y
 LoadYPosForAttackShip
         STA yPosMovementForUpperPlanetAttackShips,X
 
-b4AFA   INY
-        ; Y is now 20 ($14)
+GetXPosFrameRate   
+        INY
+        ; Y is now 20 ($14) - Byte 21.
+        ; X Pos Frame Rate for the Attack ship.
         LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
-        BEQ b4B07
+        ; Ignore if the upper bit is set.
+        BEQ GetYPosFrameRate
+
         STA upperPlanetInitialXPosFrameRateForAttackShip,X
         STA upperPlanetXPosFrameRateForAttackShip,X
 
-b4B07   INY
-        ; Y is now 21 ($15)
+GetYPosFrameRate   
+        INY
+        ; Y is now 21 ($15) - Byte 22.
+        ; Y Pos Frame Rate for the Attack ship.
         LDA (currentShipWaveDataLoPtr),Y
         CMP #$80
-        BEQ b4B14
+        ; Ignore if the upper bit is set.
+        BEQ MaybeSetInitialRandomPositionsOfEnemy
+
         STA upperPlanetInitialYPosFrameRateForAttackShips,X
         STA upperPlanetYPosFrameRateForAttackShips,X
 
-b4B14   LDA #$01
+MaybeSetInitialRandomPositionsOfEnemy   
+        LDA #$01
         LDA updatingWaveData
-        BEQ b4B1C
+        BEQ SetInitialRandomPositionsOfEnemy
         RTS
 
         ; Set the initial Y Position of the new attack ships.
         ; This is random.
-b4B1C   LDY previousAttaWaveHiPtrTempStorage
+previousAttackShipIndexTmp = tmpPtrLo
+SetInitialRandomPositionsOfEnemy   
+        LDY previousAttackShipIndex
         LDA indexForActiveShipsWaveData,X
         TAX
         LDA attackShipsMSBXPosOffsetArray + $01,X
@@ -1527,50 +1554,62 @@ b4B1C   LDY previousAttaWaveHiPtrTempStorage
         CLC
         ADC #$20
         STA upperPlanetAttackShipsXPosArray + $01,Y
+
+        ; Are we on the upper or lower planet?
         TYA
         AND #$08
-        BNE b4B5A
+        BNE SetInitialRandomPositionLowerPlanet
+
+SetInitialRandomPositionUpperPlanet   
         JSR PutRandomByteInAccumulatorRegister
         AND #$3F
         CLC
         ADC #$40
         STA upperPlanetAttackShipsYPosArray + $01,Y
 
-        STY tmpPtrLo
-        ; Byte 6 ($06): Determines if the inital Y Position of the ship is random or uses a default.
+        STY previousAttackShipIndexTmp
+        ; Byte 7 ($06): Usually an update rate for the attack ships.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
-        BNE b4B59
-        ; Byte 8 ($08): Default initiation Y position for the enemy. 
+        BNE ReturnFromLoadingWaveDataEarly
+
+        ; Byte 9 ($08): Default initiation Y position for the enemy. 
         LDY #$08
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4B59
-        LDA #$6C
-        LDY tmpPtrLo
-        STA upperPlanetAttackShipsYPosArray + $01,Y
-b4B59   RTS
+        BEQ ReturnFromLoadingWaveDataEarly
 
-b4B5A   JSR PutRandomByteInAccumulatorRegister
+        LDA #$6C
+        LDY previousAttackShipIndexTmp
+        STA upperPlanetAttackShipsYPosArray + $01,Y
+
+ReturnFromLoadingWaveDataEarly   
+        RTS
+
+SetInitialRandomPositionLowerPlanet   
+        JSR PutRandomByteInAccumulatorRegister
         AND #$3F
         CLC
         ADC #$98
         STA upperPlanetAttackShipsYPosArray + $01,Y
 
-        STY tmpPtrLo
-        ; Byte 6 ($06): Determines if the inital Y Position of the ship is random or uses a default.
+        STY previousAttackShipIndexTmp
+        ; Byte 7 ($06): Determines if the inital Y Position of the ship is random or uses a default.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
-        BNE b4B7A
-        ; Byte 8 ($08): Default initiation Y position for the enemy. 
+        BNE ReturnFromLoadingWaveData
+
+        ; Byte 9 ($08): A Hi-Ptr to wave data normally but treated here . 
         LDY #$08
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4B7A
+        BEQ ReturnFromLoadingWaveData
 
+        ; Set Y Pos to $90 if we have wave data in Bytes 8-9.
         LDA #$90
-        LDY tmpPtrLo
+        LDY previousAttackShipIndexTmp
         STA upperPlanetAttackShipsYPosArray + $01,Y
 
-b4B7A   RTS
+ReturnFromLoadingWaveData   
+        RTS
 
 orderForUpdatingPositionOfAttackShips          .BYTE $00,$00,$00,$01,$02,$03,$00,$00
                                                .BYTE $04,$05,$06,$07
@@ -1932,31 +1971,32 @@ GetNewShipDataFromDataStore
         JMP UpdateWaveDataPointersForCurrentEnemy
 
 b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
-        BEQ b4DAC
+        BEQ No3rdWaveData
         LDA #$00
         STA upperPlanetAttackShipYPosUpdated2,X
         ; The 3rd stage of wave data for this enemy.
         LDY #$1B
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4DAC
+        BEQ No3rdWaveData
         DEY
         JMP UpdateWaveDataPointersForCurrentEnemy
 
-b4DAC   LDA joystickInput
+No3rdWaveData   
+        LDA joystickInput
         AND #$10
-        BNE b4DBD
+        BNE Byte34IsZero
         ; Check if we should load extra stage data for this enemy.
-        ; FIXME: It it appears this is never set. If it was set it would
-        ; incorrectly expect their to be a hi/lo ptr in $20 and $21, when
-        ; there isn't.
+        ; FIXME: When this is set it would incorrectly expect there
+        ; to be a hi/lo ptr in $20 and $21, when there isn't.
         LDY #$21
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4DBD
+        BEQ Byte34IsZero
         DEY
         JMP UpdateWaveDataPointersForCurrentEnemy
         ; Returns
 
-b4DBD   LDA updateRateForAttackShips,X
+Byte34IsZero   
+        LDA updateRateForAttackShips,X
         BEQ UpdateAttackShipDataForNewShip
         DEC updateRateForAttackShips,X
         BNE UpdateAttackShipDataForNewShip
@@ -2010,7 +2050,7 @@ UpdateWaveDataPointersForCurrentEnemy
 GetWaveDataForShipForNewLevel
         LDA #$FF
         STA updatingWaveData
-        JSR GetWaveDateForNewShip
+        JSR GetWaveDataForNewShip
         LDA #$00
         STA updatingWaveData
         RTS
@@ -2042,14 +2082,15 @@ currentBottomPlanet     .BYTE $01
 ;------------------------------------------------------------------
 UpdateAttackShipDataForNewShip
         ; Check if the wave supports some kind of animation effect
-        ; stored as a hi/lo ptr at position $09 and $0A in its data.
-        ; FIXME: Is this actually used? Can't find the appropriate
-        ; bytes set in any of the level data.
+        ; stored as a hi/lo ptr at position $09 and $0A (Bytes 10 and 11) in its data.
+        ; FIXME: Bytes 10 and 11 are never actually set, so this is never used.
         LDY #$0A
         LDA (currentShipWaveDataLoPtr),Y
         BEQ MaybeQuicklyGravitatesToGilby
+
         DEC someKindOfRateLimitingForAttackWaves,X
         BNE MaybeQuicklyGravitatesToGilby
+
         STA tempHiPtr3
         DEY
         ; Y is now $09.
@@ -2142,7 +2183,7 @@ MaybeStickyAttackShipBehaviour
         ; Does the enemy have the stickiness behaviour?
         LDY #$16
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ NormalAttackShipBehaviour
+        BEQ MaybeSwitchToAlternateEnemyPattern
 
         ; The enemy is sticky, so make it stick to the gilby.
         CLC
@@ -2173,16 +2214,19 @@ b4EFE   INC xPosMovementForUpperPlanetAttackShip,X
 b4F01   LDA indexForActiveShipsWaveData,X
         TAX
 
-NormalAttackShipBehaviour   
-        ; FIXME: understand the intended behaviour here.
+MaybeSwitchToAlternateEnemyPattern   
+        ; Byte 7 ($06): Usually an update rate for the attack ships.
         LDY #$06
         LDA (currentShipWaveDataLoPtr),Y
         BEQ EarlyReturnFromAttackShipBehaviour
 
-        DEC anotherUpdateRateForAttackShips,X
+        DEC rateForSwitchingToAlternateEnemy,X
         BNE EarlyReturnFromAttackShipBehaviour
+
         LDA (currentShipWaveDataLoPtr),Y
-        STA anotherUpdateRateForAttackShips,X
+        STA rateForSwitchingToAlternateEnemy,X
+
+				; Push the current ship's position data onto the stack.
         TXA
         PHA
         LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
@@ -2203,16 +2247,24 @@ NormalAttackShipBehaviour
 ProcessAttackShipBehaviour   
         JSR SetXToIndexOfShipThatNeedsReplacing
         BEQ ResetAndReturnFromAttackShipBehaviour
+
+				; Pop the current ship's position data from the stack and
+				; populate it into the new ship's position.
         LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
         PLA
         STA upperPlanetAttackShipsYPosArray + $01,Y
         PLA
-        BEQ b4F3F
+        BEQ MSBXPosOffsetIzZero
+
         LDA attackShipsMSBXPosOffsetArray + $01,X
-b4F3F   STA upperPlanetAttackShipsMSBXPosArray + $01,Y
+MSBXPosOffsetIzZero   
+				STA upperPlanetAttackShipsMSBXPosArray + $01,Y
         PLA
         STA upperPlanetAttackShipsXPosArray + $01,Y
         PLA
+
+        ; Byte 8 of Wave Data gets loaded now. Bytes 8 and 9
+        ; contain the hi/lo ptrs to the alternate enemy data.
         LDY #$07
         JMP UpdateWaveDataPointersForCurrentEnemy
 
@@ -3616,14 +3668,17 @@ FlashBackgroundAndBorder
         LDA colorsForFlashBackgroundAndBorderEffect,Y
         BEQ b59D8
         STY txtGilbiesLeft
+
         LDA $D012    ;Raster Position
         CLC
         ADC #$01
         STA $D012    ;Raster Position
         BNE b5A03
+
 b59D8   LDA $D016    ;VIC Control Register 2
         AND #$F8
         STA $D016    ;VIC Control Register 2
+
         JSR PlaySoundEffects
 
         LDX #$1F
@@ -5140,10 +5195,12 @@ PrepareScreen
         STA $D018    ;VIC Memory Control Register
         JSR DrawControlPanel
         JSR InitializeEnergyBars
+
         LDA $D016    ;VIC Control Register 2
         AND #$F7
         ORA #$10
         STA $D016    ;VIC Control Register 2
+
         LDA #$01
         STA $D027    ;Sprite 0 Color
         JSR InitializePlanetProgressArrays
@@ -5281,10 +5338,12 @@ BeginRunningGame
 
         LDA #$01
         STA hasDisplayedHiScoreScreen
+
         LDA $D016    ;VIC Control Register 2
         AND #$E8
         ORA #$08
         STA $D016    ;VIC Control Register 2
+
         SEI
         LDA #$00
         STA $D015    ;Sprite display Enable
@@ -5309,10 +5368,12 @@ b6982   LDA levelRestartInProgress
 b698A   LDA progressDisplaySelected
         BEQ GoToBonusPhase
         SEI
+
         LDA $D016    ;VIC Control Register 2
         AND #$E7
         ORA #$08
         STA $D016    ;VIC Control Register 2
+
         JSR StoreStatusBarDetail
         JSR ShowProgressScreen
         INC shouldResetPlanetEntropy
@@ -5421,10 +5482,12 @@ EnterPauseMode
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
+
         LDA $D016    ;VIC Control Register 2
         AND #$C0
         ORA #$08
         STA $D016    ;VIC Control Register 2
+
         JSR StoreStatusBarDetail
         JSR LaunchMIF
 
@@ -5651,6 +5714,8 @@ b6BCA   LDA progressDisplaySelected
 
 b6BD2   LDA nextRasterPositionArray - $01,Y ; Y is currentIndexInRasterInterruptArrays
         BEQ ResetRasterAndPerformMainGameUpdate
+        ; Returns from Interrupt
+
         JMP AnimateStarFieldAndDrawLowerPlanet
         ; Returns from Interrupt
 
@@ -5662,14 +5727,17 @@ ResetRasterAndPerformMainGameUpdate
         STA currentIndexInRasterInterruptArrays
         LDA #$5C
         STA $D012    ;Raster Position
+
         LDA $D016    ;VIC Control Register 2
         AND #$E0
         ORA #$08
         STA $D016    ;VIC Control Register 2
+
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         BNE PerformMainGameUpdate
+        ; Returns from interrupt
 
 ;------------------------------------------------------------------
 ; UpdateGilbyPositionAndColor
@@ -5765,11 +5833,14 @@ b6C91   SEC
         STA $D02E    ;Sprite 7 Color
         CPY zeroRasterPosition
         BNE b6CB5
+
+        ; Scroll the planet
         LDA $D016    ;VIC Control Register 2
         AND #$F0
         ORA planetScrollSpeed
         ORA #$10
         STA $D016    ;VIC Control Register 2
+
         BNE b6CD3
 
 b6CB5   CPY #$06
@@ -5787,6 +5858,7 @@ b6CC5   DEX
         LDA $D016    ;VIC Control Register 2
         AND #$F8
         STA $D016    ;VIC Control Register 2
+
         JMP UpdateRasterPositionAndReturn
         ;Returns
 
@@ -5798,10 +5870,13 @@ b6CD3   JMP UpdateInterruptRegisterAndReturn
 ;------------------------------------------------------------------
 DrawLowerPlanet
         JSR DrawLowerPlanetAttackShips
+
         LDA #$07
         SEC
         SBC planetScrollSpeed
         STA currentMSBXPosOffset
+
+        ; Scrolling the screen
         LDA $D016    ;VIC Control Register 2
         AND #$F8
         ORA currentMSBXPosOffset
@@ -8129,58 +8204,72 @@ b7DA5   LDA #$FF
 b7DAF   LDA #$00
         STA yPosMovementForLowerPlanetAttackShips - $01,X
 b7DB4   DEC upperPlanetXPosFrameRateForAttackShip - $01,X
-        BNE b7DF6
+        BNE DecrementXPosFrameRateLowerPlanet
+
         LDA upperPlanetInitialXPosFrameRateForAttackShip - $01,X
         STA upperPlanetXPosFrameRateForAttackShip - $01,X
+
         LDA xPosMovementForUpperPlanetAttackShip - $01,X
-        BMI b7DD9
+        BMI UpperBitSetOnXPosMovement
+
         CLC
         ADC upperPlanetAttackShip2XPos,X
         STA upperPlanetAttackShip2XPos,X
-        BCC b7DF6
+        BCC DecrementXPosFrameRateLowerPlanet
         LDA upperPlanetAttackShip2MSBXPosValue,X
         EOR attackShip2MSBXPosOffsetArray,X
         STA upperPlanetAttackShip2MSBXPosValue,X
-        JMP b7DF6
+        JMP DecrementXPosFrameRateLowerPlanet
 
-b7DD9   EOR #$FF
+UpperBitSetOnXPosMovement   
+        ; This creates a decelerating effect on the attack ship's movement.
+        ; Used by the licker ship wave in planet 1 for example.
+        EOR #$FF
         STA attackShipOffsetRate
         INC attackShipOffsetRate
         LDA upperPlanetAttackShip2XPos,X
         SEC
         SBC attackShipOffsetRate
         STA upperPlanetAttackShip2XPos,X
-        BCS b7DF6
+        BCS DecrementXPosFrameRateLowerPlanet
+
         LDA upperPlanetAttackShip2MSBXPosValue,X
         EOR attackShip2MSBXPosOffsetArray,X
         STA upperPlanetAttackShip2MSBXPosValue,X
-b7DF6   DEC lowerPlanetXPosFrameRateForAttackShip - $01,X
-        BNE b7E38
+
+DecrementXPosFrameRateLowerPlanet   
+        DEC lowerPlanetXPosFrameRateForAttackShip - $01,X
+        BNE ReturnFromUpdateXYPositions
+
         LDA lowerPlanetInitialXPosFrameRateForAttackShip - $01,X
         STA lowerPlanetXPosFrameRateForAttackShip - $01,X
         LDA xPosMovementForLowerPlanetAttackShip - $01,X
-        BMI b7E1B
+        BMI UpperBitSetOnXPosMovementLowerPlanet
+
         CLC
         ADC lowerPlanetAttackShip3XPos,X
         STA lowerPlanetAttackShip3XPos,X
-        BCC b7E38
+        BCC ReturnFromUpdateXYPositions
         LDA lowerPlanetAttackSHip3MSBXPosValue,X
         EOR attackShip2MSBXPosOffsetArray,X
         STA lowerPlanetAttackSHip3MSBXPosValue,X
-        JMP b7E38
+        JMP ReturnFromUpdateXYPositions
 
-b7E1B   EOR #$FF
+UpperBitSetOnXPosMovementLowerPlanet   
+        EOR #$FF
         STA attackShipOffsetRate
         INC attackShipOffsetRate
         LDA lowerPlanetAttackShip3XPos,X
         SEC
         SBC attackShipOffsetRate
         STA lowerPlanetAttackShip3XPos,X
-        BCS b7E38
+        BCS ReturnFromUpdateXYPositions
         LDA lowerPlanetAttackSHip3MSBXPosValue,X
         EOR attackShip2MSBXPosOffsetArray,X
         STA lowerPlanetAttackSHip3MSBXPosValue,X
-b7E38   RTS
+
+ReturnFromUpdateXYPositions   
+        RTS
 
 xPosMovementForUpperPlanetAttackShip              .BYTE $06,$06,$06,$06
 xPosMovementForLowerPlanetAttackShip              .BYTE $06,$06,$06,$06
@@ -8193,37 +8282,50 @@ lowerPlanetAttackShipSpriteAnimationEnd           .BYTE BLANK_SPRITE,BLANK_SPRIT
 upperPlanetAttackShipAnimationFrameRate           .BYTE $01,$01,$01,$01
 lowerPlanetAttackShipAnimationFrameRate           .BYTE $01,$01,$01,$01
 upperPlanetAttackShipInitialFrameRate             .BYTE $03,$03,$03,$03
-lowerPlanetAttackShipInitialAnimationFrameRate    .BYTE $03,$03,$03,$03
+lowerPlanetAttackShipInitialFrameRate             .BYTE $03,$03,$03,$03
 ;------------------------------------------------------------------
 ; AnimateAttackShipSprites
 ;------------------------------------------------------------------
 AnimateAttackShipSprites
         LDA pauseModeSelected
-        BEQ b7E6F
+        BEQ AnimateUpperPlanetAttackShips
         RTS
 
-b7E6F   DEC upperPlanetAttackShipAnimationFrameRate - $01,X
-        BNE b7E8B
+AnimateUpperPlanetAttackShips   
+        DEC upperPlanetAttackShipAnimationFrameRate - $01,X
+        BNE AnimateLowerPlanetAttackShips
+
         LDA upperPlanetAttackShipInitialFrameRate - $01,X
         STA upperPlanetAttackShipAnimationFrameRate - $01,X
         INC upperPlanetAttackShip2SpriteValue,X
         LDA upperPlanetAttackShip2SpriteValue,X
+
+        ; Reached the end of the animation?
         CMP upperPlanetAttackShipSpriteAnimationEnd - $01,X
-        BNE b7E8B
+        BNE AnimateLowerPlanetAttackShips
+
+        ; Reset the animation sprite back to the start.
         LDA upperPlanetAttackShipSpritesLoadedFromBackingData - $01,X
         STA upperPlanetAttackShip2SpriteValue,X
 
-b7E8B   DEC lowerPlanetAttackShipAnimationFrameRate - $01,X
-        BNE b7EA7
-        LDA lowerPlanetAttackShipInitialAnimationFrameRate - $01,X
+AnimateLowerPlanetAttackShips   
+        DEC lowerPlanetAttackShipAnimationFrameRate - $01,X
+        BNE DontAnimateLowerPlanetAttackShip
+
+        LDA lowerPlanetAttackShipInitialFrameRate - $01,X
         STA lowerPlanetAttackShipAnimationFrameRate - $01,X
         INC lowerPlanetAttackShip2SpriteValue,X
         LDA lowerPlanetAttackShip2SpriteValue,X
+
+        ; Reached the end of the animation?
         CMP lowerPlanetAttackShipSpriteAnimationEnd - $01,X
-        BNE b7EA7
+        BNE DontAnimateLowerPlanetAttackShip
+
+        ; Reset the animation sprite back to the start.
         LDA lowerPlanetAttackShipSpritesLoadedFromBackingData - $01,X
         STA lowerPlanetAttackShip2SpriteValue,X
-b7EA7   RTS
+DontAnimateLowerPlanetAttackShip   
+        RTS
 
 ;------------------------------------------------------------------
 ; DetectGameOrAttractMode
@@ -9044,5 +9146,5 @@ pE800   SEI
         CLI
         JMP $0835
 
-; vim: tabstop=2 shiftwidth=2 expandtab
+; vim: tabstop=2 shiftwidth=2 expandtab smartindent
 
