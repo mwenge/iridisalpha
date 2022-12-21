@@ -97,7 +97,7 @@ planet4Level19Additional
         .BYTE $20
         ; Byte 17 (Index $10): Lo Ptr to the wave data we switch to when first hit. 
         ; Byte 18 (Index $11): Hi Ptr to the wave data we switch to when first hit.
-        .BYTE $40,$19
+        .BYTE <planet4Level19Additional2ndWave,>planet4Level19Additional2ndWave
         ; Byte 19 (Index $12): X Pos movement for attack ship.
         .BYTE $00
         ; Byte 20 (Index $13): Y Pos movement pattern for attack ship.
