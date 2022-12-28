@@ -69,7 +69,6 @@ tempLoPtr                               = $FE
 tempHiPtr                               = $FF
 screenLinePtrLo                         = $0340
 screenLinePtrHi                         = $0360
-randomStructureRoutineAddress           = $0029
 SCREEN_RAM                              = $0400
 COLOR_RAM                               = $D800
 Sprite0Ptr                              = $07F8
@@ -97,7 +96,7 @@ Sprite7PtrStarField                     = $07FF
 ;------------------------------------------------------------------
 *=$0810
 LaunchCurrentProgram
-        LDA #$00
+        LDA #BLACK
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
@@ -132,7 +131,7 @@ f7PressedOrTimedOutToAttractMode .BYTE $02
 ; InitializeSpritesAndInterruptsForTitleScreen
 ;------------------------------------------------------------------
 InitializeSpritesAndInterruptsForTitleScreen
-        LDA #$00
+        LDA #BLACK
         SEI
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
@@ -174,7 +173,7 @@ InitializeSpritesAndInterruptsForTitleScreen
 ; EnterTitleScreenLoop
 ;------------------------------------------------------------------
 EnterTitleScreenLoop
-        LDA #$0B
+        LDA #GRAY1
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$FE
@@ -1044,9 +1043,9 @@ b40A0   LDA #$30
         STA oldTopPlanetIndex
         LDA #$00
         STA oldBottomPlanetIndex
-        LDA #$08
+        LDA #ORANGE
         STA $D022    ;Background Color 1, Multi-Color Register 0
-        LDA #$09
+        LDA #BROWN
         STA $D023    ;Background Color 2, Multi-Color Register 1
         JSR PrepareScreen
         JMP InitializeSprites
@@ -2226,7 +2225,7 @@ MaybeSwitchToAlternateEnemyPattern
         LDA (currentShipWaveDataLoPtr),Y
         STA rateForSwitchingToAlternateEnemy,X
 
-				; Push the current ship's position data onto the stack.
+        ; Push the current ship's position data onto the stack.
         TXA
         PHA
         LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
@@ -2248,8 +2247,8 @@ ProcessAttackShipBehaviour
         JSR SetXToIndexOfShipThatNeedsReplacing
         BEQ ResetAndReturnFromAttackShipBehaviour
 
-				; Pop the current ship's position data from the stack and
-				; populate it into the new ship's position.
+        ; Pop the current ship's position data from the stack and
+        ; populate it into the new ship's position.
         LDY indexIntoUpperPlanetAttackShipXPosAndYPosArray,X
         PLA
         STA upperPlanetAttackShipsYPosArray + $01,Y
@@ -2258,7 +2257,7 @@ ProcessAttackShipBehaviour
 
         LDA attackShipsMSBXPosOffsetArray + $01,X
 MSBXPosOffsetIzZero   
-				STA upperPlanetAttackShipsMSBXPosArray + $01,Y
+        STA upperPlanetAttackShipsMSBXPosArray + $01,Y
         PLA
         STA upperPlanetAttackShipsXPosArray + $01,Y
         PLA
@@ -4237,58 +4236,62 @@ b603E   LDA statusBarDetailStorage,X
         BNE b603E
 b6047   RTS
 
-;------------------------------------------------------------------
+;-----------------------------------------------------------
 ; DrawLowerPlanetWhileInactive
 ; Draws the lower planet for the early levels when it isn't
 ; active yet.
-;------------------------------------------------------------------
+;-----------------------------------------------------------
 DrawLowerPlanetWhileInactive
         LDA lowerPlanetActivated
         BEQ b6047
 
         LDX #$28
-b604F   LDA textForInactiveLowerPlanet - $01,X
+DrawLowerTextLoop   
+        LDA textForInactiveLowerPlanet - $01,X
         AND #$3F
         STA SCREEN_RAM + LINE18_COL39,X
         LDA #WHITE
         STA COLOR_RAM + LINE18_COL39,X
         DEX
-        BNE b604F
+        BNE DrawLowerTextLoop
 
         LDX #$28
-b6061   LDA surfaceDataInactiveLowerPlanet,X
+DrawInactiveSurfaceLoop   
+        LDA surfaceDataInactiveLowerPlanet,X
         CLC
         ADC #$40
         STA SCREEN_RAM + LINE14_COL39,X
         DEX
-        BNE b6061
+        BNE DrawInactiveSurfaceLoop
 
         LDX #$10
-b606F   LDY xPosSecondLevelSurfaceInactivePlanet,X
+DrawWarpGateInactive   
+        LDY xPosSecondLevelSurfaceInactivePlanet,X
         LDA secondLevelSurfaceDataInactivePlanet,X
         CLC
         ADC #$40
         STA SCREEN_RAM + LINE12_COL4,Y
         DEX
-        BNE b606F
+        BNE DrawWarpGateInactive
         RTS
 
 ; The *-$01 is because the array index starts at 1 rather than 0.
 xPosSecondLevelSurfaceInactivePlanet =*-$01
-                                     .BYTE $00,$01,$02,$03,$28,$29,$2A,$2B
-                                     .BYTE $50,$51,$52,$53,$78,$79,$7A,$7B
+       .BYTE $00,$01,$02,$03,$28,$29,$2A,$2B
+       .BYTE $50,$51,$52,$53,$78,$79,$7A,$7B
 secondLevelSurfaceDataInactivePlanet =*-$01 
-                                     .BYTE $30,$32,$38,$3A,$31,$33,$39,$3B
-                                     .BYTE $34,$36,$3C,$3E,$35,$37,$3D,$3F
+       .BYTE $30,$32,$38,$3A,$31,$33,$39,$3B
+       .BYTE $34,$36,$3C,$3E,$35,$37,$3D,$3F
 surfaceDataInactiveLowerPlanet =*-$01       
-                                     .BYTE $01,$03,$01,$03,$01,$03,$01,$03
-                                     .BYTE $01,$03,$01,$03,$01,$03,$01,$03
-                                     .BYTE $01,$03,$01,$03,$01,$03,$01,$03
-                                     .BYTE $01,$03,$01,$03,$01,$03,$1D,$1F
-                                     .BYTE $00,$02,$00,$02,$00,$02,$00,$02
+       .BYTE $01,$03,$01,$03,$01,$03,$01,$03
+       .BYTE $01,$03,$01,$03,$01,$03,$01,$03
+       .BYTE $01,$03,$01,$03,$01,$03,$01,$03
+       .BYTE $01,$03,$01,$03,$01,$03,$1D,$1F
+       .BYTE $00,$02,$00,$02,$00,$02,$00,$02
 
-textForInactiveLowerPlanet           .TEXT "  WARP GATE       GILBY   CORE  NOT-CORE"
-progressDisplaySelected              .BYTE $00
+textForInactiveLowerPlanet
+      .TEXT "  WARP GATE       GILBY   CORE  NOT-CORE"
+progressDisplaySelected .BYTE $00
 ;------------------------------------------------------------------
 ; DrawProgressDisplayScreen
 ;------------------------------------------------------------------
@@ -4306,7 +4309,7 @@ b60F8   LDA #$1C
         DEX
         BNE b60F8
 
-b6105   LDY #$00
+b6105   LDY #BLACK
         STY $D020    ;Border Color
         STY $D021    ;Background Color 0
 
@@ -4417,7 +4420,7 @@ planetIconsLoPtrArray                    .BYTE $A0,$7B,$56,$31,$0C,$40,$6B,$96
 ; ShowProgressScreen
 ;------------------------------------------------------------------
 ShowProgressScreen
-        LDA #$00
+        LDA #BLACK
         STA $D015    ;Sprite display Enable
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
@@ -4648,7 +4651,7 @@ DisplayGameOver
         LDA #>GameSwitchAndGameOverInterruptHandler
         STA $315    ;IRQ
         CLI
-        LDA #$00
+        LDA #BLACK
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         JSR DrawProgressDisplayScreen
@@ -4829,7 +4832,7 @@ DisplayNewBonus
         STA $D011    ;VIC Control Register 1
         LDA #$F0
         STA $D012    ;Raster Position
-        LDA #$00
+        LDA #BLACK
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         CLI
@@ -5186,7 +5189,7 @@ GilbyHasSpeed
 ; PrepareScreen
 ;------------------------------------------------------------------
 PrepareScreen
-        LDA #$00
+        LDA #BLACK
         SEI
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
@@ -5267,7 +5270,7 @@ ReturnFromSetUpSprites
 ; InitializeSprites
 ;------------------------------------------------------------------
 InitializeSprites
-        LDA #$0B
+        LDA #GRAY1
         STA $D022    ;Background Color 1, Multi-Color Register 0
         LDA #$7F
         STA $D01C    ;Sprites Multi-Color Mode Select
@@ -5668,7 +5671,7 @@ FlashBorderAndBackground
         BNE b6B90
         DEC borderFlashControl2
         BNE b6BBE
-        LDA #$01
+        LDA #WHITE
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         LDA #$01
@@ -5677,7 +5680,7 @@ b6B8F   RTS
 
 b6B90   DEC borderFlashControl1
         BNE b6B8F
-        LDA #$00
+        LDA #BLACK
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         LDA #$02
@@ -5690,7 +5693,7 @@ b6BA3   LDA gilbyExploding
         STA $D020    ;Border Color
         DEC starFieldInitialStateArray - $01
         BNE b6BBE
-        LDA #$00
+        LDA #BLACK
         STA gilbyExploding
         STA $D021    ;Background Color 0
         STA $D020    ;Border Color
@@ -6737,34 +6740,43 @@ b72CF   CLC
 StoreRandomPositionInPlanetInPlanetPtr
         LDA #<planetOneBottomLayer
         STA planetPtrLo
+
         LDA #>planetOneBottomLayer
         STA planetPtrHi
+
         LDA charSetDataPtrLo
-        BEQ b72F9
+        BEQ LoPtrAlreadyZero
+
         INC planetPtrHi
         INC planetPtrHi
-b72F9   LDA planetPtrLo
-        CLC
-        ADC charSetDataPtrHi
-        STA planetPtrLo
-        LDA planetPtrHi
-        ADC #$00
-        STA planetPtrHi
+
+LoPtrAlreadyZero   
         LDA planetPtrLo
         CLC
         ADC charSetDataPtrHi
         STA planetPtrLo
+
         LDA planetPtrHi
         ADC #$00
         STA planetPtrHi
+
+        LDA planetPtrLo
+        CLC
+        ADC charSetDataPtrHi
+        STA planetPtrLo
+
+        LDA planetPtrHi
+        ADC #$00
+        STA planetPtrHi
+
         LDY #$00
         RTS
 
-randomIntToIncrement   =*+$01
 ;------------------------------------------------------------------
 ; PutRandomByteInAccumulatorRegister
 ;------------------------------------------------------------------
 PutRandomByteInAccumulatorRegister
+randomIntToIncrement   =*+$01
         LDA randomPlanetData
         INC randomIntToIncrement
         RTS
@@ -6874,13 +6886,13 @@ bitfield3ForMaterializingPlanet .BYTE $00,$04,$08,$0C
 ;------------------------------------------------------------------
 ; GeneratePlanetSurface
 ;
-; This is the routine Minter called 'GenPlan'.
+; This is the routine Minter called 'an'.
 ;
 ; From Jeff Minter's development diary:
 ; 17 February 1986
 ; "Redid the graphics completely, came up with some really nice looking
 ; metallic planet structures that I'll probably stick with. Started to
-; write the GenPlan routine that'll generate random planets at will.
+; write the an routine that'll generate random planets at will.
 ; Good to have a C64 that can generate planets in its spare time.
 ; Wrote pulsation routines for the colours; looks well good with some
 ; of the planet structures. The metallic look seems to be 'in' at the
@@ -6898,22 +6910,32 @@ GeneratePlanetSurface
         LDA #>planetSurfaceData
         STA planetSurfaceDataPtrHi
 
-        ; Clear down the planet surface data from $8000 to $8FFF
+        ; Clear down the planet surface data from $8000 to $8FFF.
+        ; There are 4 layers:
+        ; Top Layer:    $8000 to $83FF - 256 bytes 
+        ; Second Layer: $8400 to $87FF - 256 bytes 
+        ; Third Layer:  $8800 to $8BFF - 256 bytes 
+        ; Bottom Layer: $8C00 to $8FFF - 256 bytes 
         LDY #$00
-b73C6   LDA #$60
-b73C8   STA (planetSurfaceDataPtrLo),Y
+ClearPlanetHiPtrs   
+        ; $60 is an empty character and gets written to the entire
+        ; range from $8000 to $8FFF.
+        LDA #$60
+ClearPlanetLoPtrs   
+        STA (planetSurfaceDataPtrLo),Y
         DEY
-        BNE b73C8
+        BNE ClearPlanetLoPtrs
         INC planetSurfaceDataPtrHi
         LDA planetSurfaceDataPtrHi
-        CMP #$90
-        BNE b73C6
+        CMP (#>planetSurfaceData) + $10
+        BNE ClearPlanetHiPtrs
 
-        ; Fill $8C00 to $8CFF with a $40,$42 pattern. These are the
+        ; Fill $8C00 to $8FFF with a $40,$42 pattern. These are the
         ; character values that represent 'sea' on the planet.
         LDA #$8C
         STA planetSurfaceDataPtrHi
-b73D9   LDA #$40
+WriteSeaLoop   
+        LDA #$40
         STA (planetSurfaceDataPtrLo),Y
         LDA #$42
         INY
@@ -6929,28 +6951,35 @@ b73D9   LDA #$40
         STA planetSurfaceDataPtrHi
         ; Loop until $8FFF
         CMP #$90
-        BNE b73D9
+        BNE WriteSeaLoop
 
         ; Pick a random point between $8C00 and $8FFF for
         ; the start of the land section.
+
+        ; Get a random number between 0 and 256 and store
+        ; in A.
         JSR PutRandomByteInAccumulatorRegister
-        AND #$7F
-        CLC
-        ADC #$7F
+        ; Ensure the random number is between 128 and 256.
+        AND #$7F ; e.g. $92 becomes $12.
+        CLC      ; Clear the carry so addition doesn't overflow.
+        ADC #$7F ; e.g. Adding $7F to $12 gives $91 (145).
+        ; Store the result.
         STA charSetDataPtrHi
+
         LDA #$00
         STA charSetDataPtrLo
+
         ; Use the two pointers above to pick a random position
         ; in the planet between $8C00 and $8FFF and store it in
         ; planetPtrLo/planetPtrHi
         JSR StoreRandomPositionInPlanetInPlanetPtr
 
         ; Randomly generate the length of the land section, but
-        ; make it at least 32 bytes.
+        ; make it at least 32 bytes and not more than 150.
         JSR PutRandomByteInAccumulatorRegister
-        AND #$7F
+        AND #$7F ; Random number between 0 and 128
         CLC
-        ADC #$20
+        ADC #$20 ; Add 32
         STA planetSurfaceDataPtrLo
 
         ; Store $5C,$5E in the randomly chosen position. This is the
@@ -6963,9 +6992,10 @@ b73D9   LDA #$40
         STA (planetPtrLo),Y
 
         ; Draw the land from the randomly chosen position for up to
-        ; 256 bytes, depending on the randomly chosen length of the land
+        ; 150 bytes, depending on the randomly chosen length of the land
         ; chosen above and storedin planetSurfaceDataPtrLo.
-b741A   INC charSetDataPtrHi
+DrawLandMassLoop   
+        INC charSetDataPtrHi
         BNE b7420
 
         INC charSetDataPtrLo
@@ -6977,7 +7007,7 @@ b7420   JSR StoreRandomPositionInPlanetInPlanetPtr
         INY
         STA (planetPtrLo),Y
         DEC planetSurfaceDataPtrLo
-        BNE b741A
+        BNE DrawLandMassLoop
 
         ; Draw the right short of the land, represented by the chars in
         ; $5D/$5F.
@@ -6998,7 +7028,8 @@ largestStructureData .BYTE $41,$43,$51,$53,$41,$43,$FF
                      .BYTE $60,$60,$50,$52,$60,$60,$FF
                      .BYTE $49,$4B,$4D,$4F,$6D,$6F,$FF
                      .BYTE $48,$4A,$4C,$4E,$6C,$6E,$FE
-nextLargestStructure .BYTE $59,$5B,$FF,$58,$5A,$FF
+nextLargestStructure .BYTE $59,$5B,$FF
+                     .BYTE $58,$5A,$FF
                      .BYTE $55,$57,$FF
                      .BYTE $54,$56,$FE
 warpGateData         .BYTE $75,$77,$7D,$7F,$FF
@@ -7010,19 +7041,35 @@ warpGateData         .BYTE $75,$77,$7D,$7F,$FF
 ; DrawLittleStructure ($7486)
 ;------------------------------------------------------------------
 DrawLittleStructure
+        ; Start iterating at 0.
         LDX #$00
 DrawLSLoop
+        ; Get the byte in littleStructureData pointed to
+        ; by X.
         LDA littleStructureData,X
+        ; If we reached the 'end of layer' sentinel, move
+        ; our pointer planetPtrHi to the next layer. The
+        ; BNE 'stays on the same layer' by jumping to
+        ; LS_StayonSameLayer if the current byte
+        ; is not $FF.
         CMP #$FF
-        BNE b7495
+        BNE LS_StayonSameLayer
+        ; Switch to the next layer.
         JSR SwitchToNextLayerInPlanet
+        ; SwitchToNextLayerInPlanet incremented X for us
+        ; so continue looping.
         JMP DrawLSLoop
 
-b7495   CMP #$FE
-        BEQ b74B0
+LS_StayonSameLayer   
+        CMP #$FE
+        ; If we read in an $FE, we're done drawing.
+        BEQ ReturnFromDrawingStructure
         STA (planetPtrLo),Y
+        ; Increment Y to the next position to write to.
         INY
+        ; Increment X to get the next byte to read in.
         INX
+        ; Continue looping.
         JMP DrawLSLoop
 
 littleStructureData .BYTE $45,$47,$FF
@@ -7038,11 +7085,12 @@ SwitchToNextLayerInPlanet
         STA planetPtrHi
         LDY #$00
         INX
-b74B0   RTS
+ReturnFromDrawingStructure   
+        RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawMediumStructure ($74B1)
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawMediumStructure
         LDX #$00
 
@@ -7054,15 +7102,15 @@ DrawMSLoop
         JMP DrawMSLoop
 
 b74C0   CMP #$FE
-        BEQ b74B0 ; Return
+        BEQ ReturnFromDrawingStructure ; Return
         STA (planetPtrLo),Y
         INY
         INX
         JMP DrawMSLoop
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawLargestStructure ($74CB)
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawLargestStructure
         LDX #$00
 
@@ -7074,7 +7122,7 @@ DrawLargeStructureLoop
         JMP DrawLargeStructureLoop
 
 b74DA   CMP #$FE
-        BEQ b74B0 ; Return
+        BEQ ReturnFromDrawingStructure ; Return
         STA (planetPtrLo),Y
         INY
         INX
@@ -7093,7 +7141,7 @@ DrawNSLoop
         JMP DrawNSLoop
 
 b74F4   CMP #$FE
-        BEQ b74B0 ; Return
+        BEQ ReturnFromDrawingStructure ; Return
         STA (planetPtrLo),Y
         INY
         INX
@@ -7112,15 +7160,15 @@ DrawWGLoop
         JMP DrawWGLoop
 
 b750E   CMP #$FE
-        BEQ b74B0
+        BEQ ReturnFromDrawingStructure
         STA (planetPtrLo),Y
         INY
         INX
         JMP DrawWGLoop
 
-;------------------------------------------------------------------
+;-----------------------------------------------------------
 ; GeneratePlanetStructures
-;------------------------------------------------------------------
+;-----------------------------------------------------------
 GeneratePlanetStructures
         LDA #<characterSetData
         STA charSetDataPtrLo
@@ -7132,56 +7180,81 @@ GeneratePlanetStructures
 GenerateStructuresLoop
         JSR DrawRandomlyChosenStructure
         JSR PutRandomByteInAccumulatorRegister
+
+        ; The offset will be between 13 and 29
         AND #$0F
         CLC
         ADC #$0C
         CLC
         ADC charSetDataPtrHi
         STA charSetDataPtrHi
+
         LDA charSetDataPtrLo
         ADC #$00
         STA charSetDataPtrLo
+
         LDA charSetDataPtrHi
         AND #$F0
         CMP #$C0
-        BEQ b7546
+        BEQ DrawWarpGates
+
         CMP #$D0
-        BEQ b7546
+        BEQ DrawWarpGates
+
         JMP GenerateStructuresLoop
 
         ; Draw the two warp gates
-b7546   LDA charSetDataPtrLo
+DrawWarpGates   
+        LDA charSetDataPtrLo
         BEQ GenerateStructuresLoop
+
+        ; Draw a warp gate at the end of the map.
         LDA #$F1
         STA charSetDataPtrHi
+
         JSR StoreRandomPositionInPlanetInPlanetPtr
         JSR DrawWarpGate
         DEC charSetDataPtrLo
+
+        ; Draw a warp gate at the start of the map.
         LDA #$05
         STA charSetDataPtrHi
+
         JSR StoreRandomPositionInPlanetInPlanetPtr
         JSR DrawWarpGate
+
         RTS
 
-;------------------------------------------------------------------
+;---------------------------------------------------------------
 ; DrawRandomlyChosenStructure
-;------------------------------------------------------------------
+;---------------------------------------------------------------
 DrawRandomlyChosenStructure
         ; Pick a random positio to draw the structure
         JSR StoreRandomPositionInPlanetInPlanetPtr
-        ;Pick a random number between 1 and 4
-        JSR PutRandomByteInAccumulatorRegister
-        AND #$03
-        TAX
 
         ; Run the randomly chose subroutine, one of:
-        ; DrawLittleStructure, DrawMediumStructure, DrawLargestStructure, DrawNextLargestStructure to draw a structure
-        ; on the planet surface
+        ; DrawLittleStructure, DrawMediumStructure,
+        ; DrawLargestStructure, DrawNextLargestStructure
+        ; to draw a structure on the planet surface
+
+        ; Pick a random number between 0 and 3
+        JSR PutRandomByteInAccumulatorRegister
+        ; AND'ing with $03 ensures the number is between
+        ; 0 and 3.
+        AND #$03
+        ; Move the number to the X register.
+        TAX
+        ; Use the random number to pick and draw a structure.
         LDA structureSubRoutineArrayHiPtr,X
         STA structureRoutineHiPtr
         LDA structureSubRoutineArrayLoPtr,X
         STA structureRoutineLoPtr
-        JMP (randomStructureRoutineAddress)
+        ; With the address of the routine we've chosen copied
+        ; to structureRoutineLoPtr, we jump to that address and
+        ; run the routine.
+        JMP (structureRoutineLoPtr)
+        ; The routine contains an 'RTS' so does the returning
+        ; for us.
 
 ;Jump table
 structureSubRoutineArrayHiPtr   .BYTE >DrawLittleStructure,>DrawMediumStructure
@@ -7657,8 +7730,8 @@ oldTopPlanetIndex          .BYTE $00
 bottomPlanetPointerIndex   .BYTE $00
 oldBottomPlanetIndex       .BYTE $00
 qPressedToQuitGame         .BYTE $00
-backgroundColor1ForPlanets .BYTE BROWN,GRAY1,YELLOW,LTBLUE,LTGREEN
-backgroundColor2ForPlanets .BYTE LTBLUE,$10,WHITE,YELLOW,$10
+backgroundColor1ForPlanets .BYTE $09,$0B,$07,$0E,$0D
+backgroundColor2ForPlanets .BYTE $0E,$10,$01,$07,$10
 surfaceColorsForPlanets    .BYTE LTGREEN,BROWN,LTRED,GRAY2,LTRED,WHITE,WHITE
 entryLevelSequenceCounter  .BYTE $A5
 levelEntrySequenceActive   .BYTE $01
@@ -7726,26 +7799,31 @@ SetUpPlanets
         STA $D418    ;Select Filter Mode and Volume
         LDA #$03
         STA starFieldInitialStateArray - $01
+
         LDX #$06
         LDA #$EC
 b7939   STA upperPlanetAttackShipsSpriteValueArray,X
         STA lowerPlanetAttackShipsSpriteValueArray,X
         DEX
         BNE b7939
+
         LDA #$FF
         STA upperPlanetGilbyBulletMSBXPosValue
         STA upperPlanetAttackShip2MSBXPosValue
         STA lowerPlanetAttackShipsMSBXPosArray
         STA lowerPlanetGilbyBulletMSBXPosValue
+
         JSR ResetSoundDataPtr2
         LDA #<levelEntrySoundEffect
         STA secondarySoundEffectLoPtr
         LDA #>levelEntrySoundEffect
         STA secondarySoundEffectHiPtr
+
         LDA #$30
         STA soundEffectInProgress
         LDA lowerPlanetActivated
         BEQ b797C
+
         LDX topPlanetPointerIndex
         LDA backgroundColor1ForPlanets,X
         STA currentPlanetBackgroundColor1
@@ -8501,7 +8579,7 @@ DrawHiScoreScreen
         LDA #>HiScoreScreenInterruptHandler
         STA $0315    ;IRQ
         CLI
-        LDA #$00
+        LDA #BLACK
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         JSR HiScoreStopSounds
