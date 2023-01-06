@@ -665,7 +665,76 @@ LoadLastScoreLoop
 ; the SID registers (see PlayNoteVoice1 and PlayNoteVoice2) plays
 ; the appropriate note. Each 16 bit value is based off a choice of
 ; based frequency. This is usually 440hz, but not here. 
-
+;
+; In fact the values here are the standard ones given in the
+; Commodor 64 Programmer's Reference Guide. The decimal values are 
+; below in the table in Appendix D there: 
+;   +-----------------------------+-----------------------------------------+
+;   |        MUSICAL NOTE         |             OSCILLATOR FREQ             |
+;   +-------------+---------------+-------------+-------------+-------------+
+;   |     NOTE    |    OCTAVE     |   DECIMAL   |      HI     |     LOW     |
+;   +-------------+---------------+-------------+-------------+-------------+
+;   |      48     |      C-3      |     2145    |       8     |      97     |
+;   |      49     |      C#-3     |     2273    |       8     |     225     |
+;   |      50     |      D-3      |     2408    |       9     |     104     |
+;   |      51     |      D#-3     |     2551    |       9     |     247     |
+;   |      52     |      E-3      |     2703    |      10     |     143     |
+;   |      53     |      F-3      |     2864    |      11     |      48     |
+;   |      54     |      F#-3     |     3034    |      11     |     218     |
+;   |      55     |      G-3      |     3215    |      12     |     143     |
+;   |      56     |      G#-3     |     3406    |      13     |      78     |
+;   |      57     |      A-3      |     3608    |      14     |      24     |
+;   |      58     |      A#-3     |     3823    |      14     |     239     |
+;   |      59     |      B-3      |     4050    |      15     |     210     |
+;   |      64     |      C-4      |     4291    |      16     |     195     |
+;   |      65     |      C#-4     |     4547    |      17     |     195     |
+;   |      66     |      D-4      |     4817    |      18     |     209     |
+;   |      67     |      D#-4     |     5103    |      19     |     239     |
+;   |      68     |      E-4      |     5407    |      21     |      31     |
+;   |      69     |      F-4      |     5728    |      22     |      96     |
+;   |      70     |      F#-4     |     6069    |      23     |     181     |
+;   |      71     |      G-4      |     6430    |      25     |      30     |
+;   |      72     |      G#-4     |     6812    |      26     |     156     |
+;   |      73     |      A-4      |     7217    |      28     |      49     |
+;   |      74     |      A#-4     |     7647    |      29     |     223     |
+;   |      75     |      B-4      |     8101    |      31     |     165     |
+;   |      80     |      C-5      |     8583    |      33     |     135     |
+;   |      81     |      C#-5     |     9094    |      35     |     134     |
+;   |      82     |      D-5      |     9634    |      37     |     162     |
+;   |      83     |      D#-5     |    10207    |      39     |     223     |
+;   |      84     |      E-5      |    10814    |      42     |      62     |
+;   |      85     |      F-5      |    11457    |      44     |     193     |
+;   |      86     |      F#-5     |    12139    |      47     |     107     |
+;   |      87     |      G-5      |    12860    |      50     |      60     |
+;   |      88     |      G#-5     |    13625    |      53     |      57     |
+;   |      89     |      A-5      |    14435    |      56     |      99     |
+;   |      90     |      A#-5     |    15294    |      59     |     190     |
+;   |      91     |      B-5      |    16203    |      63     |      75     |
+;   |      96     |      C-6      |    17167    |      67     |      15     |
+;   |      97     |      C#-6     |    18188    |      71     |      12     |
+;   |      98     |      D-6      |    19269    |      75     |      69     |
+;   |      99     |      D#-6     |    20415    |      79     |     191     |
+;   |     100     |      E-6      |    21629    |      84     |     125     |
+;   |     101     |      F-6      |    22915    |      89     |     131     |
+;   |     102     |      F#-6     |    24278    |      94     |     214     |
+;   |     103     |      G-6      |    25721    |     100     |     121     |
+;   |     104     |      G#-6     |    27251    |     106     |     115     |
+;   |     105     |      A-6      |    28871    |     112     |     199     |
+;   |     106     |      A#-6     |    30588    |     119     |     124     |
+;   |     107     |      B-6      |    32407    |     126     |     151     |
+;   |     112     |      C-7      |    34334    |     134     |      30     |
+;   |     113     |      C#-7     |    36376    |     142     |      24     |
+;   |     114     |      D-7      |    38539    |     150     |     139     |
+;   |     115     |      D#-7     |    40830    |     159     |     126     |
+;   |     116     |      E-7      |    43258    |     168     |     250     |
+;   |     117     |      F-7      |    45830    |     179     |       6     |
+;   |     118     |      F#-7     |    48556    |     189     |     172     |
+;   |     119     |      G-7      |    51443    |     200     |     243     |
+;   |     120     |      G#-7     |    54502    |     212     |     230     |
+;   |     121     |      A-7      |    57743    |     225     |     143     |
+;   |     122     |      A#-7     |    61176    |     238     |     248     |
+;   |     123     |      B-7      |    64814    |     253     |      46     |
+;   +-------------+---------------+-------------+-------------+-------------+
                     ;      C   C#  D   D#  E   F   F#  G   G#  A   A#  B
 titleMusicHiBytes   .BYTE $08,$08,$09,$09,$0A,$0B,$0B,$0C,$0D,$0E,$0E,$0F  ; 4
                     .BYTE $10,$11,$12,$13,$15,$16,$17,$19,$1A,$1C,$1D,$1F  ; 5
@@ -680,96 +749,135 @@ titleMusicLowBytes  .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F,$4E,$18,$EF,$D2  ; 4
                     .BYTE $0F,$0C,$45,$BF,$7D,$83,$D6,$79,$73,$C7,$7C,$97  ; 7
                     .BYTE $1E,$18,$8B,$7E,$FA,$06,$AC,$F3,$E6,$8F,$F8,$2E  ; 8
 
-; This seeds the title music. Playing around with these first four bytes
-; alters the first few seconds of the title music. THe routine for the
-; title music uses these 4 bytes to determine the notes to play.
-; This arrays is periodically replenished from titleMusicSeedArray by
-; UpdateMusicCountersAndTitleMusicSeedArray.
+; This seeds the title music. Playing around with these first
+; four bytes alters the first few seconds of the title music.
+; The routine for the title music uses these 4 bytes to determine
+; the notes to play.
+; This array is periodically replenished from titleMusicSeedArray by
+; SelectNewNotesToPlay.
 titleMusicNoteArray .BYTE $00,$07,$0C,$07
 
 ; These variables are used to choose a value from titleMusicNoteArray, 
 ; mutate it, and then use that as an index into titleMusicHiBytes/titleMusicLowBytes
 ; which gives PlayNoteVoice1/2/3 a note to play.
-titleMusicNote3                           .BYTE $01
-intervalForTitleMusicVoice2               .BYTE $01
-titleMusicNote5                           .BYTE $25
-titleMusicNote6                           .BYTE $85
-titleMusicNote7                           .BYTE $00
-titleMusicOffsetToMusicNoteArrayForVoice2 .BYTE $01
-titleMusicNote9                           .BYTE $02
-titleMusicNoteA                           .BYTE $02
-titleMusicNoteB                           .BYTE $0E
-titleMusicNoteC                           .BYTE $07
-titleMusicNoteD                           .BYTE $0E
+voice3NoteDuration            .BYTE $01
+voice2NoteDuration            .BYTE $01
+voice1NoteDuration            .BYTE $25
+numberOfNotesToPlayInTune     .BYTE $85
+voice3IndexToMusicNoteArray   .BYTE $00
+voice2IndexToMusicNoteArray   .BYTE $01
+voice1IndexToMusicNoteArray   .BYTE $02
+notesPlayedSinceLastKeyChange .BYTE $02
+offsetForNextVoice2Note       .BYTE $0E
+offsetForNextVoice1Note       .BYTE $07
+offsetForNextVoice3Note       .BYTE $0E
 ;------------------------------------------------------------------
 ; PlayTitleScreenMusic
 ;------------------------------------------------------------------
 PlayTitleScreenMusic
-        DEC musicCounterOne
-        BEQ b1504
+        DEC baseNoteDuration
+        BEQ MaybeStartNewTune
         RTS
 
-b1504   LDA musicCounterTwo
-        STA musicCounterOne
-        DEC titleMusicNote6
-        BNE b152C
-        LDA #$C0
-        STA titleMusicNote6
+MaybeStartNewTune   
+        LDA previousBaseNoteDuration
+        STA baseNoteDuration
+
+        DEC numberOfNotesToPlayInTune
+        BNE MaybePlayVoice1
+
+        ; Set up a new tune.
+        LDA #$C0 ; 193
+        STA numberOfNotesToPlayInTune
+
+        ; This is what will eventually time us out of playing
+        ; the title music and enter attract mode.
         INC f7PressedOrTimedOutToAttractMode
-        LDX titleMusicNoteA
+
+        LDX notesPlayedSinceLastKeyChange
         LDA titleMusicNoteArray,X
-        STA titleMusicNoteC
+        STA offsetForNextVoice1Note
+
+        ; We'll only select a new tune when we've reached the
+        ; beginning of a new 16 bar structure.
         INX
         TXA
         AND #$03
-        STA titleMusicNoteA
-        BNE b152C
-        JSR UpdateMusicCountersAndTitleMusicSeedArray
-b152C   DEC titleMusicNote5
-        BNE b154E
+        STA notesPlayedSinceLastKeyChange
+        BNE MaybePlayVoice1
+
+        JSR SelectNewNotesToPlay
+
+MaybePlayVoice1   
+        DEC voice1NoteDuration
+        BNE MaybePlayVoice2
+
         LDA #$30
-        STA titleMusicNote5
-        LDX titleMusicNote9
+        STA voice1NoteDuration
+
+        LDX voice1IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC
-        ADC titleMusicNoteC
+        ADC offsetForNextVoice1Note
         TAY
-        STY titleMusicNoteB
+        STY offsetForNextVoice2Note
+
         JSR PlayNoteVoice1
+
         INX
         TXA
         AND #$03
-        STA titleMusicNote9
-b154E   DEC intervalForTitleMusicVoice2
-        BNE b1570
+        STA voice1IndexToMusicNoteArray
+
+MaybePlayVoice2   
+        DEC voice2NoteDuration
+        BNE MaybePlayVoice3
+
         LDA #$0C
-        STA intervalForTitleMusicVoice2
-        LDX titleMusicOffsetToMusicNoteArrayForVoice2
+        STA voice2NoteDuration
+        LDX voice2IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC
-        ADC titleMusicNoteB
-        STA titleMusicNoteD
+        ADC offsetForNextVoice2Note
+
+        ; Use this new value to change the key of the next four
+        ; notes played by voice 3. 
+        STA offsetForNextVoice3Note
+
         TAY
         JSR PlayNoteVoice2
         INX
         TXA
         AND #$03
-        STA titleMusicOffsetToMusicNoteArrayForVoice2
-b1570   DEC titleMusicNote3
-        BNE b158F
+        STA voice2IndexToMusicNoteArray
+
+MaybePlayVoice3   
+        DEC voice3NoteDuration
+        BNE ReturnFromTitleScreenMusic
+
         LDA #$03
-        STA titleMusicNote3
-        LDX titleMusicNote7
+        STA voice3NoteDuration
+
+        ; Play the note currently pointed to by 
+        ; voice3IndexToMusicNoteArray in titleMusicNoteArray.
+        LDX voice3IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC
-        ADC titleMusicNoteD
+        ADC offsetForNextVoice3Note
         TAY
         JSR PlayNoteVoice3
+
+        ; Move voice3IndexToMusicNoteArray to the next
+        ; position in titleMusicNoteArray.
         INX
         TXA
+        ; Since it's only 4 bytes long ensure we wrap
+        ; back to 0 if it's greater than 3.
         AND #$03
-        STA titleMusicNote7
-b158F   RTS
+        STA voice3IndexToMusicNoteArray
+
+ReturnFromTitleScreenMusic   
+        RTS
 
 ;------------------------------------------------------------------
 ; PlayNoteVoice1
@@ -795,9 +903,9 @@ PlayNoteVoice2
         STA $D408    ;Voice 2: Frequency Control - High-Byte
         RTS
 
-;------------------------------------------------------------------
+;----------------------------------------------------------
 ; PlayNoteVoice3
-;------------------------------------------------------------------
+;----------------------------------------------------------
 PlayNoteVoice3
         LDA #$21
         STA $D412    ;Voice 3: Control Register
@@ -824,49 +932,78 @@ SetUpMainSound
 
 ; This is used to replenish titleMusicNoteArray with seed valuse
 ; for the procedurally generated title screen music.
-titleMusicSeedArray .BYTE $00,$03,$06,$08,$00,$0C,$04,$08
-                    .BYTE $00,$07,$00,$05,$05,$00,$00,$05
-                    .BYTE $00,$06,$09,$05,$02,$04,$03,$04
-                    .BYTE $03,$07,$03,$00,$04,$08,$0C,$09
-                    .BYTE $07,$08,$04,$07,$00,$04,$07,$0E
-                    .BYTE $00,$00,$00,$07,$07,$04,$00,$0C
-                    .BYTE $04,$07,$00,$0C,$07,$08,$0A,$08
-                    .BYTE $0C,$00,$0C,$03,$0C,$03,$07,$00
-;------------------------------------------------------------------
-; UpdateMusicCountersAndTitleMusicSeedArray
-;------------------------------------------------------------------
-UpdateMusicCountersAndTitleMusicSeedArray
-        JSR PutRandomByteInAccumulator
+titleMusicSeedArray .BYTE $00,$03,$06,$08
+                    .BYTE $00,$0C,$04,$08
+                    .BYTE $00,$07,$00,$05
+                    .BYTE $05,$00,$00,$05
+                    .BYTE $00,$06,$09,$05
+                    .BYTE $02,$04,$03,$04
+                    .BYTE $03,$07,$03,$00
+                    .BYTE $04,$08,$0C,$09
+                    .BYTE $07,$08,$04,$07
+                    .BYTE $00,$04,$07,$0E
+                    .BYTE $00,$00,$00,$07
+                    .BYTE $07,$04,$00,$0C
+                    .BYTE $04,$07,$00,$0C
+                    .BYTE $07,$08,$0A,$08
+                    .BYTE $0C,$00,$0C,$03
+                    .BYTE $0C,$03,$07,$00
+;--------------------------------------------------------
+; SelectNewNotesToPlay
+;--------------------------------------------------------
+SelectNewNotesToPlay
+        ; Get a random value between 0 and 15.
+        JSR PutProceduralByteInAccumulator
         AND #$0F
-        BEQ b1630
+        ; Jump to InitializeSeedLoop if it's zero.
+        BEQ InitializeSeedLoop
+
+        ; Otherwise multiply it by 4. We do this so that
+        ; the 4-byte sequence we choose always starts at
+        ; a 4-byte offset in titleMusicSeedArray.
         TAX
         LDA #$00
-b162A   CLC
+MultiplyRandomNumBy4   
+        CLC
         ADC #$04
         DEX
-        BNE b162A
+        BNE MultiplyRandomNumBy4
 
         ; Fill titleMusicNoteArray with the next four bytes from
         ; titleMusicSeedArray.
-b1630   TAY
+
+InitializeSeedLoop   
+        ; Put our random number in Y and use it as index into
+        ; the seed array.
+        TAY
+        ; Initialize X to 0, we will use this to iterate up to
+        ; 4 bytes for pulling from titleMusicSeedArray.
         LDX #$00
-b1633   LDA titleMusicSeedArray,Y
+
+        ; Pick the first 4 bytes in titleMusicSeedArray from our
+        ; randomly chosen offset and put them in
+        ; titleMusicNoteArray.
+MusicSeedArrayLoop   
+        LDA titleMusicSeedArray,Y
         STA titleMusicNoteArray,X
         INY
         INX
         CPX #$04
-        BNE b1633
+        BNE MusicSeedArrayLoop
 
-        JSR PutRandomByteInAccumulator
+        ; Get a rnadom number between 0 and 3, add 1 to it,
+        ; and use that as the basic quanrity for note duration.
+        JSR PutProceduralByteInAccumulator
         AND #$03
         CLC
         ADC #$01
-        STA musicCounterOne
-        STA musicCounterTwo
+        STA baseNoteDuration
+        STA previousBaseNoteDuration
         RTS
 
-musicCounterOne               .BYTE $01
-musicCounterTwo               .BYTE $01
+baseNoteDuration              .BYTE $01
+previousBaseNoteDuration      .BYTE $01
+
 titleScreenSpriteCycleCounter .BYTE $04
 ;------------------------------------------------------------------
 ; TitleScreenCheckInput
@@ -923,13 +1060,19 @@ b168F   CMP #$03
 
 txtEasy   .TEXT "EASY"
 txtHard   .TEXT "UGH!"
-;------------------------------------------------------------------
-; PutRandomByteInAccumulator
-;------------------------------------------------------------------
-PutRandomByteInAccumulator
-srcOfRandomBytes   =*+$01
-        LDA sourceOfRandomBytes
-        INC srcOfRandomBytes
+;-------------------------------------------------
+; PutProceduralByteInAccumulator
+; This function is self-modifying. Every time it
+; is called it increments the address that
+; sourceOfSeedBytes points to. Since sourceOfSeedBytes
+; intially points to $9A00, it will point to $9A01
+; after the first time it's called, $9A02 after the
+; second time it's called - and so on.
+;--------------------------------------------------
+PutProceduralByteInAccumulator
+srcOfProceduralBytes   =*+$01
+        LDA sourceOfSeedBytes
+        INC srcOfProceduralBytes
         RTS
 
 
@@ -1548,7 +1691,7 @@ SetInitialRandomPositionsOfEnemy
         TAX
         LDA attackShipsMSBXPosOffsetArray + $01,X
         STA upperPlanetAttackShipsMSBXPosArray + $01,Y
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$7F
         CLC
         ADC #$20
@@ -1560,7 +1703,7 @@ SetInitialRandomPositionsOfEnemy
         BNE SetInitialRandomPositionLowerPlanet
 
 SetInitialRandomPositionUpperPlanet   
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$3F
         CLC
         ADC #$40
@@ -1585,7 +1728,7 @@ ReturnFromLoadingWaveDataEarly
         RTS
 
 SetInitialRandomPositionLowerPlanet   
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$3F
         CLC
         ADC #$98
@@ -3717,7 +3860,7 @@ PlayerKilled
         JMP DisplayGameOver
 
         ; Get a random number between 0 and 7
-b5A1E   JSR PutRandomByteInAccumulatorRegister
+b5A1E   JSR PutProceduralByteInAccumulatorRegister
         AND #$07 ; Make it a number between 0 and 7
         TAY
         JSR DrawRestartLevelText
@@ -3739,7 +3882,7 @@ b5A29   LDA txtGilbiesLeft,X
         STA SCREEN_RAM + LINE6_COL25
 
         ; Get a random number between 0 and 7
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$07 ; Make it a number between 0 and 7
         CLC
         ADC #$08 ; Selects the 'encouragement text' in the second half of txtRestartLevelMsg
@@ -3754,7 +3897,7 @@ DrawRestartLevelText
         STA tmpPtrLo
         LDA #>txtRestartLevelMsg
         STA tmpPtrHi
-        STY tmpPtrZp47 ; Random byte picked by PutRandomByteInAccumulatorRegister
+        STY tmpPtrZp47 ; Random byte picked by PutProceduralByteInAccumulatorRegister
         CPY #$00
         BEQ b5A67
 
@@ -3770,7 +3913,7 @@ b5A57   LDA tmpPtrLo
         DEY
         BNE b5A57
 
-b5A67   LDA tmpPtrZp47 ; Random byte picked by PutRandomByteInAccumulatorRegister
+b5A67   LDA tmpPtrZp47 ; Random byte picked by PutProceduralByteInAccumulatorRegister
         AND #$08
         BNE b5A7A
 
@@ -4987,7 +5130,7 @@ b6651   LDA bonusGilbyAnimation + $05
         STA bonusGilbyAnimation + $05
         DEC bonusGilbyAnimation + $04
         BNE b6709
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$04
@@ -4996,7 +5139,7 @@ b6651   LDA bonusGilbyAnimation + $05
         STA bonusGilbyAnimation + $01
         LDA bonusBountyAnimationArray,X
         STA bonusBountyOffset2
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$04
@@ -5005,13 +5148,13 @@ b6651   LDA bonusGilbyAnimation + $05
         STA bonusGilbyAnimation + $02
         LDA bonusBountyAnimationArray,X
         STA bounsBountyOffset
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$01
         STA bonusGilbyAnimation + $07
         STA bonusGilbyAnimation + $08
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$01
@@ -6773,9 +6916,9 @@ LoPtrAlreadyZero
         RTS
 
 ;------------------------------------------------------------------
-; PutRandomByteInAccumulatorRegister
+; PutProceduralByteInAccumulatorRegister
 ;------------------------------------------------------------------
-PutRandomByteInAccumulatorRegister
+PutProceduralByteInAccumulatorRegister
 randomIntToIncrement   =*+$01
         LDA randomPlanetData
         INC randomIntToIncrement
@@ -6958,7 +7101,7 @@ WriteSeaLoop
 
         ; Get a random number between 0 and 256 and store
         ; in A.
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         ; Ensure the random number is between 128 and 256.
         AND #$7F ; e.g. $92 becomes $12.
         CLC      ; Clear the carry so addition doesn't overflow.
@@ -6976,7 +7119,7 @@ WriteSeaLoop
 
         ; Randomly generate the length of the land section, but
         ; make it at least 32 bytes and not more than 150.
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$7F ; Random number between 0 and 128
         CLC
         ADC #$20 ; Add 32
@@ -7179,7 +7322,7 @@ GeneratePlanetStructures
         ; of the planet.
 GenerateStructuresLoop
         JSR DrawRandomlyChosenStructure
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
 
         ; The offset will be between 13 and 29
         AND #$0F
@@ -7238,7 +7381,7 @@ DrawRandomlyChosenStructure
         ; to draw a structure on the planet surface
 
         ; Pick a random number between 0 and 3
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         ; AND'ing with $03 ensures the number is between
         ; 0 and 3.
         AND #$03
@@ -7745,7 +7888,7 @@ MaybeDrawLevelEntrySequence
 b78CD   RTS
 
 b78CE   LDX entryLevelSequenceCounter
-        LDY sourceOfRandomBytes,X
+        LDY sourceOfSeedBytes,X
         LDA currentTopPlanetDataLoPtr
         STA planetSurfaceDataPtrLo
         LDA currentTopPlanetDataHiPtr
@@ -8430,19 +8573,19 @@ SelectRandomPlanetsForAttractMode
 
         ; Select 9 random numbers between 0 and 15
         LDX #$09
-b7EC5   JSR PutRandomByteInAccumulatorRegister
+b7EC5   JSR PutProceduralByteInAccumulatorRegister
         AND #$0F
         STA currentLevelInTopPlanets,X
         DEX
         BPL b7EC5
 
         ; Select a random planet between 0 and 4
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$03
         STA topPlanetPointerIndex
 
         ; Select a random planet between 0 and 4
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$03
         STA bottomPlanetPointerIndex
         RTS
@@ -8464,7 +8607,7 @@ GenerateJoystickInputForAttractMode
 
 b7EEA   DEC randomJoystickInputCounter
         BNE b7F01
-        JSR PutRandomByteInAccumulatorRegister
+        JSR PutProceduralByteInAccumulatorRegister
         AND #$1F
         ORA #$01
         STA randomJoystickInputCounter

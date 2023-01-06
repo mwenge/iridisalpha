@@ -591,7 +591,7 @@ planetFourBottomLayer
         .BYTE $40,$42,$40,$42,$40,$42,$40,$42
         .BYTE $40,$42,$40,$42,$40,$42,$40,$42
 *=$9A00
-sourceOfRandomBytes
+sourceOfSeedBytes
         .BYTE $E0,$D3,$33,$1F,$BF,$EC,$EF,$3E
         .BYTE $FA,$70,$DA,$26,$87,$C2,$C9,$9C
         .BYTE $F7,$FB,$C8,$85,$C1,$A9,$64,$AD
