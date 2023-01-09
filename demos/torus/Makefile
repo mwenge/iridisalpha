@@ -9,9 +9,13 @@ C1541 = c1541
 all: clean d64 run
 original: clean d64_orig run_orig
 
-torus.prg: src/torus.asm
+sources: src/torus.asm
 	64tass -Wall --cbm-prg -o bin/torus.prg -L bin/list-co1.txt -l bin/labels.txt src/torus.asm
-	md5sum bin/torus.prg orig/torus.prg
+
+check: sources
+	echo "006ba0a6f5ecddb4950ae339e477168c  bin/torus.prg" | md5sum -c
+
+torus.prg: check
 
 d64: torus.prg
 	$(C1541) -format "torus,rq" d64 $(D64_IMAGE)

@@ -9,9 +9,10 @@ C1541 = c1541
 all: clean run
 
 sources: src/iridisalpha.asm src/graphics/bonusphase_graphics.asm
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/ia.prg -L bin/list-co1.txt -l bin/labels.txt src/iridisalpha.asm
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/bonusphase_graphics.prg src/graphics/bonusphase_graphics.asm
-	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/enemy_sprites.prg -L bin/enemys-list.txt src/graphics/enemy_sprites.asm
+	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/ia.prg -L bin/list-ia.txt -l bin/labels.txt src/iridisalpha.asm
+	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/bonusphase_graphics.prg -L bin/list-bonusphase_graphics.txt \
+		src/graphics/bonusphase_graphics.asm
+	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/enemy_sprites.prg -L bin/list-enemy_sprites.txt src/graphics/enemy_sprites.asm
 
 check: sources
 	echo "44c76416f7a4d16fac31ff99ef2d2272  bin/ia.prg" | md5sum -c

@@ -443,51 +443,23 @@ s0946   LDX a0E76
         STA a086C
         RTS 
 
-f096B   BRK #$03
-        .BYTE $07,$09 ;SLO a09
-        ORA a0C
-        .BYTE $07,$03 ;SLO a03
-        BRK #$03
-        .BYTE $07,$09 ;SLO a09
-        ORA a0C
-        .BYTE $07,$03 ;SLO a03
-f097B   RTI 
 
-        LSR a4C
-        .BYTE $52    ;JAM 
-        CLI 
-        LSR f6863,X
-        ADC a7571
-        SEI 
-        .BYTE $7B,$7D,$7E ;RRA $7E7D,Y
-        .BYTE $7F,$80,$7F ;RRA $7F80,X
-        ROR f7B7D,X
-        SEI 
-        ADC f71,X
-        ADC a6368
-        LSR f5258,X
-        JMP e4046
+f096B
+.BYTE $00,$03,$07,$09,$05,$0C,$07,$03,$00,$03,$07,$09,$05,$0C,$07,$03
 
-        AND f2D33,Y
-        .BYTE $27,$21 ;RLA $21
-        .BYTE $1C,$17,$12 ;NOP $1217,X
-        ASL a070A
-        .BYTE $04,$02 ;NOP a02
-        ORA (p00,X)
-        BRK #$00
-        ORA (p02,X)
-        .BYTE $04,$07 ;NOP a07
-        ASL 
-        ASL a1712
-        .BYTE $1C,$21,$27 ;NOP $2721,X
-        AND a3933
-a09BC   =*+$01
-a09BD   =*+$02
-        .BYTE $FF,$01,$00 ;ISC $0001,X
-a09BE   SEI 
-a09C0   =*+$01
-a09BF   .BYTE $63,$0E ;RRA (p0E,X)
-a09C1   PLA 
+f097B
+.BYTE $40,$46,$4C,$52,$58,$5E,$63,$68
+.BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F,$80,$7F,$7E,$7D,$7B,$78,$75
+.BYTE $71,$6D,$68,$63,$5E,$58,$52,$4C,$46,$40,$39,$33,$2D,$27,$21
+.BYTE $1C,$17,$12,$0E,$0A,$07,$04,$02,$01,$00,$00,$00,$01,$02,$04
+.BYTE $07,$0A,$0E,$12,$17,$1C,$21,$27,$2D,$33,$39,$FF
+
+a09BC .BYTE $01 
+a09BD .BYTE $00
+a09BE .BYTE $78 
+a09BF .BYTE $63
+a09C0 .BYTE $0E  
+a09C1 .BYTE $68  
 
 ;------------------------------------------------------
 ; The main loop
