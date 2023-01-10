@@ -40,9 +40,7 @@ colormap = {
     }
 
 s = """
-backgroundColor1ForPlanets .BYTE $09,$0B,$07,$0E,$0D
-backgroundColor2ForPlanets .BYTE $0E,$10,$01,$07,$10
-surfaceColorsForPlanets    .BYTE $0D,$09,$0A,$0C,$0A,$01,$01
+f0A6E  .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
 """
 ls = re.split("([, #\n])", s)
 

@@ -10,10 +10,10 @@ all: clean d64 run
 original: clean d64_orig run_orig
 
 sources: src/torus.asm
-	64tass -Wall --cbm-prg -o bin/torus.prg -L bin/list-co1.txt -l bin/labels.txt src/torus.asm
+	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/torus.prg -L bin/list-co1.txt -l bin/labels.txt src/torus.asm
 
 check: sources
-	echo "006ba0a6f5ecddb4950ae339e477168c  bin/torus.prg" | md5sum -c
+	echo "453399390a0d2a5c583461559be58ada  bin/torus.prg" | md5sum -c
 
 torus.prg: check
 

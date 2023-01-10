@@ -1,5 +1,5 @@
-f = open("../src/planet_textures_in.asm", 'r')
-o = open("../src/planet_textures.asm", 'w')
+f = open("../demos/torus/src/charsetin.asm", 'r')
+o = open("../demos/torus/src/charsetout.asm", 'w')
 
 bytes = []
 labels = {}

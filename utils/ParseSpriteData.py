@@ -1,5 +1,5 @@
-f = open("../src/compressed-sprites.asm", 'r')
-o = open("../src/decompressed-sprite.asm", 'w')
+f = open("../demos/torus/src/spritesin.asm", 'r')
+o = open("../demos/torus/src/spritesout.asm", 'w')
 
 bytes = []
 labels = {}
