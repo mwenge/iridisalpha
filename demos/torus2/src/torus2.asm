@@ -53,27 +53,29 @@ titleMusicLoBytes   .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F,$4E,$18,$EF,$D2  ; 4
 
 titleMusicNoteArray   .BYTE $00,$07,$0C,$07
 
-voice3NoteDuration            .BYTE $02
-voice2NoteDuration            .BYTE $02
-voice1NoteDuration            .BYTE $0E
-numberOfNotesToPlayInTune     .BYTE $9E
+voice3NoteDuration            .BYTE $01
+voice2NoteDuration            .BYTE $01
+voice1NoteDuration            .BYTE $01
+numberOfNotesToPlayInTune     .BYTE $01
 voice3IndexToMusicNoteArray   .BYTE $00
-voice2IndexToMusicNoteArray   .BYTE $03
-voice1IndexToMusicNoteArray   .BYTE $01
-notesPlayedSinceLastKeyChange .BYTE $01
+voice2IndexToMusicNoteArray   .BYTE $00
+voice1IndexToMusicNoteArray   .BYTE $00
+notesPlayedSinceLastKeyChange .BYTE $00
 offsetForNextVoice3Note       .BYTE $00
 offsetForNextVoice2Note       .BYTE $00
-offsetForNextVoice1Note       .BYTE $0C
+offsetForNextVoice1Note       .BYTE $00
 ;-------------------------------------------------------
 ; PlayTitleScreenMusic   
 ;-------------------------------------------------------
 PlayTitleScreenMusic   
-        LDA a09D9
-        STA a09D8
+        LDA UnusedValue1
+        STA UnusedValue2
 
+MaybeStartNewTune   
         DEC numberOfNotesToPlayInTune
         BNE MaybePlayVoice1
 
+        ; Set up a new tune.
         LDA #$C0
         STA numberOfNotesToPlayInTune
 
@@ -81,27 +83,32 @@ PlayTitleScreenMusic
         LDA titleMusicNoteArray,X
         STA offsetForNextVoice2Note
 
+        ; We'll only select a new tune when we've reached the
+        ; beginning of a new 16 bar structure.
         INX 
         TXA 
         AND #$03
         STA notesPlayedSinceLastKeyChange
-
         BNE MaybePlayVoice1
 
-        JSR MusicSeedArray
+        JSR SelectNewNotesToPlay
 
 MaybePlayVoice1   
         DEC voice1NoteDuration
         BNE MaybePlayVoice2
+
         LDA #$30
         STA voice1NoteDuration
+
         LDX voice1IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC 
         ADC offsetForNextVoice2Note
         TAY 
         STY offsetForNextVoice3Note
-        JSR PlayVoice1
+
+        JSR PlayNoteVoice1
+
         INX 
         TXA 
         AND #$03
@@ -110,15 +117,20 @@ MaybePlayVoice1
 MaybePlayVoice2   
         DEC voice2NoteDuration
         BNE MaybePlayVoice3
+
         LDA #$0C
         STA voice2NoteDuration
         LDX voice2IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC 
         ADC offsetForNextVoice3Note
+
+        ; Use this new value to change the key of the next four
+        ; notes played by voice 1. 
         STA offsetForNextVoice1Note
+
         TAY 
-        JSR PlayVoice2
+        JSR PlayNoteVoice2
         INX 
         TXA 
         AND #$03
@@ -127,25 +139,35 @@ MaybePlayVoice2
 MaybePlayVoice3   
         DEC voice3NoteDuration
         BNE ReturnFromTitleMusic
+
         LDA #$03
         STA voice3NoteDuration
+
+        ; Play the note currently pointed to by 
+        ; voice3IndexToMusicNoteArray in titleMusicNoteArray.
         LDX voice3IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC 
         ADC offsetForNextVoice1Note
         TAY 
-        JSR PlayVoice3
+        JSR PlayNoteVoice3
+
+        ; Move voice3IndexToMusicNoteArray to the next
+        ; position in titleMusicNoteArray.
         INX 
         TXA 
+        ; Since it's only 4 bytes long ensure we wrap
+        ; back to 0 if it's greater than 3.
         AND #$03
         STA voice3IndexToMusicNoteArray
+
 ReturnFromTitleMusic   
         RTS 
 
 ;-------------------------------------------------------
-; PlayVoice1   
+; PlayNoteVoice1   
 ;-------------------------------------------------------
-PlayVoice1   
+PlayNoteVoice1   
         LDA #$21
         STA $D404    ;Voice 1: Control Register
         LDA titleMusicLoBytes,Y
@@ -155,9 +177,9 @@ PlayVoice1
         RTS 
 
 ;-------------------------------------------------------
-; PlayVoice2   
+; PlayNoteVoice2   
 ;-------------------------------------------------------
-PlayVoice2   
+PlayNoteVoice2   
         LDA #$21
         STA $D40B    ;Voice 2: Control Register
         LDA titleMusicLoBytes,Y
@@ -167,9 +189,9 @@ PlayVoice2
         RTS 
 
 ;-------------------------------------------------------
-; PlayVoice3   
+; PlayNoteVoice3   
 ;-------------------------------------------------------
-PlayVoice3   
+PlayNoteVoice3   
         LDA #$21
         STA $D412    ;Voice 3: Control Register
         LDA titleMusicLoBytes,Y
@@ -203,9 +225,9 @@ SetUpMainSound
         .BYTE $0C,$00,$0C,$03,$0C,$03,$07,$00
 
 ;-------------------------------------------------------
-; MusicSeedArray   
+; SelectNewNotesToPlay   
 ;-------------------------------------------------------
-MusicSeedArray   
+SelectNewNotesToPlay   
         LDY initialCounterBetweenXPosUpdats
         LDA titleMusicSeedArray,Y
         STA titleMusicNoteArray
@@ -220,8 +242,8 @@ MusicSeedArray
         STA titleMusicNoteArray + $03
         RTS 
 
-a09D8   .BYTE $01
-a09D9   .BYTE $01
+UnusedValue2   .BYTE $01
+UnusedValue1   .BYTE $01
 a09DB   =*+$01
         LDA sourceOfSeedBytes
         INC a09DB
@@ -283,17 +305,19 @@ b0A42   LDY f0A99,X
         BPL b0A42
         RTS 
 ;-------------------------------------------------------
-; s0A5F   
+; DrawWithoutText   
 ;-------------------------------------------------------
-s0A5F   
+DrawWithoutText   
         LDA #$00
         STA a1C
         STA a1D
+
 b0A65   LDX a1C
         LDA f0AB0,X
         STA a1E
         LDA f0AA9,X
         STA a1F
+
 j0A71   JSR s0AC3
         INC a1D
         LDA a1D
@@ -341,8 +365,10 @@ b0AD5   STX a0AC1
         PLA 
         TAX 
         JMP j0A40
+        ; Returns
 
-spritePositionArray   .BYTE $40,$46,$4C,$52,$58,$5E,$63,$68
+spritePositionArray   
+        .BYTE $40,$46,$4C,$52,$58,$5E,$63,$68
         .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
         .BYTE $7F,$7F,$7E,$7D,$7B,$78,$75,$71
         .BYTE $6D,$68,$63,$5E,$58,$52,$4C,$46
@@ -419,9 +445,10 @@ ClearScreenLoop
         BEQ b0B93
         JSR WriteTextToScreen
         JMP UpdateSPriteColors
+        ; Returns
 
 b0B93   
-        JSR s0A5F
+        JSR DrawWithoutText
 
 UpdateSPriteColors   
         LDX #$07

@@ -54,15 +54,16 @@ titleMusicLoBytes   .BYTE $61,$E1,$68,$F7,$8F,$30,$DA,$8F,$4E,$18,$EF,$D2  ; 4
  offsetForNextVoice1Note       .BYTE $07
  offsetForNextVoice3Note       .BYTE $13
 
-;------------------------------------------------------------
+;---------------------------------------------------------------
 ; PlayTitleScreenMusic
-;------------------------------------------------------------
+;---------------------------------------------------------------
 PlayTitleScreenMusic   
         DEC numberOfNotesToPlayInTune
         BNE MaybePlayVoice1
 
         JSR MusicSeedArray
 
+        ; Set up a new tune.
         LDA #$C0
         STA numberOfNotesToPlayInTune
 
@@ -70,6 +71,8 @@ PlayTitleScreenMusic
         LDA titleMusicNoteArray,X
         STA offsetForNextVoice1Note
 
+        ; We'll only select a new tune when we've reached the
+        ; beginning of a new 16 bar structure.
         INX 
         TXA 
         AND #$03
@@ -78,15 +81,19 @@ PlayTitleScreenMusic
 MaybePlayVoice1   
         DEC voice1NoteDuration
         BNE MaybePlayVoice2
+
         LDA #$30
         STA voice1NoteDuration
+
         LDX voice1IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC 
         ADC offsetForNextVoice1Note
         TAY 
         STY offsetForNextVoice2Note
+
         JSR PlayVoice1
+
         INX 
         TXA 
         AND #$03
@@ -95,13 +102,18 @@ MaybePlayVoice1
 MaybePlayVoice2   
         DEC voice2NoteDuration
         BNE MaybePlayVoice3
+
         LDA #$0C
         STA voice2NoteDuration
         LDX voice2IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC 
         ADC offsetForNextVoice2Note
+
+        ; Use this new value to change the key of the next four
+        ; notes played by voice 3. 
         STA offsetForNextVoice3Note
+
         TAY 
         JSR PlayVoice2
         INX 
@@ -112,16 +124,25 @@ MaybePlayVoice2
 MaybePlayVoice3   
         DEC voice3NoteDuration
         BNE ReturnFromTitleScreenMusic
+
         LDA #$03
         STA voice3NoteDuration
+
+        ; Play the note currently pointed to by 
+        ; voice3IndexToMusicNoteArray in titleMusicNoteArray.
         LDX voice3IndexToMusicNoteArray
         LDA titleMusicNoteArray,X
         CLC 
         ADC offsetForNextVoice3Note
         TAY 
         JSR PlayVoice3
+
+        ; Move voice3IndexToMusicNoteArray to the next
+        ; position in titleMusicNoteArray.
         INX 
         TXA 
+        ; Since it's only 4 bytes long ensure we wrap
+        ; back to 0 if it's greater than 3.
         AND #$03
         STA voice3IndexToMusicNoteArray
 

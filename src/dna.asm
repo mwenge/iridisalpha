@@ -124,7 +124,7 @@ DNA_SetInterruptHandler
         LDA #>DNA_InterruptHandler
         STA $0315    ;IRQ
         LDA #$00
-        STA a0DF6
+        STA DNA_UnusedVariable
         LDA $D011    ;VIC Control Register 1
         AND #$7F
         STA $D011    ;VIC Control Register 1
@@ -138,7 +138,7 @@ DNA_SetInterruptHandler
         CLI 
         RTS 
 
-a0DF6   .BYTE $00
+DNA_UnusedVariable   .BYTE $00
 ;----------------------------------------------------------------
 ; DNA_InterruptHandler
 ;----------------------------------------------------------------

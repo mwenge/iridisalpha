@@ -1,5 +1,5 @@
-f = open("../demos/torus/src/charsetin.asm", 'r')
-o = open("../demos/torus/src/charsetout.asm", 'w')
+f = open("../demos/dna/src/charset-in.asm", 'r')
+o = open("../demos/dna/src/charset-out.asm", 'w')
 
 bytes = []
 labels = {}

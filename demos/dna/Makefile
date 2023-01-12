@@ -9,15 +9,13 @@ C1541 = c1541
 all: clean d64 run
 original: clean d64_orig run_orig
 
-dna.prg: src/dna.asm
-	64tass -Wall --cbm-prg -o bin/dna.prg -L bin/list-co1.txt -l bin/labels.txt src/dna.asm
-	md5sum bin/dna.prg orig/dna.prg
+sources: src/dna.asm
+	64tass -Wall -Wno-implied-reg --cbm-prg -o bin/dna.prg -L bin/list-co1.txt -l bin/labels.txt src/dna.asm
 
-d64: dna.prg
-	$(C1541) -format "dna,rq" d64 $(D64_IMAGE)
-	$(C1541) $(D64_IMAGE) -write bin/dna.prg "dna"
-	$(C1541) $(D64_IMAGE) -list
+check: sources
+	echo "0bbaaf333a8f032a370c5256740e5471  bin/dna.prg" | md5sum -c
 
+dna.prg: check
 d64_orig:
 	$(C1541) -format "dna,rq" d64 $(D64_ORIG_IMAGE)
 	$(C1541) $(D64_ORIG_IMAGE) -write orig/dna.prg "dna"

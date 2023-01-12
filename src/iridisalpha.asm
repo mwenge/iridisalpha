@@ -771,9 +771,9 @@ notesPlayedSinceLastKeyChange .BYTE $02
 offsetForNextVoice2Note       .BYTE $0E
 offsetForNextVoice1Note       .BYTE $07
 offsetForNextVoice3Note       .BYTE $0E
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PlayTitleScreenMusic
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PlayTitleScreenMusic
         DEC baseNoteDuration
         BEQ MaybeStartNewTune

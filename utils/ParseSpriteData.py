@@ -1,5 +1,5 @@
-f = open("../demos/torus/src/spritesin.asm", 'r')
-o = open("../demos/torus/src/spritesout.asm", 'w')
+f = open("../demos/dna/src/sprites-in.asm", 'r')
+o = open("../demos/dna/src/sprites-out.asm", 'w')
 
 bytes = []
 labels = {}
