@@ -19,7 +19,7 @@
 ;----------------------------------------------------------------
 ; LaunchDNA
 ;----------------------------------------------------------------
-LaunchDNA   
+LaunchDNA
         LDA #$7F
         STA $DC0D    ;CIA1: CIA Interrupt Control Register
         LDA #$00
@@ -31,29 +31,29 @@ startofBonusPhaseSprites = $E400
 ;----------------------------------------------------------------
 ; DNA_SwapSpriteData
 ;----------------------------------------------------------------
-DNA_SwapSpriteData   
-        SEI 
+DNA_SwapSpriteData
+        SEI
         LDA #$34
         STA RAM_ACCESS_MODE
 
         ; $E400 is the location of the IBALL sprites
         LDX #$00
 b0D47   LDA startofBonusPhaseSprites,X
-        PHA 
+        PHA
         LDA beginningOfGilbySprites,X
         STA startofBonusPhaseSprites,X
-        PLA 
+        PLA
         STA beginningOfGilbySprites,X
-        DEX 
+        DEX
         BNE b0D47
         LDA #$36
         STA RAM_ACCESS_MODE
-        RTS 
+        RTS
 
 ;----------------------------------------------------------------
 ; DNA_ClearScreenAndInit
 ;----------------------------------------------------------------
-DNA_ClearScreenAndInit   
+DNA_ClearScreenAndInit
         LDA #$00
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
@@ -81,7 +81,7 @@ DNA_ClearScreenAndInit
 ;----------------------------------------------------------------
 ; DNA_ClearScreenMain
 ;----------------------------------------------------------------
-DNA_ClearScreenMain   
+DNA_ClearScreenMain
         LDX #$00
 b0D9C   LDA #$20
         STA SCREEN_RAM,X
@@ -93,18 +93,18 @@ b0D9C   LDA #$20
         STA COLOR_RAM + LINE6_COL16,X
         STA COLOR_RAM + LINE12_COL32,X
         STA $DB00,X
-        DEX 
+        DEX
         BNE b0D9C
-        RTS 
+        RTS
 
 ;----------------------------------------------------------------
 ; DNA_Initialize
 ;----------------------------------------------------------------
-DNA_Initialize   
+DNA_Initialize
         JSR DNA_SetInterruptHandler
         JSR DNA_DrawTitleScreen
         JSR DNA_DrawStuff
-        CLI 
+        CLI
 
         ; Loop until the player exits
 b0DC6   LDA dnaPlayerPressedExit
@@ -112,13 +112,13 @@ b0DC6   LDA dnaPlayerPressedExit
 
         ; Player exited, swap back in the game sprite data
         JSR DNA_SwapSpriteData
-        RTS 
+        RTS
 
 ;----------------------------------------------------------------
 ; DNA_SetInterruptHandler
 ;----------------------------------------------------------------
-DNA_SetInterruptHandler   
-        SEI 
+DNA_SetInterruptHandler
+        SEI
         LDA #<DNA_InterruptHandler
         STA $0314    ;IRQ
         LDA #>DNA_InterruptHandler
@@ -135,26 +135,26 @@ DNA_SetInterruptHandler
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        CLI 
-        RTS 
+        CLI
+        RTS
 
 DNA_UnusedVariable   .BYTE $00
 ;----------------------------------------------------------------
 ; DNA_InterruptHandler
 ;----------------------------------------------------------------
-DNA_InterruptHandler   
+DNA_InterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE DNA_RunMainAnimationRoutine
 ReturnFromDNAInterruptHandler
-        PLA 
-        TAY 
-        PLA 
-        TAX 
-        PLA 
-        RTI 
+        PLA
+        TAY
+        PLA
+        TAX
+        PLA
+        RTI
 
-DNA_RunMainAnimationRoutine   
+DNA_RunMainAnimationRoutine
         JMP DNA_MainAnimationRoutine
 
 dnaCurrentSpritesXPosArrayIndex   .BYTE $00
@@ -162,14 +162,14 @@ dnaCurrentSpritesXPosArrayIndex   .BYTE $00
 ;----------------------------------------------------------------
 ; DNA_MainAnimationRoutine
 ;----------------------------------------------------------------
-DNA_MainAnimationRoutine   
+DNA_MainAnimationRoutine
         LDX dnaCurrentSpritesXPosArrayIndex
         LDY currentSpriteIndex
-        TYA 
+        TYA
         STA currentShipWaveDataLoPtr
-        CLC 
-        ASL 
-        TAY 
+        CLC
+        ASL
+        TAY
 
         LDA dnaSpritesPreviousXPosArray,X
         STA $CFFE,Y ; Sprite 'Y' X Pos
@@ -191,20 +191,20 @@ DNA_MainAnimationRoutine
 b0E3B   LDA dnaStarfielSprite2Array,X
         STA $D00E    ;Sprite 7 X Pos
 
-        TXA 
-        PHA 
-        CLC 
+        TXA
+        PHA
+        CLC
         ADC dnaCurrentPhase
         CMP #$27
         BMI b0E4E
 
-        SEC 
+        SEC
         SBC #$27
-b0E4E   TAX 
+b0E4E   TAX
         LDA dnaSpritesPreviousXPosArray,X
         STA $D004,Y  ;Sprite 2 X Pos
-        PLA 
-        TAX 
+        PLA
+        TAX
         LDY currentSpriteIndex
         STX currentShipWaveDataLoPtr
 
@@ -213,7 +213,7 @@ dnaColorScheme1LoByte   =*+$01
 dnaColorScheme1HiByte   =*+$02
         LDA dnaSpriteColor2Array,X
         STA $D026,Y  ;Sprite Multi-Color Register 1
-        INX 
+        INX
 dnaColorScheme2LoByte   =*+$01
 dnaColorScheme2HiByte   =*+$02
         LDA dnaSpriteColor2Array,X
@@ -232,7 +232,7 @@ dnaColorScheme3HiByte   =*+$02
         ; Increment the color array index and reset
         ; it to 00 if we've reached the end of dnaSpriteColorArray (denoted
         ; by an $FF sentinel).
-        INX 
+        INX
 dnaColorScheme4LoByte   =*+$01
 dnaColorScheme4HiByte   =*+$02
         LDA dnaSpriteColorArray,X
@@ -242,8 +242,8 @@ dnaColorScheme4HiByte   =*+$02
 b0E85   STX dnaCurrentSpriteColorArrayIndex
 
         LDX currentShipWaveDataLoPtr
-        INX 
-        INY 
+        INX
+        INY
         CPY #$04
         BNE b0E92
 
@@ -275,12 +275,13 @@ b0E92   STY currentSpriteIndex
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JMP $EA31
+
         LDX dnaCurrentSpritesXPosArrayIndex
 
         ; Update the 'Raster Position' to the next position on the screen
         ; that we want to interrupt at.
 b0EC7   LDA dnaSpritesXPositionsArray,X
-        SEC 
+        SEC
         SBC #$02
         STA $D012    ;Raster Position
 
@@ -290,7 +291,6 @@ b0EC7   LDA dnaSpritesXPositionsArray,X
 
         JMP ReturnFromDNAInterruptHandler
 
-dnaSpritesPreviousXPosArrayIndexMinusOne   =*-$01
 dnaSpritesPreviousXPosArray     .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
                                 .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
                                 .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
@@ -319,19 +319,19 @@ dnaCurrentPhase                 .BYTE $05
 ;----------------------------------------------------------------
 ; DNA_PropagatePreviousXPosToTheRight
 ;----------------------------------------------------------------
-DNA_PropagatePreviousXPosToTheRight   
+DNA_PropagatePreviousXPosToTheRight
         LDX #$27
-b0F71   LDA dnaSpritesPreviousXPosArrayIndexMinusOne,X
+b0F71   LDA dnaSpritesPreviousXPosArray - $01,X
         STA dnaSpritesPreviousXPosArray,X
-        DEX 
+        DEX
         BNE b0F71
-        RTS 
+        RTS
 
 a0F7B   .BYTE $00
 ;----------------------------------------------------------------
 ; DNA_UpdateHeadOfPreviousXPosData
 ;----------------------------------------------------------------
-DNA_UpdateHeadOfPreviousXPosData   
+DNA_UpdateHeadOfPreviousXPosData
         DEC actualSpeed
         BNE b0F8A
         LDA dnaCurrentSpeed
@@ -348,24 +348,24 @@ b0F8A   JSR DNA_CalculateValueForHeadOfPreviousXPosData
         STA tempVarStorage
         LDY dnaWave2Enabled
         BEQ b0FA9
-        CLC 
-        ROR 
+        CLC
+        ROR
         STA tempVarStorage
 b0FA9   LDA newHeadOfXPosData
-        CLC 
+        CLC
         ADC tempVarStorage
         STA dnaSpritesPreviousXPosArray
-        TXA 
-        CLC 
+        TXA
+        CLC
         ADC incrementToXPosition
-        TAX 
+        TAX
         CPX #$40
         BMI b0FC0
-        SEC 
+        SEC
         SBC #$40
-        TAX 
+        TAX
 b0FC0   STX a0F7B
-b0FC3   RTS 
+b0FC3   RTS
 
 incrementToXPosition          .BYTE $02
 timeToNextUpdateCounter       .BYTE $01
@@ -388,7 +388,7 @@ xPosOffsetsForFrequency       .BYTE $01,$01,$01,$01,$01,$01,$01,$01
 ; we only act on input when the previous key press was `$C0` and
 ; the current key press is potentially something else.
 ;----------------------------------------------------------------
-DNA_CheckKeyBoardInput   
+DNA_CheckKeyBoardInput
         LDA dnaLastRecordedKey
         CMP #$40 ; No key pressed
         BEQ b1018
@@ -396,7 +396,7 @@ DNA_CheckKeyBoardInput
         ; No key was pressed. Update last recorded key and return.
         LDA lastKeyPressed
         STA dnaLastRecordedKey
-        RTS 
+        RTS
 
 b1018   LDA lastKeyPressed
         STA dnaLastRecordedKey
@@ -419,7 +419,7 @@ b1031   CMP #$0A ; 'A'
         ; A pressed. Increase speed.
         INC dnaCurrentSpeed
 
-UpdateSpeedAndDisplayUpdatedSettings   
+UpdateSpeedAndDisplayUpdatedSettings
         LDA dnaCurrentSpeed
         AND #$0F
         STA actualSpeed
@@ -438,10 +438,10 @@ b1043   CMP #$0D ; 'S'
 ;----------------------------------------------------------------
 ; DNA_DrawStuff
 ;----------------------------------------------------------------
-DNA_DrawStuff   
+DNA_DrawStuff
         LDA dnaWave1Frequency
         AND #$1F
-        TAX 
+        TAX
         LDA timesToNextUpdateForFrequency,X
         STA initialTimeToNextUpdate
         STA timeToNextUpdateCounter
@@ -450,7 +450,7 @@ DNA_DrawStuff
 
         LDA dnaWave2Frequency
         AND #$1F
-        TAX 
+        TAX
         LDA timesToNextUpdateForFrequency,X
         STA initialTimeToNextUpdateForPreviousHead
         STA timeToNextUpdateCounterForPreviousHead
@@ -521,7 +521,7 @@ b10C6   CMP #$06 ; F5
         BNE b10D9
         LDA #$00
         STA dnaCurrentColorScheme
-b10D9   TAX 
+b10D9   TAX
         LDA dnaColorSchemeLoPtr,X
         STA dnaColorScheme2LoByte
         STA dnaColorScheme1LoByte
@@ -530,7 +530,7 @@ b10D9   TAX
         STA dnaColorScheme1HiByte
         LDA #$00
         STA dnaSpriteColor2ArrayIndex
-        RTS 
+        RTS
 
 b10F2   CMP #$03 ; F7
         BNE b111D
@@ -542,7 +542,7 @@ b10F2   CMP #$03 ; F7
 
         LDA #$00
         STA dnaCurrentColorScheme2
-b1105   TAX 
+b1105   TAX
         LDA dnaColorSchemeLoPtr,X
         STA dnaColorScheme4LoByte
         STA dnaColorScheme3LoByte
@@ -557,7 +557,7 @@ b111D   CMP #$31 ; *
         ; * Pressed. Exit DNA.
         INC dnaPlayerPressedExit
 
-b1124   RTS 
+b1124   RTS
 
 dnaWave2Frequency           .BYTE $12
 dnaPlayerPressedExit        .BYTE $00
@@ -576,7 +576,7 @@ dnaColorUpdateInterval      .BYTE $01
 ;----------------------------------------------------------------
 ; DNA_UpdateSpritePointers
 ;----------------------------------------------------------------
-DNA_UpdateSpritePointers   
+DNA_UpdateSpritePointers
         DEC dnaColorUpdateInterval
         BNE b1181
 
@@ -585,7 +585,7 @@ DNA_UpdateSpritePointers
         LDX indexToSpriteColor1Array
         LDA dnaSpriteColor1Array,X
         STA $D025    ;Sprite Multi-Color Register 0
-        INX 
+        INX
         LDA dnaSpriteColor1Array,X
         BPL b1176
 
@@ -601,14 +601,14 @@ b1181   DEC dnaIBallBlinkInterval
         STA dnaIBallBlinkInterval
 
         LDA currentColorIBallSprite
-        CLC 
+        CLC
         ADC #$C1
         STA Sprite0Ptr
         STA Sprite1Ptr
         STA Sprite2Ptr
 
         LDA currentMonochromIBallSprite
-        CLC 
+        CLC
         ADC #$C1
         STA Sprite3Ptr
         STA Sprite4Ptr
@@ -627,7 +627,7 @@ b11B8   DEC currentMonochromIBallSprite
         BNE b11C7
         LDA #$03
         STA currentMonochromIBallSprite
-b11C7   RTS 
+b11C7   RTS
 
 indexToXPosDataHeadArray               .BYTE $00
 indexToSpriteColor1Array               .BYTE $00
@@ -639,12 +639,12 @@ newHeadOfXPosData                      .BYTE $00
 ;----------------------------------------------------------------
 ; DNA_CalculateValueForHeadOfPreviousXPosData
 ;----------------------------------------------------------------
-DNA_CalculateValueForHeadOfPreviousXPosData   
+DNA_CalculateValueForHeadOfPreviousXPosData
         LDA dnaWave2Enabled
         BNE b11DA
         LDA #$40
         STA newHeadOfXPosData
-b11D9   RTS 
+b11D9   RTS
 
 b11DA   DEC timeToNextUpdateCounterForPreviousHead
         BNE b11D9
@@ -652,25 +652,25 @@ b11DA   DEC timeToNextUpdateCounterForPreviousHead
         STA timeToNextUpdateCounterForPreviousHead
         LDX indexToXPosDataHeadArray
         LDA dnaXPosDataHeadArray,X
-        CLC 
-        ROR 
-        CLC 
+        CLC
+        ROR
+        CLC
         ADC #$40
         STA newHeadOfXPosData
-        TXA 
-        CLC 
+        TXA
+        CLC
         ADC incrementToXPositionForPreviousHead
         CMP #$40
         BMI b11FF
-        SEC 
+        SEC
         SBC #$40
 b11FF   STA indexToXPosDataHeadArray
-        RTS 
+        RTS
 
 ;----------------------------------------------------------------
 ; DNA_DrawTitleScreen
 ;----------------------------------------------------------------
-DNA_DrawTitleScreen   
+DNA_DrawTitleScreen
         LDX #$07
 b1205   LDA sideBarTxt1,X
         AND #$3F
@@ -705,7 +705,7 @@ b1205   LDA sideBarTxt1,X
         LDA sideBarTxt11,X
         AND #$3F
         STA SCREEN_RAM + LINE18_COL32,X
-        DEX 
+        DEX
         BNE b1205
         JMP DNA_DrawCreditsText
 
@@ -724,7 +724,7 @@ sideBarTxt12 .TEXT "0123456789ABCDEF"
 ;----------------------------------------------------------------
 ; DNA_UpdateDisplayedSettings
 ;----------------------------------------------------------------
-DNA_UpdateDisplayedSettings   
+DNA_UpdateDisplayedSettings
         LDA dnaTextDisplayed
         BNE b12D6
         INC dnaTextDisplayed
@@ -742,7 +742,7 @@ b12D6   LDA #$20
 
 b12EA   LDA dnaWave1Frequency
         AND #$0F
-        TAX 
+        TAX
         LDA sideBarTxt12,X
         AND #$3F
         STA SCREEN_RAM + LINE6_COL39
@@ -755,7 +755,7 @@ b12EA   LDA dnaWave1Frequency
 
 b1304   LDA dnaWave2Frequency
         AND #$0F
-        TAX 
+        TAX
         LDA sideBarTxt12,X
         AND #$3F
         STA SCREEN_RAM + LINE12_COL39
@@ -776,13 +776,13 @@ b1304   LDA dnaWave2Frequency
         STA SCREEN_RAM + LINE10_COL34
         STA SCREEN_RAM + LINE10_COL35
 
-        RTS 
+        RTS
 
 b1336   LDA #<p200E
         STA SCREEN_RAM + LINE10_COL34
         LDA #>p200E
         STA SCREEN_RAM + LINE10_COL35
-        RTS 
+        RTS
 
 END_SENTINEL = $FF
 dnaTextDisplayed     .BYTE $01
@@ -815,7 +815,7 @@ titleTextLine7   .TEXT ".BE NICE TO HAIRY ANIMALS "
 ;----------------------------------------------------------------
 ; DNA_DrawCreditsText
 ;----------------------------------------------------------------
-DNA_DrawCreditsText   
+DNA_DrawCreditsText
         LDX #$19
 b143B   LDA titleTextLine1 - $01,X
         AND #$3F
@@ -838,7 +838,7 @@ b143B   LDA titleTextLine1 - $01,X
         LDA titleTextLine7,X
         AND #$3F
         STA SCREEN_RAM + LINE23_COL3,X
-        DEX 
+        DEX
         BNE b143B
-        RTS 
+        RTS
 
