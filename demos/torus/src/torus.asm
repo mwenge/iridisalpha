@@ -2,7 +2,7 @@
 ; **** ZP ABSOLUTE ADRESSES **** 
 ;
 LastKeyPressed = $C5
-aFA = $FA
+spritePosOffsetTemp = $FA
 ;
 ReEnterInterrupt = $EA31
 ;
@@ -15,6 +15,23 @@ COLOR_RAM = $D800
 ;
 a0314 = $0314
 a0315 = $0315
+
+BLACK        = $00
+WHITE        = $01
+RED          = $02
+CYAN         = $03
+PURPLE       = $04
+GREEN        = $05
+BLUE         = $06
+YELLOW       = $07
+ORANGE       = $08
+BROWN        = $09
+LTRED        = $0A
+GRAY1        = $0B
+GRAY2        = $0C
+LTGREEN      = $0D
+LTBLUE       = $0E
+GRAY3        = $0F
 
 sourceOfSeedBytes = $E024
 
@@ -335,7 +352,8 @@ oscillator4WorkingValue                   .BYTE $02
 oscillator4Value                          .BYTE $02,$01,$01
 indexForXPosOffetsetInSpritePositionArray .BYTE $CF
 inxedForYPosOffsetInSpritePositionArray   .BYTE $D2
-spriteColors                              .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
+spriteColors                              .BYTE RED,LTRED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE
+
 
 ;-------------------------------------------------------
 ; RunMainInterruptHandler   
@@ -345,7 +363,7 @@ RunMainInterruptHandler
         LDA #$F0
         STA $D012    ;Raster Position
         DEC counterBetweeXPosUpdates
-        BNE b0A92
+        BNE MaybeUpdateYPos
 
         LDA initialCounterBetweenXPosUpdates
         STA counterBetweeXPosUpdates
@@ -355,7 +373,8 @@ RunMainInterruptHandler
         ADC indexForXPosInSpritePositionArray
         STA indexForXPosInSpritePositionArray
 
-b0A92   DEC counterBetweenYPosUpdates
+MaybeUpdateYPos   
+        DEC counterBetweenYPosUpdates
         BNE MaybeResetOsc3WorkingValue
 
         LDA initialCounterBetweenYPosUpdates
@@ -423,6 +442,7 @@ SpriteAnimationLoop
         CLC 
         ADC #$08
         STA inxedForYPosOffsetInSpritePositionArray
+
         LDA indexForXPosOffetsetInSpritePositionArray
         CLC 
         ADC #$08
@@ -445,19 +465,23 @@ SpriteAnimationLoop
 
         PLA 
         STA inxedForYPosOffsetInSpritePositionArray
+
         PLA 
         STA indexForXPosOffetsetInSpritePositionArray
+
         PLA 
         STA indexForYPosInSpritePositionArray
+
         PLA 
         STA indexForXPosInSpritePositionArray
+
         DEC noOfSpritesToUpdate
-        BNE b0B9B
+        BNE AnimationFrameFinished
 
         LDA #$C0
         STA noOfSpritesToUpdate
         LDA autoOn
-        BNE b0B9B
+        BNE AnimationFrameFinished
 
         ; Auto is on so generate procedural/random values for oscillators.
 GenerateValuesForOscillators
@@ -470,8 +494,10 @@ GenerateValuesForOscillators
 
         LDA intervalBetweenPosUpdatesArray,X
         STA initialCounterBetweenXPosUpdates
+
         LDA positionIncrementArray,X
         STA incrementForXPos
+
         JSR PutProceduralByteInAccumulator
         AND #$07
         CLC 
@@ -481,8 +507,10 @@ GenerateValuesForOscillators
 
         LDA intervalBetweenPosUpdatesArray,X
         STA initialCounterBetweenYPosUpdates
+
         LDA positionIncrementArray,X
         STA incrementForYPos
+
         JSR PutProceduralByteInAccumulator
         AND #$07
         CLC 
@@ -497,7 +525,8 @@ GenerateValuesForOscillators
         STA oscillator4WorkingValue
         STA oscillator4Value
 
-b0B9B   LDA #$01
+AnimationFrameFinished   
+        LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JSR UpdateHeadsUpDisplay
@@ -543,12 +572,12 @@ UpdateSpriteYPos
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS 
 
-incrementForXPos   .BYTE $01
-incrementForYPos   .BYTE $03
-intervalBetweenPosUpdatesArray   .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-        .BYTE $02,$03,$04,$05,$06,$07,$08,$09
-positionIncrementArray   .BYTE $08,$07,$06,$05,$04,$03,$02,$01
-        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+incrementForXPos               .BYTE $01
+incrementForYPos               .BYTE $03
+intervalBetweenPosUpdatesArray .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+                               .BYTE $02,$03,$04,$05,$06,$07,$08,$09
+positionIncrementArray         .BYTE $08,$07,$06,$05,$04,$03,$02,$01
+                               .BYTE $01,$01,$01,$01,$01,$01,$01,$01
 ;-------------------------------------------------------
 ; AdjustSpriteXPos   
 ;-------------------------------------------------------
@@ -556,15 +585,16 @@ AdjustSpriteXPos
         LDA currSpriteXPos
         CLC 
         ROR 
-        STA aFA
+        STA spritePosOffsetTemp
         LDA offsetForSPriteXPos
         CLC 
         ROR 
         CLC 
-        ADC aFA
+        ADC spritePosOffsetTemp
         ADC #$68
         STA $D000,Y  ;Sprite 0 X Pos
         RTS 
+
 ;-------------------------------------------------------
 ; AdjustSpriteYPos   
 ;-------------------------------------------------------
@@ -572,15 +602,16 @@ AdjustSpriteYPos
         LDA currSpriteYPos
         CLC 
         ROR 
-        STA aFA
+        STA spritePosOffsetTemp
         LDA offsetForSpriteYPos
         CLC 
         ROR 
         CLC 
-        ADC aFA
+        ADC spritePosOffsetTemp
         ADC #$40
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS 
+
 ;-------------------------------------------------------
 ; WriteMainTextToScreen   
 ;-------------------------------------------------------

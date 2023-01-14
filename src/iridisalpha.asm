@@ -271,7 +271,7 @@ b091E   LDA titleScreenStarFieldYPosArrayPtr,Y
         JSR CheckJoystickInputsInTitleScreenAnimation
         JSR TitleScreenUpdateSpritePositions
         JSR PlayTitleScreenMusic
-        JMP $EA31
+        JMP ReEnterInterrupt
 
         ; Animate the star field in the title screen
 b0947   STA $D00F    ;Sprite 7 Y Pos
@@ -4705,7 +4705,7 @@ b62D2   JSR PlaySoundEffects
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         LDA #$20
         STA $D012    ;Raster Position
-        JMP $EA31
+        JMP ReEnterInterrupt
 
 txtProgressStatusLine1 .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
 txtProgressStatusLine2 .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READY"
@@ -4951,8 +4951,8 @@ bonusGilbiesPositionArray .BYTE $40,$46,$4C,$52,$58,$5E,$63,$68
 bonusBountiesEarned       .BYTE $00
 bonusGilbyXPos1           .BYTE $00
 bonusGilbyYPos1           .BYTE $00
-bonusGilbyXPos2           .BYTE $00
-bonusGilbyYPos2           .BYTE $00
+bonusGilbyXPosOffset           .BYTE $00
+bonusGilbyYPosOffset           .BYTE $00
 ;------------------------------------------------------------------
 ; DisplayNewBonus
 ;------------------------------------------------------------------
@@ -4988,7 +4988,7 @@ DisplayNewBonus
         ; Display the animated gilbies
 b6595   LDA #$C1
         STA Sprite0Ptr,X
-        LDA NewBonusGilbyColors,X
+        LDA newBonusGilbyColors,X
         STA $D027,X  ;Sprite 0 Color
         DEX
         BPL b6595
@@ -5032,146 +5032,197 @@ NewBonusGilbyAnimation
         PLA
         RTI
 
-bonusGilbyAnimation   .BYTE $04,$04,$02,$02,$00,$00,$00,$03
-                      .BYTE $03,$06,$06,$01,$01,$00,$00
-NewBonusGilbyColors   .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
+counterBetweeXPosUpdates                  .BYTE $04
+initialCounterBetweenXPosUpdates          .BYTE $04
+initialCounterBetweenYPosUpdates          .BYTE $02
+counterBetweenYPosUpdates                 .BYTE $02
+noOfSpritesToUpdate                       .BYTE $00
+indexForXPosInSpritePositionArray         .BYTE $00
+indexForYPosInSpritePositionArray         .BYTE $00
+oscillator3WorkingValue                   .BYTE $03
+oscillator3Value                          .BYTE $03
+oscillator4WorkingValue                   .BYTE $06
+oscillator4Value                          .BYTE $06
+oscillator5Value                          .BYTE $01
+oscillator6Value                          .BYTE $01
+indexForXPosOffetsetInSpritePositionArray .BYTE $00
+inxedForYPosOffsetInSpritePositionArray   .BYTE $00
+newBonusGilbyColors   .BYTE RED,LTRED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE
 
-;------------------------------------------------------------------
+;--------------------------------------------------
 ; AnimateGilbiesForNewBonus
-;------------------------------------------------------------------
+;--------------------------------------------------
 AnimateGilbiesForNewBonus
         LDY #$00
         LDA #$F0
         STA $D012    ;Raster Position
-        DEC bonusGilbyAnimation
-        BNE b6610
-        LDA bonusGilbyAnimation + $01
-        STA bonusGilbyAnimation
-        LDA bonusBountyOffset2
+        DEC counterBetweeXPosUpdates
+        BNE MaybeUpdateYPos
+
+        LDA initialCounterBetweenXPosUpdates
+        STA counterBetweeXPosUpdates
+
+        LDA incrementForXPos
         CLC
-        ADC bonusGilbyAnimation + $05
-        STA bonusGilbyAnimation + $05
-b6610   DEC bonusGilbyAnimation + $03
-        BNE b6625
-        LDA bonusGilbyAnimation + $02
-        STA bonusGilbyAnimation + $03
-        LDA bonusGilbyAnimation + $06
+        ADC indexForXPosInSpritePositionArray
+        STA indexForXPosInSpritePositionArray
+
+MaybeUpdateYPos   
+        DEC counterBetweenYPosUpdates
+        BNE MaybeResetOsc3WorkingValue
+
+        LDA initialCounterBetweenYPosUpdates
+        STA counterBetweenYPosUpdates
+
+        LDA indexForYPosInSpritePositionArray
         CLC
-        ADC bounsBountyOffset
-        STA bonusGilbyAnimation + $06
-b6625   DEC bonusGilbyAnimation + $07
-        BNE b6633
-        LDA bonusGilbyAnimation + $08
-        STA bonusGilbyAnimation + $07
-        INC bonusGilbyAnimation + $0D
-b6633   DEC bonusGilbyAnimation + $09
-        BNE b6641
-        LDA bonusGilbyAnimation + $0A
-        STA bonusGilbyAnimation + $09
-        INC bonusGilbyAnimation + $0E
-b6641   LDA bonusGilbyAnimation + $05
+        ADC incrementForYPos
+        STA indexForYPosInSpritePositionArray
+
+MaybeResetOsc3WorkingValue   
+        DEC oscillator3WorkingValue
+        BNE MaybeResetOsc4WorkingValue
+
+        LDA oscillator3Value
+        STA oscillator3WorkingValue
+        INC indexForXPosOffetsetInSpritePositionArray
+
+MaybeResetOsc4WorkingValue   
+        DEC oscillator4WorkingValue
+        BNE InitializeSpriteAnimation
+
+        LDA oscillator4Value
+        STA oscillator4WorkingValue
+        INC inxedForYPosOffsetInSpritePositionArray
+
+InitializeSpriteAnimation   
+        LDA indexForXPosInSpritePositionArray
         PHA
-        LDA bonusGilbyAnimation + $06
+        LDA indexForYPosInSpritePositionArray
         PHA
-        LDA bonusGilbyAnimation + $0D
+        LDA indexForXPosOffetsetInSpritePositionArray
         PHA
-        LDA bonusGilbyAnimation + $0E
+        LDA inxedForYPosOffsetInSpritePositionArray
         PHA
-b6651   LDA bonusGilbyAnimation + $05
+
+SpriteAnimationLoop   
+        LDA indexForXPosInSpritePositionArray
         AND #$3F
         TAX
         LDA bonusGilbiesPositionArray,X
         STA bonusGilbyXPos1
-        LDA bonusGilbyAnimation + $06
+
+        LDA indexForYPosInSpritePositionArray
         AND #$3F
         TAX
         LDA bonusGilbiesPositionArray,X
         STA bonusGilbyYPos1
-        LDA bonusGilbyAnimation + $0D
+
+        LDA indexForXPosOffetsetInSpritePositionArray
         AND #$3F
         TAX
         LDA bonusGilbiesPositionArray,X
-        STA bonusGilbyXPos2
-        LDA bonusGilbyAnimation + $0E
+        STA bonusGilbyXPosOffset
+
+        LDA inxedForYPosOffsetInSpritePositionArray
         AND #$3F
         TAX
         LDA bonusGilbiesPositionArray,X
-        STA bonusGilbyYPos2
+        STA bonusGilbyYPosOffset
 
         JSR BonusBountyPerformAnimation
 
-        LDA bonusGilbyAnimation + $0E
+        LDA inxedForYPosOffsetInSpritePositionArray
         CLC
         ADC #$08
-        STA bonusGilbyAnimation + $0E
-        LDA bonusGilbyAnimation + $0D
+        STA inxedForYPosOffsetInSpritePositionArray
+
+        LDA indexForXPosOffetsetInSpritePositionArray
         CLC
         ADC #$08
-        STA bonusGilbyAnimation + $0D
-        LDA bonusGilbyAnimation + $06
+        STA indexForXPosOffetsetInSpritePositionArray
+
+        LDA indexForYPosInSpritePositionArray
         CLC
         ADC #$08
-        STA bonusGilbyAnimation + $06
-        LDA bonusGilbyAnimation + $05
+        STA indexForYPosInSpritePositionArray
+
+        LDA indexForXPosInSpritePositionArray
         CLC
         ADC #$08
-        STA bonusGilbyAnimation + $05
+        STA indexForXPosInSpritePositionArray
+
         INY
         INY
         CPY #$10
-        BNE b6651
+        BNE SpriteAnimationLoop
+
         PLA
-        STA bonusGilbyAnimation + $0E
+        STA inxedForYPosOffsetInSpritePositionArray
+
         PLA
-        STA bonusGilbyAnimation + $0D
+        STA indexForXPosOffetsetInSpritePositionArray
+
         PLA
-        STA bonusGilbyAnimation + $06
+        STA indexForYPosInSpritePositionArray
+
         PLA
-        STA bonusGilbyAnimation + $05
-        DEC bonusGilbyAnimation + $04
-        BNE b6709
+        STA indexForXPosInSpritePositionArray
+
+        DEC noOfSpritesToUpdate
+        BNE AnimationFrameFinished
+
         JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$04
         TAX
-        LDA bonusBountyAnimationArray2,X
-        STA bonusGilbyAnimation + $01
-        LDA bonusBountyAnimationArray,X
-        STA bonusBountyOffset2
+
+        LDA intervalBetweenPosUpdatesArray,X
+        STA initialCounterBetweenXPosUpdates
+
+        LDA positionIncrementArray,X
+        STA incrementForXPos
+
         JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$04
         TAX
-        LDA bonusBountyAnimationArray2,X
-        STA bonusGilbyAnimation + $02
-        LDA bonusBountyAnimationArray,X
-        STA bounsBountyOffset
+
+        LDA intervalBetweenPosUpdatesArray,X
+        STA initialCounterBetweenYPosUpdates
+
+        LDA positionIncrementArray,X
+        STA incrementForYPos
+
         JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$01
-        STA bonusGilbyAnimation + $07
-        STA bonusGilbyAnimation + $08
+        STA oscillator3WorkingValue
+        STA oscillator3Value
+
         JSR PutProceduralByteInAccumulatorRegister
         AND #$07
         CLC
         ADC #$01
-        STA bonusGilbyAnimation + $09
-        STA bonusGilbyAnimation + $0A
-b6709   LDA #$01
+        STA oscillator4WorkingValue
+        STA oscillator4Value
+
+AnimationFrameFinished   
+        LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JSR PlaySoundEffects
-        JMP $EA31
+        JMP ReEnterInterrupt
 
 ;------------------------------------------------------------------
 ; BonusBountyPerformAnimation
 ;------------------------------------------------------------------
 BonusBountyPerformAnimation
         LDA bonusGilbyXPos1
-        LDX bonusGilbyAnimation + $0B
+        LDX oscillator5Value
         BEQ b6725
         JSR BonusBountyAnimateGilbyXPos
         JMP BonusBountySkipUpdatingXPos
@@ -5182,7 +5233,7 @@ b6725   CLC
 
 BonusBountySkipUpdatingXPos
         LDA bonusGilbyYPos1
-        LDX bonusGilbyAnimation + $0C
+        LDX oscillator6Value
         BEQ b6736
         JMP BonusBountyAnimateGilbyYPos
 
@@ -5191,13 +5242,13 @@ b6736   CLC
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS
 
-bonusBountyOffset2         .BYTE $01
-bounsBountyOffset          .BYTE $01
-bonusBountyAnimationArray2 .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-                           .BYTE $02,$03,$04,$05,$06,$07,$08,$09
-bonusBountyAnimationArray  .BYTE $08,$07,$06,$05,$04,$03,$02,$01
-                           .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-bonusBountyGilbyXPosOffset = $FA
+incrementForXPos               .BYTE $01
+incrementForYPos               .BYTE $01
+intervalBetweenPosUpdatesArray .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+                               .BYTE $02,$03,$04,$05,$06,$07,$08,$09
+positionIncrementArray      .BYTE $08,$07,$06,$05,$04,$03,$02,$01
+                               .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+bonusBountyOffsetTemp     = $FA
 ;------------------------------------------------------------------
 ; BonusBountyAnimateGilbyXPos
 ;------------------------------------------------------------------
@@ -5205,12 +5256,12 @@ BonusBountyAnimateGilbyXPos
         LDA bonusGilbyXPos1
         CLC
         ROR
-        STA bonusBountyGilbyXPosOffset
-        LDA bonusGilbyXPos2
+        STA bonusBountyOffsetTemp
+        LDA bonusGilbyXPosOffset
         CLC
         ROR
         CLC
-        ADC bonusBountyGilbyXPosOffset
+        ADC bonusBountyOffsetTemp
         ADC #$70
         STA $D000,Y  ;Sprite 0 X Pos
         RTS
@@ -5222,12 +5273,12 @@ BonusBountyAnimateGilbyYPos
         LDA bonusGilbyYPos1
         CLC
         ROR
-        STA bonusBountyGilbyXPosOffset
-        LDA bonusGilbyYPos2
+        STA bonusBountyOffsetTemp
+        LDA bonusGilbyYPosOffset
         CLC
         ROR
         CLC
-        ADC bonusBountyGilbyXPosOffset
+        ADC bonusBountyOffsetTemp
         ADC #$40
         STA $D001,Y  ;Sprite 0 Y Pos
         RTS
@@ -5939,7 +5990,7 @@ PerformMainGameUpdate
         JSR UpdateBulletPositions
         JSR DrawUpperPlanetAttackShips
         JSR UpdateControlPanelColors
-        JMP $EA31 ; jump into KERNAL's standard interrupt service routine to handle keyboard scan, cursor display etc.
+        JMP ReEnterInterrupt ; jump into KERNAL's standard interrupt service routine to handle keyboard scan, cursor display etc.
         ;Returns From Interrupt
 
 ;------------------------------------------------------------------
@@ -9253,7 +9304,7 @@ bCD59   LDA #$01
         STA $D012    ;Raster Position
         LDA hiScoreScreenUpdateRate
         BNE bCD6E
-        JMP $EA31
+        JMP ReEnterInterrupt
 
 bCD6E   LDX #$00
         LDY currHiScoreColorSeq1
@@ -9295,7 +9346,7 @@ bCDC1   LDA currHiScoreColorSeq1
         BNE bCDCD
         LDA #$00
         STA currHiScoreColorSeq1
-bCDCD   JMP $EA31
+bCDCD   JMP ReEnterInterrupt
 
 currHiScoreColorSeq1    .BYTE $1C
 currHiScoreColorSeq2    .BYTE $0C

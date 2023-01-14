@@ -40,7 +40,7 @@ colormap = {
     }
 
 s = """
-f0A6E  .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
+spriteColors                              .BYTE $02,$0A,$08,$07,$05,$0E,$04,$06
 """
 ls = re.split("([, #\n])", s)
 
