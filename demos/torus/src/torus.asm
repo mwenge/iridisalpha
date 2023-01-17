@@ -343,15 +343,15 @@ counterBetweeXPosUpdates                  .BYTE $01
 initialCounterBetweenXPosUpdates          .BYTE $02
 initialCounterBetweenYPosUpdates          .BYTE $01
 counterBetweenYPosUpdates                 .BYTE $01
-noOfSpritesToUpdate                       .BYTE $2E
+noOfIterationsToRunBeforeChanginOscValues .BYTE $2E
 indexForXPosInSpritePositionArray         .BYTE $0D
 indexForYPosInSpritePositionArray         .BYTE $C5
-oscillator3WorkingValue                   .BYTE $04
+cyclesBetweenXPosOffsetUpdates                   .BYTE $04
 oscillator3Value                          .BYTE $06
-oscillator4WorkingValue                   .BYTE $02
+cyclesBetweenYPosOffsetUpdates                   .BYTE $02
 oscillator4Value                          .BYTE $02,$01,$01
 indexForXPosOffetsetInSpritePositionArray .BYTE $CF
-inxedForYPosOffsetInSpritePositionArray   .BYTE $D2
+indexForYPosOffsetInSpritePositionArray   .BYTE $D2
 spriteColors                              .BYTE RED,LTRED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE
 
 
@@ -365,6 +365,7 @@ RunMainInterruptHandler
         DEC counterBetweeXPosUpdates
         BNE MaybeUpdateYPos
 
+UpdateXPos
         LDA initialCounterBetweenXPosUpdates
         STA counterBetweeXPosUpdates
 
@@ -375,7 +376,7 @@ RunMainInterruptHandler
 
 MaybeUpdateYPos   
         DEC counterBetweenYPosUpdates
-        BNE MaybeResetOsc3WorkingValue
+        BNE MaybeUpdateXPosOffset
 
         LDA initialCounterBetweenYPosUpdates
         STA counterBetweenYPosUpdates
@@ -385,32 +386,36 @@ MaybeUpdateYPos
         ADC incrementForYPos
         STA indexForYPosInSpritePositionArray
 
-MaybeResetOsc3WorkingValue   
-        DEC oscillator3WorkingValue
-        BNE MaybeResetOsc4WorkingValue
+MaybeUpdateXPosOffset
+        DEC cyclesBetweenXPosOffsetUpdates
+        BNE MaybeUpdateYPosOffset
 
         LDA oscillator3Value
-        STA oscillator3WorkingValue
+        STA cyclesBetweenXPosOffsetUpdates
         INC indexForXPosOffetsetInSpritePositionArray
 
-MaybeResetOsc4WorkingValue   
-        DEC oscillator4WorkingValue
-        BNE InitializeSpriteAnimation
+MaybeUpdateYPosOffset
+        DEC cyclesBetweenYPosOffsetUpdates
+        BNE StoreInitialIndexValues
 
         LDA oscillator4Value
-        STA oscillator4WorkingValue
-        INC inxedForYPosOffsetInSpritePositionArray
+        STA cyclesBetweenYPosOffsetUpdates
+        INC indexForYPosOffsetInSpritePositionArray
 
-InitializeSpriteAnimation   
+StoreInitialIndexValues   
+        ; Store the initial values for our indices
+        ; on the stack.
         LDA indexForXPosInSpritePositionArray
         PHA 
         LDA indexForYPosInSpritePositionArray
         PHA 
         LDA indexForXPosOffetsetInSpritePositionArray
         PHA 
-        LDA inxedForYPosOffsetInSpritePositionArray
+        LDA indexForYPosOffsetInSpritePositionArray
         PHA 
 
+        ; The main loop for updating the position of
+        ; each sprite during this interrupt.
 SpriteAnimationLoop   
         LDA indexForXPosInSpritePositionArray
         AND #$3F
@@ -430,7 +435,7 @@ SpriteAnimationLoop
         LDA spritePositionArray,X
         STA offsetForSPriteXPos
 
-        LDA inxedForYPosOffsetInSpritePositionArray
+        LDA indexForYPosOffsetInSpritePositionArray
         AND #$3F
         TAX 
         LDA spritePositionArray,X
@@ -438,10 +443,12 @@ SpriteAnimationLoop
 
         JSR UpdateSpritePosition
 
-        LDA inxedForYPosOffsetInSpritePositionArray
+        ; Increment the indices to the x, y, and 
+        ; offset values by 8 for the next sprite.
+        LDA indexForYPosOffsetInSpritePositionArray
         CLC 
         ADC #$08
-        STA inxedForYPosOffsetInSpritePositionArray
+        STA indexForYPosOffsetInSpritePositionArray
 
         LDA indexForXPosOffetsetInSpritePositionArray
         CLC 
@@ -458,13 +465,18 @@ SpriteAnimationLoop
         ADC #$08
         STA indexForXPosInSpritePositionArray
 
+        ; Move Y to the register position for the next
+        ; sprite, used by UpdateSpritePosition.
         INY 
         INY 
         CPY #$10
         BNE SpriteAnimationLoop
 
+RestoreInitialIndexValues
+        ; Pull the index values we stored on the stack
+        ; back into their variables.
         PLA 
-        STA inxedForYPosOffsetInSpritePositionArray
+        STA indexForYPosOffsetInSpritePositionArray
 
         PLA 
         STA indexForXPosOffetsetInSpritePositionArray
@@ -475,11 +487,14 @@ SpriteAnimationLoop
         PLA 
         STA indexForXPosInSpritePositionArray
 
-        DEC noOfSpritesToUpdate
+MaybeChangeOscillatorValues
+        ; Maybe it's time to change the oscillator values
+        ; if we're on autopilot.
+        DEC noOfIterationsToRunBeforeChanginOscValues
         BNE AnimationFrameFinished
 
         LDA #$C0
-        STA noOfSpritesToUpdate
+        STA noOfIterationsToRunBeforeChanginOscValues
         LDA autoOn
         BNE AnimationFrameFinished
 
@@ -515,14 +530,14 @@ GenerateValuesForOscillators
         AND #$07
         CLC 
         ADC #$01
-        STA oscillator3WorkingValue
+        STA cyclesBetweenXPosOffsetUpdates
         STA oscillator3Value
 
         JSR PutProceduralByteInAccumulator
         AND #$07
         CLC 
         ADC #$01
-        STA oscillator4WorkingValue
+        STA cyclesBetweenYPosOffsetUpdates
         STA oscillator4Value
 
 AnimationFrameFinished   

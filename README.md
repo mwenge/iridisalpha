@@ -9,7 +9,17 @@ This is the reverse-engineered and [commented source code] for the 1986 Commodor
 
 
 ## Current Status
-The game compiles and plays. The routines in [the main game](https://github.com/mwenge/iridisalpha/tree/master/src/iridisalpha.asm) are all labelled. Character set data, sprite data, and mini-games have been separated out but noall of them are commented yet. Because there is so much character and sprite data, and because Iridis Alpha contains two sub games, it was necessary to use a compressor ([Exomizer]) to produce the final binary. Interesting findings, some analysis of the game logic and an overview of the code's structure [can be found here](https://github.com/mwenge/iridisalpha/tree/master/src).
+The source code is well documented at this point.
+
+Because there is so much character and
+sprite data, and because Iridis Alpha contains two sub games, it was necessary to use a compressor ([Exomizer]) to produce the final binary.
+
+Interesting findings, some analysis of the game logic and an overview of the code's structure [can be found
+here](https://github.com/mwenge/iridisalpha/tree/master/src).
+
+If you want to read more about Iridis Alpha than is possibly healthy, you can try the [Scrapbook
+Edition](https://github.com/mwenge/iatheory/blob/main/out/iatheory_scrapbook.pdf) of 
+a work-in-progress ~omnium gatherium~ called [Iridis Alpha Theory](https://github.com/mwenge/iatheory).
 
 ## Download
 
