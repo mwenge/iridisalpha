@@ -83,20 +83,20 @@ Sprite7PtrStarField                     = $07FF
 .include "constants.asm"
 
 *=$0801
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SYS 16384 ($4000)
 ; This launches the program from address $4000, i.e. MainControlLoop.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; $9E = SYS
 ; $31,$36,$33,$38,$34,$00 = 16384 ($4000 in hex)
 .BYTE $0C,$08,$0A,$00,$9E,$31,$36,$33,$38,$34,$00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; LaunchCurrentProgram
-;------------------------------------------------------------------
+;-------------------------------------------------------
 *=$0810
 LaunchCurrentProgram
-        LDA #BLACK
+        LDA #BLACK   ; $00
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
@@ -121,57 +121,82 @@ DNANotActive
         JMP EnterTitleScreenLoop
 
                                  .BYTE $00,$06,$02,$04,$05,$03,$07,$01
-                                 .BYTE $01,$07,$03,$05,$04,$02,$06
-titleScreenStarfieldColorsArray  .BYTE $00
-titleScreenGilbiesColorArray     .BYTE $02,$08,$07,$05,$0E,$04,$06,$0B
-                                 .BYTE $0B,$06,$04,$0E,$05,$07,$08,$02
+                                 .BYTE $01,$07,$03,$05,$04,$02,$06,$00
+titleScreenColorsArray           .BYTE RED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE,GRAY1
+                                 .BYTE GRAY1,BLUE,PURPLE,LTBLUE,GREEN,YELLOW,ORANGE,RED
+
 f7PressedOrTimedOutToAttractMode .BYTE $02
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; InitializeSpritesAndInterruptsForTitleScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 InitializeSpritesAndInterruptsForTitleScreen
+
+        ; Set the border and background to black.
         LDA #BLACK
         SEI
         STA $D020    ;Border Color
         STA $D021    ;Background Color 0
         STA difficultySelected
+
         JSR ClearEntireScreen
 
+        ; The '1' points screen memory to its default position
+        ; in memory (i.e. SCREEN_RAM = $0400). The '8'
+        ; selects $2000 as the location of the character set to
+        ; use. $2000 = characterSetData
         LDA #$18
         STA $D018    ;VIC Memory Control Register
 
+        ; Select 40 column display.
         LDA $D016    ;VIC Control Register 2
         AND #$E7
         ORA #$08
         STA $D016    ;VIC Control Register 2
 
-        LDA #$01
+        LDA #WHITE
         STA $D027    ;Sprite 0 Color
+
         LDA #$FF
         STA $D015    ;Sprite display Enable
+
         LDA #STARFIELD_SPRITE
         STA Sprite7PtrStarField
+
+        ; Make sure all sprites appear in front of character
+        ; data except for Sprite 7, which is the starfield.
         LDA #$80
         STA $D01B    ;Sprite to Background Display Priority
+
+        ; Set up the our interrupt handler for the title
+        ; screen. This will do all the animation and title
+        ; music work.
         LDA #<TitleScreenInterruptHandler
         STA $0314    ;IRQ
         LDA #>TitleScreenInterruptHandler
         STA $0315    ;IRQ
+
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
+
+        ; Set up the raster interrupt to happen when the
+        ; raster reaches the position we specify in D012.
         LDA $D011    ;VIC Control Register 1
         AND #$7F
         STA $D011    ;VIC Control Register 1
+
+        ; Set the position for triggering our interrupt.
         LDA #$10
         STA $D012    ;Raster Position
         CLI
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; EnterTitleScreenLoop
-;------------------------------------------------------------------
+;-------------------------------------------------------
 EnterTitleScreenLoop
         LDA #GRAY1
         STA $D022    ;Background Color 1, Multi-Color Register 0
@@ -211,17 +236,17 @@ b08E7   LDA lastKeyPressed
         BNE b08E7
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; TitleScreenInterruptHandler
-;------------------------------------------------------------------
+;-------------------------------------------------------
 TitleScreenInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE TitleScreenAnimation
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ReturnFromTitleScreenInterruptHandler
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ReturnFromTitleScreenInterruptHandler
         PLA
         TAY
@@ -230,9 +255,9 @@ ReturnFromTitleScreenInterruptHandler
         PLA
         RTI
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ClearEntireScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ClearEntireScreen
         LDX #$00
         LDA #$20
@@ -244,128 +269,155 @@ b08FF   STA SCREEN_RAM,X
         BNE b08FF
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; TitleScreenAnimation
-;------------------------------------------------------------------
+; This handles all the activity in the title screen and is called
+; roughly 60 times a second by the Raster Interrupt.
+;-------------------------------------------------------
 TitleScreenAnimation
         LDY titleScreenStarFieldAnimationCounter
         CPY #$0C
-        BNE b091E
+        BNE MaybeDoStarFieldOrTitleText
 
-        JSR TitleScreenPaintSprites
+        JSR UpdateJumpingGilbyPositionsAndColors
         LDY #$10
         STY titleScreenStarFieldAnimationCounter
 
-b091E   LDA titleScreenStarFieldYPosArrayPtr,Y
-        BNE b0947
+MaybeDoStarFieldOrTitleText   
+        LDA titleScreenStarFieldYPosArray,Y
+        BNE DoStarfieldAnimation
 
+PaintTitleTextSprites
         JSR TitleScreenMutateStarfieldAnimationData
+
         LDA #$00
         STA titleScreenStarFieldAnimationCounter
+
         LDA #$10
         STA $D012    ;Raster Position
+
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
-        JSR UpdateGilbysInTitleAnimation
-        JSR CheckJoystickInputsInTitleScreenAnimation
-        JSR TitleScreenUpdateSpritePositions
+
+        JSR UpdateTitleTextSprites
+        JSR MaybeUpdateSpriteColors
+        JSR RecalculateJumpingGilbyPositions
         JSR PlayTitleScreenMusic
         JMP ReEnterInterrupt
+        ; We're done, returns from function.
 
-        ; Animate the star field in the title screen
-b0947   STA $D00F    ;Sprite 7 Y Pos
-        LDA titleScreenStarFieldXPosArray,Y
+;-------------------------------------------------------
+; DoStarfieldAnimation   
+; Animate the star field in the title screen
+;-------------------------------------------------------
+DoStarfieldAnimation   
+        ; A was loaded from titleScreenStarFieldYPosArray
+        ; by the caller.
+        STA $D00F    ;Sprite 7 Y Pos
+
+        ; Set the X position of the star.
+        LDA titleScreenStarFieldXPosArray + $01,Y
         STA $D00E    ;Sprite 7 X Pos
-        LDA titleScreenStarFielMSBXPosArray,Y
+
+        ; Set the rest of the X position of the star
+        ; if it's greater than 255.
+        LDA titleScreenStarfieldMSBXPosArray + $01,Y
         AND #$01
         STA spriteMSBXPosOffset
-        BEQ b095D
+
+        BEQ StarFieldSkipMSB
 
         LDA #$80
         STA spriteMSBXPosOffset
-b095D   LDA $D010    ;Sprites 0-7 MSB of X coordinate
+StarFieldSkipMSB   
+        LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$7F
         ORA spriteMSBXPosOffset
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        LDA titleScreenStarFieldYPosArray,Y
+
+        ; Update the raster position for the next interrupt
+        ; to the current line - 1. This will allow us to 
+        ; draw the sprite multiple times on different lines.
+        LDA titleScreenStarFieldYPosArray + $01,Y
         SEC
         SBC #$01
         STA $D012    ;Raster Position
 
         LDA titleScreenStarFieldColorsArrayLookUp,Y
         TAX
-        LDA titleScreenStarfieldColorsArray,X
+        LDA titleScreenColorsArray - $01,X
         STA $D02E    ;Sprite 7 Color
 
         LDA $D016    ;VIC Control Register 2
         AND #$F8
         STA $D016    ;VIC Control Register 2
 
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
+
         INC titleScreenStarFieldAnimationCounter
 
         JMP ReturnFromTitleScreenInterruptHandler
 
 ; Data for the title screen animation sequence
-titleScreenStarFieldYPosArrayPtr       .BYTE $48
-titleScreenStarFieldYPosArray          .BYTE $4E,$54,$5A
-                                       .BYTE $60,$66,$6C,$72,$78,$7E,$84,$8A
-                                       .BYTE $90,$96,$9C,$A2,$A8,$AE,$B4,$BA
-                                       .BYTE $C0,$C6,$CC,$D2,$D8,$DE,$E4,$EA
-                                       .BYTE $F0,$F6
-titleScreenStarFieldXPosArrayPtr       .BYTE $00
-titleScreenStarFieldXPosArray          .BYTE $3A,$1A,$C4,$1B,$94,$7B,$96,$5D
-                                       .BYTE $4F,$B5,$18,$C7,$E1,$EB,$4A,$8F
-                                       .BYTE $DA,$83,$6A,$B0,$FC,$68,$04,$10
-                                       .BYTE $06,$A7,$B8,$19,$BB
-titleScreenStarfieldMSBXPosArrayPtr    .BYTE $E4
-titleScreenStarFielMSBXPosArray        .BYTE $02,$02,$00,$03,$05,$02,$02,$01
-                                       .BYTE $01,$01,$03,$01,$00,$01,$03,$01
-                                       .BYTE $01,$04,$02,$01,$00,$01,$02,$01
-                                       .BYTE $02,$01,$00,$01,$02,$02,$01
-titleScreenStarFieldAnimationCounter   .BYTE $00
-titleScreenStarFieldColorsArrayLookUp  .BYTE $03,$06,$07,$02,$01,$05,$03,$08
-                                       .BYTE $04,$03,$02,$08,$06,$04,$02,$04
-                                       .BYTE $06,$01,$07,$07,$05,$03,$02,$05
-                                       .BYTE $07,$03,$06,$08,$05,$03,$06,$08
-                                       .BYTE $07,$06,$03,$05,$06,$08,$06,$04
-titleScreenStarfieldAnimationSeedArray .BYTE $06,$01,$03,$02,$01,$01,$01,$01
-                                       .BYTE $07,$02,$03,$02,$07,$02,$03,$02
-                                       .BYTE $03,$02,$01,$03,$04,$01,$02,$01
-                                       .BYTE $02,$03,$02,$01,$06,$01,$01,$01
-                                       .BYTE $01,$01,$01,$01,$01,$01,$01,$01
-                                       .BYTE $01,$01
-gilbyColorsArray                       .BYTE YELLOW,GREEN,LTBLUE,BLACK,RED,ORANGE
-starFieldOffset                        .BYTE $04,$01,$0F,$0C,$0B
+titleScreenStarFieldYPosArray           .BYTE $48,$4E,$54,$5A,$60,$66,$6C,$72
+                                        .BYTE $78,$7E,$84,$8A,$90,$96,$9C,$A2
+                                        .BYTE $A8,$AE,$B4,$BA,$C0,$C6,$CC,$D2
+                                        .BYTE $D8,$DE,$E4,$EA,$F0,$F6
+titleScreenStarFieldXPosArray           .BYTE $00,$3A,$1A,$C4,$1B,$94,$7B,$96
+                                        .BYTE $5D,$4F,$B5,$18,$C7,$E1,$EB,$4A
+                                        .BYTE $8F,$DA,$83,$6A,$B0,$FC,$68,$04
+                                        .BYTE $10,$06,$A7,$B8,$19,$BB
+titleScreenStarfieldMSBXPosArray        .BYTE $E4,$02,$02,$00,$03,$05,$02,$02
+                                        .BYTE $01,$01,$01,$03,$01,$00,$01,$03
+                                        .BYTE $01,$01,$04,$02,$01,$00,$01,$02
+                                        .BYTE $01,$02,$01,$00,$01,$02,$02,$01
+titleScreenStarFieldAnimationCounter    .BYTE $00
+titleScreenStarFieldColorsArrayLookUp   .BYTE $03,$06,$07,$02,$01,$05,$03,$08
+                                        .BYTE $04,$03,$02,$08,$06,$04,$02,$04
+                                        .BYTE $06,$01,$07,$07,$05,$03,$02,$05
+                                        .BYTE $07,$03,$06,$08,$05,$03,$06,$08
+                                        .BYTE $07,$06,$03,$05,$06,$08,$06,$04
+titleScreenStarfieldAnimationSeedArray  .BYTE $06,$01,$03,$02,$01,$01,$01,$01
+                                        .BYTE $07,$02,$03,$02,$07,$02,$03,$02
+                                        .BYTE $03,$02,$01,$03,$04,$01,$02,$01
+                                        .BYTE $02,$03,$02,$01,$06,$01,$01,$01
+                                        .BYTE $01,$01,$01,$01,$01,$01,$01,$01
+                                        .BYTE $01,$01
+gilbyColorsArray                        .BYTE YELLOW,GREEN,LTBLUE,BLACK,RED,ORANGE
+starFieldOffset                         .BYTE $04,$01,$0F,$0C,$0B
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; TitleScreenMutateStarfieldAnimationData
-;------------------------------------------------------------------
+;-------------------------------------------------------
 TitleScreenMutateStarfieldAnimationData
         LDX #$1E
         LDA #$00
         STA starFieldAnimationRate
 b0A50   DEC titleScreenStarfieldAnimationSeedArray,X
         BNE b0A6D
-        LDA titleScreenStarFieldAnimationCounter,X
+        LDA titleScreenStarFieldColorsArrayLookUp - $01,X
         STA titleScreenStarfieldAnimationSeedArray,X
-        LDA titleScreenStarFieldXPosArrayPtr,X
+        LDA titleScreenStarFieldXPosArray,X
         CLC
         ADC starFieldOffset
-        STA titleScreenStarFieldXPosArrayPtr,X
-        LDA titleScreenStarfieldMSBXPosArrayPtr,X
+        STA titleScreenStarFieldXPosArray,X
+        LDA titleScreenStarfieldMSBXPosArray,X
         ADC #$00
-        STA titleScreenStarfieldMSBXPosArrayPtr,X
+        STA titleScreenStarfieldMSBXPosArray,X
 b0A6D   DEX
         BNE b0A50
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawStripesBehindTitle
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawStripesBehindTitle
         LDX #$28
         LDA #$00
@@ -397,97 +449,124 @@ DrawStripesLoop
         BNE DrawStripesLoop
 
         LDX #$06
-b0AB7   LDA titleScreenStarfieldColorsArray,X
+b0AB7   LDA titleScreenColorsArray - $01,X
         STA gilbyColorsArray,X
         DEX
         BNE b0AB7
+
         LDA #$01
         STA shouldUpdateTitleScreenColors
         RTS
 
-;------------------------------------------------------------------
-; UpdateGilbysInTitleAnimation
-;------------------------------------------------------------------
-UpdateGilbysInTitleAnimation
+;-------------------------------------------------------
+; UpdateTitleTextSprites
+; Write the title text to the title screen using 6 sprites.
+;-------------------------------------------------------
+UpdateTitleTextSprites
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND #$80
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 
         LDX #$06
-b0AD0   LDA titleScreenBottomRightCharArray,X
-        STA SCREEN_RAM + LINE25_COL15,X
+PaintSpriteLettersLoop   
+        ; Assign the sprite.
+        LDA titleTextSpriteArray,X
+        STA Sprite0Ptr - $01,X
+
+        ; Shift the value in X left 1 bit and assign to Y.
+        ; So e.g. 6 becomes 12, 5 becomes 10, 4 becomes 8,
+        ; 3 becomes 6 and so on. This allows us to use Y
+        ; as an offset to the appropriate item in $D000-
+        ; $D012 for updating the sprite's position.
         TXA
         ASL
         TAY
 
-        ; Update the Y Position of the sprite
-        LDA titleAnimationSpriteYPosSequence - $01,X
-        STA $CFFE,Y
+        ; Update the X Position of the sprite
+        LDA titleTextXPosArray - $01,X
+        STA $D000 - $02,Y
 
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
-        ORA titleScreenGilbiesMSBXPosAnimationSequence,X
+        ORA titleTextMSBXPosArray,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 
-        ; Update the X position of hte sprite
+        ; Update the Y position of the sprite
         LDA #$40
-        STA $CFFF,Y
+        STA $D000 - $01,Y
         DEX
-        BNE b0AD0
+        BNE PaintSpriteLettersLoop
 
+        ; Write the 'Alpha' sprite to the right hand of
+        ; the screen.
         LDA #$3F
         STA $D01C    ;Sprites Multi-Color Mode Select
         STA $D01D    ;Sprites Expand 2x Horizontal (X)
         STA $D017    ;Sprites Expand 2x Vertical (Y)
+
+        ; Set its position.
         LDA #$FF
         STA $D00C    ;Sprite 6 X Pos
         LDA #$70
         STA $D00D    ;Sprite 6 Y Pos
+
+        ; Set its color.
         LDA #$0B
         STA $D025    ;Sprite Multi-Color Register 0
         LDA #$00
         STA $D026    ;Sprite Multi-Color Register 1
-        LDA #$01
+        LDA #WHITE
         STA $D02D    ;Sprite 6 Color
-        LDA #$F5
+
+        LDA #ALPHA
         STA Sprite6Ptr
+
         RTS
 
-titleAnimationSpriteYPosSequence           .BYTE $20,$50,$80,$B0,$E0
-titleScreenGilbiesMSBXPosAnimationSequence .BYTE $10,$00,$00,$00,$00,$00
-titleScreenBottomRightCharArray            .BYTE $20,$F1,$F2,$F1,$F3,$F1,$F4
-shouldUpdateTitleScreenColors              .BYTE $01
-;------------------------------------------------------------------
-; CheckJoystickInputsInTitleScreenAnimation
-;------------------------------------------------------------------
-CheckJoystickInputsInTitleScreenAnimation
+titleTextXPosArray            .BYTE $20,$50,$80,$B0,$E0
+titleTextMSBXPosArray         .BYTE $10,$00,$00,$00,$00,$00
+titleTextSpriteArray          .BYTE $20,BIG_I,BIG_R,BIG_I,BIG_D,BIG_I,BIG_S
+shouldUpdateTitleScreenColors .BYTE $01
+;-------------------------------------------------------
+; MaybeUpdateSpriteColors
+;-------------------------------------------------------
+MaybeUpdateSpriteColors
         LDA shouldUpdateTitleScreenColors
-        BNE b0B34
-b0B32   RTS
+        BNE UpdateTitleScreenSpriteColors
 
-gilbyColorsTitleCounter   .BYTE $04
+ReturnFromUpdateColors   
+        RTS
 
-b0B34   DEC gilbyColorsTitleCounter
-        BNE b0B32
+updateTitleColorsInterval   .BYTE $04
+;-------------------------------------------------------
+; UpdateTitleScreenSpriteColors   
+;-------------------------------------------------------
+UpdateTitleScreenSpriteColors   
+        DEC updateTitleColorsInterval
+        BNE ReturnFromUpdateColors
         LDA #$04
-        STA gilbyColorsTitleCounter
+        STA updateTitleColorsInterval
+
         LDX #$00
         LDA gilbyColorsArray
         PHA
-b0B44   LDA gilbyColorsArray + $01,X
+UpdateSpriteColorsLoop   
+        LDA gilbyColorsArray + $01,X
         STA $D027,X  ;Sprite 0 Color
         STA gilbyColorsArray,X
         INX
         CPX #$06
-        BNE b0B44
+        BNE UpdateSpriteColorsLoop
+
+        ; Make sure the 'Alpha' sprite stays white.
         PLA
         STA gilbyColorsArray + $05
         STA $D02C    ;Sprite 5 Color
         RTS
 
-;------------------------------------------------------------------
-; TitleScreenPaintSprites
-;------------------------------------------------------------------
-TitleScreenPaintSprites
+;-------------------------------------------------------
+; UpdateJumpingGilbyPositionsAndColors
+;-------------------------------------------------------
+UpdateJumpingGilbyPositionsAndColors
         LDA #$02
         STA $D025    ;Sprite Multi-Color Register 0
         LDA #$01
@@ -501,41 +580,47 @@ TitleScreenPaintSprites
         ; Loop through the gilby sprites in the title screen and
         ; update their position and color
         LDX #$00
-b0B73   TXA
+UpdateJumpingGilbiesLoop   
+        TXA
         ASL
         TAY
         LDA titleScreenGilbiesXPosArray,X
         ASL
         STA $D000,Y  ;Sprite 0 X Pos
-        BCC b0B8B
+        BCC SkipGilbyMSBXPos
         LDA $D010    ;Sprites 0-7 MSB of X coordinate
         ORA titleScreenGilbiesMSBXPosArray,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         JMP UpdateYPosJumpingGilbies
 
-b0B8B   LDA $D010    ;Sprites 0-7 MSB of X coordinate
+SkipGilbyMSBXPos   
+        LDA $D010    ;Sprites 0-7 MSB of X coordinate
         AND titleScreenGilbiesMSBXPosOffset,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 
 UpdateYPosJumpingGilbies
         LDA titleScreenGilbiesYPosARray,X
         STA $D001,Y  ;Sprite 0 Y Pos
+
         LDA currentTitleScreenGilbySpriteValue
         STA Sprite0Ptr,X
-        LDA titleScreenGilbiesColorArray,X
+
+        ; Update Gilby color.
+        LDA titleScreenColorsArray,X
         STA $D027,X  ;Sprite 0 Color
+
         INX
         CPX #$07
-        BNE b0B73
+        BNE UpdateJumpingGilbiesLoop
         RTS
 
 titleScreenGilbiesYPosARray       .BYTE $B2,$B6,$BB,$C1,$D0,$C8,$C1
 titleScreenGilbiesXPosArray       .BYTE $54,$58,$5C,$60,$64,$68,$6C
 titleScreenGilbiesYPosOffsetArray .BYTE $FC,$FB,$FA,$F9,$08,$07,$06
-;------------------------------------------------------------------
-; TitleScreenUpdateSpritePositions
-;------------------------------------------------------------------
-TitleScreenUpdateSpritePositions
+;-------------------------------------------------------
+; RecalculateJumpingGilbyPositions
+;-------------------------------------------------------
+RecalculateJumpingGilbyPositions
         LDX #$00
 TitleScreenUpdateSpritesLoop   
         LDA titleScreenGilbiesYPosARray,X
@@ -612,9 +697,9 @@ titleScreenTextLine3               .TEXT "F1 FOR PAUSE MODE     Q TO QUIT THE "
                                    .TEXT "GAME"
 titleScreenTextLine4               .TEXT "CREATED BY JEFF MINTER...SPACE EASY/HARD"
 titleScreenTextLine5               .TEXT "LAST GILBY HIT 0000000; MODE IS NOW EASY"
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawTitleScreenText
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawTitleScreenText
         LDX #$28
 DrawTitleTextLoop   
@@ -651,10 +736,10 @@ LoadLastScoreLoop
         BPL LoadLastScoreLoop
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; The DNA pause mode mini game. Accessed by pressing *
 ; from within the Made in France pause mode mini game.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 .include "dna.asm"
 
 
@@ -879,9 +964,9 @@ MaybePlayVoice3
 ReturnFromTitleScreenMusic   
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PlayNoteVoice1
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PlayNoteVoice1
         LDA #$21
         STA $D404    ;Voice 1: Control Register
@@ -891,9 +976,9 @@ PlayNoteVoice1
         STA $D401    ;Voice 1: Frequency Control - High-Byte
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PlayNoteVoice2
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PlayNoteVoice2
         LDA #$21
         STA $D40B    ;Voice 2: Control Register
@@ -915,9 +1000,9 @@ PlayNoteVoice3
         STA $D40F    ;Voice 3: Frequency Control - High-Byte
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetUpMainSound
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetUpMainSound
         LDA #$0F
         STA $D405    ;Voice 1: Attack / Decay Cycle Control
@@ -1005,9 +1090,9 @@ baseNoteDuration              .BYTE $01
 previousBaseNoteDuration      .BYTE $01
 
 titleScreenSpriteCycleCounter .BYTE $04
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; TitleScreenCheckInput
-;------------------------------------------------------------------
+;-------------------------------------------------------
 TitleScreenCheckInput
         LDA lastKeyPressed
         CMP #$40 ; $40 means no key was pressed
@@ -1081,10 +1166,10 @@ srcOfProceduralBytes   =*+$01
 .include "graphics/sprites.asm"
 
 difficultySelected   =*+$01
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MainControlLoop
 ; Execution starts here
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MainControlLoop
         LDA #$00
         SEI
@@ -1149,9 +1234,9 @@ p4003   LDA #<MainControlLoopInterruptHandler
         JSR ClearPlanetTextureCharsets
         JMP PrepareToLaunchIridisAlpha
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ClearPlanetTextureCharsets
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ClearPlanetTextureCharsets
         LDA #$00
         TAX
@@ -1163,9 +1248,9 @@ b4084   STA planetTextureCharset1,X
         BNE b4084
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PrepareToLaunchIridisAlpha
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PrepareToLaunchIridisAlpha
 
         LDX #$05
@@ -1199,15 +1284,15 @@ pauseModeSelected          .BYTE $00
 reasonGilbyDied            .BYTE $03
 gilbyHasJustDied           .BYTE $00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; 'Made In France' - a pause mode mini game.
 ; Accessed by pressing F1 during play.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 .include "madeinfrance.asm"
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; The data for drawing the planets.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 planet2Level5Data         = $1000
 planet3Level7Data         = $1078
 planet2Level6Data         = $10C8
@@ -1387,13 +1472,13 @@ shipCollidedWithGilbySound  .BYTE $00,$00,$0F,$05,$00
                             .BYTE $00,$00,$10,$04,$00
                             .BYTE $00,$80,<f7BCA,>f7BCA,$00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetXToIndexOfShipThatNeedsReplacing
 ;
 ; Searches activeShipsWaveDataHiPtrArray for an entry with zeroized ptrs
 ; indicating that the ship has been killed and needs to be replaced.
 ; Stores the index of the ships that needs replacing in the X register.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetXToIndexOfShipThatNeedsReplacing
         LDA activeShipsWaveDataHiPtrArray,X
         BEQ FoundOneSoReturn
@@ -1439,9 +1524,9 @@ bottomPlanetStepsBetweenAttackWaveUpdates     .BYTE $04
 currentStepsBetweenTopPlanetAttackWaves       .BYTE $00
 currentStepsBetweenBottomPlanetAttackWaves    .BYTE $00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PerformMainGameProcessing
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PerformMainGameProcessing
         LDA levelEntrySequenceActive
         BNE MainGameProcReturnEarly
@@ -1464,9 +1549,9 @@ mainGameProcReturnEarly
 
 gameSequenceCounter   .BYTE $14
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GetNewWaveDataForAnyDeadShips
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GetNewWaveDataForAnyDeadShips
         LDA #$20
         STA gameSequenceCounter
@@ -1506,9 +1591,9 @@ b4A1F   LDX #$08
         INC currentStepsBetweenBottomPlanetAttackWaves
         ; Falls through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateCurrentShipWaveDataPtrs
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateCurrentShipWaveDataPtrs
         LDA activeShipsWaveDataLoPtrArray,X
         STA currentShipWaveDataLoPtr
@@ -1521,12 +1606,12 @@ UpdateCurrentShipWaveDataPtrs
         STY previousAttackShipIndex
         ; Falls through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GetWaveDataForNewShip
 ; Loads the wave data for the current wave from level_data.asm and level_data2.asm.
 ; currentShipWaveDataLoPtr is a reference to one of the data chunks in those
 ; files.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GetWaveDataForNewShip
         ; X is the index of the ship in activeShipsWaveDataLoPtrArray
         LDY #$00
@@ -1763,9 +1848,9 @@ indexIntoYPosMovementForUpperPlanetAttackShips .BYTE $00,$00,$00,$01,$02,$03,$00
                                                .BYTE $00,$00,$04,$05,$06,$07
 indexIntoAttackWaveDataHiPtrArray              .BYTE $00,$00,$02,$03,$04,$05,$00,$00
                                                .BYTE $00,$00,$08,$09,$0A,$0B
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PerformMainAttackWaveProcessing
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PerformMainAttackWaveProcessing
         LDY #$00
         LDA pauseModeSelected
@@ -1797,9 +1882,9 @@ NoShipToUpdate
 ReturnFromMainWave   
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ProcessAttackWaveDataForActiveShip
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ProcessAttackWaveDataForActiveShip
         ; X is the current value in indexForActiveShipsWaveData
         STA currentShipWaveDataHiPtr
@@ -1824,9 +1909,9 @@ StillOnSameLevel
         JMP CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         ; Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateScoresAfterHittingShipWithBullet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateScoresAfterHittingShipWithBullet
         LDA #$00
         STA shipsThatHaveBeenHitByABullet,X
@@ -1939,9 +2024,9 @@ LoadExplosionAnimation
         JMP UpdateWaveDataPointersForCurrentEnemy
         ;Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         ; X is the current value in indexForActiveShipsWaveData
         ; We're checking if this is the first time the ship has been hit by the gilby.
@@ -1973,22 +2058,22 @@ CheckForCollisionsBeforeUpdatingCurrentShipsWaveData
         JMP CheckCollisionType
         ; Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; JumpToGetNewShipDataFromDataStore
-;------------------------------------------------------------------
+;-------------------------------------------------------
 JumpToGetNewShipDataFromDataStore
         JMP GetNewShipDataFromDataStore
         ; Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DecrementStepsThenCheckCollisionsForBottomPlanet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DecrementStepsThenCheckCollisionsForBottomPlanet
         DEC currentStepsBetweenBottomPlanetAttackWaves
         ; Falls through
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckCollisionType
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckCollisionType
         ; Does an exploded version of the enemy allow us to warp to the
         ; other planet?
@@ -1998,9 +2083,9 @@ CheckCollisionType
         JMP UpdateEnergyLevelsAfterCollision
         ;Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MaybeTransferToOtherPlanet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MaybeTransferToOtherPlanet
         LDA joystickInput
         AND #JOYSTICK_FIRE
@@ -2051,9 +2136,9 @@ InitializeStateAfterPlanetTransfer
         STA starFieldInitialStateArray - $01
         ; Falls through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateEnergyLevelsAfterCollision
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateEnergyLevelsAfterCollision
         ; Check if the enemy saps energy from the gilby?
         LDY #$23
@@ -2097,29 +2182,36 @@ b4D7F   LDY #$1E
         JMP UpdateWaveDataPointersForCurrentEnemy
         ; Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GetNewShipDataFromDataStore
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GetNewShipDataFromDataStore
         LDA upperPlanetAttackShipYPosUpdated,X
-        BEQ b4D98
+        BEQ No2ndWaveData
+
         LDA #$00
         STA upperPlanetAttackShipYPosUpdated,X
+
         ; The 2nd stage of wave data for this enemy.
         LDY #$19
         LDA (currentShipWaveDataLoPtr),Y
-        BEQ b4D98
+        BEQ No2ndWaveData
+
         DEY
         JMP UpdateWaveDataPointersForCurrentEnemy
 
-b4D98   LDA upperPlanetAttackShipYPosUpdated2,X
+No2ndWaveData   
+        LDA upperPlanetAttackShipYPosUpdated2,X
         BEQ No3rdWaveData
+
         LDA #$00
         STA upperPlanetAttackShipYPosUpdated2,X
+
         ; The 3rd stage of wave data for this enemy.
         LDY #$1B
         LDA (currentShipWaveDataLoPtr),Y
         BEQ No3rdWaveData
+
         DEY
         JMP UpdateWaveDataPointersForCurrentEnemy
 
@@ -2166,9 +2258,9 @@ UpdatePointersToWaveDataWhenFirstHit
         ; to the second tranche of wave data for this level. 
         ; Or Y has been set by the caller.
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateWaveDataPointersForCurrentEnemy
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateWaveDataPointersForCurrentEnemy
         LDA (currentShipWaveDataLoPtr),Y
         PHA
@@ -2186,9 +2278,9 @@ UpdateWaveDataPointersForCurrentEnemy
         STA activeShipsWaveDataLoPtrArray,X
         ; Falls through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GetWaveDataForShipForNewLevel
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GetWaveDataForShipForNewLevel
         LDA #$FF
         STA updatingWaveData
@@ -2197,9 +2289,9 @@ GetWaveDataForShipForNewLevel
         STA updatingWaveData
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ClearDeadShipFromLevelData
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ClearDeadShipFromLevelData
         LDA #$F0
         STA upperPlanetAttackShipsSpriteValueArray + $01,X
@@ -2219,9 +2311,9 @@ updatingWaveData        .BYTE $00
 currentTopPlanet        .BYTE $01
 currentBottomPlanet     .BYTE $01
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateAttackShipDataForNewShip
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateAttackShipDataForNewShip
         ; Check if the wave supports some kind of animation effect
         ; stored as a hi/lo ptr at position $09 and $0A (Bytes 10 and 11) in its data.
@@ -2430,9 +2522,9 @@ EarlyReturnFromAttackShipsPosition
 setToZeroIfOnUpperPlanet .BYTE $00
 currentAttackShipXPos    .BYTE $00
 currentAttackShipYPos    .BYTE $00,$00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateAttackShipsPosition
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateAttackShipsPosition
         LDA setToZeroIfOnUpperPlanet
         TAY
@@ -2474,9 +2566,9 @@ b4F92   LDA upperPlanetAttackShipsXPosArray + $02,Y
         STA nextShipOffset
         ; Falls through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateAttackShipsMSBXPosition
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateAttackShipsMSBXPosition
         TYA
         TAX
@@ -2561,9 +2653,9 @@ SkipRestofMXBPositionUpdates
 CollisionReturnEarly   
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DetectAttackShipCollisionWithGilby
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DetectAttackShipCollisionWithGilby
         LDY #$00
         LDA levelEntrySequenceActive
@@ -2675,9 +2767,9 @@ controlPanelColors .BYTE BROWN,BROWN,BLACK,WHITE,WHITE,WHITE,WHITE
 ; This is the hiptr (e.g. $9200, $9000) array into the character sets for each planet.
 planetCharsetDataHiPtrArray   .BYTE >planet1Charset,>planet2Charset,>planet3Charset
                               .BYTE >planet4Charset,>planet5Charset
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PerformPlanetWarp
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PerformPlanetWarp
         LDX topPlanetPointerIndex
         LDA planetCharsetDataHiPtrArray,X
@@ -2729,9 +2821,9 @@ b5208   LDA #EXPLOSION_START
         STA currentSoundEffectHiPtr
         ;Fall through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawPlanetProgressPointers
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawPlanetProgressPointers
         LDX #$0A
         LDA #$20
@@ -2764,9 +2856,9 @@ unusedVariable3               .BYTE $00
 controlPanelIsGrey            .BYTE $01
 planetProgressPointersOffsets .BYTE $01,$03,$05,$07,$09
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateControlPanelColors
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateControlPanelColors
         LDA gilbyVerticalPositionUpperPlanet
         CMP #$50
@@ -2805,9 +2897,9 @@ b52B6   STA COLOR_RAM + LINE20_COL39,X
         STA controlPanelIsGrey
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateControlPanelColor
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateControlPanelColor
         LDY #$00
         STY controlPanelColorDoesntNeedUpdating
@@ -2819,10 +2911,10 @@ controlPanelColorDoesntNeedUpdating   .BYTE $00
 
 screenTmpPtrLo = $46
 screenTmpPtrHi = $47
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; WriteInitialWarpStateToScreen
 ; Writes storage for top and bottom planets to $0763 and $07B3
-;------------------------------------------------------------------
+;-------------------------------------------------------
 WriteInitialWarpStateToScreen
         LDA #>SCREEN_RAM + LINE21_COL27
         STA screenTmpPtrHi ; Actually the hi ptr here
@@ -2838,9 +2930,9 @@ WriteInitialWarpStateToScreen
         STA screenTmpPtrLo
         LDX bottomPlanetPointerIndex
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateWarpStateOnScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateWarpStateOnScreen
         TXA
         ASL
@@ -2882,9 +2974,9 @@ pointsEarnedTopPlanetByte1    .BYTE $00
 pointsEarnedTopPlanetByte2    .BYTE $00
 pointsEarnedBottomPlanetByte1 .BYTE $00
 pointsEarnedBottomPlanetByte2 .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateScores
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateScores
         LDA pointsEarnedTopPlanetByte2
         BNE b532F
@@ -2930,9 +3022,9 @@ b536E   DEC pointsEarnedBottomPlanetByte1
         DEC pointsEarnedBottomPlanetByte2
 b537B   RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; InitializeEnergyBars
-;------------------------------------------------------------------
+;-------------------------------------------------------
 InitializeEnergyBars
         LDX #$03
         STX currEnergyTop
@@ -2965,9 +3057,9 @@ currEnergyBottom                     .BYTE $03
 currCoreEnergyLevel                  .BYTE $00
 extraAmountToDecreaseEnergyByTopPlanet    .BYTE $00
 extraAmountToDecreaseEnergyByBottomPlanet .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DecreaseEnergyStorage
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DecreaseEnergyStorage
         DEC updateEnergyStorageInterval
         BNE b53B3
@@ -3035,9 +3127,9 @@ energyLabelColors           .BYTE WHITE,BLUE,RED,PURPLE,GREEN,CYAN,YELLOW,WHITE
                             .BYTE BLUE
 updateEnergyStorageInterval .BYTE $01
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DepleteEnergyTop
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DepleteEnergyTop
         STX temporaryStorageForXRegister
         LDX currEnergyTop
@@ -3053,9 +3145,9 @@ DepleteEnergyTop
         BNE b547B
 b545B   JMP GilbyDiedBecauseEnergyDepleted
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DepleteEnergyBottom
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DepleteEnergyBottom
         STX temporaryStorageForXRegister
         LDX currEnergyBottom
@@ -3072,17 +3164,17 @@ DepleteEnergyBottom
 b547B   LDX temporaryStorageForXRegister
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GilbyDiesFromExcessEnergy
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GilbyDiesFromExcessEnergy
         LDA #$01
         STA reasonGilbyDied ; Overload (too much energy)
         JMP GilbyDied
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; IncreaseEnergyTop
-;------------------------------------------------------------------
+;-------------------------------------------------------
 IncreaseEnergyTop
         STX temporaryStorageForXRegister
         LDX currEnergyTop
@@ -3100,9 +3192,9 @@ IncreaseEnergyTop
         STA SCREEN_RAM + LINE22_COL3,X
         BNE b547B
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; IncreaseEnergyBottom
-;------------------------------------------------------------------
+;-------------------------------------------------------
 IncreaseEnergyBottom
         STX temporaryStorageForXRegister
         LDX currEnergyBottom
@@ -3120,9 +3212,9 @@ IncreaseEnergyBottom
         STA SCREEN_RAM + LINE23_COL3,X
         BNE b547B
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateCoreEnergyLevel
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateCoreEnergyLevel
         LDX currCoreEnergyLevel
         CPX #$FF
@@ -3156,9 +3248,9 @@ b5505   INC bonusPhaseEarned
 b5508   RTS
 
 bonusPhaseEarned   .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; IncreaseCoreEnergyLevel
-;------------------------------------------------------------------
+;-------------------------------------------------------
 IncreaseCoreEnergyLevel
         LDX currCoreEnergyLevel
         CPX #$FF
@@ -3177,9 +3269,9 @@ b5528   RTS
 
 temporaryStorageForXRegister   .BYTE $00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateCoreEnergyValues
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateCoreEnergyValues
         LDA gilbyIsOverLand
         BNE b5530
@@ -3207,9 +3299,9 @@ b554D   LDA currEnergyBottom
 b555C   JSR UpdateCoreEnergyLevel
         JMP DepleteEnergyBottom
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; IncreaseEnergyTopOnly
-;------------------------------------------------------------------
+;-------------------------------------------------------
 IncreaseEnergyTopOnly
         LDY #$23
         LDA (currentShipWaveDataLoPtr),Y
@@ -3223,9 +3315,9 @@ b556A   JSR IncreaseEnergyTop
 b5572   JMP IncreaseEnergyTop
         ;Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; IncreaseEnergyBottomOnly
-;------------------------------------------------------------------
+;-------------------------------------------------------
 IncreaseEnergyBottomOnly
         LDY #$23
         LDA (currentShipWaveDataLoPtr),Y
@@ -3241,9 +3333,9 @@ b5585   JMP IncreaseEnergyBottom
 
 updateLevelForBottomPlanet  .BYTE $01
 currentLevelInCurrentPlanet .BYTE $09
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateLevelText
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateLevelText
         LDA #$01
         STA hasEnteredNewLevel
@@ -3291,9 +3383,9 @@ b55DC   DEX
 b55DF   LDA oldBottomPlanetIndex
         PHA
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateLevelData
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateLevelData
         LDA #<levelDataPerPlanet
         STA levelDataPtrLo
@@ -3386,9 +3478,9 @@ b566C   DEY
         STA unusedVariable3
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateTopPlanetProgressData
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateTopPlanetProgressData
         STX temporaryStorageForXRegister
         LDX oldTopPlanetIndex
@@ -3418,9 +3510,9 @@ ReturnFromPlanetProgress
         LDX temporaryStorageForXRegister
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateBottomPlanetProgressData
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateBottomPlanetProgressData
         STX temporaryStorageForXRegister
         LDX oldBottomPlanetIndex
@@ -3448,9 +3540,9 @@ b56E3   LDA #$04
         JSR UpdateLevelText
         JMP ReturnFromPlanetProgress
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; InitializePlanetProgressArrays
-;------------------------------------------------------------------
+;-------------------------------------------------------
 InitializePlanetProgressArrays
         LDX #$05
         LDA #$00
@@ -3462,9 +3554,9 @@ b5705   STA bottomPlanetLevelDataHiPtr,X
         BNE b5705
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MapPlanetProgressToLevelText
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MapPlanetProgressToLevelText
         LDX topPlanetPointerIndex
         LDA currentLevelInTopPlanets,X
@@ -3478,9 +3570,9 @@ MapPlanetProgressToLevelText
         STA currentLevelInCurrentPlanet
         JMP UpdateLevelText
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CalculatePointsForByte2
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CalculatePointsForByte2
         LDX lastRegisteredScoringRate
         BNE b573C
@@ -3505,9 +3597,9 @@ b5744   CLC
 b5751   RTS
 
 pointsToAddToPointsEarnedByte2   .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckProgressInPlanet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckProgressInPlanet
         LDX #$09
         LDA attractModeCountdown
@@ -3550,9 +3642,9 @@ b5791   LDA currentTopPlanet
         JMP CheckProgressInBottomPlanet
 
 everyThirdLevelInPlanet   .BYTE $03,$06,$09,$0C,$0F
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckProgressInBottomPlanet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckProgressInBottomPlanet
         LDY currentBottomPlanet
         LDX #$00
@@ -3579,9 +3671,9 @@ b57CB   LDA currentBottomPlanet
         STA lowerPlanetActivated
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; AugmentAmountToDecreaseEnergyByBountiesEarned
-;------------------------------------------------------------------
+;-------------------------------------------------------
 AugmentAmountToDecreaseEnergyByBountiesEarned
         STY tempStorageForYRegister
         LDY bonusBountiesEarned
@@ -3593,9 +3685,9 @@ AugmentAmountToDecreaseEnergyByBountiesEarned
 tempStorageForYRegister             .BYTE $23
 amountToDecreaseEnergyByOffsetArray .BYTE $00,$0A,$14,$1E,$28,$32,$3C,$46
                                     .BYTE $50
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GilbyDied
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GilbyDied
         LDA #$01
         STA gilbyHasJustDied
@@ -3635,9 +3727,9 @@ explosionXPosOffSet      .BYTE $02,$06,$00
 explosionXPosOffset1     .BYTE $50,$A0,$40
 explosionSprite          .BYTE $FE
 gilbyExplosionColorIndex .BYTE $08
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ProcessGilbyExplosion
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ProcessGilbyExplosion
         LDA gilbyExploding
         BEQ GilbyIsExploding
@@ -3749,9 +3841,9 @@ gilbyDiedSoundEffect   .BYTE $00,$00,$0F,$0C,$00
                        .BYTE $00,$00,$80,$12,$00
                        .BYTE $00,$80,<f7BCA,>f7BCA,$00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetUpLevelRestart
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetUpLevelRestart
         LDX #$00
 b596E   LDA #$C0 ; Starfield sprite
@@ -3799,9 +3891,9 @@ b596E   LDA #$C0 ; Starfield sprite
 levelRestartInProgress .BYTE $00
 gilbiesLeft            .BYTE $02
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; FlashBackgroundAndBorder
-;------------------------------------------------------------------
+;-------------------------------------------------------
 FlashBackgroundAndBorder
         LDY txtGilbiesLeft
         LDA colorsForFlashBackgroundAndBorderEffect,Y
@@ -3839,6 +3931,8 @@ b59E9   LDA colorsForFlashBackgroundAndBorderEffect,X
         STA txtGilbiesLeft
         STA $D020    ;Border Color
 
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
 b5A03   LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
@@ -3849,9 +3943,9 @@ b5A03   LDA #$01
         PLA
         RTI
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PlayerKilled
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PlayerKilled
         JSR ClearScreen3
         DEC gilbiesLeft
@@ -3889,9 +3983,9 @@ b5A29   LDA txtGilbiesLeft,X
         TAY
         ;Fall through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawRestartLevelText
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawRestartLevelText
         LDA #<txtRestartLevelMsg
         STA tmpPtrLo
@@ -3943,9 +4037,9 @@ b5A8C   DEY
         BNE b5A8A
         ;Fall through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ClearScreen3
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ClearScreen3
         LDX #$00
 b5A98   LDA #$20
@@ -4012,11 +4106,11 @@ colorsForFlashBackgroundAndBorderEffect
 
 initialColorForFlashEffect   .BYTE $02,$00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawLevelEntryAndWarpGilbyAnimation
 ; This is the multi-coloured level entry effect where 7 gilbys
 ; spread across the screen.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawLevelEntryAndWarpGilbyAnimation
         LDX #$00
 b5CCB   LDA gilbyVerticalPositionUpperPlanet
@@ -4102,9 +4196,9 @@ f5DD8                  .BYTE $00,$00,$40,$0F,$02
                        .BYTE $00,$00,$80,$12,$00
                        .BYTE $00,$00,$0F,$18,$00
                        .BYTE $00,$80,<f7BCA,>f7BCA,$00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateDisplayedScoringRate
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateDisplayedScoringRate
         LDA #$23
         STA SCREEN_RAM + LINE22_COL23
@@ -4135,9 +4229,9 @@ scoringRateToScoreMap .BYTE $00,$01,$02,$04,$08
 scoreColors           .BYTE BLUE,PURPLE,GREEN,YELLOW,WHITE
 
 lastRegisteredScoringRate   .BYTE $01
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; InitializePlanetEntropyStatus
-;------------------------------------------------------------------
+;-------------------------------------------------------
 InitializePlanetEntropyStatus
         LDA lowerPlanetActivated
         BEQ b5E5D
@@ -4166,9 +4260,9 @@ upperPlanetEntropyStatus .BYTE $08
 lowerPlanetEntropyStatus .BYTE $08
 entropyDisplayUpdateRate  .BYTE $23
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MaybeUpdateDisplayedEntropy
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MaybeUpdateDisplayedEntropy
         DEC entropyDisplayUpdateRate
         BNE UpdateDisplayedEntropyStatus
@@ -4207,11 +4301,11 @@ b5EAE   LDA lowerPlanetEntropyStatus
         BNE UpdateDisplayedEntropyStatus
         JMP EntropyKillsGilby
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateDisplayedEntropyStatus
 ; This is the planet entropy status for the upper and
 ; lower plants, on the bottom left hand side of the screen.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateDisplayedEntropyStatus
         LDA #$08
         SEC
@@ -4246,9 +4340,9 @@ enemiesKilledBottomPlanetSinceLastUpdate .BYTE $00
 txtEnemiesLeftCol1                       .BYTE $30
 txtEnemiesLeftCol2                       .BYTE $30
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateEnemiesLeft
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateEnemiesLeft
         LDA #ZERO
         STA txtEnemiesLeftCol1
@@ -4312,9 +4406,9 @@ UpdateSpeedometerLowerPlanet
         STA COLOR_RAM + LINE24_COL8
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateEnemiesLeftStorage
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateEnemiesLeftStorage
         INC txtEnemiesLeftCol2
         LDA txtEnemiesLeftCol2
@@ -4357,9 +4451,9 @@ statusBarDetailStorage =*-$01
         .BYTE $30,$30,$30,$20,$20,$B2,$B4,$30
         .BYTE $30,$20,$9B,$9D,$20,$99,$20,$20
         .BYTE $20,$20,$20,$20,$20,$20,$20
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; StoreStatusBarDetail
-;------------------------------------------------------------------
+;-------------------------------------------------------
 StoreStatusBarDetail
         LDX #$A0
 b6032   LDA SCREEN_RAM + LINE20_COL39,X
@@ -4368,9 +4462,9 @@ b6032   LDA SCREEN_RAM + LINE20_COL39,X
         BNE b6032
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawStatusBarDetail
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawStatusBarDetail
         LDX #$A0
 b603E   LDA statusBarDetailStorage,X
@@ -4435,9 +4529,9 @@ surfaceDataInactiveLowerPlanet =*-$01
 textForInactiveLowerPlanet
       .TEXT "  WARP GATE       GILBY   CORE  NOT-CORE"
 progressDisplaySelected .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawProgressDisplayScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawProgressDisplayScreen
         JSR ClearScreen3
 
@@ -4512,9 +4606,9 @@ txtGilbiesLeftBonusBounty   .TEXT "GILBIES LEFT 0: BONUS BOUNTY NOW 0000000"
 
 b6195   RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawProgressForTopPlanets
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawProgressForTopPlanets
         LDA progressMapTopPlanetScreenPtrArrayHi,X
         CLC
@@ -4534,9 +4628,9 @@ b61A9   STA (tempLoPtr),Y
         LDA #$05
         BNE b61A9
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawProgressForBottomPlanets
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawProgressForBottomPlanets
         LDA progressMapBottomPlanetScreenPtrArrayHi,X
         CLC
@@ -4559,9 +4653,9 @@ planetIconsHiPtrArray                    .BYTE $04,$04
                                          .BYTE $04,$04,$04,$05,$05,$05,$05,$05
 planetIconsLoPtrArray                    .BYTE $A0,$7B,$56,$31,$0C,$40,$6B,$96
                                          .BYTE $C1,$EC
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ShowProgressScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ShowProgressScreen
         LDA #BLACK
         STA $D015    ;Sprite display Enable
@@ -4614,9 +4708,9 @@ b623A   LDA $DC00    ;CIA1: Data Port Register A
         STA progressDisplaySelected
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawPlanetIconsOnProgressDisplay
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawPlanetIconsOnProgressDisplay
         LDX #$00
 b6249   LDA planetIconsLoPtrArray,X
@@ -4685,9 +4779,9 @@ offsetIntoPlanetIconSeedArray      .BYTE $00,$01,$28,$29
 progressDisplayPlanetIconSeedArray .BYTE $9A,$9C,$9B,$9D,$9A,$9C,$9B,$9D
 offsetsIntoPlanetIconsPtrArray     .BYTE $00,$04,$08,$0C,$10,$00,$04,$08
                                    .BYTE $0C,$10
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GameSwitchAndGameOverInterruptHandler
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GameSwitchAndGameOverInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
@@ -4700,6 +4794,8 @@ GameSwitchAndGameOverInterruptHandler
         RTI
 
 b62D2   JSR PlaySoundEffects
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
@@ -4730,14 +4826,14 @@ f6371                             .BYTE $00,$00,$A0,$01,$02
                                   .BYTE $00,$00,$20,$04,$00
                                   .BYTE $00,$80,<f7BCA,>f7BCA,$00
 enemySprites2 = $E800
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SwapTitleScreenDataAndSpriteLevelData
 ; Swap data in $E800 (some enemy sprites and level data) to
 ; $810, where the title screen data and logic normally lives.
 ; In other words, swap a big chunk of sprite and level data
 ; into the position in memory where the title screen logic lives.
 ; At 'Game Over' this will get swapped back.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SwapTitleScreenDataAndSpriteLevelData
         SEI
         LDA #$34
@@ -4770,9 +4866,9 @@ b63A6   LDA (tempLoPtr1),Y
         STA RAM_ACCESS_MODE
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; EnterMainTitleScreen ($63C5)
-;------------------------------------------------------------------
+;-------------------------------------------------------
 EnterMainTitleScreen
         JSR SwapTitleScreenDataAndSpriteLevelData
         JSR LaunchCurrentProgram
@@ -4784,9 +4880,9 @@ EnterMainTitleScreen
         JMP SwapTitleScreenDataAndSpriteLevelData
         ; Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DisplayGameOver
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DisplayGameOver
         SEI
         LDA #<GameSwitchAndGameOverInterruptHandler
@@ -4828,9 +4924,9 @@ b63FA   LDA txtGameOver,X
 txtGameOver        .TEXT "GAME OVER.."
 txtFinalScore      .TEXT "FINAL SCORE"
 txtFinalScoreValue .TEXT "  0000000  "
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; AnimateFinalScoreTally
-;------------------------------------------------------------------
+;-------------------------------------------------------
 AnimateFinalScoreTally
         LDA #$5E
         STA tempLoPtr
@@ -4860,9 +4956,9 @@ AnimateFinalScoreTally
         JMP JumpToHiScoreScreen
 
 finalScoreUpdateInterval = $FB
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; IncrementFinalScoreTally
-;------------------------------------------------------------------
+;-------------------------------------------------------
 IncrementFinalScoreTally
         LDY #$07
 b6482   LDA (tempLoPtr1),Y
@@ -4882,9 +4978,9 @@ b6493   DEX
         BNE b6482
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateFinalScoreTally
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateFinalScoreTally
         TYA
         PHA
@@ -4910,9 +5006,9 @@ b64B4   PLA
         RTS
 
 txtReasonGilbyDied   .TEXT "DEPLETED..OVERLOAD..ENTROPY...HIT SOMMAT"
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawReasonGilbyDied
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawReasonGilbyDied
         LDA #$00
         LDY reasonGilbyDied
@@ -4933,9 +5029,9 @@ b64F7   LDA txtReasonGilbyDied,X
         BNE b64F7
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; JumpDisplayNewBonus
-;------------------------------------------------------------------
+;-------------------------------------------------------
 JumpDisplayNewBonus
         JMP DisplayNewBonus
 
@@ -4953,9 +5049,9 @@ bonusGilbyXPos1           .BYTE $00
 bonusGilbyYPos1           .BYTE $00
 bonusGilbyXPosOffset           .BYTE $00
 bonusGilbyYPosOffset           .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DisplayNewBonus
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DisplayNewBonus
         SEI
         INC bonusBountiesEarned
@@ -5018,9 +5114,9 @@ b65C9   LDA lastKeyPressed
         BNE b65C9
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; NewBonusGilbyAnimation
-;------------------------------------------------------------------
+;-------------------------------------------------------
 NewBonusGilbyAnimation
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
@@ -5211,15 +5307,17 @@ SpriteAnimationLoop
         STA oscillator4Value
 
 AnimationFrameFinished   
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JSR PlaySoundEffects
         JMP ReEnterInterrupt
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; BonusBountyPerformAnimation
-;------------------------------------------------------------------
+;-------------------------------------------------------
 BonusBountyPerformAnimation
         LDA bonusGilbyXPos1
         LDX oscillator5Value
@@ -5249,9 +5347,9 @@ intervalBetweenPosUpdatesArray .BYTE $01,$01,$01,$01,$01,$01,$01,$01
 positionIncrementArray      .BYTE $08,$07,$06,$05,$04,$03,$02,$01
                                .BYTE $01,$01,$01,$01,$01,$01,$01,$01
 bonusBountyOffsetTemp     = $FA
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; BonusBountyAnimateGilbyXPos
-;------------------------------------------------------------------
+;-------------------------------------------------------
 BonusBountyAnimateGilbyXPos
         LDA bonusGilbyXPos1
         CLC
@@ -5266,9 +5364,9 @@ BonusBountyAnimateGilbyXPos
         STA $D000,Y  ;Sprite 0 X Pos
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; BonusBountyAnimateGilbyYPos
-;------------------------------------------------------------------
+;-------------------------------------------------------
 BonusBountyAnimateGilbyYPos
         LDA bonusGilbyYPos1
         CLC
@@ -5347,9 +5445,9 @@ currentPlanetBackgroundClr1        .BYTE $09
 currentPlanetBackgroundClr2        .BYTE $0E
 currentPlanetBackgroundColor1      .BYTE $09
 currentPlanetBackgroundColor2      .BYTE $0E
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; InitializeStarfieldSprite
-;------------------------------------------------------------------
+;-------------------------------------------------------
 InitializeStarfieldSprite
         LDA #$00
         LDY #$40
@@ -5357,9 +5455,9 @@ b6812   STA starFieldSprite - $01,Y
         DEY
         BNE b6812
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawParallaxOfStarfieldInGilbyDirection
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawParallaxOfStarfieldInGilbyDirection
         LDX currentGilbySpeed
         BPL GilbyHasSpeed
@@ -5379,9 +5477,9 @@ GilbyHasSpeed
         STA starFieldSprite + $39
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PrepareScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PrepareScreen
         LDA #BLACK
         SEI
@@ -5403,9 +5501,9 @@ PrepareScreen
         JSR InitializePlanetProgressArrays
         ;Fall through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetupSpritesAndSound
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetupSpritesAndSound
         LDA #$FF
         SEI
@@ -5436,14 +5534,19 @@ SetupSpritesAndSound
         STA $0314    ;IRQ
         LDA #>MainGameInterruptHandler
         STA $0315    ;IRQ
+
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
+
         LDA $D011    ;VIC Control Register 1
         AND #$7F
         STA $D011    ;VIC Control Register 1
         LDA #$10
         STA $D012    ;Raster Position
+
         JSR DrawLowerPlanetWhileInactive
         LDX #$28
         LDA lowerPlanetActivated
@@ -5460,9 +5563,9 @@ ClearSurfaceLoop
 ReturnFromSetUpSprites   
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; InitializeSprites
-;------------------------------------------------------------------
+;-------------------------------------------------------
 InitializeSprites
         LDA #GRAY1
         STA $D022    ;Background Color 1, Multi-Color Register 0
@@ -5480,9 +5583,9 @@ InitializeSprites
         JSR SetUpGilbySprite
 p6904   JMP PrepareToRunGame
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetUpGilbySprite
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetUpGilbySprite
         LDA #GILBY_AIRBORNE_RIGHT
         STA currentGilbySprite
@@ -5500,9 +5603,9 @@ SetUpGilbySprite
         RTS
 
 bonusAwarded   .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PrepareToRunGame
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PrepareToRunGame
         LDA attractModeCountdown
         BEQ b6932
@@ -5516,9 +5619,9 @@ b6932   LDA #$00
         STA joystickInput
         ;Fall through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; BeginRunningGame
-;------------------------------------------------------------------
+;-------------------------------------------------------
 BeginRunningGame
         CLI
         NOP
@@ -5584,9 +5687,9 @@ GoToBonusPhase
         JSR ClearScreen3
         JSR DisplayEnterBonusRoundScreen
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ResumeGame
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ResumeGame
         JSR ClearPlanetTextureCharsets
         JSR DrawStatusBarDetail
@@ -5620,10 +5723,12 @@ b69C4   STA planetTextureCharset1,X
 
 b69F0   LDA #$00
         STA bonusPhaseEarned
+
         LDA $D011    ;VIC Control Register 1
         AND #$F0
         ORA #$0B
         STA $D011    ;VIC Control Register 1
+
         JMP SetUpGameScreen
 
 b6A02   JSR UpdateEnemiesLeft
@@ -5632,9 +5737,9 @@ b6A02   JSR UpdateEnemiesLeft
         LDA levelRestartInProgress
         BEQ LevelRestartNotInProgress
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; EnterMainControlLoop
-;------------------------------------------------------------------
+;-------------------------------------------------------
 EnterMainControlLoop
         JSR InitializeEnergyBars
         JSR StoreStatusBarDetail
@@ -5697,9 +5802,9 @@ EnterPauseMode
         STA $D026    ;Sprite Multi-Color Register 1
         INC shouldResetPlanetEntropy
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetUpGameScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetUpGameScreen
         LDA #$18
         STA $D018    ;VIC Memory Control Register
@@ -5734,9 +5839,9 @@ InitializeEnemySpritesLoop
         JMP BeginRunningGame
 
 previousGilbySprite   .BYTE $D3
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawUpperPlanetAttackShips
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawUpperPlanetAttackShips
         LDX #$0C
         LDY #$06
@@ -5770,9 +5875,9 @@ b6ACA   LDA upperPlanetAttackShipsXPosArray,Y
         BNE b6ACA
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawLowerPlanetAttackShips
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawLowerPlanetAttackShips
         LDX #$0C
         LDY #$06
@@ -5809,9 +5914,9 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
         BNE b6B06
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MainControlLoopInterruptHandler
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MainControlLoopInterruptHandler
         RTI
 
@@ -5822,17 +5927,17 @@ attackShip2MSBXPosOffsetArray .BYTE $04,$08,$10,$20,$40,$02,$04,$08
                               .BYTE $10,$20,$40
 difficultySetting             .BYTE $00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MainGameInterruptHandler
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MainGameInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
         BNE RasterPositionMatchesRequestedInterrupt ; Collision detected
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ReturnFromInterrupt
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ReturnFromInterrupt
         PLA
         TAY
@@ -5841,9 +5946,9 @@ ReturnFromInterrupt
         PLA
         RTI
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ClearGameViewPort
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ClearGameViewPort
         LDX #$00
         LDA #$20
@@ -5855,9 +5960,9 @@ b6B63   STA SCREEN_RAM,X
         BNE b6B63
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; FlashBorderAndBackground
-;------------------------------------------------------------------
+;-------------------------------------------------------
 FlashBorderAndBackground
         LDA currentEntropy
         BEQ b6BA3
@@ -5893,9 +5998,9 @@ b6BA3   LDA gilbyExploding
         STA $D020    ;Border Color
 b6BBE   RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; RasterPositionMatchesRequestedInterrupt
-;------------------------------------------------------------------
+;-------------------------------------------------------
 RasterPositionMatchesRequestedInterrupt
         LDY currentIndexInRasterInterruptArrays
         LDA levelRestartInProgress
@@ -5916,9 +6021,9 @@ b6BD2   LDA nextRasterPositionArray - $01,Y ; Y is currentIndexInRasterInterrupt
         JMP AnimateStarFieldAndDrawLowerPlanet
         ; Returns from Interrupt
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ResetRasterAndPerformMainGameUpdate
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ResetRasterAndPerformMainGameUpdate
         LDA #$00
         STA currentIndexInRasterInterruptArrays
@@ -5930,15 +6035,17 @@ ResetRasterAndPerformMainGameUpdate
         ORA #$08
         STA $D016    ;VIC Control Register 2
 
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         BNE PerformMainGameUpdate
         ; Returns from interrupt
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateGilbyPositionAndColor
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateGilbyPositionAndColor
         LDA gilbyHasJustDied
         BNE b6C24
@@ -5961,9 +6068,9 @@ b6C24   RTS
 
 currentGilbySprite   .BYTE GILBY_AIRBORNE_RIGHT
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PerformMainGameUpdate
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PerformMainGameUpdate
         LDX currentPlanetBackgroundClr1
         LDA backgroundColorsForPlanets,X
@@ -5993,10 +6100,10 @@ PerformMainGameUpdate
         JMP ReEnterInterrupt ; jump into KERNAL's standard interrupt service routine to handle keyboard scan, cursor display etc.
         ;Returns From Interrupt
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; AnimateStarFieldAndDrawLowerPlanet
 ; Sprite 7 is used to draw the parallax starfield background.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 AnimateStarFieldAndDrawLowerPlanet
 
         ; Animate the Starfield
@@ -6062,9 +6169,9 @@ b6CC5   DEX
 b6CD3   JMP UpdateInterruptRegisterAndReturn
         ;Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawLowerPlanet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawLowerPlanet
         JSR DrawLowerPlanetAttackShips
 
@@ -6119,19 +6226,21 @@ b6D2C   LDY setToZeroIfOnUpperPlanet
         LDA #GRAY1
 b6D33   STA $D027    ;Sprite 0 Color (lower planet gilby)
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateRasterPositionAndReturn
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateRasterPositionAndReturn
         LDY #$0A
         STY currentIndexInRasterInterruptArrays
         LDA spriteCollidedWithBackground,Y
         STA $D012    ;Raster Position
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateInterruptRegisterAndReturn
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateInterruptRegisterAndReturn
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
@@ -6160,9 +6269,9 @@ starFieldCurrentStateArray          .BYTE $04,$02,$03,$04,$03,$02,$03,$04
                                     .BYTE $02,$03
 starFieldColorsArray                .BYTE $04,$01,$0F,$0C,$0B,$08,$06
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ScrollStarfieldAndThenPlanets
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ScrollStarfieldAndThenPlanets
         LDX #$0F
         LDA #$00
@@ -6218,9 +6327,9 @@ starfieldSpriteAnimationData .BYTE $C0,$C0,$C0,$C0,$E0,$E0,$E0,$E0
 processJoystickFrameRate     .BYTE $01
 gilbyIsOverLand              .BYTE $01
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
         ; Find reasons for gilby not to die because he hit something.
         LDA spriteCollidedWithBackground
@@ -6256,9 +6365,9 @@ CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
         JMP GilbyDied
         ; Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; WarpToNextPlanet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 WarpToNextPlanet
         JSR PerformPlanetWarp
         LDA #$01
@@ -6274,9 +6383,9 @@ WarpToNextPlanet
         LDY #$EC
 b6E85   STY currentGilbySpeed
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckJoystickInput
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckJoystickInput
         DEC processJoystickFrameRate
         BEQ b6E8E
@@ -6397,9 +6506,9 @@ b6F54   LDA joystickInput
         BEQ JoystickPushedUpWhileLandGilbyAirborneOverSea
         JMP JoystickPushedUpWhileOnLand
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; JoystickPushedUpWhileLandGilbyAirborneOverSea
-;------------------------------------------------------------------
+;-------------------------------------------------------
 JoystickPushedUpWhileLandGilbyAirborneOverSea
         ; Joystick pushed up
         LDA gilbyVerticalPositionUpperPlanet
@@ -6427,9 +6536,9 @@ JoystickPushedUpWhileLandGilbyAirborneOverSea
         STA previousJoystickAction
 b6F98   RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ActionIfPreviousActionWasHorizontal
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ActionIfPreviousActionWasHorizontal
         CMP #HORIZONTAL_MOVEMENT ; Looking at previousJoystickAction
         BEQ b6FA0
@@ -6494,9 +6603,9 @@ j700F
         BNE JoystickPushedUpWhileOnLand
         JMP JoystickPushedUpWhileLandGilbyAirborneOverSea
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; JoystickPushedUpWhileOnLand
-;------------------------------------------------------------------
+;-------------------------------------------------------
 JoystickPushedUpWhileOnLand
         LDA gilbyVerticalPositionUpperPlanet
         CMP #$6D
@@ -6511,9 +6620,9 @@ JoystickPushedUpWhileOnLand
         DEC gilbyVerticalPositionUpperPlanet
 b703A   RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MaybePreviousActionWasToLaunchIntoAir
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MaybePreviousActionWasToLaunchIntoAir
         CMP #LAUNCHED_INTO_AIR ; Looks at previousJoystickAction
         BNE MaybePreviousActionWasToLand
@@ -6532,9 +6641,9 @@ MaybePreviousActionWasToLaunchIntoAir
         CMP #$02
         BNE b703A
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; LandGilby
-;------------------------------------------------------------------
+;-------------------------------------------------------
 LandGilby
         LDA #$15
         STA backupGilbySpriteIndex
@@ -6550,9 +6659,9 @@ LandGilby
         STA previousJoystickAction
 b707D   RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MaybePreviousActionWasToLand
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MaybePreviousActionWasToLand
         CMP #LANDED ; Looks at previousJoystickAction
         BNE RightJoystickPressedWithPreviousAction
@@ -6571,33 +6680,33 @@ b7099   JSR ResetGilbyIsLanding
         LDA #GILBY_AIRBORNE_LEFT
         STA currentGilbySprite
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdatePreviousJoystickAction
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdatePreviousJoystickAction
         LDA #ALREADY_AIRBORNE
         STA previousJoystickAction
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateGilbySpriteToAirborne
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateGilbySpriteToAirborne
         LDA #GILBY_AIRBORNE_RIGHT
         STA currentGilbySprite
         JSR UpdatePreviousJoystickAction
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ResetGilbyIsLanding
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ResetGilbyIsLanding
         LDA #$00
         STA gilbyIsLanding
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; RightJoystickPressedWithPreviousAction
-;------------------------------------------------------------------
+;-------------------------------------------------------
 RightJoystickPressedWithPreviousAction
         JSR ProcessFireButtonPressed
         LDA joystickInput
@@ -6630,9 +6739,9 @@ b70EF   LDA currentGilbySpeed
 b70F6   DEC currentGilbySpeed
 b70F9   JMP AnimateGilbyMovement
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; LeftJoystickPressedWithPreviousAction
-;------------------------------------------------------------------
+;-------------------------------------------------------
 LeftJoystickPressedWithPreviousAction
         LDA joystickInput
         AND #$08
@@ -6667,9 +6776,9 @@ b713A   INC currentGilbySpeed
 gilbyIsLanding   .BYTE $00
 
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DecelerateGilbyAndPossiblySetUpToLand
-;------------------------------------------------------------------
+;-------------------------------------------------------
 b7141   RTS
 
 DecelerateGilbyAndPossiblySetUpToLand
@@ -6705,9 +6814,9 @@ joystickInput          .BYTE $09
 previousJoystickAction .BYTE $04
 gilbyAnimationTYpe     .BYTE $02
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; AlsoPerformGilbyLandingOrJumpingAnimation
-;------------------------------------------------------------------
+;-------------------------------------------------------
 AlsoPerformGilbyLandingOrJumpingAnimation
         LDA previousJoystickAction
         CMP #ALREADY_AIRBORNE
@@ -6743,9 +6852,9 @@ b71A4   LDA joystickInput
         BNE b719D
         ;Fall through?
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawPlanetSurfaces
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawPlanetSurfaces
         LDY #$00
         LDA lowerPlanetActivated
@@ -6792,9 +6901,9 @@ b71E8   LDA (planetTextureTopLayerPtr),Y
         BNE b71E8
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ScrollPlanets
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ScrollPlanets
         INC planetScrollFrameRate
         LDA planetScrollFrameRate
@@ -6834,9 +6943,9 @@ b7243   LDA planetScrollSpeed
         STA planetTextureBottomLayerPtr
         LDA planetTextureTopLayerPtrHi
         ADC #$00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawPlanetScroll
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawPlanetScroll
         ; Adjust the layer pointers to the approriate
         ; positions for this planet
@@ -6897,9 +7006,9 @@ b72AD   CLC
 
 b72BD   JMP DrawPlanetSurfaces
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ScrollPlanetLeft
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ScrollPlanetLeft
         LDA planetScrollSpeed
         CLC
@@ -6928,9 +7037,9 @@ b72CF   CLC
         SBC #$00
         JMP DrawPlanetScroll
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; StoreRandomPositionInPlanetInPlanetPtr
-;------------------------------------------------------------------
+;-------------------------------------------------------
 StoreRandomPositionInPlanetInPlanetPtr
         LDA #<planetOneBottomLayer
         STA planetPtrLo
@@ -6966,18 +7075,18 @@ LoPtrAlreadyZero
         LDY #$00
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PutProceduralByteInAccumulatorRegister
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PutProceduralByteInAccumulatorRegister
 randomIntToIncrement   =*+$01
         LDA randomPlanetData
         INC randomIntToIncrement
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateTopPlanetSurfaceColor
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateTopPlanetSurfaceColor
         LDX #$28
 b731F   STA COLOR_RAM + LINE6_COL39,X
@@ -6988,9 +7097,9 @@ b731F   STA COLOR_RAM + LINE6_COL39,X
         BNE b731F
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateBottomPlanetSurfaceColor
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateBottomPlanetSurfaceColor
         LDX #$28
 b7331   STA COLOR_RAM + LINE11_COL39,X
@@ -7001,9 +7110,9 @@ b7331   STA COLOR_RAM + LINE11_COL39,X
         BNE b7331
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; AnimateEntryLevelSequence
-;------------------------------------------------------------------
+;-------------------------------------------------------
 AnimateEntryLevelSequence
         LDA currentBottomPlanetDataLoPtr
         STA planetSurfaceDataPtrLo
@@ -7018,9 +7127,9 @@ AnimateEntryLevelSequence
         STA planetTextureCharset4,X
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MutateSomeMoreOfThePlanetCharsetForEntrySequence
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MutateSomeMoreOfThePlanetCharsetForEntrySequence
         LDA (planetSurfaceDataPtrLo),Y
         PHA
@@ -7077,7 +7186,7 @@ bitfield1ForMaterializingPlanet .BYTE $00,$40,$80,$C0
 bitfield2ForMaterializingPlanet .BYTE $00,$10,$20,$30
 bitfield3ForMaterializingPlanet .BYTE $00,$04,$08,$0C
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GeneratePlanetSurface
 ;
 ; This is the routine Minter called 'an'.
@@ -7096,7 +7205,7 @@ bitfield3ForMaterializingPlanet .BYTE $00,$04,$08,$0C
 ; be nice to have completely different planet surfaces in top and bottom
 ; of the screen. The neat thing is that all the surfaces have the same
 ; basic structures, all I do is fit different graphics around each one."
-;------------------------------------------------------------------
+;-------------------------------------------------------
 
 GeneratePlanetSurface
         LDA #<planetSurfaceData
@@ -7231,9 +7340,9 @@ warpGateData         .BYTE $75,$77,$7D,$7F,$FF
                      .BYTE $71,$73,$79,$7B,$FF
                      .BYTE $70,$72,$78,$7A,$FE
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawLittleStructure ($7486)
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawLittleStructure
         ; Start iterating at 0.
         LDX #$00
@@ -7269,9 +7378,9 @@ LS_StayonSameLayer
 littleStructureData .BYTE $45,$47,$FF
                     .BYTE $44,$46,$FE
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SwitchToNextLayerInPlanet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SwitchToNextLayerInPlanet
         LDA planetPtrHi
         SEC
@@ -7322,9 +7431,9 @@ b74DA   CMP #$FE
         INX
         JMP DrawLargeStructureLoop
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawNextLargestStructure ($74E5)
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawNextLargestStructure
         LDX #$00
 DrawNSLoop
@@ -7341,9 +7450,9 @@ b74F4   CMP #$FE
         INX
         JMP DrawNSLoop
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawWarpGate
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawWarpGate
         LDX #$00
 DrawWGLoop
@@ -7472,9 +7581,9 @@ backupGilbySpriteIndex               .BYTE $0D
 gilbyInitialAnimationFrameRate       .BYTE $06
 gilbyAnimationFrameRate              .BYTE $06
 gilbySpriteIndex                     .BYTE $0D
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; AnimateGilbySpriteMovement
-;------------------------------------------------------------------
+;-------------------------------------------------------
 AnimateGilbySpriteMovement
         LDA gilbyHasJustDied
         BNE b75BF
@@ -7526,9 +7635,9 @@ gilbyVerticalPositionUpperPlanet       .BYTE $3F
 gilbyVerticalPositionLowerPlanet       .BYTE $CA
 gilbyLandingFrameRate                  .BYTE $01
 gilbyJumpingAndLandingFrameRate        .BYTE $03
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PerformGilbyLandingOrJumpingAnimation
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PerformGilbyLandingOrJumpingAnimation
         LDA levelEntrySequenceActive
         BNE b761A
@@ -7574,9 +7683,9 @@ b765F   DEC gilbyLandingJumpingAnimationYPosOffset
 
 bulletDirectionArray .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 bulletFrameRate      .BYTE $01
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ProcessFireButtonPressed
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ProcessFireButtonPressed
         ; Check if fire pressed
         LDA joystickInput
@@ -7679,9 +7788,9 @@ b7722   LDA #$FF
         JMP ResetUpperPlanetBullet
         ;Returns
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckBulletPositions
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckBulletPositions
         LDA #$00
         STA currentMSBXPosOffset
@@ -7728,9 +7837,9 @@ b7777   LDA #$FF
         JMP UpdateBulletSpriteAndReturnIfRequired
 
 upperPlanetGilbyBulletNextYPosArray   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateBulletPositions
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateBulletPositions
         LDX #$00
         LDA gilbyHasJustDied
@@ -7750,9 +7859,9 @@ UpdateNextBullet
 
 b77A9   LDA #BLANK_SPRITE
         STA upperPlanetGilbyBulletSpriteValue,X
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateBulletSpriteAndReturnIfRequired
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateBulletSpriteAndReturnIfRequired
         INX
         CPX #$08
@@ -7766,9 +7875,9 @@ JumpToUpdateBulletSpriteAndReturn
         JMP UpdateBulletSpriteAndReturn
 
 upperPlanetBulletYPosUpdateCounterArray   .BYTE $03,$03,$03,$03,$03,$03,$03,$03
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateUpperPlanetBulletPosition
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateUpperPlanetBulletPosition
         LDA upperPlanetGilbyBulletSpriteValue,X
         CMP #LASER_BULLET
@@ -7797,9 +7906,9 @@ b77F2   LDA #$FF
         PLA
         JMP UpdateBulletSpriteAndReturnIfRequired
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ResetUpperPlanetBullet
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ResetUpperPlanetBullet
         LDA #$F0
         STA upperPlanetGilbyBulletSpriteValue,X
@@ -7810,9 +7919,9 @@ ResetUpperPlanetBullet
 ReturnEarlyFromBullet   
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateBulletSpriteAndReturn
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateBulletSpriteAndReturn
         LDX #$00
 b7811   LDA #$FF
@@ -7845,9 +7954,9 @@ b7845   STA lowerPlanetAttackShip2MSBXPosValue,X
         BNE b7811
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawControlPanel
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawControlPanel
         LDX #$A0
 b7850   LDA controlPanelData,X
@@ -7859,9 +7968,9 @@ b7850   LDA controlPanelData,X
         RTS
 
 f1WasPressed   .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; CheckKeyboardInGame
-;------------------------------------------------------------------
+;-------------------------------------------------------
 CheckKeyboardInGame
         LDA lastKeyPressed
         CMP #$40 ; $40 means no key was pressed
@@ -7930,9 +8039,9 @@ surfaceColorsForPlanets    .BYTE LTGREEN,BROWN,LTRED,GRAY2,LTRED,WHITE,WHITE
 entryLevelSequenceCounter  .BYTE $A5
 levelEntrySequenceActive   .BYTE $01
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; MaybeDrawLevelEntrySequence
-;------------------------------------------------------------------
+;-------------------------------------------------------
 MaybeDrawLevelEntrySequence
         LDA levelEntrySequenceActive
         BNE b78CE
@@ -7964,9 +8073,9 @@ b78CE   LDX entryLevelSequenceCounter
         LDA #$00
         STA levelEntrySequenceActive
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetUpPlanets
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetUpPlanets
         LDX topPlanetPointerIndex
         LDA backgroundColor1ForPlanets,X
@@ -8055,9 +8164,9 @@ currentSoundEffectLoPtr     .BYTE <f5D97
 currentSoundEffectHiPtr     .BYTE >f5D97
 secondarySoundEffectLoPtr   .BYTE <f5D65
 secondarySoundEffectHiPtr   .BYTE >f5D65
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PlaySoundEffects
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PlaySoundEffects
         LDA #$00
         STA indexToCurrentOrSecondarySoundEffectPtr
@@ -8078,9 +8187,9 @@ DontDecrementSoundEffectProgressCounter
         STA soundTmpHiPtr
         ;Falls through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PlayFirstSoundEffect
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PlayFirstSoundEffect
         LDY #$00
 ClearSoundEffectDataStructureLoop   
@@ -8113,9 +8222,9 @@ StorePointersAndReturn
         STA tmpSoundEffectHiPtr1,X
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; PlaySecondSoundEffect
-;------------------------------------------------------------------
+;-------------------------------------------------------
 PlaySecondSoundEffect
         LDA soundTmpLoPtr
         CLC
@@ -8328,25 +8437,25 @@ borderFlashControl2       .BYTE $02
 borderFlashControl1       .BYTE $01
 currentEntropy            .BYTE $00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ResetSoundDataPtr1
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ResetSoundDataPtr1
         LDA #$00
         STA tmpSoundEffectLoHiPtr3
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ResetSoundDataPtr2
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ResetSoundDataPtr2
         LDA #$00
         STA tempSoundEffectLoHiPtr4
 b7C96   RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateAndAnimateAttackShips
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateAndAnimateAttackShips
         LDX #$04
         LDA gilbyHasJustDied
@@ -8423,9 +8532,9 @@ lowerPlanetInitialYPosFrameRateForAttackShips .BYTE $01,$01,$01,$01
 upperPlanetYPosFrameRateForAttackShips        .BYTE $01,$01,$01,$01
 lowerPlanetYPosFrameRateForAttackShips        .BYTE $01,$01,$01,$01
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; UpdateAttackShipsXAndYPositions
-;------------------------------------------------------------------
+;-------------------------------------------------------
 UpdateAttackShipsXAndYPositions
         DEC upperPlanetYPosFrameRateForAttackShips - $01,X
         BNE b7D79
@@ -8555,9 +8664,9 @@ upperPlanetAttackShipAnimationFrameRate           .BYTE $01,$01,$01,$01
 lowerPlanetAttackShipAnimationFrameRate           .BYTE $01,$01,$01,$01
 upperPlanetAttackShipInitialFrameRate             .BYTE $03,$03,$03,$03
 lowerPlanetAttackShipInitialFrameRate             .BYTE $03,$03,$03,$03
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; AnimateAttackShipSprites
-;------------------------------------------------------------------
+;-------------------------------------------------------
 AnimateAttackShipSprites
         LDA pauseModeSelected
         BEQ AnimateUpperPlanetAttackShips
@@ -8599,9 +8708,9 @@ AnimateLowerPlanetAttackShips
 DontAnimateLowerPlanetAttackShip   
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DetectGameOrAttractMode
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DetectGameOrAttractMode
         LDA attractModeSelected
         BNE b7EB8
@@ -8617,9 +8726,9 @@ b7EB8   LDA #$00
         STA attractModeCountdown
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SelectRandomPlanetsForAttractMode
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SelectRandomPlanetsForAttractMode
 
         ; Select 9 random numbers between 0 and 15
@@ -8630,12 +8739,12 @@ b7EC5   JSR PutProceduralByteInAccumulatorRegister
         DEX
         BPL b7EC5
 
-        ; Select a random planet between 0 and 4
+        ; Select a random planet between 0 and 3
         JSR PutProceduralByteInAccumulatorRegister
         AND #$03
         STA topPlanetPointerIndex
 
-        ; Select a random planet between 0 and 4
+        ; Select a random planet between 0 and 3
         JSR PutProceduralByteInAccumulatorRegister
         AND #$03
         STA bottomPlanetPointerIndex
@@ -8648,9 +8757,9 @@ b7EC5   JSR PutProceduralByteInAccumulatorRegister
 attractModeCountdown       .BYTE $AD
 randomJoystickInputCounter .BYTE $09
 randomJoystickInput        .BYTE $09
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GenerateJoystickInputForAttractMode
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GenerateJoystickInputForAttractMode
         LDA attractModeCountdown
         BNE b7EEA
@@ -8691,25 +8800,25 @@ unusedVariable2       .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 .include "bonusphase.asm"
 
 lastBlastScorePtr   =*+$02
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; JumpToHiScoreScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 JumpToHiScoreScreen
         JMP InitAndDisplayHiScoreScreen
 
 lastBlastScore         .TEXT "0000000...."
 previousLastBlastScore .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; JumpToDrawProgressDisplayScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 jumpToDrawProgressLoPtr   =*+$01
 jumpToDrawProgressHiPtr   =*+$02
 JumpToDrawProgressDisplayScreen   JMP DrawProgressDisplayScreen
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; The high score table.
-;------------------------------------------------------------------
+;-------------------------------------------------------
 hiScoreTablePtr           .TEXT "0068000"
 canAwardBonus             .TEXT "YAK "
                           .FILL 10, $00
@@ -8753,9 +8862,9 @@ ptrLastScoreInTable       .TEXT "0000800LAMA"
                           .FILL 10, $00
                           .BYTE $FF
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; InitAndDisplayHiScoreScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 InitAndDisplayHiScoreScreen
         STX tempHiPtr1
         LDA #$00
@@ -8763,9 +8872,9 @@ InitAndDisplayHiScoreScreen
         STY tempLoPtr1
         ; Fall through
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DrawHiScoreScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DrawHiScoreScreen
         SEI
         LDA #<HiScoreScreenInterruptHandler
@@ -8831,9 +8940,9 @@ bCA1E   LDA tempLoPtr
 
 storedLastBlastScore   .BYTE $00
 lastBlastCounter = $FA
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; StoreLastBlastInTable
-;------------------------------------------------------------------
+;-------------------------------------------------------
 StoreLastBlastInTable
         LDA #$01
         STA lastBlastCounter
@@ -8881,9 +8990,9 @@ bCA5B   LDA (tempLoPtr1),Y
         STA tempHiPtr1
         JMP StoreScoreLoop
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; StoreLastBlastScoreInTable
-;------------------------------------------------------------------
+;-------------------------------------------------------
 StoreLastBlastScoreInTable
         LDA #$01
         STA storedLastBlastScore
@@ -8896,9 +9005,9 @@ bCA8F   LDA lastBlastScore,Y
         PHA
         LDA tempHiPtr1
         PHA
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ClearScreenDrawHiScoreScreenText
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ClearScreenDrawHiScoreScreenText
 
         LDX #$00
@@ -8985,9 +9094,9 @@ hiScoreTableCursorPosLoPtr .BYTE $A1,$C9,$F1,$19,$41,$69,$91,$B9
 hiScoreTableCursorPosHiPtr .BYTE $04,$04,$04,$05,$05,$05,$05,$05
                            .BYTE $05,$06,$04,$04,$05,$05,$05,$05
                            .BYTE $05,$05,$05,$06
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ClearScreenDrawHiScoreTextContinued
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ClearScreenDrawHiScoreTextContinued
         LDA storedLastBlastScore
         BNE bCB60
@@ -9024,9 +9133,9 @@ bCB85   JSR GetHiScoreScreenInput
 
 hiScoreTableInputName .TEXT "YAK "
 hiScoreJoystickInput = $FA
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; GetHiScoreScreenInput
-;------------------------------------------------------------------
+;-------------------------------------------------------
 GetHiScoreScreenInput
         LDA hiScoreTableInputName - $0A,Y
         AND #$3F
@@ -9100,9 +9209,9 @@ bCBFC   DEX
         BNE bCBFC
         RTS
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; DisplayHiScoreScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 DisplayHiScoreScreen
         LDA #$01
         STA hasDisplayedHiScoreScreen
@@ -9179,9 +9288,9 @@ bCC7E   LDA hiScoreJoystickInput
 
 currentEntryInHiScoreTable   .BYTE $00
 hasDisplayedHiScoreScreen   .BYTE $01
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; ExitHiScoreScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ExitHiScoreScreen
         LDX #$F8
         TXS
@@ -9190,9 +9299,9 @@ bCC8C   LDA $DC00    ;CIA1: Data Port Register A
         BEQ bCC8C
         JMP MainControlLoop
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; SetupHiScoreScreen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 SetupHiScoreScreen
         LDX currentEntryInHiScoreTable
         LDA #<hiScoreTablePtr
@@ -9249,9 +9358,9 @@ bCCE0   LDA gameCompletionText,X
 
 gameCompletionText   .TEXT "GAME COMPLETION CHART FOR ZARD, THE HERO"
 
-;--------------------------------------------------------------------
+;---------------------------------------------------------
 ; UpdateDisplayedHiScore   
-;--------------------------------------------------------------------
+;---------------------------------------------------------
 UpdateDisplayedHiScore   
         LDY #$07
         LDX #$00
@@ -9282,10 +9391,10 @@ bCD41   LDA lastKeyPressed
         RTS
 
 hiScoreScreenUpdateRate   .BYTE $01
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; HiScoreScreenInterruptHandler
 ; Paints the color effects on the hi-score screen
-;------------------------------------------------------------------
+;-------------------------------------------------------
 HiScoreScreenInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
@@ -9297,13 +9406,18 @@ HiScoreScreenInterruptHandler
         PLA
         RTI
 
+        ; Acknowledge the interrupt, so the CPU knows that
+        ; we have handled it.
 bCD59   LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
+
         LDA #$F0
         STA $D012    ;Raster Position
+
         LDA hiScoreScreenUpdateRate
         BNE bCD6E
+
         JMP ReEnterInterrupt
 
 bCD6E   LDX #$00
@@ -9362,9 +9476,9 @@ txtHiScorLine4          .TEXT "THE SCORE FOR THE LAST BLAST WAS 0000000"
 hiScoreInputRateControl .BYTE $00
 hiScoreInputWait1       .BYTE $00
 hiScoreInputWait2       .BYTE $00
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; HiScoreCheckInput
-;------------------------------------------------------------------
+;-------------------------------------------------------
 HiScoreCheckInput
         DEC hiScoreInputRateControl
         BEQ bCEAC
@@ -9386,9 +9500,9 @@ bCEAC   DEC hiScoreInputWait1
 
         JMP ExitHiScoreScreen
 
-;------------------------------------------------------------------
+;-------------------------------------------------------
 ; HiScoreStopSounds
-;------------------------------------------------------------------
+;-------------------------------------------------------
 HiScoreStopSounds
         STA $D020    ;Border Color
         LDA #$80
