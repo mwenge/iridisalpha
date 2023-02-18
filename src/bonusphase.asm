@@ -285,9 +285,9 @@ bAD50   STA SCREEN_RAM + LINE8_COL39,X
         ; Copy in the charset for landscape. This is in bonusphase_graphics.asm.
         LDX #$00
 bAD5D   LDA $E000,X
-        STA planetTextureCharset1,X
+        STA upperPlanetSurfaceCharset,X
         LDA $E100,X
-        STA planetTextureCharset2,X
+        STA upperPlanetHUDCharset,X
         DEX 
         BNE bAD5D
         LDA #$36

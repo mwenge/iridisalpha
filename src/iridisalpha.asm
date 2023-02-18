@@ -38,7 +38,7 @@ planetSurfaceDataPtrLo                  = $22
 planetSurfaceDataPtrHi                  = $23
 charSetDataPtrLo                        = $24
 charSetDataPtrHi                        = $25
-mutatedCharToDraw                       = $26
+invertedCharToDraw                       = $26
 structureRoutineLoPtr                   = $29
 structureRoutineHiPtr                   = $2A
 soundTmpLoPtr                           = $30
@@ -1240,10 +1240,10 @@ p4003   LDA #<MainControlLoopInterruptHandler
 ClearPlanetTextureCharsets
         LDA #$00
         TAX
-b4084   STA planetTextureCharset1,X
-        STA planetTextureCharset2,X
-        STA planetTextureCharset3,X
-        STA planetTextureCharset4,X
+b4084   STA upperPlanetSurfaceCharset,X
+        STA upperPlanetHUDCharset,X
+        STA lowerPlanetSurfaceCharset,X
+        STA lowerPlanetHUDCharset,X
         DEX
         BNE b4084
         RTS
@@ -3277,7 +3277,7 @@ UpdateCoreEnergyValues
         BNE b5530
 b552F   RTS
 
-b5530   LDA previousJoystickAction
+b5530   LDA gilbyCurrentState
         BNE b552F
         LDA currEnergyTop
         CMP #$04
@@ -5594,12 +5594,12 @@ SetUpGilbySprite
         STA gilbyAnimationTYpe
         LDA #$40
         STA $D001    ;Sprite 0 Y Pos
-        LDA #ALREADY_AIRBORNE
-        STA previousJoystickAction
+        LDA #AIRBORNE
+        STA gilbyCurrentState
         LDA #$EA
         STA currentGilbySpeed
         LDA #$00
-        STA gilbyIsLanding
+        STA gilbyIsEarthbound
         RTS
 
 bonusAwarded   .BYTE $00
@@ -5699,10 +5699,10 @@ ResumeGame
         ; Clear charset data
         LDX #$00
         TXA
-b69C4   STA planetTextureCharset1,X
-        STA planetTextureCharset2,X
-        STA planetTextureCharset3,X
-        STA planetTextureCharset4,X
+b69C4   STA upperPlanetSurfaceCharset,X
+        STA upperPlanetHUDCharset,X
+        STA lowerPlanetSurfaceCharset,X
+        STA lowerPlanetHUDCharset,X
         DEX
         BNE b69C4
 
@@ -5845,7 +5845,8 @@ previousGilbySprite   .BYTE $D3
 DrawUpperPlanetAttackShips
         LDX #$0C
         LDY #$06
-b6ACA   LDA upperPlanetAttackShipsXPosArray,Y
+UpperPlanetShipsLoop   
+        LDA upperPlanetAttackShipsXPosArray,Y
         STA $D000,X  ;Sprite 0 X Pos
 
         LDA attackShipsXPosArray - $01,Y
@@ -5872,7 +5873,7 @@ b6ACA   LDA upperPlanetAttackShipsXPosArray,Y
         DEX
         DEX
         DEY
-        BNE b6ACA
+        BNE UpperPlanetShipsLoop
         RTS
 
 ;-------------------------------------------------------
@@ -5881,7 +5882,8 @@ b6ACA   LDA upperPlanetAttackShipsXPosArray,Y
 DrawLowerPlanetAttackShips
         LDX #$0C
         LDY #$06
-b6B06   LDA lowerPlanetAttackShip1XPos,Y
+LowerPlanetShipsLoop   
+        LDA lowerPlanetAttackShipsXPosArray + $01,Y
         STA $D000,X  ;Sprite 0 X Pos
 
         LDA attackShipsXPosArray - $01,Y
@@ -5901,7 +5903,7 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
         STX tempVarStorage
 
         LDX lowerPlanetAttackShipsColorArray,Y
-        LDA backgroundColorsForPlanets,X
+        LDA colorsForAttackShips,X
         STA $D027,Y  ;Sprite 0 Color
 
         LDA lowerPlanetAttackShipsSpriteValueArray,Y
@@ -5911,7 +5913,7 @@ b6B06   LDA lowerPlanetAttackShip1XPos,Y
         DEX
         DEX
         DEY
-        BNE b6B06
+        BNE LowerPlanetShipsLoop
         RTS
 
 ;-------------------------------------------------------
@@ -6018,7 +6020,7 @@ b6BD2   LDA nextRasterPositionArray - $01,Y ; Y is currentIndexInRasterInterrupt
         BEQ ResetRasterAndPerformMainGameUpdate
         ; Returns from Interrupt
 
-        JMP AnimateStarFieldAndDrawLowerPlanet
+        JMP AnimateStarFieldAndScrollPlanets
         ; Returns from Interrupt
 
 ;-------------------------------------------------------
@@ -6044,9 +6046,9 @@ ResetRasterAndPerformMainGameUpdate
         ; Returns from interrupt
 
 ;-------------------------------------------------------
-; UpdateGilbyPositionAndColor
+; PaintGilbySprite
 ;-------------------------------------------------------
-UpdateGilbyPositionAndColor
+PaintGilbySprite
         LDA gilbyHasJustDied
         BNE b6C24
         LDA currentGilbySprite
@@ -6084,27 +6086,29 @@ PerformMainGameUpdate
 
         JSR CheckKeyboardInGame
         JSR ScrollStarfieldAndThenPlanets
-        JSR AnimateGilbySpriteMovement
+        JSR UpdateCurrentGilbySprite
         JSR PerformMainGameProcessing
         JSR CheckForLandscapeCollisionAndWarpThenProcessJoystickInput
-        JSR PerformGilbyLandingOrJumpingAnimation
-        JSR AlsoPerformGilbyLandingOrJumpingAnimation
+        JSR CalculateGilbyVerticalPositionEarthBound
+        JSR CalculateGilbyVerticalPositionAirborne
         JSR MaybeDrawLevelEntrySequence
         JSR PlaySoundEffects
         JSR FlashBorderAndBackground
-        JSR UpdateGilbyPositionAndColor
+        JSR PaintGilbySprite
         JSR UpdateAndAnimateAttackShips
         JSR UpdateBulletPositions
         JSR DrawUpperPlanetAttackShips
         JSR UpdateControlPanelColors
-        JMP ReEnterInterrupt ; jump into KERNAL's standard interrupt service routine to handle keyboard scan, cursor display etc.
+        ; Jump into KERNAL's standard interrupt service routine to 
+        ; handle keyboard scan, cursor display etc.
+        JMP ReEnterInterrupt 
         ;Returns From Interrupt
 
 ;-------------------------------------------------------
-; AnimateStarFieldAndDrawLowerPlanet
+; AnimateStarFieldAndScrollPlanets
 ; Sprite 7 is used to draw the parallax starfield background.
 ;-------------------------------------------------------
-AnimateStarFieldAndDrawLowerPlanet
+AnimateStarFieldAndScrollPlanets
 
         ; Animate the Starfield
         STA $D00F    ;Sprite 7 Y Pos
@@ -6450,7 +6454,7 @@ JoystickNormalMode
         LDA levelEntrySequenceActive
         BNE b6E8D
 
-        LDA previousJoystickAction
+        LDA gilbyCurrentState
         BEQ b6F03
         JMP ActionIfPreviousActionWasHorizontal
 
@@ -6464,7 +6468,7 @@ b6F03
 
         ; Joystick pushed to left
         LDA #HORIZONTAL_MOVEMENT
-        STA previousJoystickAction
+        STA gilbyCurrentState
         LDA #$01
         STA currentGilbySpeed
         LDA #$04
@@ -6494,7 +6498,7 @@ b6F2E   LDA joystickInput
         LDA #$FF
         STA currentGilbySpeed
         LDA #HORIZONTAL_MOVEMENT
-        STA previousJoystickAction
+        STA gilbyCurrentState
 
         ;Check if joystick pushed down.
 b6F54   LDA joystickInput
@@ -6533,14 +6537,14 @@ JoystickPushedUpWhileLandGilbyAirborneOverSea
         LDA #$0A
         STA gilbyInitialAnimationFrameRate
         LDA #LAUNCHED_INTO_AIR
-        STA previousJoystickAction
+        STA gilbyCurrentState
 b6F98   RTS
 
 ;-------------------------------------------------------
 ; ActionIfPreviousActionWasHorizontal
 ;-------------------------------------------------------
 ActionIfPreviousActionWasHorizontal
-        CMP #HORIZONTAL_MOVEMENT ; Looking at previousJoystickAction
+        CMP #HORIZONTAL_MOVEMENT ; Looking at gilbyCurrentState
         BEQ b6FA0
         JMP MaybePreviousActionWasToLaunchIntoAir
 
@@ -6556,7 +6560,7 @@ b6FA0   JSR ProcessFireButtonPressed
         INC currentGilbySpeed
         BNE b6FD7
 b6FB7   LDA #$00
-        STA previousJoystickAction
+        STA gilbyCurrentState
         STA currentGilbySpeed
         STA gilbyAnimationTYpe
         LDA #$06
@@ -6624,7 +6628,7 @@ b703A   RTS
 ; MaybePreviousActionWasToLaunchIntoAir
 ;-------------------------------------------------------
 MaybePreviousActionWasToLaunchIntoAir
-        CMP #LAUNCHED_INTO_AIR ; Looks at previousJoystickAction
+        CMP #LAUNCHED_INTO_AIR ; Looks at gilbyCurrentState
         BNE MaybePreviousActionWasToLand
 
         JSR ProcessFireButtonPressed
@@ -6656,14 +6660,14 @@ LandGilby
         STA gilbyInitialAnimationFrameRate
         STA gilbyAnimationFrameRate
         LDA #LANDED
-        STA previousJoystickAction
+        STA gilbyCurrentState
 b707D   RTS
 
 ;-------------------------------------------------------
 ; MaybePreviousActionWasToLand
 ;-------------------------------------------------------
 MaybePreviousActionWasToLand
-        CMP #LANDED ; Looks at previousJoystickAction
+        CMP #LANDED ; Looks at gilbyCurrentState
         BNE RightJoystickPressedWithPreviousAction
 
         JSR ProcessFireButtonPressed
@@ -6684,8 +6688,8 @@ b7099   JSR ResetGilbyIsLanding
 ; UpdatePreviousJoystickAction
 ;-------------------------------------------------------
 UpdatePreviousJoystickAction
-        LDA #ALREADY_AIRBORNE
-        STA previousJoystickAction
+        LDA # AIRBORNE
+        STA gilbyCurrentState
         RTS
 
 ;-------------------------------------------------------
@@ -6701,7 +6705,7 @@ UpdateGilbySpriteToAirborne
 ;-------------------------------------------------------
 ResetGilbyIsLanding
         LDA #$00
-        STA gilbyIsLanding
+        STA gilbyIsEarthbound
         RTS
 
 ;-------------------------------------------------------
@@ -6773,7 +6777,7 @@ b7133   LDA currentGilbySpeed
 b713A   INC currentGilbySpeed
         JMP AnimateGilbyMovement
 
-gilbyIsLanding   .BYTE $00
+gilbyIsEarthbound   .BYTE $00
 
 
 ;-------------------------------------------------------
@@ -6800,7 +6804,7 @@ b715A   LDA joystickInput
         LDA gilbyIsOverLand
         BEQ b7141
         LDA #$01
-        STA gilbyIsLanding
+        STA gilbyIsEarthbound
         LDA #GILBY_TAKING_OFF4
         STA currentGilbySprite
         JMP LandGilby
@@ -6811,45 +6815,49 @@ AnimateGilbyMovement
         ; Returns
 
 joystickInput          .BYTE $09
-previousJoystickAction .BYTE $04
+gilbyCurrentState .BYTE $04
 gilbyAnimationTYpe     .BYTE $02
 
 ;-------------------------------------------------------
-; AlsoPerformGilbyLandingOrJumpingAnimation
+; CalculateGilbyVerticalPositionAirborne
 ;-------------------------------------------------------
-AlsoPerformGilbyLandingOrJumpingAnimation
-        LDA previousJoystickAction
-        CMP #ALREADY_AIRBORNE
-        BEQ b7181
-b7180   RTS
+CalculateGilbyVerticalPositionAirborne
+        LDA gilbyCurrentState
+        CMP #AIRBORNE
+        BEQ MaybeJoystickPressedDown
+ReturnEarlyFromVertPos   
+        RTS
 
-b7181   LDA joystickInput
+MaybeJoystickPressedDown   
+        LDA joystickInput
         AND #$01
-        BNE b71A4
+        BNE MaybeJoystickPressedUp
         DEC gilbyVerticalPositionUpperPlanet
         DEC gilbyVerticalPositionUpperPlanet
         LDA gilbyVerticalPositionUpperPlanet
         AND #$FE
         CMP #$30
-        BNE b719D
+        BNE UpdateGilbyVerticalPosition
         INC gilbyVerticalPositionUpperPlanet
         INC gilbyVerticalPositionUpperPlanet
-b719D   LDA gilbyVerticalPositionUpperPlanet
+UpdateGilbyVerticalPosition   
+        LDA gilbyVerticalPositionUpperPlanet
         STA $D001    ;Sprite 0 Y Pos
         RTS
 
-b71A4   LDA joystickInput
+MaybeJoystickPressedUp   
+        LDA joystickInput
         AND #$02
-        BNE b7180
+        BNE ReturnEarlyFromVertPos
         INC gilbyVerticalPositionUpperPlanet
         INC gilbyVerticalPositionUpperPlanet
         LDA gilbyVerticalPositionUpperPlanet
         AND #$F0
         CMP #$70
-        BNE b719D
+        BNE UpdateGilbyVerticalPosition
         DEC gilbyVerticalPositionUpperPlanet
         DEC gilbyVerticalPositionUpperPlanet
-        BNE b719D
+        BNE UpdateGilbyVerticalPosition
         ;Fall through?
 
 ;-------------------------------------------------------
@@ -6914,18 +6922,20 @@ ScrollPlanets
         LDA colorSequenceArray,X
         STA unusedByte2
         LDA currentGilbySpeed
-        BMI b7234
+        BMI MaybeGilbyStationary
         JMP ScrollPlanetLeft
 
-b7234   LDA planetScrollSpeed
+MaybeGilbyStationary   
+        LDA planetScrollSpeed
         CLC
         ADC currentGilbySpeed
         STA planetScrollSpeed
         AND #$F8
-        BNE b7243
+        BNE ScrollPlanetRight
         RTS
 
-b7243   LDA planetScrollSpeed
+ScrollPlanetRight   
+        LDA planetScrollSpeed
         EOR #$FF
         CLC
         AND #$F8
@@ -7111,56 +7121,87 @@ b7331   STA COLOR_RAM + LINE11_COL39,X
         RTS
 
 ;-------------------------------------------------------
-; AnimateEntryLevelSequence
+; InvertSurfaceDataForLowerPlanet
 ;-------------------------------------------------------
-AnimateEntryLevelSequence
+InvertSurfaceDataForLowerPlanet
         LDA currentBottomPlanetDataLoPtr
         STA planetSurfaceDataPtrLo
         LDA currentBottomPlanetDataHiPtr
         STA planetSurfaceDataPtrHi
-        JSR MutateSomeMoreOfThePlanetCharsetForEntrySequence
-        LDA mutatedCharToDraw
-        STA planetTextureCharset3,X
+
+        JSR InvertCharacter
+        LDA invertedCharToDraw
+        ; Note that 'X' was updated by InvertCharacter
+        STA lowerPlanetSurfaceCharset,X
         INC planetSurfaceDataPtrHi
-        JSR MutateSomeMoreOfThePlanetCharsetForEntrySequence
-        LDA mutatedCharToDraw
-        STA planetTextureCharset4,X
+
+        JSR InvertCharacter
+        LDA invertedCharToDraw
+        ; Note that 'X' was updated by InvertCharacter
+        STA lowerPlanetHUDCharset,X
+
         RTS
 
 ;-------------------------------------------------------
-; MutateSomeMoreOfThePlanetCharsetForEntrySequence
+; InvertCharacter
+; There are two parts to this routine:
+; - Inverting the byte itself
+; - Inverting its position in the 8-byte charset 
+;   definition
 ;-------------------------------------------------------
-MutateSomeMoreOfThePlanetCharsetForEntrySequence
+InvertCharacter
+        ; This part of the routine inverts the byte itself.
+
+        ; The rightmost bit-pair.
         LDA (planetSurfaceDataPtrLo),Y
         PHA
         AND #$03
         TAX
-        LDA bitfield1ForMaterializingPlanet,X
-        STA mutatedCharToDraw
+
+        LDA bitfield1ForInvertingByte,X
+        STA invertedCharToDraw
+
+        ; The second-to-right bitpair. We're pulling the
+        ; original byte back off the stack and shifting
+        ; the secdond-to-right bitpair to the rightmost
+        ; position.
         PLA
         ROR
         ROR
         PHA
         AND #$03
         TAX
-        LDA bitfield2ForMaterializingPlanet,X
-        ORA mutatedCharToDraw
-        STA mutatedCharToDraw
+
+        LDA bitfield2ForInvertingByte,X
+        ORA invertedCharToDraw
+        STA invertedCharToDraw
+
+        ; The second-to-left bitpair.
         PLA
         ROR
         ROR
         AND #$03
         TAX
-        LDA bitfield3ForMaterializingPlanet,X
-        ORA mutatedCharToDraw
-        STA mutatedCharToDraw
+
+        LDA bitfield3ForInvertingByte,X
+        ORA invertedCharToDraw
+        STA invertedCharToDraw
+
+        ; The left-most bitpair.
         LDA (planetSurfaceDataPtrLo),Y
         ROL
         ROL
         ROL
         AND #$03
-        ORA mutatedCharToDraw
-        STA mutatedCharToDraw
+        ORA invertedCharToDraw
+        STA invertedCharToDraw
+
+        ; Now that the byte has been inverted, invert the position in
+        ; the 8 byte charset definition. For example, if the position is
+        ; 0 then the inverted position is 7.
+
+        ; Mask out everything but the last 3 bits in the current upper
+        ; planet position. 
         TYA
         PHA
         AND #$07
@@ -7169,22 +7210,33 @@ MutateSomeMoreOfThePlanetCharsetForEntrySequence
         PHA
         AND #$F8
         STA charSetDataPtrLo
-        LDA bitsOfPlanetToShow,Y
+
+        ; Now add the inverted position to get the correct lower planet
+        ; position in the 8-byte charset definition. charSetDataPtrLo is
+        ; just temporary storage here. We store the final value for use
+        ; by the calling routine in 'X' below.
+        LDA positionInInvertedCharSet,Y
         CLC
         ADC charSetDataPtrLo
+
+        ; By storing the updated position in the charset definition to 'X'
+        ; here, we're changing the offset used in lowerPlanetSurfaceCharset
+        ; in InvertSurfaceDataForLowerPlanet.
         TAX
+
         PLA
         TAY
+
         RTS
 
-bitsOfPlanetToShow              .BYTE $07,$06,$05,$04,$03,$02,$01,$00
+positionInInvertedCharSet              .BYTE $07,$06,$05,$04,$03,$02,$01,$00
 currentTopPlanetDataLoPtr       .BYTE $00
 currentTopPlanetDataHiPtr       .BYTE $92
 currentBottomPlanetDataLoPtr    .BYTE $00
 currentBottomPlanetDataHiPtr    .BYTE $92
-bitfield1ForMaterializingPlanet .BYTE $00,$40,$80,$C0
-bitfield2ForMaterializingPlanet .BYTE $00,$10,$20,$30
-bitfield3ForMaterializingPlanet .BYTE $00,$04,$08,$0C
+bitfield1ForInvertingByte .BYTE $00,$40,$80,$C0
+bitfield2ForInvertingByte .BYTE $00,$10,$20,$30
+bitfield3ForInvertingByte .BYTE $00,$04,$08,$0C
 
 ;-------------------------------------------------------
 ; GeneratePlanetSurface
@@ -7582,9 +7634,9 @@ gilbyInitialAnimationFrameRate       .BYTE $06
 gilbyAnimationFrameRate              .BYTE $06
 gilbySpriteIndex                     .BYTE $0D
 ;-------------------------------------------------------
-; AnimateGilbySpriteMovement
+; UpdateCurrentGilbySprite
 ;-------------------------------------------------------
-AnimateGilbySpriteMovement
+UpdateCurrentGilbySprite
         LDA gilbyHasJustDied
         BNE b75BF
         LDA pauseModeSelected
@@ -7615,7 +7667,7 @@ b75CF   INC gilbySpriteIndex
 
 b75E3   LDA backupGilbySpriteIndex
         STA gilbySpriteIndex
-        LDA previousJoystickAction
+        LDA gilbyCurrentState
         CMP #HORIZONTAL_MOVEMENT
         BNE b7601
         LDA gilbyVerticalPositionUpperPlanet
@@ -7634,52 +7686,65 @@ gilbyLandingJumpingAnimationYPosOffset .BYTE $01
 gilbyVerticalPositionUpperPlanet       .BYTE $3F
 gilbyVerticalPositionLowerPlanet       .BYTE $CA
 gilbyLandingFrameRate                  .BYTE $01
-gilbyJumpingAndLandingFrameRate        .BYTE $03
+intervalsBetweenAcceleration        .BYTE $03
+
+YPOS_PLANET_SURFACE = $6D
 ;-------------------------------------------------------
-; PerformGilbyLandingOrJumpingAnimation
+; CalculateGilbyVerticalPositionEarthBound
 ;-------------------------------------------------------
-PerformGilbyLandingOrJumpingAnimation
+CalculateGilbyVerticalPositionEarthBound
         LDA levelEntrySequenceActive
-        BNE b761A
+        BNE ReturnEarlyEarthboundVertPos
         DEC gilbyLandingFrameRate
-        BEQ b761B
-b761A   RTS
+        BEQ MaybeGilbyIsOnLandAlready
+ReturnEarlyEarthboundVertPos   
+        RTS
 
-b761B   LDA #$02
+MaybeGilbyIsOnLandAlready   
+        LDA #$02
         STA gilbyLandingFrameRate
-        LDA gilbyIsLanding
-        BEQ b761A
-        LDA gilbyVerticalPositionUpperPlanet
-        CMP #$6D
-        BEQ b761A
-        DEC gilbyJumpingAndLandingFrameRate
-        BEQ b764A
+        LDA gilbyIsEarthbound
+        BEQ ReturnEarlyEarthboundVertPos
 
-GilbyLandingLoop
+        LDA gilbyVerticalPositionUpperPlanet
+        CMP #YPOS_PLANET_SURFACE
+        BEQ ReturnEarlyEarthboundVertPos
+
+        DEC intervalsBetweenAcceleration
+        BEQ AccelerateGilbyMovement
+
+UpdateGilbyPosition
         CLC
         ADC gilbyLandingJumpingAnimationYPosOffset
         STA gilbyVerticalPositionUpperPlanet
         AND #$F0
-        CMP #$70
-        BNE b7643
-        LDA #$6D
+        CMP #YPOS_PLANET_SURFACE + $03
+        BNE StorePositionAndReturn
+
+        LDA #YPOS_PLANET_SURFACE
         STA gilbyVerticalPositionUpperPlanet
-b7643   LDA gilbyVerticalPositionUpperPlanet
+
+StorePositionAndReturn   
+        LDA gilbyVerticalPositionUpperPlanet
         STA $D001    ;Sprite 0 Y Pos
         RTS
 
-b764A   LDA #$03
-        STA gilbyJumpingAndLandingFrameRate
+AccelerateGilbyMovement   
+        LDA #$03
+        STA intervalsBetweenAcceleration
+
         INC gilbyLandingJumpingAnimationYPosOffset
         LDA gilbyLandingJumpingAnimationYPosOffset
         CMP #$08
-        BEQ b765F
-        LDA gilbyVerticalPositionUpperPlanet
-        JMP GilbyLandingLoop
+        BEQ ReachedMaximumAcceleration
 
-b765F   DEC gilbyLandingJumpingAnimationYPosOffset
         LDA gilbyVerticalPositionUpperPlanet
-        JMP GilbyLandingLoop
+        JMP UpdateGilbyPosition
+
+ReachedMaximumAcceleration   
+        DEC gilbyLandingJumpingAnimationYPosOffset
+        LDA gilbyVerticalPositionUpperPlanet
+        JMP UpdateGilbyPosition
 
 bulletDirectionArray .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 bulletFrameRate      .BYTE $01
@@ -7743,8 +7808,8 @@ b76A8   LDA #$B5
         LDA #>bulletSoundEffect
         STA secondarySoundEffectHiPtr
 
-b76DF   LDA previousJoystickAction
-        CMP #ALREADY_AIRBORNE
+b76DF   LDA gilbyCurrentState
+        CMP #AIRBORNE
         BNE b7717
 
         ; The gilby is in the air
@@ -8041,33 +8106,43 @@ levelEntrySequenceActive   .BYTE $01
 
 ;-------------------------------------------------------
 ; MaybeDrawLevelEntrySequence
+; The time used for animating the entry level sequence
+; is also used to invert the charset for the lower planet
+; surface byte by byte. The entryLevelSequenceCounter is
+; 256 counts long - the same length as the surface. So each
+; time we're called here we add another byte to the inverted
+; surface.
 ;-------------------------------------------------------
 MaybeDrawLevelEntrySequence
         LDA levelEntrySequenceActive
-        BNE b78CE
-b78CD   RTS
+        BNE DrawLevelEntrySequence
+ReturnFromEntrySequence   
+        RTS
 
-b78CE   LDX entryLevelSequenceCounter
+DrawLevelEntrySequence   
+        LDX entryLevelSequenceCounter
         LDY sourceOfSeedBytes,X
+
         LDA currentTopPlanetDataLoPtr
         STA planetSurfaceDataPtrLo
+
         LDA currentTopPlanetDataHiPtr
         STA planetSurfaceDataPtrHi
 
         LDA (planetSurfaceDataPtrLo),Y
-        STA planetTextureCharset1,Y
+        STA upperPlanetSurfaceCharset,Y
 
         INC planetSurfaceDataPtrHi
         LDA (planetSurfaceDataPtrLo),Y
-        STA planetTextureCharset2,Y
+        STA upperPlanetHUDCharset,Y
 
-        JSR AnimateEntryLevelSequence
+        JSR InvertSurfaceDataForLowerPlanet
 
         ; See if we should end the sequence
         INC entryLevelSequenceCounter
         LDA entryLevelSequenceCounter
         CMP #$01
-        BNE b78CD
+        BNE ReturnFromEntrySequence
 
         ; The sequence is over
         LDA #$00

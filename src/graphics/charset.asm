@@ -645,7 +645,7 @@ p2017
                                                 ; 00000000           
                                                 ; 00000000           
 
-planetTextureCharset1
+upperPlanetSurfaceCharset
         .BYTE $00,$00,$20,$00,$8A,$AA,$00,$AA   ;.BYTE $00,$00,$20,$00,$8A,$AA,$00,$AA
                                                 ; CHARACTER $40
                                                 ; 00000000           
@@ -967,7 +967,7 @@ planetTextureCharset1
                                                 ; 00000000           
                                                 ; 01010110    * * ** 
 
-planetTextureCharset2
+upperPlanetHUDCharset
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00   ;.BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                                 ; CHARACTER $60
                                                 ; 00000000           
@@ -1929,7 +1929,7 @@ planetTextureCharset2
                                                 ; 11110110   **** ** 
                                                 ; 00000000           
 
-planetTextureCharset3
+lowerPlanetSurfaceCharset
         .BYTE $AA,$00,$AA,$A2,$00,$08,$00,$00   ;.BYTE $AA,$00,$AA,$A2,$00,$08,$00,$00
                                                 ; CHARACTER $c0
                                                 ; 10101010   * * * * 
@@ -2251,7 +2251,7 @@ planetTextureCharset3
                                                 ; 00000000           
                                                 ; 00000000           
 
-planetTextureCharset4
+lowerPlanetHUDCharset
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00   ;.BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                                 ; CHARACTER $e0
                                                 ; 00000000           
