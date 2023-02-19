@@ -8227,11 +8227,9 @@ indexToCurrentOrSecondarySoundEffectPtr .BYTE $02
 ; Five bytes loaded from the sound effect in 5 byte intervals.
 soundEffectDataStructure
 offsetIntoSoundEffectBuffer .BYTE $18
-; $01 means _
-; $02
-; $03 
 sequenceControlByte         .BYTE $05
 dataforSoundEffectBuffer    .BYTE $00
+firstSoundByte
 nextEffectLoPtr             .BYTE <f5D65
 nextEffectHiPtr             .BYTE >f5D65
 
@@ -8253,38 +8251,39 @@ DontDecrementSoundEffectProgressCounter
         STA soundTmpLoPtr
         LDA currentSoundEffectHiPtr
         STA soundTmpHiPtr
-        JSR PlayFirstSoundEffect
+        JSR PlayCurrentSoundEffect
         LDA #$02
         STA indexToCurrentOrSecondarySoundEffectPtr
         LDA secondarySoundEffectLoPtr
         STA soundTmpLoPtr
         LDA secondarySoundEffectHiPtr
         STA soundTmpHiPtr
-        ;Falls through
+        ;Falls through and plays secondary sound effect.
 
 ;-------------------------------------------------------
-; PlayFirstSoundEffect
+; PlayCurrentSoundEffect
 ;-------------------------------------------------------
-PlayFirstSoundEffect
+PlayCurrentSoundEffect
         LDY #$00
-ClearSoundEffectDataStructureLoop   
+FillSoundEffectDataStructureLoop   
         LDA (soundTmpLoPtr),Y
         STA soundEffectDataStructure,Y
         INY
         CPY #$05
-        BNE ClearSoundEffectDataStructureLoop
+        BNE FillSoundEffectDataStructureLoop
 
         LDA sequenceControlByte
-        BNE TrySequenceByteValueWithHighBitSet
+        BNE PlayNextSoundBasedOnSequenceByte
+
         LDA dataforSoundEffectBuffer
-        LDX nextEffectLoPtr
+        LDX firstSoundByte
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
 
 PlayNextSound
-        JSR PlaySecondSoundEffect
+        JSR UpdateSoundEffectPtrs
         LDA nextEffectHiPtr
-        BEQ PlayFirstSoundEffect
+        BEQ PlayCurrentSoundEffect
         CMP #$01
         BNE StorePointersAndReturn
         RTS
@@ -8298,9 +8297,9 @@ StorePointersAndReturn
         RTS
 
 ;-------------------------------------------------------
-; PlaySecondSoundEffect
+; UpdateSoundEffectPtrs
 ;-------------------------------------------------------
-PlaySecondSoundEffect
+UpdateSoundEffectPtrs
         LDA soundTmpLoPtr
         CLC
         ADC #$05
@@ -8313,7 +8312,10 @@ PlaySecondSoundEffect
         STA currentSoundEffectHiPtr,X
         RTS
 
-TrySequenceByteValueWithHighBitSet   
+;-------------------------------------------------------
+; PlayNextSoundBasedOnSequenceByte
+;-------------------------------------------------------
+PlayNextSoundBasedOnSequenceByte   
         AND #$80
         BEQ TrySequenceByteValueOf1
         JMP TrySequenceByteValueOf80
@@ -8326,7 +8328,7 @@ TrySequenceByteValueOf1
         LDA soundEffectBuffer,X
         CLC
         ADC dataforSoundEffectBuffer
-        LDX nextEffectLoPtr
+        LDX firstSoundByte
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
         JMP PlayNextSound
@@ -8339,8 +8341,8 @@ TrySequenceByteValueOf2
         SEC
         SBC dataforSoundEffectBuffer
 
-PlaySecondSoundEffectLoop
-        LDX nextEffectLoPtr
+UpdateSoundEffectPtrsLoop
+        LDX firstSoundByte
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
         JMP PlayNextSound
@@ -8353,7 +8355,7 @@ TrySequenceByteValueOf3
         LDA soundEffectBuffer,X
         CLC
         ADC soundEffectBuffer,Y
-        JMP PlaySecondSoundEffectLoop
+        JMP UpdateSoundEffectPtrsLoop
 
 TrySequenceByteValueOf4   
         CMP #$04
@@ -8363,7 +8365,7 @@ TrySequenceByteValueOf4
         LDA soundEffectBuffer,X
         SEC
         SBC soundEffectBuffer,Y
-        JMP PlaySecondSoundEffectLoop
+        JMP UpdateSoundEffectPtrsLoop
 
 TrySequenceByteValueOf5   
         CMP #$05
@@ -8376,7 +8378,7 @@ TrySequenceByteValueOf5
 StorePointersAndReturnIfZero
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
-        BEQ JumpToPlaySecondSoundEffect
+        BEQ JumpToUpdateSoundEffectPtrs
         LDA nextEffectLoPtr
         LDX indexToCurrentOrSecondarySoundEffectPtr
         STA currentSoundEffectLoPtr,X
@@ -8384,8 +8386,8 @@ StorePointersAndReturnIfZero
         STA currentSoundEffectHiPtr,X
         RTS
 
-JumpToPlaySecondSoundEffect   
-        JMP PlaySecondSoundEffect
+JumpToUpdateSoundEffectPtrs   
+        JMP UpdateSoundEffectPtrs
 
 TrySequenceByteValueOf6   
         CMP #$06
@@ -8409,7 +8411,7 @@ TrySequenceByteValueOf80
 
 TrySequenceByteValueOf81   
         CMP #$81
-        BNE ReturnFromPlaySecondSoundEffect
+        BNE ReturnFromUpdateSoundEffectPtrs
         LDX indexToCurrentOrSecondarySoundEffectPtr
         LDA tmpSoundEffectLoHiPtr3,X
         BNE SoundEffectPresent
@@ -8417,17 +8419,17 @@ TrySequenceByteValueOf81
         STA tmpSoundEffectLoHiPtr3,X
 SoundEffectPresent   
         DEC tmpSoundEffectLoHiPtr3,X
-        BEQ JumpToPlaySecondSoundEffect_
+        BEQ JumpToUpdateSoundEffectPtrs_
         LDA tmpSoundEffectLoPtr1,X
         STA soundTmpLoPtr
         LDA tmpSoundEffectHiPtr1,X
         STA soundTmpHiPtr
-        JMP PlayFirstSoundEffect
+        JMP PlayCurrentSoundEffect
 
-JumpToPlaySecondSoundEffect_   
-        JMP PlaySecondSoundEffect
+JumpToUpdateSoundEffectPtrs_   
+        JMP UpdateSoundEffectPtrs
 
-ReturnFromPlaySecondSoundEffect   
+ReturnFromUpdateSoundEffectPtrs   
         RTS
 
 gilbyWalkingSound         .BYTE $00,$00,$00,$04,$00
