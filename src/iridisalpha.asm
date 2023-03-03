@@ -41,8 +41,8 @@ charSetDataPtrHi                        = $25
 invertedCharToDraw                       = $26
 structureRoutineLoPtr                   = $29
 structureRoutineHiPtr                   = $2A
-soundTmpLoPtr                           = $30
-soundTmpHiPtr                           = $31
+currentSoundEffectLoPtr                           = $30
+currentSoundEffectHiPtr                           = $31
 planetPtrLo2                            = $35
 planetPtrHi2                            = $36
 screenLintPtrTempLo                     = $3A
@@ -1435,42 +1435,42 @@ soundEffectInProgress                .BYTE $00,$01,$00,$01,$00,$00,$01,$00
                                      .BYTE $01,$FF,$00,$02,$00,$FF,$FF,$01
                                      .BYTE $02,$80
 
-newPlanetSound              .BYTE $00,$00,$0F,$0C,$00
-                            .BYTE $00,$00,$0F,$13,$00
-                            .BYTE $00,$00,$00,$0D,$00
-                            .BYTE $00,$00,$00,$14,$00
-                            .BYTE $00,$00,$10,$08,$00
-                            .BYTE $00,$00,$10,$0F,$00
-                            .BYTE $00,$00,$11,$0B,$00
-                            .BYTE $00,$00,$11,$12,$02
-                            .BYTE $0F,$02,$02,$0F,$00
-                            .BYTE $08,$02,$02,$08,$01
-                            .BYTE $00,$81,$08,$00,$00
-                            .BYTE $00,$00,$81,$0B,$00
-                            .BYTE $00,$00,$28,$08,$00
-                            .BYTE $00,$00,$80,$12,$02
-                            .BYTE $08,$02,$03,$08,$01
-                            .BYTE $00,$81,$05,$00,$00
-                            .BYTE $00,$00,$21,$12,$00
-                            .BYTE $00,$00,$20,$0F,$02
-                            .BYTE $08,$02,$03,$08,$00
-                            .BYTE $0F,$02,$04,$0F,$01
-                            .BYTE $00,$81,$08,$00,$00
-                            .BYTE $00,$00,$80,$0B,$00
-                            .BYTE $00,$00,$80,$12,$00
-                            .BYTE $00,$80,<f7BCA,>f7BCA,$00
-shipCollidedWithGilbySound  .BYTE $00,$00,$0F,$05,$00
-                            .BYTE $00,$00,$00,$06,$00
-                            .BYTE $00,$00,$40,$01,$00
-                            .BYTE $00,$00,$81,$04,$02
-                            .BYTE $01,$01,$0C,$01,$01
-                            .BYTE $00,$81,$04,$00,$00
-                            .BYTE $00,$00,$20,$01,$00
-                            .BYTE $00,$00,$11,$04,$02
-                            .BYTE $01,$02,$04,$01,$01
-                            .BYTE $00,$81,$08,$00,$00
-                            .BYTE $00,$00,$10,$04,$00
-                            .BYTE $00,$80,<f7BCA,>f7BCA,$00
+newPlanetSound              .BYTE $00,PLAY_SOUND,$0F,VOICE2_ATK_DEC,$00
+                            .BYTE $00,PLAY_SOUND,$0F,VOICE3_ATK_DEC,$00
+                            .BYTE $00,PLAY_SOUND,$00,VOICE2_SUS_REL,$00
+                            .BYTE $00,PLAY_SOUND,$00,VOICE3_SUS_REL,$00
+                            .BYTE $00,PLAY_SOUND,$10,VOICE2_HI,$00
+                            .BYTE $00,PLAY_SOUND,$10,VOICE3_HI,$00
+                            .BYTE $00,PLAY_SOUND,$11,VOICE2_CTRL,$00
+                            .BYTE $00,PLAY_SOUND,$11,VOICE3_CTRL,$02
+                            .BYTE $0F,DEC_AND_PLAY_FROM_BUFFER,$02,VOICE3_HI,$00
+                            .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$02,VOICE2_HI,$01
+                            .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                            .BYTE $00,PLAY_SOUND,$81,VOICE2_CTRL,$00
+                            .BYTE $00,PLAY_SOUND,$28,VOICE2_HI,$00
+                            .BYTE $00,PLAY_SOUND,$80,VOICE3_CTRL,$02
+                            .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$03,$08,$01
+                            .BYTE $00,REPEAT_PREVIOUS,$05,$00,$00
+                            .BYTE $00,PLAY_SOUND,$21,VOICE3_CTRL,$00
+                            .BYTE $00,PLAY_SOUND,$20,VOICE3_HI,$02
+                            .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$03,VOICE2_HI,$00
+                            .BYTE $0F,DEC_AND_PLAY_FROM_BUFFER,$04,VOICE3_HI,$01
+                            .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                            .BYTE $00,PLAY_SOUND,$80,VOICE2_CTRL,$00
+                            .BYTE $00,PLAY_SOUND,$80,VOICE3_CTRL,$00
+                            .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+shipCollidedWithGilbySound  .BYTE $00,PLAY_SOUND,$0F,VOICE1_ATK_DEC,$00
+                            .BYTE $00,PLAY_SOUND,$00,VOICE1_SUS_REL,$00
+                            .BYTE $00,PLAY_SOUND,$40,VOICE1_HI,$00
+                            .BYTE $00,PLAY_SOUND,$81,VOICE1_CTRL,$02
+                            .BYTE $01,INC_AND_PLAY_FROM_BUFFER,$0C,VOICE1_HI,$01
+                            .BYTE $00,REPEAT_PREVIOUS,$04,$00,$00
+                            .BYTE $00,PLAY_SOUND,$20,VOICE1_HI,$00
+                            .BYTE $00,PLAY_SOUND,$11,VOICE1_CTRL,$02
+                            .BYTE $01,DEC_AND_PLAY_FROM_BUFFER,$04,VOICE1_HI,$01
+                            .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                            .BYTE $00,PLAY_SOUND,$10,VOICE1_CTRL,$00
+                            .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
 
 ;-------------------------------------------------------
 ; SetXToIndexOfShipThatNeedsReplacing
@@ -1920,7 +1920,7 @@ UpdateScoresAfterHittingShipWithBullet
         STA secondarySoundEffectLoPtr
         LDA #>newPlanetSound
         STA secondarySoundEffectHiPtr
-        JSR ResetSoundDataPtr2
+        JSR ResetRepetitionForSecondarySoundEffect
         LDA #$1C
         STA soundEffectInProgress
 
@@ -2100,11 +2100,11 @@ MaybeTransferToOtherPlanet
         BNE TransferToTheUpperPlanet ; BNE, so branch if setToZeroIfOnUpperPlanet is not $00.
 
         ; Transfer to the lower planet.
-        JSR ResetSoundDataPtr1
+        JSR ResetRepetitionForPrimarySoundEffect
         LDA #<transferToLowerPlanetSoundEffect
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>transferToLowerPlanetSoundEffect
-        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr
 
         ; We're setting setToZeroIfOnUpperPlanet to $08 here to 
         ; indicate we're now on the lower planet.
@@ -2114,11 +2114,11 @@ MaybeTransferToOtherPlanet
         BNE InitializeStateAfterPlanetTransfer
 
 TransferToTheUpperPlanet   
-        JSR ResetSoundDataPtr1
+        JSR ResetRepetitionForPrimarySoundEffect
         LDA #<transferToUpperPlanetSoundEffect
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>transferToUpperPlanetSoundEffect
-        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr
 
         ; We're setting setToZeroIfOnUpperPlanet to $00 here to 
         ; indicate we're now on the upper planet.
@@ -2146,10 +2146,10 @@ UpdateEnergyLevelsAfterCollision
         BEQ b4D7F
 
         LDA #<shipCollidedWithGilbySound
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>shipCollidedWithGilbySound
-        STA currentSoundEffectHiPtr
-        JSR ResetSoundDataPtr1
+        STA primarySoundEffectHiPtr
+        JSR ResetRepetitionForPrimarySoundEffect
         LDA #$0E
         STA gilbyExploding
         LDA #$02
@@ -2808,17 +2808,17 @@ b5208   LDA #EXPLOSION_START
         BNE b5208
 
         STX shouldResetPlanetEntropy
-        JSR ResetSoundDataPtr1
-        JSR ResetSoundDataPtr2
+        JSR ResetRepetitionForPrimarySoundEffect
+        JSR ResetRepetitionForSecondarySoundEffect
 
         LDA #<planetWarpSoundEffect
         STA secondarySoundEffectLoPtr
         LDA #>planetWarpSoundEffect
         STA secondarySoundEffectHiPtr
         LDA #<planetWarpSoundEffect2
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>planetWarpSoundEffect2
-        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr
         ;Fall through
 
 ;-------------------------------------------------------
@@ -3715,7 +3715,7 @@ InitializeGilbyExplosion
         STA secondarySoundEffectLoPtr
         LDA #>gilbyDiedSoundEffect
         STA secondarySoundEffectHiPtr
-        JSR ResetSoundDataPtr2
+        JSR ResetRepetitionForSecondarySoundEffect
         LDX #$23
         RTS
 
@@ -3814,32 +3814,32 @@ ReturnFromGilbyExplosion
         RTS
 
 explosionInProgress    .BYTE $0A
-gilbyDiedSoundEffect   .BYTE $00,$00,$0F,$0C,$00
-                       .BYTE $00,$00,$0F,$13,$00
-                       .BYTE $00,$00,$00,$0D,$00
-                       .BYTE $00,$00,$00,$14,$00
-                       .BYTE $00,$00,$80,$08,$00
-                       .BYTE $00,$00,$40,$0F,$00
-                       .BYTE $00,$00,$81,$0B,$00
-                       .BYTE $00,$00,$81,$12,$02
-                       .BYTE $08,$01,$0C,$08,$00
-                       .BYTE $0F,$01,$0C,$0F,$01
-                       .BYTE $00,$81,$1C,$00,$00
-                       .BYTE $00,$00,$20,$08,$00
-                       .BYTE $00,$00,$20,$0F,$00
-                       .BYTE $00,$00,$81,$0B,$00
-                       .BYTE $00,$00,$21,$12,$02
-                       .BYTE $08,$02,$01,$08,$00
-                       .BYTE $0F,$02,$45,$0F,$01
-                       .BYTE $00,$81,$1F,$00,$00
-                       .BYTE $00,$00,$10,$08,$02
-                       .BYTE $08,$02,$01,$08,$00
-                       .BYTE $0F,$02,$01,$0F,$00
-                       .BYTE $18,$02,$01,$18,$01
-                       .BYTE $00,$81,$0F,$00,$00
-                       .BYTE $00,$00,$80,$0B,$00
-                       .BYTE $00,$00,$80,$12,$00
-                       .BYTE $00,$80,<f7BCA,>f7BCA,$00
+gilbyDiedSoundEffect   .BYTE $00,PLAY_SOUND,$0F,VOICE2_ATK_DEC,$00
+                       .BYTE $00,PLAY_SOUND,$0F,VOICE3_ATK_DEC,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE2_SUS_REL,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE3_SUS_REL,$00
+                       .BYTE $00,PLAY_SOUND,$80,VOICE2_HI,$00
+                       .BYTE $00,PLAY_SOUND,$40,VOICE3_HI,$00
+                       .BYTE $00,PLAY_SOUND,$81,VOICE2_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$81,VOICE3_CTRL,$02
+                       .BYTE $08,INC_AND_PLAY_FROM_BUFFER,$0C,VOICE2_HI,$00
+                       .BYTE $0F,INC_AND_PLAY_FROM_BUFFER,$0C,VOICE3_HI,$01
+                       .BYTE $00,REPEAT_PREVIOUS,$1C,$00,$00
+                       .BYTE $00,PLAY_SOUND,$20,VOICE2_HI,$00
+                       .BYTE $00,PLAY_SOUND,$20,VOICE3_HI,$00
+                       .BYTE $00,PLAY_SOUND,$81,VOICE2_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$21,VOICE3_CTRL,$02
+                       .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$01,VOICE2_HI,$00
+                       .BYTE $0F,DEC_AND_PLAY_FROM_BUFFER,$45,VOICE3_HI,$01
+                       .BYTE $00,REPEAT_PREVIOUS,$1F,$00,$00
+                       .BYTE $00,PLAY_SOUND,$10,VOICE2_HI,$02
+                       .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$01,VOICE2_HI,$00
+                       .BYTE $0F,DEC_AND_PLAY_FROM_BUFFER,$01,VOICE3_HI,$00
+                       .BYTE $18,DEC_AND_PLAY_FROM_BUFFER,$01,VOLUME,$01
+                       .BYTE $00,REPEAT_PREVIOUS,$0F,$00,$00
+                       .BYTE $00,PLAY_SOUND,$80,VOICE2_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$80,VOICE3_CTRL,$00
+                       .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
 
 ;-------------------------------------------------------
 ; SetUpLevelRestart
@@ -3871,10 +3871,10 @@ b596E   LDA #$C0 ; Starfield sprite
         STA entryLevelSequenceCounter
 
         LDA #<levelRestartSoundEffect1
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
 
         LDA #>levelRestartSoundEffect1
-        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr
 
         LDA #<levelRestartSoundEffect2
         STA secondarySoundEffectLoPtr
@@ -3884,8 +3884,8 @@ b596E   LDA #$C0 ; Starfield sprite
 
         LDA #NO_SPRITES
         STA $D015    ;Sprite display Enable
-        JSR ResetSoundDataPtr1
-        JMP ResetSoundDataPtr2
+        JSR ResetRepetitionForPrimarySoundEffect
+        JMP ResetRepetitionForSecondarySoundEffect
         ; Returns
 
 levelRestartInProgress .BYTE $00
@@ -4066,37 +4066,38 @@ txtRestartLevelMsg .TEXT "TAKE OUT THAT BRIDGE% % I BET THAT HURT!"
                    .TEXT "YAK SEZ GO ZAP 'EM!!FLY FAST AND MEAN..."
                    .TEXT "LASERBLAZE THE SCUM!HEAVY METAL THUNDER"
                    .BYTE $21
-levelRestartSoundEffect1 .BYTE $00,$00,$0F,$05,$00
-                         .BYTE $00,$00,$00,$06,$00
-                         .BYTE $00,$00,$20,$01,$00
-                         .BYTE $00,$00,$21,$04,$02
-                         .BYTE $01,$02,$43,$01,$01
-                         .BYTE $00,$81,$F0,$00,$00
-                         .BYTE $00,$00,$20,$04,$00
-                         .BYTE $00,$80,<f7BCA,>f7BCA,$00
-levelRestartSoundEffect2 .BYTE $00,$00,$0F,$18,$00
-                         .BYTE $00,$00,$0F,$0C,$00
-                         .BYTE $00,$00,$0F,$13,$00
-                         .BYTE $00,$00,$00,$0D,$00
-                         .BYTE $00,$00,$00,$14,$01
-                         .BYTE $00,$00,$10,$08,$00
-                         .BYTE $00,$00,$10,$0F,$00
-                         .BYTE $00,$00,$21,$0B,$00
-                         .BYTE $00,$00,$21,$12,$02
-                         .BYTE $08,$01,$04,$08,$00
-                         .BYTE $0F,$01,$04,$0F,$01
-                         .BYTE $00,$81,$05,$00,$00
-                         .BYTE $00,$00,$10,$08,$00
-                         .BYTE $00,$00,$10,$0F,$00
-                         .BYTE $00,$00,$11,$0B,$00
-                         .BYTE $00,$00,$11,$12,$02
-f5C85                    .BYTE $08,$02,$02,$08,$00
-                         .BYTE $0F,$02,$02,$0F,$01
-                         .BYTE $00,$81,$08,$00,$00
-                         .BYTE $18,$05,$01,$4E,$5C
-                         .BYTE $00,$00,$10,$0B,$00
-                         .BYTE $00,$00,$10,$12,$00
-                         .BYTE $00,$80,<f7BCA,>f7BCA
+
+levelRestartSoundEffect1 .BYTE $00,PLAY_SOUND,$0F,VOICE1_ATK_DEC,$00
+                         .BYTE $00,PLAY_SOUND,$00,VOICE1_SUS_REL,$00
+                         .BYTE $00,PLAY_SOUND,$20,VOICE1_HI,$00
+                         .BYTE $00,PLAY_SOUND,$21,VOICE1_CTRL,$02
+                         .BYTE $01,DEC_AND_PLAY_FROM_BUFFER,$43,VOICE1_HI,$01
+                         .BYTE $00,REPEAT_PREVIOUS,$F0,$00,$00
+                         .BYTE $00,PLAY_SOUND,$20,VOICE1_CTRL,$00
+                         .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+levelRestartSoundEffect2 .BYTE $00,PLAY_SOUND,$0F,VOLUME,$00
+                         .BYTE $00,PLAY_SOUND,$0F,VOICE2_ATK_DEC,$00
+                         .BYTE $00,PLAY_SOUND,$0F,VOICE3_ATK_DEC,$00
+                         .BYTE $00,PLAY_SOUND,$00,VOICE2_SUS_REL,$00
+                         .BYTE $00,PLAY_SOUND,$00,VOICE3_SUS_REL,$01
+f5C4E                    .BYTE $00,PLAY_SOUND,$10,VOICE2_HI,$00
+                         .BYTE $00,PLAY_SOUND,$10,VOICE3_HI,$00
+                         .BYTE $00,PLAY_SOUND,$21,VOICE2_CTRL,$00
+                         .BYTE $00,PLAY_SOUND,$21,VOICE3_CTRL,$02
+                         .BYTE $08,INC_AND_PLAY_FROM_BUFFER,$04,VOICE2_HI,$00
+                         .BYTE $0F,INC_AND_PLAY_FROM_BUFFER,$04,VOICE3_HI,$01
+                         .BYTE $00,REPEAT_PREVIOUS,$05,$00,$00
+                         .BYTE $00,PLAY_SOUND,$10,VOICE2_HI,$00
+                         .BYTE $00,PLAY_SOUND,$10,VOICE3_HI,$00
+                         .BYTE $00,PLAY_SOUND,$11,VOICE2_CTRL,$00
+                         .BYTE $00,PLAY_SOUND,$11,VOICE3_CTRL,$02
+f5C85                    .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$02,VOICE2_HI,$00
+                         .BYTE $0F,DEC_AND_PLAY_FROM_BUFFER,$02,VOICE3_HI,$01
+                         .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                         .BYTE VOLUME,PLAY_LOOP,$01,<f5C4E,>f5C4E
+                         .BYTE $00,PLAY_SOUND,$10,VOICE2_CTRL,$00
+                         .BYTE $00,PLAY_SOUND,$10,VOICE3_CTRL,$00
+                         .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax
 
 colorsForFlashBackgroundAndBorderEffect
         .BYTE ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE,GRAY3,GRAY3,GRAY2
@@ -4155,47 +4156,52 @@ b5D21   INX
 
 initialXPosArray1      .BYTE $B8,$C0,$C8,$D0,$D8,$E0
 initialXPosArray2      .BYTE $A8,$A0,$98,$90,$88,$80
-planetWarpSoundEffect  .BYTE $00,$00,$0F,$0C,$00
-                       .BYTE $00,$00,$0F,$13,$00
-                       .BYTE $00,$00,$0F,$18,$00
-                       .BYTE $00,$00,$00,$0D,$00
-                       .BYTE $00,$00,$00,$14,$00
-                       .BYTE $00,$00,$03,$08,$00
-                       .BYTE $00,$00,$03,$0F,$00
-                       .BYTE $00,$00,$21,$0B,$00
-                       .BYTE $00,$00,$08,$0E,$00
-                       .BYTE $00,$00,$00,$07,$00
-f5D65                  .BYTE $00,$00,$21,$12,$01
-                       .BYTE $18,$05,$00,<f5D65,>f5D65
-                       .BYTE $00,$00,$20,$0B,$00
-                       .BYTE $00,$00,$20,$12,$00
-                       .BYTE $00,$80,<f7BCA,>f7BCA,$00
-planetWarpSoundEffect2 .BYTE $00,$00,$0F,$05,$00
-                       .BYTE $00,$00,$00,$06,$00
-                       .BYTE $00,$00,$00,$01,$00
-f5D8D                  .BYTE $00,$00,$11,$04,$02
-f5D92                  .BYTE $01,$01,$64,$01,$01
-f5D97                  .BYTE $00,$81,$08,$00,$00
-                       .BYTE $01,$01,$18,$01,$01
-                       .BYTE $18,$05,$01,<f5D8D,>f5D8D
-                       .BYTE $00,$00,$10,$04,$00
-                       .BYTE $00,$80,<f7BCA,>f7BCA,$00
-levelEntrySoundEffect  .BYTE $00,$00,$0F,$0C,$00
-                       .BYTE $00,$00,$0F,$13,$00
-                       .BYTE $00,$00,$00,$0D,$00
-                       .BYTE $00,$00,$00,$14,$00
-                       .BYTE $00,$00,$10,$08,$00
-                       .BYTE $00,$00,$15,$12,$00
-                       .BYTE $00,$00,$20,$0B,$00
-                       .BYTE $00,$00,$0F,$18,$00
-f5DD8                  .BYTE $00,$00,$40,$0F,$02
-                       .BYTE $0F,$02,$28,$0F,$01
-                       .BYTE $00,$81,$08,$00,$00
-                       .BYTE $18,$05,$05,<f5DD8,>f5DD8
-                       .BYTE $00,$00,$80,$0B,$00
-                       .BYTE $00,$00,$80,$12,$00
-                       .BYTE $00,$00,$0F,$18,$00
-                       .BYTE $00,$80,<f7BCA,>f7BCA,$00
+
+VOICE2_LO = $07
+VOICE3_LO = $0E
+planetWarpSoundEffect  .BYTE $00,PLAY_SOUND,$0F,VOICE2_ATK_DEC,$00
+                       .BYTE $00,PLAY_SOUND,$0F,VOICE3_ATK_DEC,$00
+                       .BYTE $00,PLAY_SOUND,$0F,VOLUME,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE2_SUS_REL,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE3_SUS_REL,$00
+                       .BYTE $00,PLAY_SOUND,$03,VOICE2_HI,$00
+                       .BYTE $00,PLAY_SOUND,$03,VOICE3_HI,$00
+                       .BYTE $00,PLAY_SOUND,$21,VOICE2_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$08,VOICE3_LO,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE2_LO,$00
+fPlanetWarpLoop        .BYTE $00,PLAY_SOUND,$21,VOICE3_CTRL,$01
+                       .BYTE VOLUME,PLAY_LOOP,$00,<fPlanetWarpLoop,>fPlanetWarpLoop
+                       .BYTE $00,PLAY_SOUND,$20,VOICE2_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$20,VOICE3_CTRL,$00
+                       .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+
+planetWarpSoundEffect2 .BYTE $00,PLAY_SOUND,$0F,VOICE1_ATK_DEC,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE1_SUS_REL,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE1_HI,$00
+f5D8D                  .BYTE $00,PLAY_SOUND,$11,VOICE1_CTRL,$02
+f5D92                  .BYTE $01,INC_AND_PLAY_FROM_BUFFER,$64,VOICE1_HI,$01
+f5D97                  .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                       .BYTE $01,INC_AND_PLAY_FROM_BUFFER,$18,VOICE1_HI,$01
+                       .BYTE VOLUME,PLAY_LOOP,$01,<f5D8D,>f5D8D
+                       .BYTE $00,PLAY_SOUND,$10,VOICE1_CTRL,$00
+                       .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+
+levelEntrySoundEffect  .BYTE $00,PLAY_SOUND,$0F,VOICE2_ATK_DEC,$00
+                       .BYTE $00,PLAY_SOUND,$0F,VOICE3_ATK_DEC,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE2_SUS_REL,$00
+                       .BYTE $00,PLAY_SOUND,$00,VOICE3_SUS_REL,$00
+                       .BYTE $00,PLAY_SOUND,$10,VOICE2_HI,$00
+                       .BYTE $00,PLAY_SOUND,$15,VOICE3_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$20,VOICE2_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$0F,VOLUME,$00
+f5DD8                  .BYTE $00,PLAY_SOUND,$40,VOICE3_HI,$02
+                       .BYTE $0F,DEC_AND_PLAY_FROM_BUFFER,$28,VOICE3_HI,$01
+                       .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                       .BYTE VOLUME,PLAY_LOOP,$05,<f5DD8,>f5DD8
+                       .BYTE $00,PLAY_SOUND,$80,VOICE2_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$80,VOICE3_CTRL,$00
+                       .BYTE $00,PLAY_SOUND,$0F,VOLUME,$00
+                       .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
 ;-------------------------------------------------------
 ; UpdateDisplayedScoringRate
 ;-------------------------------------------------------
@@ -4806,25 +4812,26 @@ b62D2   JSR PlaySoundEffects
 txtProgressStatusLine1 .TEXT "IRIDIS ALPHA: PROGRESS STATUS DISPLAY %"
 txtProgressStatusLine2 .TEXT "%PRESS THE FIRE BUTTON WHEN YOU ARE READY"
 
-transferToUpperPlanetSoundEffect  .BYTE $00,$00,$20,$04,$00
-                                  .BYTE $00,$00,$03,$02,$00
-                                  .BYTE $00,$00,$21,$04,$00
-f6344                             .BYTE $00,$00,$60,$01,$02
-                                  .BYTE $01,$01,$10,$01,$01
-                                  .BYTE $00,$81,$08,$00,$00
-                                  .BYTE $02,$05,$01,<f6344,>f6344
-                                  .BYTE $00,$00,$20,$04,$00
-                                  .BYTE $00,$80,<f7BCA,>f7BCA,$00
+VOICE1_PLS_LO = $02
+transferToUpperPlanetSoundEffect  .BYTE $00,PLAY_SOUND,$20,VOICE1_CTRL,$00
+                                  .BYTE $00,PLAY_SOUND,$03,VOICE1_PLS_LO,$00
+                                  .BYTE $00,PLAY_SOUND,$21,VOICE1_CTRL,$00
+f6344                             .BYTE $00,PLAY_SOUND,$60,VOICE1_HI,$02
+                                  .BYTE $01,INC_AND_PLAY_FROM_BUFFER,$10,VOICE1_HI,$01
+                                  .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                                  .BYTE $02,PLAY_LOOP,$01,<f6344,>f6344
+                                  .BYTE $00,PLAY_SOUND,$20,VOICE1_CTRL,$00
+                                  .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
 transferToLowerPlanetSoundEffect
-                                  .BYTE $00,$00,$20,$04,$00
-                                  .BYTE $00,$00,$03,$02,$00
-                                  .BYTE $00,$00,$21,$04,$00
-f6371                             .BYTE $00,$00,$A0,$01,$02
-                                  .BYTE $01,$02,$10,$01,$01
-                                  .BYTE $00,$81,$08,$00,$00
-                                  .BYTE $02,$05,$01,<f6371,>f6371
-                                  .BYTE $00,$00,$20,$04,$00
-                                  .BYTE $00,$80,<f7BCA,>f7BCA,$00
+                                  .BYTE $00,PLAY_SOUND,$20,VOICE1_CTRL,$00
+                                  .BYTE $00,PLAY_SOUND,$03,VOICE1_PLS_LO,$00
+                                  .BYTE $00,PLAY_SOUND,$21,VOICE1_CTRL,$00
+f6371                             .BYTE $00,PLAY_SOUND,$A0,VOICE1_HI,$02
+                                  .BYTE $01,DEC_AND_PLAY_FROM_BUFFER,$10,VOICE1_HI,$01
+                                  .BYTE $00,REPEAT_PREVIOUS,$08,$00,$00
+                                  .BYTE $02,PLAY_LOOP,$01,<f6371,>f6371
+                                  .BYTE $00,PLAY_SOUND,$20,VOICE1_CTRL,$00
+                                  .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
 enemySprites2 = $E800
 ;-------------------------------------------------------
 ; SwapTitleScreenDataAndSpriteLevelData
@@ -6521,9 +6528,9 @@ JoystickPushedUpWhileLandGilbyAirborneOverSea
 
         ; Gilby is on the ground
         LDA #<pushedUpWhileOverSea
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>pushedUpWhileOverSea
-        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr
         LDA #$FA
         STA gilbyLandingJumpingAnimationYPosOffset
         DEC gilbyVerticalPositionUpperPlanet
@@ -6617,10 +6624,10 @@ JoystickPushedUpWhileOnLand
         LDA #$FA
         STA gilbyLandingJumpingAnimationYPosOffset
         LDA #<soundGilbyJumpOnLand
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>soundGilbyJumpOnLand
-        STA currentSoundEffectHiPtr
-        JSR ResetSoundDataPtr1
+        STA primarySoundEffectHiPtr
+        JSR ResetRepetitionForPrimarySoundEffect
         DEC gilbyVerticalPositionUpperPlanet
 b703A   RTS
 
@@ -6675,9 +6682,9 @@ MaybePreviousActionWasToLand
         CMP #$6D
         BNE b707D
         LDA #<gilbyWalkingSound
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>gilbyWalkingSound
-        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr
         JMP b6FB7
 
 b7099   JSR ResetGilbyIsLanding
@@ -7674,9 +7681,9 @@ b75E3   LDA backupGilbySpriteIndex
         CMP #$6D
         BNE b7601
         LDA #<gilbyWalkingSound
-        STA currentSoundEffectLoPtr
+        STA primarySoundEffectLoPtr
         LDA #>gilbyWalkingSound
-        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr
 b7601   LDX gilbySpriteIndex
         LDA gilbySprites,X
         STA currentGilbySprite
@@ -7815,7 +7822,7 @@ b76DF   LDA gilbyCurrentState
         ; The gilby is in the air
         LDA soundEffectInProgress
         BNE b76F8
-        JSR ResetSoundDataPtr2
+        JSR ResetRepetitionForSecondarySoundEffect
         LDA #<airborneBulletSoundEffect
         STA secondarySoundEffectLoPtr
         LDA #>airborneBulletSoundEffect
@@ -8191,7 +8198,7 @@ b7939   STA upperPlanetAttackShipsSpriteValueArray,X
         STA lowerPlanetAttackShipsMSBXPosArray
         STA lowerPlanetGilbyBulletMSBXPosValue
 
-        JSR ResetSoundDataPtr2
+        JSR ResetRepetitionForSecondarySoundEffect
         LDA #<levelEntrySoundEffect
         STA secondarySoundEffectLoPtr
         LDA #>levelEntrySoundEffect
@@ -8216,48 +8223,48 @@ soundEffectBuffer                       .BYTE $00,$94,$00,$00,$11,$0F,$00,$00
                                         .BYTE $03,$00,$00,$21,$0F,$00,$08,$03
                                         .BYTE $00,$00,$21,$0F,$00,$00,$00,$00
                                         .BYTE $02,$00,$00,$00,$00,$00,$00,$00
-tmpSoundEffectLoPtr1                    .BYTE <f5D92
-tmpSoundEffectHiPtr1                    .BYTE >f5D92
-tmpSoundEffectLoPtr2                    .BYTE <f5C85
-tmpSoundEffectHiPtr2                    .BYTE >f5C85
-tmpSoundEffectLoHiPtr3                  .BYTE $02,$00
-tempSoundEffectLoHiPtr4                 .BYTE $00,$00
-indexToCurrentOrSecondarySoundEffectPtr .BYTE $02
+storedPrimarySoundEffectLoPtr           .BYTE <f5D92
+storedPrimarySoundEffectHiPtr           .BYTE >f5D92
+storedSecondarySoundEffectLoPtr         .BYTE <f5C85
+storedSecondarySoundEffectHiPtr         .BYTE >f5C85
+repetitionsForPrimarySoundEffect        .BYTE $02,$00
+repetitionsForSecondarySoundEffect      .BYTE $00,$00
+indexToPrimaryOrSecondarySoundEffectPtr .BYTE $02
 
 ; Five bytes loaded from the sound effect in 5 byte intervals.
 soundEffectDataStructure
-offsetIntoSoundEffectBuffer .BYTE $18
-sequenceControlByte         .BYTE $05
-dataforSoundEffectBuffer    .BYTE $00
-firstSoundByte
-nextEffectLoPtr             .BYTE <f5D65
-nextEffectHiPtr             .BYTE >f5D65
+soundEffectDataStructure_Byte1 .BYTE $18
+soundEffectDataStructure_Byte2 .BYTE $05
+soundEffectDataStructure_Byte3 .BYTE $00
+soundEffectDataStructure_Byte4 .BYTE <fPlanetWarpLoop
+soundEffectDataStructure_Byte5 .BYTE >fPlanetWarpLoop
 
-currentSoundEffectLoPtr     .BYTE <f5D97
-currentSoundEffectHiPtr     .BYTE >f5D97
-secondarySoundEffectLoPtr   .BYTE <f5D65
-secondarySoundEffectHiPtr   .BYTE >f5D65
+primarySoundEffectLoPtr     .BYTE <f5D97
+primarySoundEffectHiPtr     .BYTE >f5D97
+secondarySoundEffectLoPtr   .BYTE <fPlanetWarpLoop
+secondarySoundEffectHiPtr   .BYTE >fPlanetWarpLoop
 ;-------------------------------------------------------
 ; PlaySoundEffects
 ;-------------------------------------------------------
 PlaySoundEffects
         LDA #$00
-        STA indexToCurrentOrSecondarySoundEffectPtr
+        STA indexToPrimaryOrSecondarySoundEffectPtr
         LDA soundEffectInProgress
         BEQ DontDecrementSoundEffectProgressCounter
         DEC soundEffectInProgress
 DontDecrementSoundEffectProgressCounter   
-        LDA currentSoundEffectLoPtr
-        STA soundTmpLoPtr
-        LDA currentSoundEffectHiPtr
-        STA soundTmpHiPtr
+        LDA primarySoundEffectLoPtr
+        STA currentSoundEffectLoPtr
+        LDA primarySoundEffectHiPtr
+        STA currentSoundEffectHiPtr
         JSR PlayCurrentSoundEffect
+
         LDA #$02
-        STA indexToCurrentOrSecondarySoundEffectPtr
+        STA indexToPrimaryOrSecondarySoundEffectPtr
         LDA secondarySoundEffectLoPtr
-        STA soundTmpLoPtr
+        STA currentSoundEffectLoPtr
         LDA secondarySoundEffectHiPtr
-        STA soundTmpHiPtr
+        STA currentSoundEffectHiPtr
         ;Falls through and plays secondary sound effect.
 
 ;-------------------------------------------------------
@@ -8266,50 +8273,52 @@ DontDecrementSoundEffectProgressCounter
 PlayCurrentSoundEffect
         LDY #$00
 FillSoundEffectDataStructureLoop   
-        LDA (soundTmpLoPtr),Y
+        LDA (currentSoundEffectLoPtr),Y
         STA soundEffectDataStructure,Y
         INY
         CPY #$05
         BNE FillSoundEffectDataStructureLoop
 
-        LDA sequenceControlByte
+        LDA soundEffectDataStructure_Byte2
         BNE PlayNextSoundBasedOnSequenceByte
 
-        LDA dataforSoundEffectBuffer
-        LDX firstSoundByte
+        ; Type 00 just plays what ever is in Byte 3 into
+        ; the offset of D400 given by Byte 4.
+        LDA soundEffectDataStructure_Byte3
+        LDX soundEffectDataStructure_Byte4
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
 
-PlayNextSound
-        JSR UpdateSoundEffectPtrs
-        LDA nextEffectHiPtr
+GetNextRecordAndMaybePlayIt
+        JSR GetNextRecordInSoundEffect
+        LDA soundEffectDataStructure_Byte5
         BEQ PlayCurrentSoundEffect
         CMP #$01
         BNE StorePointersAndReturn
         RTS
 
 StorePointersAndReturn   
-        LDX indexToCurrentOrSecondarySoundEffectPtr
-        LDA soundTmpLoPtr
-        STA tmpSoundEffectLoPtr1,X
-        LDA soundTmpHiPtr
-        STA tmpSoundEffectHiPtr1,X
+        LDX indexToPrimaryOrSecondarySoundEffectPtr
+        LDA currentSoundEffectLoPtr
+        STA storedPrimarySoundEffectLoPtr,X
+        LDA currentSoundEffectHiPtr
+        STA storedPrimarySoundEffectHiPtr,X
         RTS
 
 ;-------------------------------------------------------
-; UpdateSoundEffectPtrs
+; GetNextRecordInSoundEffect
 ;-------------------------------------------------------
-UpdateSoundEffectPtrs
-        LDA soundTmpLoPtr
+GetNextRecordInSoundEffect
+        LDA currentSoundEffectLoPtr
         CLC
         ADC #$05
-        STA soundTmpLoPtr
-        LDX indexToCurrentOrSecondarySoundEffectPtr
-        STA currentSoundEffectLoPtr,X
-        LDA soundTmpHiPtr
+        STA currentSoundEffectLoPtr
+        LDX indexToPrimaryOrSecondarySoundEffectPtr
+        STA primarySoundEffectLoPtr,X
+        LDA currentSoundEffectHiPtr
         ADC #$00
-        STA soundTmpHiPtr
-        STA currentSoundEffectHiPtr,X
+        STA currentSoundEffectHiPtr
+        STA primarySoundEffectHiPtr,X
         RTS
 
 ;-------------------------------------------------------
@@ -8317,217 +8326,324 @@ UpdateSoundEffectPtrs
 ;-------------------------------------------------------
 PlayNextSoundBasedOnSequenceByte   
         AND #$80
-        BEQ TrySequenceByteValueOf1
-        JMP TrySequenceByteValueOf80
+        BEQ MaybeIncrementAndPlaySoundFromBuffer
+        JMP MaybeSkipToLinkedRecord
 
-TrySequenceByteValueOf1   
-        LDA sequenceControlByte
-        CMP #$01
-        BNE TrySequenceByteValueOf2
-        LDX offsetIntoSoundEffectBuffer
+MaybeIncrementAndPlaySoundFromBuffer   
+        LDA soundEffectDataStructure_Byte2
+        CMP #INC_AND_PLAY_FROM_BUFFER
+        BNE MaybeDecrementAndPlaySoundFromBuffer
+
+        ; Increment the value in the buffer and play it.
+        LDX soundEffectDataStructure_Byte1
         LDA soundEffectBuffer,X
         CLC
-        ADC dataforSoundEffectBuffer
-        LDX firstSoundByte
+        ADC soundEffectDataStructure_Byte3
+        LDX soundEffectDataStructure_Byte4
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
-        JMP PlayNextSound
+        JMP GetNextRecordAndMaybePlayIt
 
-TrySequenceByteValueOf2   
-        CMP #$02
+MaybeDecrementAndPlaySoundFromBuffer   
+        CMP #DEC_AND_PLAY_FROM_BUFFER
         BNE TrySequenceByteValueOf3
-        LDX offsetIntoSoundEffectBuffer
+
+        ; Decrement the value in the buffer and play it.
+        LDX soundEffectDataStructure_Byte1
         LDA soundEffectBuffer,X
         SEC
-        SBC dataforSoundEffectBuffer
+        SBC soundEffectDataStructure_Byte3
 
-UpdateSoundEffectPtrsLoop
-        LDX firstSoundByte
+GetNextRecordInSoundEffectLoop
+        LDX soundEffectDataStructure_Byte4
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
-        JMP PlayNextSound
+        JMP GetNextRecordAndMaybePlayIt
 
 TrySequenceByteValueOf3   
         CMP #$03
         BNE TrySequenceByteValueOf4
-        LDX offsetIntoSoundEffectBuffer
-        LDY dataforSoundEffectBuffer
+        LDX soundEffectDataStructure_Byte1
+        LDY soundEffectDataStructure_Byte3
         LDA soundEffectBuffer,X
         CLC
         ADC soundEffectBuffer,Y
-        JMP UpdateSoundEffectPtrsLoop
+        JMP GetNextRecordInSoundEffectLoop
 
 TrySequenceByteValueOf4   
         CMP #$04
-        BNE TrySequenceByteValueOf5
-        LDX offsetIntoSoundEffectBuffer
-        LDY dataforSoundEffectBuffer
+        BNE MaybeIsFadeOutLoop
+        LDX soundEffectDataStructure_Byte1
+        LDY soundEffectDataStructure_Byte3
         LDA soundEffectBuffer,X
         SEC
         SBC soundEffectBuffer,Y
-        JMP UpdateSoundEffectPtrsLoop
+        JMP GetNextRecordInSoundEffectLoop
 
-TrySequenceByteValueOf5   
-        CMP #$05
+MaybeIsFadeOutLoop   
+        CMP #PLAY_LOOP
         BNE TrySequenceByteValueOf6
-        LDX offsetIntoSoundEffectBuffer
+
+        ; The record is a fade out loop. Bytes 4 and 5
+        ; (soundEffectDataStructure_Byte4 and soundEffectDataStructure_Byte5) contain
+        ; the address of the record to loop back to.
+        ; Byte 1 contains the offset to the volume switch
+        ; (i.e. 18 for D418).
+        ; Byte 3 (dataForSounEffectBuffer) contains the
+        ; decrements to reduce the volume by. 
+        LDX soundEffectDataStructure_Byte1
         LDA soundEffectBuffer,X
         SEC
-        SBC dataforSoundEffectBuffer
+        SBC soundEffectDataStructure_Byte3
 
 StorePointersAndReturnIfZero
         STA soundEffectBuffer,X
         STA $D400,X  ;Voice 1: Frequency Control - Low-Byte
-        BEQ JumpToUpdateSoundEffectPtrs
-        LDA nextEffectLoPtr
-        LDX indexToCurrentOrSecondarySoundEffectPtr
-        STA currentSoundEffectLoPtr,X
-        LDA nextEffectHiPtr
-        STA currentSoundEffectHiPtr,X
+        BEQ JumpToGetNextRecordInSoundEffect
+        LDA soundEffectDataStructure_Byte4
+        LDX indexToPrimaryOrSecondarySoundEffectPtr
+        STA primarySoundEffectLoPtr,X
+        LDA soundEffectDataStructure_Byte5
+        STA primarySoundEffectHiPtr,X
         RTS
 
-JumpToUpdateSoundEffectPtrs   
-        JMP UpdateSoundEffectPtrs
+JumpToGetNextRecordInSoundEffect   
+        JMP GetNextRecordInSoundEffect
 
 TrySequenceByteValueOf6   
         CMP #$06
-        BNE TrySequenceByteValueOf80
-        LDX offsetIntoSoundEffectBuffer
+        BNE MaybeSkipToLinkedRecord
+        LDX soundEffectDataStructure_Byte1
         LDA soundEffectBuffer,X
         CLC
-        ADC dataforSoundEffectBuffer
+        ADC soundEffectDataStructure_Byte3
         JMP StorePointersAndReturnIfZero
 
-TrySequenceByteValueOf80
-        LDA sequenceControlByte
+MaybeSkipToLinkedRecord
+        LDA soundEffectDataStructure_Byte2
         CMP #$80
-        BNE TrySequenceByteValueOf81
-        LDX indexToCurrentOrSecondarySoundEffectPtr
-        LDA dataforSoundEffectBuffer
-        STA currentSoundEffectLoPtr,X
-        LDA nextEffectLoPtr
-        STA currentSoundEffectHiPtr,X
+        BNE MaybePlayStoredSoundEffect
+
+        ; Cease playing records and point to the
+        ; record to play at the next interrupt.
+        LDX indexToPrimaryOrSecondarySoundEffectPtr
+        LDA soundEffectDataStructure_Byte3
+        STA primarySoundEffectLoPtr,X
+        LDA soundEffectDataStructure_Byte4
+        STA primarySoundEffectHiPtr,X
         RTS
 
-TrySequenceByteValueOf81   
-        CMP #$81
-        BNE ReturnFromUpdateSoundEffectPtrs
-        LDX indexToCurrentOrSecondarySoundEffectPtr
-        LDA tmpSoundEffectLoHiPtr3,X
+MaybePlayStoredSoundEffect   
+        CMP #REPEAT_PREVIOUS
+        BNE ReturnFromGetNextRecordInSoundEffect
+
+        ; Play a sound effect record stored previously.
+        LDX indexToPrimaryOrSecondarySoundEffectPtr
+        LDA repetitionsForPrimarySoundEffect,X
         BNE SoundEffectPresent
-        LDA dataforSoundEffectBuffer
-        STA tmpSoundEffectLoHiPtr3,X
+        LDA soundEffectDataStructure_Byte3
+        STA repetitionsForPrimarySoundEffect,X
+
 SoundEffectPresent   
-        DEC tmpSoundEffectLoHiPtr3,X
-        BEQ JumpToUpdateSoundEffectPtrs_
-        LDA tmpSoundEffectLoPtr1,X
-        STA soundTmpLoPtr
-        LDA tmpSoundEffectHiPtr1,X
-        STA soundTmpHiPtr
+        DEC repetitionsForPrimarySoundEffect,X
+        BEQ JumpToGetNextRecordInSoundEffect_
+        LDA storedPrimarySoundEffectLoPtr,X
+        STA currentSoundEffectLoPtr
+        LDA storedPrimarySoundEffectHiPtr,X
+        STA currentSoundEffectHiPtr
         JMP PlayCurrentSoundEffect
 
-JumpToUpdateSoundEffectPtrs_   
-        JMP UpdateSoundEffectPtrs
+JumpToGetNextRecordInSoundEffect_   
+        JMP GetNextRecordInSoundEffect
 
-ReturnFromUpdateSoundEffectPtrs   
+ReturnFromGetNextRecordInSoundEffect   
         RTS
 
-gilbyWalkingSound         .BYTE $00,$00,$00,$04,$00
-                          .BYTE $00,$00,$00,$05,$00
-                          .BYTE $00,$00,$60,$06,$00
-                          .BYTE $00,$00,$40,$01,$00
-                          .BYTE $00,$00,$81,$04,$01
-                          .BYTE $00,$00,$20,$04,$01
-                          .BYTE $00,$00,$10,$01,$01
-                          .BYTE $00,$00,$20,$01,$01
-                          .BYTE $00,$80,<f7BCA,>f7BCA,$00
-soundGilbyJumpOnLand      .BYTE $00,$00,$00,$04,$01
-                          .BYTE $00,$00,$0F,$05,$00
-                          .BYTE $00,$00,$F9,$06,$00
-                          .BYTE $00,$00,$C0,$01,$00
-                          .BYTE $00,$00,$21,$04,$01
-                          .BYTE $00,$00,$10,$04,$02
-                          .BYTE $01,$01,$41,$01,$01
-                          .BYTE $00,$81,$30,$00,$00
-                          .BYTE $00,$80,<f7BCA,>f7BCA,$00
-pushedUpWhileOverSea      .BYTE $00,$00,$00,$04,$00
-                          .BYTE $00,$00,$00,$05,$00
-                          .BYTE $00,$00,$F9,$06,$00
-                          .BYTE $00,$00,$20,$01,$00
-                          .BYTE $00,$00,$81,$04,$01
-                          .BYTE $00,$00,$10,$01,$01
-                          .BYTE $00,$00,$10,$01,$00
-                          .BYTE $00,$00,$20,$04,$00
-                          .BYTE $00,$00,$06,$1F,$00
-                          .BYTE $01,$01,$20,$01,$02
-                          .BYTE $01,$02,$06,$01,$01
-                          .BYTE $00,$81,$06,$00,$00
-                          .BYTE $1F,$05,$01,$8E,$7B
-                          .BYTE $00,$80,<f7BCA,>f7BCA,$00
-                          .BYTE $00,$00,$00,$04,$00
-                          .BYTE $00,$00,$AD,$05,$00
-                          .BYTE $00,$00,$C0,$01,$00
-                          .BYTE $00,$00,$5D,$06,$00
-                          .BYTE $00,$00,$81,$04,$01
-                          .BYTE $00,$00,$80,$04,$01
-                          .BYTE $00,$80,<f7BCA,>f7BCA,$00
-f7BCA                     .BYTE $00,$00,$0F,$18,$01
-                          .BYTE $00,$80,<f7BCA,>f7BCA,$00
-bulletSoundEffect         .BYTE $00,$00,$10,$08,$00
-                          .BYTE $00,$00,$0F,$18,$01
-                          .BYTE $00,$00,$00,$0C,$00
-                          .BYTE $00,$00,$F0,$0D,$00
-                          .BYTE $00,$00,$00,$13,$00
-                          .BYTE $00,$00,$F0,$14,$00
-                          .BYTE $00,$00,$C0,$0F,$00
-                          .BYTE $00,$00,$21,$0B,$00
-                          .BYTE $00,$00,$21,$12,$01
-                          .BYTE $00,$00,$10,$0F,$00
-                          .BYTE $0F,$02,$01,$0F,$00
-                          .BYTE $08,$02,$01,$08,$01
-                          .BYTE $08,$05,$00,$06,$7C
-                          .BYTE $00,$00,$10,$0B,$00
-                          .BYTE $00,$00,$20,$12,$02
-                          .BYTE $00,$80,<f7BCA,>f7BCA,$00
-airborneBulletSoundEffect .BYTE $00,$00,$00,$0C,$00
-                          .BYTE $00,$00,$F0,$0D,$00
-                          .BYTE $00,$00,$00,$13,$00
-                          .BYTE $00,$00,$F0,$14,$00
-                          .BYTE $00,$00,$0F,$18,$01
-                          .BYTE $00,$00,$20,$08,$00
-                          .BYTE $00,$00,$C0,$0F,$00
-                          .BYTE $00,$00,$81,$0B,$00
-                          .BYTE $00,$00,$81,$12,$02
-                          .BYTE $08,$02,$02,$08,$00
-                          .BYTE $0F,$01,$01,$0F,$01
-                          .BYTE $00,$81,$02,$00,$00
-                          .BYTE $00,$00,$11,$0B,$00
-                          .BYTE $00,$00,$15,$12,$02
-                          .BYTE $08,$02,$04,$08,$00
-                          .BYTE $0F,$01,$02,$0F,$01
-                          .BYTE $00,$81,$10,$00,$00
-                          .BYTE $00,$00,$80,$0B,$00
-                          .BYTE $00,$00,$80,$12,$00
-                          .BYTE $00,$80,<f7BCA,>f7BCA,$00
+PLAY_SOUND = $00
+; 'Plays' the value in Byte 3 by writing it to the SID register given
+; by the offset in Byte 4.
+; Byte 1 - Unused
+; Byte 2 - $00 (PLAY_SOUND)
+; Byte 3 - Value to write to offset to $D400 given by Byte 4.
+; Byte 4 - Offset to $D400 to write to.
+; Byte 5 - '00' indicates the next record should be played immediately.
+;          '01' indicates should play no more records.
+;          Anything else indicates the next record should be stored and
+;           no more should be played for now.
+
+INC_AND_PLAY_FROM_BUFFER = $01
+; Picks a value from soundEffectBuffer using Byte 1 as an index, increments
+; it with Byte 3, and then 'plays' it to the register given by Byte 4.
+; Byte 1 - Address of byte to pick from soundEffectBuffer
+; Byte 2 - $01 (INC_AND_PLAY_FROM_BUFFER)
+; Byte 3 - Amount to increment picked byte by.
+; Byte 4 - Offset to $D400 to write to.
+; Byte 5 - '00' indicates the next record should be played immediately.
+;          '01' indicates should play no more records.
+;          Anything else indicates the next record should be stored and
+;           no more should be played for now.
+
+DEC_AND_PLAY_FROM_BUFFER = $02
+; Picks a value from soundEffectBuffer using Byte 1 as an index, decrements
+; it with Byte 3, and then 'plays' it to the register given by Byte 4.
+; Byte 1 - Address of byte to pick from soundEffectBuffer
+; Byte 2 - $02 (DEC_AND_PLAY_FROM_BUFFER)
+; Byte 3 - Amount to decrement picked byte by.
+; Byte 4 - Offset to $D400 to write to.
+; Byte 5 - '00' indicates the next record should be played immediately.
+;          '01' indicates should play no more records.
+;          Anything else indicates the next record should be stored and
+;           no more should be played for now.
+
+PLAY_LOOP = $05
+; Plays a sequence of records in a loop. Will use Byte 1 to pick a
+; value from soundEffectBuffer, decrement Byte 3 from it, play the
+; result to the offset from D400 given by Byte 1, and continue
+; looping from the address given by Bytes 4 and 5
+; until the picked value in soundEffectBuffer reaches zero.
+; Byte 1 - Address of byte to pick from soundEffectBuffer
+; Byte 2 - $05 (PLAY_LOOP)
+; Byte 3 - Amount to decrement picked byte by.
+; Byte 4 - Lo Ptr of next record to play
+; Byte 5 - Hi Ptr of next record to play
+
+LINK = $80
+; Stops playing records and just updates primarySoundEffectLoPtr/
+; primarySoundEffectHiPtr with Byes 4 and 5 that point to the record
+; to be played the next time around.
+; Byte 1 - Unused
+; Byte 2 - $80 (LINK)
+; Byte 3 - Lo Ptr of next record to play
+; Byte 4 - Hi Ptr of next record to play
+; Byte 5 - '00' indicates the next record should be played immediately.
+;          '01' indicates should play no more records.
+;          Anything else indicates the next record should be stored and
+;           no more should be played for now.
+
+REPEAT_PREVIOUS = $81
+; Repeats the previous record by the number of times given in Byte 3.
+; Byte 1 - Unused
+; Byte 2 - $81 (REPEAT_PREVIOUS)
+; Byte 3 - Number of times to play previously stored record.
+; Byte 4 - Unused
+; Byte 5 - '00' indicates the next record should be played immediately.
+;          '01' indicates should play no more records.
+;          Anything else indicates the next record should be stored and
+;           no more should be played for now.
+VOICE1_HI = $01
+VOICE1_CTRL = $04
+VOICE1_ATK_DEC = $05
+VOICE1_SUS_REL = $06
+VOICE2_HI = $08
+VOICE2_CTRL = $0B
+VOLUME = $18
+VOICE3_HI = $0F
+VOICE2_ATK_DEC = $0C
+VOICE2_SUS_REL = $0D
+VOICE3_CTRL = $12
+VOICE3_ATK_DEC = $13
+VOICE3_SUS_REL = $14
+
+gilbyWalkingSound         .BYTE $00,PLAY_SOUND,$00,VOICE1_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$00,VOICE1_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$60,VOICE1_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$40,VOICE1_HI,$00
+                          .BYTE $00,PLAY_SOUND,$81,VOICE1_CTRL,$01
+                          .BYTE $00,PLAY_SOUND,$20,VOICE1_CTRL,$01
+                          .BYTE $00,PLAY_SOUND,$10,VOICE1_HI,$01
+                          .BYTE $00,PLAY_SOUND,$20,VOICE1_HI,$01
+                          .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+soundGilbyJumpOnLand      .BYTE $00,PLAY_SOUND,$00,VOICE1_CTRL,$01
+                          .BYTE $00,PLAY_SOUND,$0F,VOICE1_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$F9,VOICE1_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$C0,VOICE1_HI,$00
+                          .BYTE $00,PLAY_SOUND,$21,VOICE1_CTRL,$01
+                          .BYTE $00,PLAY_SOUND,$10,VOICE1_CTRL,$02
+                          .BYTE $01,INC_AND_PLAY_FROM_BUFFER,$41,VOICE1_HI,$01
+                          .BYTE $00,REPEAT_PREVIOUS,$30,$00,$00
+                          .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+
+pushedUpWhileOverSea      .BYTE $00,PLAY_SOUND,$00,VOICE1_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$00,VOICE1_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$F9,VOICE1_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$20,VOICE1_HI,$00
+                          .BYTE $00,PLAY_SOUND,$81,VOICE1_CTRL,$01
+                          .BYTE $00,PLAY_SOUND,$10,VOICE1_HI,$01
+                          .BYTE $00,PLAY_SOUND,$10,VOICE1_HI,$00
+                          .BYTE $00,PLAY_SOUND,$20,VOICE1_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$06,$1F,$00
+pushedUpOverSeaLoop       .BYTE $01,INC_AND_PLAY_FROM_BUFFER,$20,VOICE1_HI,$02
+                          .BYTE $01,DEC_AND_PLAY_FROM_BUFFER,$06,VOICE1_HI,$01
+                          .BYTE $00,REPEAT_PREVIOUS,$06,$00,$00
+                          .BYTE $1F,PLAY_LOOP,$01,<pushedUpOverSeaLoop,>pushedUpOverSeaLoop
+                          .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+                          .BYTE $00,PLAY_SOUND,$00,VOICE1_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$AD,VOICE1_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$C0,VOICE1_HI,$00
+                          .BYTE $00,PLAY_SOUND,$5D,VOICE1_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$81,VOICE1_CTRL,$01
+                          .BYTE $00,PLAY_SOUND,$80,VOICE1_CTRL,$01
+                          .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+
+setVolumeToMax            .BYTE $00,PLAY_SOUND,$0F,VOLUME,$01
+                          .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+
+bulletSoundEffect         .BYTE $00,PLAY_SOUND,$10,VOICE2_HI,$00
+                          .BYTE $00,PLAY_SOUND,$0F,VOLUME,$01
+                          .BYTE $00,PLAY_SOUND,$00,VOICE2_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$F0,VOICE2_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$00,VOICE3_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$F0,VOICE3_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$C0,VOICE3_HI,$00
+                          .BYTE $00,PLAY_SOUND,$21,VOICE2_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$21,VOICE3_CTRL,$01
+                          .BYTE $00,PLAY_SOUND,$10,VOICE3_HI,$00
+bulletEffectLoop          .BYTE $0F,DEC_AND_PLAY_FROM_BUFFER,$01,VOICE3_HI,$00
+                          .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$01,VOICE2_HI,$01
+                          .BYTE $08,PLAY_LOOP,$00,<bulletEffectLoop,>bulletEffectLoop
+                          .BYTE $00,PLAY_SOUND,$10,VOICE2_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$20,VOICE3_CTRL,$02
+                          .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
+
+airborneBulletSoundEffect .BYTE $00,PLAY_SOUND,$00,VOICE2_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$F0,VOICE2_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$00,VOICE3_ATK_DEC,$00
+                          .BYTE $00,PLAY_SOUND,$F0,VOICE3_SUS_REL,$00
+                          .BYTE $00,PLAY_SOUND,$0F,VOLUME,$01
+                          .BYTE $00,PLAY_SOUND,$20,VOICE2_HI,$00
+                          .BYTE $00,PLAY_SOUND,$C0,VOICE3_HI,$00
+                          .BYTE $00,PLAY_SOUND,$81,VOICE2_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$81,VOICE3_CTRL,$02
+                          .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$02,VOICE2_HI,$00
+                          .BYTE $0F,INC_AND_PLAY_FROM_BUFFER,$01,VOICE3_HI,$01
+                          .BYTE $00,REPEAT_PREVIOUS,$02,$00,$00
+                          .BYTE $00,PLAY_SOUND,$11,VOICE2_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$15,VOICE3_CTRL,$02
+                          .BYTE $08,DEC_AND_PLAY_FROM_BUFFER,$04,VOICE2_HI,$00
+                          .BYTE $0F,INC_AND_PLAY_FROM_BUFFER,$02,VOICE3_HI,$01
+                          .BYTE $00,REPEAT_PREVIOUS,$10,$00,$00
+                          .BYTE $00,PLAY_SOUND,$80,VOICE2_CTRL,$00
+                          .BYTE $00,PLAY_SOUND,$80,VOICE3_CTRL,$00
+                          .BYTE $00,LINK,<setVolumeToMax,>setVolumeToMax,$00
 
 borderFlashControl2       .BYTE $02
 borderFlashControl1       .BYTE $01
 currentEntropy            .BYTE $00
 
 ;-------------------------------------------------------
-; ResetSoundDataPtr1
+; ResetRepetitionForPrimarySoundEffect
 ;-------------------------------------------------------
-ResetSoundDataPtr1
+ResetRepetitionForPrimarySoundEffect
         LDA #$00
-        STA tmpSoundEffectLoHiPtr3
+        STA repetitionsForPrimarySoundEffect
         RTS
 
 ;-------------------------------------------------------
-; ResetSoundDataPtr2
+; ResetRepetitionForSecondarySoundEffect
 ;-------------------------------------------------------
-ResetSoundDataPtr2
+ResetRepetitionForSecondarySoundEffect
         LDA #$00
-        STA tempSoundEffectLoHiPtr4
+        STA repetitionsForSecondarySoundEffect
 b7C96   RTS
 
 ;-------------------------------------------------------
