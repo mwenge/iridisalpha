@@ -348,7 +348,7 @@ InitializeBonusPhase
         LDA bonusPhaseCounter
         BNE bADC1
         LDA #$00
-        STA aAED0
+        STA currentOffsetToBonusMap
 
 bADC1   INC bonusPhaseCounter
 
@@ -366,7 +366,7 @@ bADDA   STA fBB1E,X
         BPL bADDA
 
         JSR sC358
-        LDA aAED0
+        LDA currentOffsetToBonusMap
         STA aAEB6
         LDA #$A0
         STA bpGilbyXPos
@@ -375,11 +375,11 @@ bADDA   STA fBB1E,X
         LDA #$01
         STA aC24E
         LDA #$00
-        STA aAEBD
+        STA offsetForScrollDown
         STA aAEC0
         STA bpBonusRoundTimer
         LDA #$F6
-        STA aAEBE
+        STA offsetForScrollUp
         LDA #$FF
         STA bpJoystickInput
         LDA #$07
@@ -460,7 +460,7 @@ bAE71   LDA #$F0
         LDA #BLUE
         STA $D023    ;Background Color 2, Multi-Color Register 1
         JSR BonusPhaseSetUpScrollingMap
-        JMP BonusRoundControlLoop
+        JMP BonusRoundSetUpMapAndLoop
 
 ;-------------------------------------------------------
 ; RegisterCollisionOnLickerShips
@@ -481,24 +481,24 @@ BP_PutRandomValueInAccumulator
         INC aAEB6
         RTS 
 
-aAEBC   .BYTE $00
-aAEBD   .BYTE $0A
-aAEBE   .BYTE $00
-aAEBF   .BYTE $00
-aAEC0   .BYTE $00
-noBonusColorArray   .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,GRAY1
+scrollLineOffset                        .BYTE $00
+offsetForScrollDown          .BYTE $0A
+offsetForScrollUp            .BYTE $00
+iBallUpdateInterval                        .BYTE $00
+aAEC0                        .BYTE $00
+noBonusColorArray            .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,GRAY1
 
-defaultLickerShipSpriteArray   .BYTE LICKER_SHIP1,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKER_SHIP1
+defaultLickerShipSpriteArray .BYTE LICKER_SHIP1,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKER_SHIP1
 
-aAED0   .BYTE $00
-bpGilbyXPos   .BYTE $A0
-bpGilbyXPosMSB   .BYTE $00
-bpMovementOnXAxis   .BYTE $00
+currentOffsetToBonusMap      .BYTE $00
+bpGilbyXPos                  .BYTE $A0
+bpGilbyXPosMSB               .BYTE $00
+bpMovementOnXAxis            .BYTE $00
 ;-------------------------------------------------------
 ; BonusPhaseFillTopLineAfterScrollDown
 ;-------------------------------------------------------
 BonusPhaseFillTopLineAfterScrollDown   
-        LDX aAEBD
+        LDX offsetForScrollDown
         LDY bonusPhaseMapOffsetArray,X
         LDA bonusPhaseMapLoPtrArray,Y
         STA bonusPhaseMapLoPtr
@@ -510,7 +510,7 @@ bAEE8   LDA (bonusPhaseMapLoPtr),Y
         STY mapOffsetTemp
         ASL 
         CLC 
-        ADC aAEBC
+        ADC scrollLineOffset
         TAY 
         LDA newLineByte1Array,Y
         STA SCREEN_RAM,X
@@ -523,11 +523,11 @@ bAEE8   LDA (bonusPhaseMapLoPtr),Y
         CPY #$14
         BNE bAEE8
 
-        LDA aAEBC
+        LDA scrollLineOffset
         BNE bAF12
 
-        INC aAEBD
-        INC aAEBE
+        INC offsetForScrollDown
+        INC offsetForScrollUp
 bAF12   RTS 
 
 ;-------------------------------------------------------
@@ -713,7 +713,7 @@ bonusPhaseMapData
 ; BonusPhaseFillBottomLineAfterScrollUp
 ;-------------------------------------------------------
 BonusPhaseFillBottomLineAfterScrollUp   
-        LDX aAEBE
+        LDX offsetForScrollUp
         LDY bonusPhaseMapOffsetArray,X
         LDA bonusPhaseMapLoPtrArray,Y
         STA bonusPhaseMapLoPtr
@@ -726,7 +726,7 @@ bB2D5   LDA (bonusPhaseMapLoPtr),Y
         STY mapOffsetTemp
         ASL 
         CLC 
-        ADC aAEBC
+        ADC scrollLineOffset
         TAY 
         LDA newLineByte1Array,Y
         STA SCREEN_RAM + LINE18_COL0,X
@@ -738,17 +738,17 @@ bB2D5   LDA (bonusPhaseMapLoPtr),Y
         INY 
         CPY #$14
         BNE bB2D5
-        LDA aAEBC
+        LDA scrollLineOffset
         BEQ bB310
-        DEC aAEBE
-        DEC aAEBD
-        LDA aAEBE
+        DEC offsetForScrollUp
+        DEC offsetForScrollDown
+        LDA offsetForScrollUp
         CMP #$FF
         BNE bB310
         LDA #$00
-        STA aAEBE
+        STA offsetForScrollUp
         LDA #$0A
-        STA aAEBD
+        STA offsetForScrollDown
 bB310   RTS 
 
 ;-------------------------------------------------------
@@ -799,14 +799,14 @@ bB313   LDA SCREEN_RAM + LINE0_COL39,X
 tempBonusMapLoPtr                              = $FD
 tempBonusMapHiPtr                               = $FE
 ;-------------------------------------------------------
-; BonusRoundControlLoop
+; BonusRoundSetUpMapAndLoop
 ;-------------------------------------------------------
-BonusRoundControlLoop   
-        LDA aAED0
+BonusRoundSetUpMapAndLoop   
+        LDA currentOffsetToBonusMap
         AND #$07
         TAX 
         JSR BonusPhaseChangeColorScheme
-        LDA aAED0
+        LDA currentOffsetToBonusMap
         AND #$0F
         TAX 
         LDA fB499,X
@@ -823,7 +823,7 @@ bB3A1   STA bonusPhaseMapOffsetArray,X
 bB3AB   JSR BP_PutRandomValueInAccumulator
         AND #$07
         PHA 
-        LDA aAED0
+        LDA currentOffsetToBonusMap
         AND #$FC
         BEQ bB3BF
 
@@ -833,9 +833,9 @@ bB3AB   JSR BP_PutRandomValueInAccumulator
         PHA 
 bB3BF   PLA 
         TAY 
-        LDA #<pBD40
+        LDA #<bonusMapOffsetSourceArray
         STA tempBonusMapLoPtr
-        LDA #>pBD40
+        LDA #>bonusMapOffsetSourceArray
         STA tempBonusMapHiPtr
         TXA 
         PHA 
@@ -852,10 +852,10 @@ bB3CF   LDA tempBonusMapLoPtr
         BNE bB3CF
 
 bB3DF   LDY #$00
-        LDA aAED0
+        LDA currentOffsetToBonusMap
         AND #$FC
         BNE bB400
-        LDA aAED0
+        LDA currentOffsetToBonusMap
         AND #$03
         BEQ bB400
         TAX 
@@ -878,18 +878,25 @@ bB402   LDA (tempBonusMapLoPtr),Y
         BNE bB402
         DEC tempHiPtr
         BNE bB3AB
+
         LDX #$09
         LDA #$00
 bB415   STA bonusPhaseMapOffsetArray,X
         DEX 
         BPL bB415
+
         JSR BonusPhaseSetUpInterruptHandler
+
         LDA #$00
-        STA aAEBF
+        STA iBallUpdateInterval
         LDA #$40
         STA lastKeyPressed
 
-bB427   NOP 
+;-------------------------------------------------------
+; BonusPhaseMainLoop   
+;-------------------------------------------------------
+BonusPhaseMainLoop   
+        NOP 
         NOP 
         NOP 
         LDA lastKeyPressed
@@ -897,9 +904,9 @@ bB427   NOP
         BEQ bB448
         LDA aBC90
         BNE bB448
-        LDA aAEBF
+        LDA iBallUpdateInterval
         EOR #$01
-        STA aAEBF
+        STA iBallUpdateInterval
         LDA #$00
         STA bpCharactersToScroll
 
@@ -912,7 +919,8 @@ bB448   LDA bpAllowedCollisionsLeft
         JMP BP_CollisionsUsedUp
 
 bB450   LDA aAEC0
-        BEQ bB427
+        BEQ BonusPhaseMainLoop
+
         JMP DisplayBonusBountyScreen
 
 ;-------------------------------------------------------
@@ -1000,18 +1008,18 @@ bB4C1   DEY
         LDA #$B8
         STA $D012    ;Raster Position
 
-        LDA aAEBF
+        LDA iBallUpdateInterval
         BEQ bB50F
 
         DEC aC425
         JSR BP_UpdateEnemyIBallPosition
         INC aC425
-        JMP jB515
+        JMP UpdateGilbyAndBackground
 
 bB50F   JSR BP_CalculateMovementOfEnemySprites
         JSR BP_UpdateBulletSprites
 
-jB515   
+UpdateGilbyAndBackground   
         JSR BP_UpdateGilbyXAndYPosition
         JSR BP_DoStuffAndUpdateBackgroundColor
         JSR BP_PlaySound
@@ -1047,9 +1055,9 @@ jB548
         LDA aB488
         AND #$07
         STA aB488
-        LDA aAEBC
+        LDA scrollLineOffset
         EOR #$01
-        STA aAEBC
+        STA scrollLineOffset
         RTS 
 
 bB559   LDA aB488
@@ -1845,7 +1853,8 @@ BP_PlaySound
 bBD3E   RTS 
 
 bpNoteToPlay   .BYTE $00
-pBD40   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+bonusMapOffsetSourceArray
+        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$15,$16,$17,$00,$00
         .BYTE $15,$16,$17,$00,$00,$14,$14,$14
         .BYTE $14,$14,$14,$14,$14,$00,$11,$11
@@ -1860,32 +1869,31 @@ pBD40   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $0F,$0F,$00,$00,$01,$01,$01,$01
         .BYTE $00,$00,$01,$01,$01,$01,$00,$00
         .BYTE $0B,$0B,$0B,$0C,$0C,$0C,$00,$00
-        .BYTE $00,$02,$03,$04,$05
-fBDBD   .BYTE $06,$07,$08,$09,$0A,$02,$03,$04
-        .BYTE $05,$05,$05,$05,$0B,$0B,$0B,$00
-        .BYTE $00,$01,$01,$00,$00,$01,$01,$00
-        .BYTE $00,$00,$00,$0E,$0D,$00,$00,$0E
-        .BYTE $0D,$00,$00,$00,$02,$03,$04,$05
-        .BYTE $08,$09,$0A,$0B,$00,$00,$00,$00
-        .BYTE $1A,$1A,$1A,$18,$18,$18,$18,$00
-        .BYTE $00,$00,$1A,$1A,$1A,$19,$19,$19
-        .BYTE $19,$00,$00,$18,$18,$00,$00,$00
-        .BYTE $00,$19,$19,$00,$00,$1B,$1B,$00
-        .BYTE $00,$15,$16,$17,$00,$15,$16,$17
-        .BYTE $1D,$1D,$15,$16,$17,$1D,$1D,$14
-        .BYTE $14,$1E,$1E,$00,$00,$15,$16,$17
-        .BYTE $00,$00,$0B,$0B,$0B,$15,$16,$17
-        .BYTE $15,$16,$17,$00,$00,$1D,$1D,$1D
-        .BYTE $1D,$1E,$1E,$1E,$1E,$00,$00,$20
-        .BYTE $1F,$20,$1F,$00,$00,$11,$11,$00
-        .BYTE $00,$20,$1F,$20,$1F,$20,$1F,$20
-        .BYTE $1F,$00,$1E,$1E,$1E,$20,$1F,$1D
-        .BYTE $1D,$1D,$00,$00,$0C,$0C,$0C,$15
-        .BYTE $16,$17,$00,$00,$00,$00,$02,$03
-        .BYTE $04,$05,$08,$09,$0A,$0B,$00,$00
-        .BYTE $00,$06,$06,$06,$11,$11,$11,$00
-        .BYTE $00,$00,$00,$0F,$0F,$15,$16,$17
-        .BYTE $15,$16,$17
+        .BYTE $00,$02,$03,$04,$05,$06,$07,$08
+        .BYTE $09,$0A,$02,$03,$04,$05,$05,$05
+        .BYTE $05,$0B,$0B,$0B,$00,$00,$01,$01
+        .BYTE $00,$00,$01,$01,$00,$00,$00,$00
+        .BYTE $0E,$0D,$00,$00,$0E,$0D,$00,$00
+        .BYTE $00,$02,$03,$04,$05,$08,$09,$0A
+        .BYTE $0B,$00,$00,$00,$00,$1A,$1A,$1A
+        .BYTE $18,$18,$18,$18,$00,$00,$00,$1A
+        .BYTE $1A,$1A,$19,$19,$19,$19,$00,$00
+        .BYTE $18,$18,$00,$00,$00,$00,$19,$19
+        .BYTE $00,$00,$1B,$1B,$00,$00,$15,$16
+        .BYTE $17,$00,$15,$16,$17,$1D,$1D,$15
+        .BYTE $16,$17,$1D,$1D,$14,$14,$1E,$1E
+        .BYTE $00,$00,$15,$16,$17,$00,$00,$0B
+        .BYTE $0B,$0B,$15,$16,$17,$15,$16,$17
+        .BYTE $00,$00,$1D,$1D,$1D,$1D,$1E,$1E
+        .BYTE $1E,$1E,$00,$00,$20,$1F,$20,$1F
+        .BYTE $00,$00,$11,$11,$00,$00,$20,$1F
+        .BYTE $20,$1F,$20,$1F,$20,$1F,$00,$1E
+        .BYTE $1E,$1E,$20,$1F,$1D,$1D,$1D,$00
+        .BYTE $00,$0C,$0C,$0C,$15,$16,$17,$00
+        .BYTE $00,$00,$00,$02,$03,$04,$05,$08
+        .BYTE $09,$0A,$0B,$00,$00,$00,$06,$06
+        .BYTE $06,$11,$11,$11,$00,$00,$00,$00
+        .BYTE $0F,$0F,$15,$16,$17,$15,$16,$17
 ;-------------------------------------------------------
 ; BP_ReactToGilbyCollidingWithWall
 ;-------------------------------------------------------
@@ -2131,7 +2139,7 @@ DisplayBonusBountyScreen
         STA $0315    ;IRQ
         LDA #$00
         STA bpCurrentBonusBountyIBallColumn
-        INC aAED0
+        INC currentOffsetToBonusMap
         INC incrementLives
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         LDA $D011    ;VIC Control Register 1
@@ -2439,9 +2447,9 @@ seedForIBallXPosMSBArray   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-aC353   .BYTE $00
-aC354   .BYTE $00
-aC355   .BYTE $00
+randomIBallXPos   .BYTE $00
+randomIBallYPos   .BYTE $00
+randomIBallMSBXPos   .BYTE $00
 aC356   .BYTE $00
 aC357   .BYTE $01
 ;-------------------------------------------------------
@@ -2460,11 +2468,11 @@ bC35E   LDA aC356
 bC367   INC aC356
 
         JSR BP_PutRandomValueInAccumulator
-        STA aC353
+        STA randomIBallXPos
         LDA #>currentShipWaveDataLoPtr
-        STA aC355
+        STA randomIBallMSBXPos
         LDA #<currentShipWaveDataLoPtr
-        STA aC354
+        STA randomIBallYPos
 
         JSR sC380
         JMP RefreshRandomIBallMovementArrays
@@ -2492,9 +2500,9 @@ RefreshRandomIBallMovementArrays
         LDX #$3F
 bC399   LDA #$00
         STA seedForIBallXPosMSBArray,X
-        LDA aC353
+        LDA randomIBallXPos
         STA iBallXPosArray,X
-        LDA aC354
+        LDA randomIBallYPos
         STA iBallYPosArray,X
         DEX 
         BPL bC399
@@ -2605,39 +2613,39 @@ bC476   LDA aC423
         BMI bC48F
 
         CLC 
-        ADC aC353
-        STA aC353
+        ADC randomIBallXPos
+        STA randomIBallXPos
         LDA #$00
-        ADC aC355
+        ADC randomIBallMSBXPos
         AND #$01
-        STA aC355
+        STA randomIBallMSBXPos
         JMP jC4B2
 
 bC48F   EOR #$FF
         STA a77
         INC a77
 
-        LDA aC353
+        LDA randomIBallXPos
         SEC 
         SBC a77
-        STA aC353
+        STA randomIBallXPos
 
-        LDA aC355
+        LDA randomIBallMSBXPos
         SBC #$00
         CMP #$FF
         BNE bC4AF
 
         LDA #$00
         STA aC423
-        STA aC353
+        STA randomIBallXPos
 
-bC4AF   STA aC355
+bC4AF   STA randomIBallMSBXPos
 
 jC4B2   
-        LDA aC354
+        LDA randomIBallYPos
         CLC 
         ADC aC424
-        STA aC354
+        STA randomIBallYPos
         AND #$F0
         CMP #$20
         BNE bC4D4
@@ -2646,7 +2654,7 @@ jC4B2
         STA aC424
         INC aC424
         LDA #$30
-        STA aC354
+        STA randomIBallYPos
         BNE bC4E8
 bC4D4   CMP #$B0
         BNE bC4E8
@@ -2655,7 +2663,7 @@ bC4D4   CMP #$B0
         STA aC424
         INC aC424
         LDA #$AF
-        STA aC354
+        STA randomIBallYPos
 bC4E8   LDA aC676
         BEQ RecalculateIBallXYPositions
         JSR sC677
@@ -2665,11 +2673,11 @@ bC4E8   LDA aC676
 ;-------------------------------------------------------
 RecalculateIBallXYPositions   
         LDX aC425
-        LDA aC353
+        LDA randomIBallXPos
         STA iBallXPosArray,X
-        LDA aC354
+        LDA randomIBallYPos
         STA iBallYPosArray,X
-        LDA aC355
+        LDA randomIBallMSBXPos
         STA seedForIBallXPosMSBArray,X
         INX 
         TXA 
@@ -2740,7 +2748,7 @@ bpCurrentIBallSpriteFrame   .BYTE $C8,$02,$06,$07,$04
 ;-------------------------------------------------------
 sC57D   
         LDA #$70
-        CMP aC354
+        CMP randomIBallYPos
         BMI bC591
         LDA aC424
         CMP aC3BE
@@ -2764,9 +2772,9 @@ bC5A4   RTS
 ; sC5A5
 ;-------------------------------------------------------
 sC5A5   
-        LDA aC355
+        LDA randomIBallMSBXPos
         ROR 
-        LDA aC353
+        LDA randomIBallXPos
         ROR 
         STA a77
         LDA bpGilbyXPosMSB
@@ -2829,7 +2837,7 @@ bC60C   RTS
 ;-------------------------------------------------------
 sC60D   
         SEC 
-        SBC aC354
+        SBC randomIBallYPos
         BPL bC618
         EOR #$FF
         CLC 
@@ -2841,9 +2849,9 @@ bC618   CMP #$10
         LDA fBB1B,X
         ROR 
         STA a77
-        LDA aC355
+        LDA randomIBallMSBXPos
         ROR 
-        LDA aC353
+        LDA randomIBallXPos
         ROR 
         SEC 
         SBC a77
@@ -2898,9 +2906,9 @@ bC68D   RTS
 BP_FollowGilbyMovement   
         LDA aC676
         BNE bC68D
-        LDA aC355
+        LDA randomIBallMSBXPos
         ROR 
-        LDA aC353
+        LDA randomIBallXPos
         ROR 
         STA a77
         LDA bpGilbyXPosMSB
@@ -2915,7 +2923,7 @@ BP_FollowGilbyMovement
         ADC #$01
 bC6AF   CMP #$0C
         BPL bC68D
-        LDA aC354
+        LDA randomIBallYPos
         SEC 
         SBC #$70
         BPL bC6C0
