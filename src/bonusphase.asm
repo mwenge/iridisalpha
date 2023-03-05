@@ -84,15 +84,15 @@ bAB77   LDA aAD23
 
 txtStandByEnterBonusPhase   =*-$01
         .TEXT "STAND BY TO ENTER BONUS PHASE, HOTSHOT.."
-bpRasterPositionArray   .BYTE $01,$01,$01,$01,$02,$02,$02,$02
-        .BYTE $03,$03,$03,$03,$04,$04,$04,$04
-        .BYTE $05,$05,$05,$05,$06,$06,$06,$06
-        .BYTE $07,$07,$07,$07,$07,$07,$00
+bpRasterPositionArray     .BYTE $01,$01,$01,$01,$02,$02,$02,$02
+                          .BYTE $03,$03,$03,$03,$04,$04,$04,$04
+                          .BYTE $05,$05,$05,$05,$06,$06,$06,$06
+                          .BYTE $07,$07,$07,$07,$07,$07,$00
 enterBPBackgroundColors   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00
-backgroundColorIndex   .BYTE $00
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                          .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+                          .BYTE $00,$00,$00,$00,$00,$00,$00
+backgroundColorIndex      .BYTE $00
 ;-------------------------------------------------------
 ; EnterBonusPhaseInterruptHandler   
 ;-------------------------------------------------------
@@ -454,9 +454,10 @@ bAE71   LDA #$F0
         AND #$EF
         ORA #$10
         STA $D016    ;VIC Control Register 2
-        LDA #$07
+
+        LDA #YELLOW
         STA $D022    ;Background Color 1, Multi-Color Register 0
-        LDA #$06
+        LDA #BLUE
         STA $D023    ;Background Color 2, Multi-Color Register 1
         JSR BonusPhaseSetUpScrollingMap
         JMP BonusRoundControlLoop
@@ -485,8 +486,10 @@ aAEBD   .BYTE $0A
 aAEBE   .BYTE $00
 aAEBF   .BYTE $00
 aAEC0   .BYTE $00
-fAEC1   .BYTE $0B,$0C,$0F,$01,$0F,$0C,$0B
-defaultLickerShipSpriteArray   .BYTE $F6,$F7,$F8,$F7,$F7,$F8,$F7,$F6
+noBonusColorArray   .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,GRAY1
+
+defaultLickerShipSpriteArray   .BYTE LICKER_SHIP1,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKER_SHIP1
+
 aAED0   .BYTE $00
 bpGilbyXPos   .BYTE $A0
 bpGilbyXPosMSB   .BYTE $00
@@ -496,22 +499,22 @@ bpMovementOnXAxis   .BYTE $00
 ;-------------------------------------------------------
 BonusPhaseFillTopLineAfterScrollDown   
         LDX aAEBD
-        LDY bonusPhaseMapOffset,X
-        LDA bonusPhaseMapPtrLo,Y
-        STA planetPtrLo2
-        LDA bonusPhaseMapPtrHi,Y
-        STA planetPtrHi2
+        LDY bonusPhaseMapOffsetArray,X
+        LDA bonusPhaseMapLoPtrArray,Y
+        STA bonusPhaseMapLoPtr
+        LDA bonusPhaseMapHiPtrArray,Y
+        STA bonusPhaseMapHiPtr
         LDY #$00
         LDX #$00
-bAEE8   LDA (planetPtrLo2),Y
+bAEE8   LDA (bonusPhaseMapLoPtr),Y
         STY mapOffsetTemp
         ASL 
         CLC 
         ADC aAEBC
         TAY 
-        LDA fAFB4,Y
+        LDA newLineByte1Array,Y
         STA SCREEN_RAM,X
-        LDA fAFE6,Y
+        LDA newLineByte2Array,Y
         STA SCREEN_RAM + LINE0_COL1,X
         LDY mapOffsetTemp
         INX 
@@ -604,14 +607,16 @@ bAFA4   STA COLOR_RAM + LINE0_COL0,X
         BNE bAFA4
         RTS 
 
-fAFB4   .BYTE $40,$41,$44,$47,$48,$49,$4F,$4D
+newLineByte1Array
+        .BYTE $40,$41,$44,$47,$48,$49,$4F,$4D
         .BYTE $50,$51,$54,$56,$5B,$59,$5C,$5D
         .BYTE $60,$61,$64,$65,$68,$69,$47,$47
         .BYTE $4E,$4E,$57,$57,$5D,$5D,$20,$20
         .BYTE $5D,$45,$4B,$47,$4C,$5D,$4E,$52
         .BYTE $7C,$7D,$6C,$6D,$70,$71,$74,$75
         .BYTE $78,$79
-fAFE6   .BYTE $42,$43,$46,$47,$4A,$48,$4E,$4F
+newLineByte2Array   
+        .BYTE $42,$43,$46,$47,$4A,$48,$4E,$4F
         .BYTE $51,$53,$56,$57,$5A,$5B,$5E,$5C
         .BYTE $61,$63,$66,$67,$6A,$6B,$47,$47
         .BYTE $4E,$4E,$57,$57,$5D,$5D,$20,$20
@@ -620,7 +625,8 @@ fAFE6   .BYTE $42,$43,$46,$47,$4A,$48,$4E,$4F
         .BYTE $7A,$7B,$FF,$FF,$FF,$FF,$FF,$FF
         .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
         .BYTE $FF,$FF,$FF,$FF,$FF,$FF
-BonusPhaseMapData   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+bonusPhaseMapData   
+        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$0D,$0D,$0E,$0E
         .BYTE $0E,$0E,$0E,$00,$00,$0B,$0B,$00
@@ -708,22 +714,23 @@ BonusPhaseMapData   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
 ;-------------------------------------------------------
 BonusPhaseFillBottomLineAfterScrollUp   
         LDX aAEBE
-        LDY bonusPhaseMapOffset,X
-        LDA bonusPhaseMapPtrLo,Y
-        STA planetPtrLo2
-        LDA bonusPhaseMapPtrHi,Y
-        STA planetPtrHi2
+        LDY bonusPhaseMapOffsetArray,X
+        LDA bonusPhaseMapLoPtrArray,Y
+        STA bonusPhaseMapLoPtr
+        LDA bonusPhaseMapHiPtrArray,Y
+        STA bonusPhaseMapHiPtr
+
         LDY #$00
         LDX #$00
-bB2D5   LDA (planetPtrLo2),Y
+bB2D5   LDA (bonusPhaseMapLoPtr),Y
         STY mapOffsetTemp
         ASL 
         CLC 
         ADC aAEBC
         TAY 
-        LDA fAFB4,Y
+        LDA newLineByte1Array,Y
         STA SCREEN_RAM + LINE18_COL0,X
-        LDA fAFE6,Y
+        LDA newLineByte2Array,Y
         STA SCREEN_RAM + LINE18_COL1,X
         LDY mapOffsetTemp
         INX 
@@ -789,6 +796,8 @@ bB313   LDA SCREEN_RAM + LINE0_COL39,X
         BNE bB313
         RTS 
 
+tempBonusMapLoPtr                              = $FD
+tempBonusMapHiPtr                               = $FE
 ;-------------------------------------------------------
 ; BonusRoundControlLoop
 ;-------------------------------------------------------
@@ -806,7 +815,7 @@ BonusRoundControlLoop
         STA bpCharactersToScroll
         LDX #$00
         LDA #$10
-bB3A1   STA bonusPhaseMapOffset,X
+bB3A1   STA bonusPhaseMapOffsetArray,X
         DEX 
         BNE bB3A1
         LDA #$19
@@ -817,6 +826,7 @@ bB3AB   JSR BP_PutRandomValueInAccumulator
         LDA aAED0
         AND #$FC
         BEQ bB3BF
+
         PLA 
         JSR BP_PutRandomValueInAccumulator
         AND #$1F
@@ -824,22 +834,23 @@ bB3AB   JSR BP_PutRandomValueInAccumulator
 bB3BF   PLA 
         TAY 
         LDA #<pBD40
-        STA tempHiPtr1
+        STA tempBonusMapLoPtr
         LDA #>pBD40
-        STA tempLoPtr
+        STA tempBonusMapHiPtr
         TXA 
         PHA 
         CPY #$00
         BEQ bB3DF
-bB3CF   LDA tempHiPtr1
+bB3CF   LDA tempBonusMapLoPtr
         CLC 
         ADC #$0A
-        STA tempHiPtr1
-        LDA tempLoPtr
+        STA tempBonusMapLoPtr
+        LDA tempBonusMapHiPtr
         ADC #$00
-        STA tempLoPtr
+        STA tempBonusMapHiPtr
         DEY 
         BNE bB3CF
+
 bB3DF   LDY #$00
         LDA aAED0
         AND #$FC
@@ -848,19 +859,19 @@ bB3DF   LDY #$00
         AND #$03
         BEQ bB400
         TAX 
-bB3F0   LDA tempHiPtr1
+bB3F0   LDA tempBonusMapLoPtr
         CLC 
         ADC #$50
-        STA tempHiPtr1
-        LDA tempLoPtr
+        STA tempBonusMapLoPtr
+        LDA tempBonusMapHiPtr
         ADC #$00
-        STA tempLoPtr
+        STA tempBonusMapHiPtr
         DEX 
         BNE bB3F0
 bB400   PLA 
         TAX 
-bB402   LDA (tempHiPtr1),Y
-        STA bonusPhaseMapOffset,X
+bB402   LDA (tempBonusMapLoPtr),Y
+        STA bonusPhaseMapOffsetArray,X
         INY 
         INX 
         CPY #$0A
@@ -869,7 +880,7 @@ bB402   LDA (tempHiPtr1),Y
         BNE bB3AB
         LDX #$09
         LDA #$00
-bB415   STA bonusPhaseMapOffset,X
+bB415   STA bonusPhaseMapOffsetArray,X
         DEX 
         BPL bB415
         JSR BonusPhaseSetUpInterruptHandler
@@ -930,7 +941,7 @@ BonusPhaseSetUpInterruptHandler
 BonusPhaseInterruptHandler
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
-        BNE bB4AA
+        BNE BonusPhaseRasterInterruptHandler
         PLA 
         TAY 
         PLA 
@@ -946,7 +957,11 @@ fB499   .BYTE $A0,$80,$60,$50,$48,$40,$30,$28
         .BYTE $20,$18,$10,$0C,$08,$04,$02,$01
 aB4A9   .BYTE $00
 
-bB4AA   NOP 
+;-------------------------------------------------------
+; BonusPhaseRasterInterruptHandler   
+;-------------------------------------------------------
+BonusPhaseRasterInterruptHandler   
+        NOP 
         NOP 
         NOP 
         LDA $D011    ;VIC Control Register 1
@@ -1173,34 +1188,36 @@ BP_CI_Exit
 
 bB641   RTS 
 
+bonusPhaseMapLoPtr                            = $35
+bonusPhaseMapHiPtr                            = $36
 ;-------------------------------------------------------
 ; BonusPhaseSetUpScrollingMap
 ;-------------------------------------------------------
 BonusPhaseSetUpScrollingMap   
-        LDA #<BonusPhaseMapData
-        STA planetPtrLo2
-        LDA #>BonusPhaseMapData
-        STA planetPtrHi2
+        LDA #<bonusPhaseMapData
+        STA bonusPhaseMapLoPtr
+        LDA #>bonusPhaseMapData
+        STA bonusPhaseMapHiPtr
 
         LDX #$00
-bB64C   LDA planetPtrLo2
-        STA bonusPhaseMapPtrLo,X
-        LDA planetPtrHi2
-        STA bonusPhaseMapPtrHi,X
-        LDA planetPtrLo2
+bB64C   LDA bonusPhaseMapLoPtr
+        STA bonusPhaseMapLoPtrArray,X
+        LDA bonusPhaseMapHiPtr
+        STA bonusPhaseMapHiPtrArray,X
+        LDA bonusPhaseMapLoPtr
         CLC 
         ADC #$14
-        STA planetPtrLo2
-        LDA planetPtrHi2
+        STA bonusPhaseMapLoPtr
+        LDA bonusPhaseMapHiPtr
         ADC #$00
-        STA planetPtrHi2
+        STA bonusPhaseMapHiPtr
         INX 
         CPX #$C8
         BNE bB64C
 
         LDX #$00
         TXA 
-bB66B   STA bonusPhaseMapOffset,X
+bB66B   STA bonusPhaseMapOffsetArray,X
         DEX 
         BNE bB66B
 
@@ -1210,7 +1227,7 @@ fB671   RTS
 fB679               .BYTE $0A,$C0,$C1,$C2,$C3,$C4,$C5,$C6
                     .BYTE $C7
 aB682               .BYTE $C0
-bonusPhaseMapPtrLo  .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+bonusPhaseMapLoPtrArray  .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -1235,7 +1252,7 @@ bonusPhaseMapPtrLo  .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-bonusPhaseMapPtrHi  .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+bonusPhaseMapHiPtrArray  .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -1260,7 +1277,7 @@ bonusPhaseMapPtrHi  .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-bonusPhaseMapOffset .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+bonusPhaseMapOffsetArray .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
@@ -1387,21 +1404,21 @@ bB9A9   CMP #$A0
 ;-------------------------------------------------------
 BP_Init_ScreenLinePointerArray
         LDA #>SCREEN_RAM
-        STA planetPtrHi2
+        STA bonusPhaseMapHiPtr
         LDA #<SCREEN_RAM
-        STA planetPtrLo2
+        STA bonusPhaseMapLoPtr
         TAX 
-bB9C2   LDA planetPtrLo2
+bB9C2   LDA bonusPhaseMapLoPtr
         STA screenLinePtrLo,X
-        LDA planetPtrHi2
+        LDA bonusPhaseMapHiPtr
         STA screenLinePtrHi,X
-        LDA planetPtrLo2
+        LDA bonusPhaseMapLoPtr
         CLC 
         ADC #$28
-        STA planetPtrLo2
-        LDA planetPtrHi2
+        STA bonusPhaseMapLoPtr
+        LDA bonusPhaseMapHiPtr
         ADC #$00
-        STA planetPtrHi2
+        STA bonusPhaseMapHiPtr
         INX 
         CPX #$1E
         BNE bB9C2
@@ -1992,19 +2009,19 @@ bBF41   LDA defaultLickerShipSpriteArray,X
         JSR ClearScreen
         LDY #$27
 bBF4F   LDX #$06
-bBF51   LDA fBFAA,X
-        STA tempHiPtr1
-        LDA fBFB1,X
-        STA tempLoPtr
-        LDA fC019,Y
+bBF51   LDA bonusTextScreenPosLoPtArray,X
+        STA tempBonusMapLoPtr
+        LDA bonusTextScreenPosHiPtrArray,X
+        STA tempBonusMapHiPtr
+        LDA txtSorryNoBonus,Y
         AND #$3F
-        STA (tempHiPtr1),Y
-        LDA tempLoPtr
+        STA (tempBonusMapLoPtr),Y
+        LDA tempBonusMapHiPtr
         CLC 
         ADC #$D4
-        STA tempLoPtr
-        LDA fAEC1,X
-        STA (tempHiPtr1),Y
+        STA tempBonusMapHiPtr
+        LDA noBonusColorArray,X
+        STA (tempBonusMapLoPtr),Y
         DEX 
         BPL bBF51
         DEY 
@@ -2031,10 +2048,10 @@ bBF88   LDA MainControlLoop,X
         BNE bBF86
         JMP SwapSpriteData
 
-bpBonusBountyIBallYPosArray   .BYTE $30,$4C,$68,$84,$A0,$BC,$D8,$00
-aBFA9   .BYTE $00
-fBFAA   .BYTE $A0,$C8,$F0,$18,$40,$68,$90
-fBFB1   .BYTE $04,$04,$04,$05,$05,$05,$05
+bpBonusBountyIBallYPosArray  .BYTE $30,$4C,$68,$84,$A0,$BC,$D8,$00
+aBFA9                        .BYTE $00
+bonusTextScreenPosLoPtArray  .BYTE $A0,$C8,$F0,$18,$40,$68,$90
+bonusTextScreenPosHiPtrArray .BYTE $04,$04,$04,$05,$05,$05,$05
 
 ;-------------------------------------------------------------------
 ; CollisionsUsedUpInterrupt
@@ -2102,7 +2119,7 @@ bC015   DEX
         BPL bC006
         RTS 
 
-fC019   .TEXT " % % \ \  SORRY!!   NO BONUS!!  \ \ % % "
+txtSorryNoBonus   .TEXT " % % \ \  SORRY!!   NO BONUS!!  \ \ % % "
 ;-------------------------------------------------------
 ; DisplayBonusBountyScreen
 ;-------------------------------------------------------
@@ -2131,19 +2148,19 @@ DisplayBonusBountyScreen
         JSR ClearScreen
         LDY #$27
 bC07C   LDX #$06
-bC07E   LDA fBFAA,X
-        STA tempHiPtr1
-        LDA fBFB1,X
-        STA tempLoPtr
+bC07E   LDA bonusTextScreenPosLoPtArray,X
+        STA tempBonusMapLoPtr
+        LDA bonusTextScreenPosHiPtrArray,X
+        STA tempBonusMapHiPtr
         LDA txtCongoatulations,Y
         AND #$3F
-        STA (tempHiPtr1),Y
-        LDA tempLoPtr
+        STA (tempBonusMapLoPtr),Y
+        LDA tempBonusMapHiPtr
         CLC 
         ADC #$D4
-        STA tempLoPtr
+        STA tempBonusMapHiPtr
         LDA fB489,X
-        STA (tempHiPtr1),Y
+        STA (tempBonusMapLoPtr),Y
         DEX 
         BPL bC07E
         LDA #$20
@@ -2398,7 +2415,7 @@ bC289   LDA SCREEN_RAM + LINE18_COL22,X
         BPL bC289
         RTS 
 
-fC293   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+iBallXPosArray   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -2406,7 +2423,7 @@ fC293   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-fC2D3   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+iBallYPosArray   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -2414,7 +2431,7 @@ fC2D3   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-fC313   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+seedForIBallXPosMSBArray   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00
@@ -2450,7 +2467,7 @@ bC367   INC aC356
         STA aC354
 
         JSR sC380
-        JMP jC397
+        JMP RefreshRandomIBallMovementArrays
 
 ;-------------------------------------------------------
 ; sC380
@@ -2469,16 +2486,16 @@ sC380
         RTS 
 
 ;-------------------------------------------------------
-; jC397
+; RefreshRandomIBallMovementArrays
 ;-------------------------------------------------------
-jC397   
+RefreshRandomIBallMovementArrays   
         LDX #$3F
 bC399   LDA #$00
-        STA fC313,X
+        STA seedForIBallXPosMSBArray,X
         LDA aC353
-        STA fC293,X
+        STA iBallXPosArray,X
         LDA aC354
-        STA fC2D3,X
+        STA iBallYPosArray,X
         DEX 
         BPL bC399
         LDA #$01
@@ -2508,7 +2525,7 @@ bC3D5   LDA aC356
         BEQ bC3BC
         CMP #$01
         BNE bC426
-        JSR sC4F0
+        JSR RecalculateIBallXYPositions
         INC aC356
         LDA #$00
         STA aC423
@@ -2640,20 +2657,20 @@ bC4D4   CMP #$B0
         LDA #$AF
         STA aC354
 bC4E8   LDA aC676
-        BEQ sC4F0
+        BEQ RecalculateIBallXYPositions
         JSR sC677
 
 ;-------------------------------------------------------
-; sC4F0
+; RecalculateIBallXYPositions
 ;-------------------------------------------------------
-sC4F0   
+RecalculateIBallXYPositions   
         LDX aC425
         LDA aC353
-        STA fC293,X
+        STA iBallXPosArray,X
         LDA aC354
-        STA fC2D3,X
+        STA iBallYPosArray,X
         LDA aC355
-        STA fC313,X
+        STA seedForIBallXPosMSBArray,X
         INX 
         TXA 
         PHA 
@@ -2668,7 +2685,8 @@ sC4F0
 ;-------------------------------------------------------
 BP_UpdateEnemyIBallPosition   
         LDX #$00
-bC514   TXA 
+UpdateIBallPosLoop   
+        TXA 
         ASL 
         TAY 
         LDA #$00
@@ -2684,38 +2702,38 @@ bC526   LDA bpCurrentIBallSpriteFrame
         PHA 
         LDA aC425
         SEC 
-        SBC fC574,X
+        SBC currIBallIndexToXYPosArrays,X
         AND #$3F
         TAX 
-        LDA fC293,X
+        LDA iBallXPosArray,X
         STA $D008,Y  ;Sprite 4 X Pos
-        LDA fC2D3,X
+        LDA iBallYPosArray,X
         STA $D009,Y  ;Sprite 4 Y Pos
-        LDA fC313,X
+        LDA seedForIBallXPosMSBArray,X
         STA a77
         PLA 
         TAX 
         LDA a77
         BEQ bC560
-        LDA fC56C,X
+        LDA iBallXPosMSBArray,X
         ORA $D010    ;Sprites 0-7 MSB of X coordinate
         STA $D010    ;Sprites 0-7 MSB of X coordinate
 
-jC558   
+UpdateIBallXPosMSBLoop   
         INX 
         CPX #$04
-        BNE bC514
+        BNE UpdateIBallPosLoop
 
         JMP BP_UpdateCurrentIBallSpriteFrame
 
 bC560   LDA $D010    ;Sprites 0-7 MSB of X coordinate
-        AND fC570,X
+        AND iBallXPosMSBAdjustArray,X
         STA $D010    ;Sprites 0-7 MSB of X coordinate
-        JMP jC558
+        JMP UpdateIBallXPosMSBLoop
 
-fC56C   .BYTE $10,$20,$40,$80
-fC570   .BYTE $EF,$DF,$BF,$7F
-fC574   .BYTE $00,$03,$06,$09
+iBallXPosMSBArray           .BYTE $10,$20,$40,$80
+iBallXPosMSBAdjustArray     .BYTE $EF,$DF,$BF,$7F
+currIBallIndexToXYPosArrays .BYTE $00,$03,$06,$09
 bpCurrentIBallSpriteFrame   .BYTE $C8,$02,$06,$07,$04
 ;-------------------------------------------------------
 ; sC57D
