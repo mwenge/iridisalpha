@@ -375,11 +375,11 @@ bADDA   STA fBB1E,X
         LDA #$01
         STA aC24E
         LDA #$00
-        STA offsetForScrollDown
+        STA offsetForScrollUp
         STA aAEC0
         STA bpBonusRoundTimer
         LDA #$F6
-        STA offsetForScrollUp
+        STA offsetForScrollDown
         LDA #$FF
         STA bpJoystickInput
         LDA #$07
@@ -482,8 +482,8 @@ BP_PutRandomValueInAccumulator
         RTS 
 
 scrollLineOffset                        .BYTE $00
-offsetForScrollDown          .BYTE $0A
-offsetForScrollUp            .BYTE $00
+offsetForScrollUp          .BYTE $0A
+offsetForScrollDown            .BYTE $00
 iBallUpdateInterval                        .BYTE $00
 aAEC0                        .BYTE $00
 noBonusColorArray            .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,GRAY1
@@ -495,15 +495,16 @@ bpGilbyXPos                  .BYTE $A0
 bpGilbyXPosMSB               .BYTE $00
 bpMovementOnXAxis            .BYTE $00
 ;-------------------------------------------------------
-; BonusPhaseFillTopLineAfterScrollDown
+; BonusPhaseFillTopLineAfterScrollUp
 ;-------------------------------------------------------
-BonusPhaseFillTopLineAfterScrollDown   
-        LDX offsetForScrollDown
+BonusPhaseFillTopLineAfterScrollUp   
+        LDX offsetForScrollUp
         LDY bonusPhaseMapOffsetArray,X
         LDA bonusPhaseMapLoPtrArray,Y
         STA bonusPhaseMapLoPtr
         LDA bonusPhaseMapHiPtrArray,Y
         STA bonusPhaseMapHiPtr
+
         LDY #$00
         LDX #$00
 bAEE8   LDA (bonusPhaseMapLoPtr),Y
@@ -526,14 +527,14 @@ bAEE8   LDA (bonusPhaseMapLoPtr),Y
         LDA scrollLineOffset
         BNE bAF12
 
-        INC offsetForScrollDown
         INC offsetForScrollUp
+        INC offsetForScrollDown
 bAF12   RTS 
 
 ;-------------------------------------------------------
-; BonusRoundScrollDown
+; BonusRoundScrollUp
 ;-------------------------------------------------------
-BonusRoundScrollDown   
+BonusRoundScrollUp   
         LDX #$28
 bAF15   LDA SCREEN_RAM + LINE16_COL39,X
         STA SCREEN_RAM + LINE17_COL39,X
@@ -622,98 +623,58 @@ newLineByte2Array
         .BYTE $4E,$4E,$57,$57,$5D,$5D,$20,$20
         .BYTE $45,$47,$57,$4B,$4E,$4C,$52,$57
         .BYTE $7E,$7F,$6E,$6F,$72,$73,$76,$77
-        .BYTE $7A,$7B,$FF,$FF,$FF,$FF,$FF,$FF
+        .BYTE $7A,$7B
+
         .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-        .BYTE $FF,$FF,$FF,$FF,$FF,$FF
-bonusPhaseMapData   
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$0D,$0D,$0E,$0E
-        .BYTE $0E,$0E,$0E,$00,$00,$0B,$0B,$00
-        .BYTE $00,$0D,$0D,$0D,$0D,$0D,$0E,$0E
-        .BYTE $10,$0B,$0B,$0B,$0B,$0B,$0B,$0B
-        .BYTE $0B,$11,$10,$0B,$0B,$0B,$0B,$0B
-        .BYTE $0B,$0B,$0B,$11,$0E,$10,$0B,$0B
-        .BYTE $0B,$0B,$0B,$0B,$11,$0D,$0E,$10
-        .BYTE $0B,$0B,$0B,$0B,$0B,$0B,$11,$0D
-        .BYTE $0E,$0E,$10,$0B,$0B,$0B,$0B,$11
-        .BYTE $0D,$0D,$0E,$0E,$10,$0B,$0B,$0B
-        .BYTE $0B,$11,$0D,$0D,$0E,$0E,$0E,$00
-        .BYTE $00,$00,$00,$0D,$0D,$0D,$0E,$0E
-        .BYTE $0E,$00,$00,$00,$00,$0D,$0D,$0D
-        .BYTE $0E,$0E,$0E,$00,$0A,$0A,$00,$0D
-        .BYTE $0D,$0D,$0E,$0E,$0E,$00,$0A,$0A
-        .BYTE $00,$0D,$0D,$0D,$0E,$0E,$0E,$00
-        .BYTE $09,$09,$00,$0D,$0D,$0D,$0E,$0E
-        .BYTE $0E,$00,$09,$09,$00,$0D,$0D,$0D
-        .BYTE $0E,$0E,$12,$0C,$0C,$0C,$0C,$13
-        .BYTE $0D,$0D,$0E,$0E,$12,$0C,$0C,$0C
-        .BYTE $0C,$13,$0D,$0D,$0E,$07,$00,$00
-        .BYTE $15,$15,$00,$00,$05,$0D,$0E,$07
-        .BYTE $00,$00,$15,$15,$00,$00,$05,$0D
-        .BYTE $07,$0F,$00,$00,$15,$15,$00,$00
-        .BYTE $0F,$05,$07,$0F,$00,$00,$15,$15
-        .BYTE $00,$00,$0F,$05,$17,$17,$00,$00
-        .BYTE $18,$17,$00,$00,$18,$18,$17,$17
-        .BYTE $00,$00,$18,$17,$00,$00,$18,$18
-        .BYTE $0F,$0F,$0F,$00,$00,$00,$00,$0F
-        .BYTE $0F,$0F,$0F,$0F,$0F,$00,$00,$00
-        .BYTE $00,$0F,$0F,$0F,$00,$00,$09,$09
-        .BYTE $00,$00,$09,$09,$00,$00,$00,$00
-        .BYTE $09,$09,$00,$00,$09,$09,$00,$00
-        .BYTE $00,$00,$0A,$0A,$00,$00,$0A,$0A
-        .BYTE $00,$00,$00,$00,$0A,$0A,$00,$00
-        .BYTE $0A,$0A,$00,$00,$0F,$0F,$0F,$0F
-        .BYTE $0F,$0F,$0F,$0F,$0F,$00,$00,$0F
-        .BYTE $0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F
-        .BYTE $14,$14,$14,$14,$14,$14,$14,$14
-        .BYTE $14,$14,$14,$14,$14,$14,$14,$14
-        .BYTE $14,$14,$14,$14,$0F,$0E,$0E,$0E
-        .BYTE $0E,$0E,$0E,$0E,$0E,$0E,$0D,$0D
-        .BYTE $0D,$0D,$0D,$0D,$0D,$0D,$0D,$0F
-        .BYTE $0B,$0B,$0B,$00,$0B,$0B,$0B,$0B
-        .BYTE $0B,$0F,$0F,$0B,$0B,$0B,$0B,$0B
-        .BYTE $00,$0B,$0B,$0B,$15,$15,$15,$15
-        .BYTE $15,$15,$15,$15,$15,$15,$15,$15
-        .BYTE $15,$15,$15,$15,$15,$15,$15,$15
-        .BYTE $00,$00,$00,$0F,$0F,$0F,$00,$00
-        .BYTE $00,$0F,$0F,$00,$00,$00,$0F,$0F
-        .BYTE $0F,$00,$00,$00,$00,$10,$0B,$11
-        .BYTE $00,$00,$10,$0B,$11,$00,$00,$10
-        .BYTE $0B,$11,$00,$00,$10,$0B,$11,$00
-        .BYTE $00,$0E,$00,$0D,$00,$00,$0E,$00
-        .BYTE $0D,$00,$00,$0E,$00,$0D,$00,$00
-        .BYTE $0E,$00,$0D,$00,$00,$12,$0C,$13
-        .BYTE $00,$00,$12,$0C,$13,$00,$00,$12
-        .BYTE $0C,$13,$00,$00,$12,$0C,$13,$00
-        .BYTE $0F,$0E,$00,$00,$00,$00,$0D,$0F
-        .BYTE $0F,$0F,$0F,$0F,$0F,$0E,$0B,$0B
-        .BYTE $0B,$0B,$0D,$0F,$0F,$0E,$0B,$0B
-        .BYTE $0B,$0B,$0D,$0F,$0F,$0F,$0F,$0F
-        .BYTE $0F,$0E,$00,$00,$00,$00,$0D,$0F
-        .BYTE $0F,$0E,$00,$00,$00,$00,$0D,$0F
-        .BYTE $0F,$0F,$0F,$0F,$0F,$0E,$00,$00
-        .BYTE $00,$00,$0D,$0F,$15,$15,$00,$00
-        .BYTE $16,$16,$00,$00,$15,$15,$00,$00
-        .BYTE $16,$16,$00,$00,$15,$15,$00,$00
-        .BYTE $00,$00,$16,$16,$00,$00,$15,$15
-        .BYTE $00,$00,$16,$16,$00,$00,$15,$15
-        .BYTE $00,$00,$16,$16,$0B,$0B,$0B,$0B
-        .BYTE $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
-        .BYTE $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
-        .BYTE $0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C
-        .BYTE $0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C
-        .BYTE $0C,$0C,$0C,$0C,$09,$09,$09,$09
-        .BYTE $09,$09,$09,$09,$09,$15,$15,$09
-        .BYTE $09,$09,$09,$09,$09,$09,$09,$09
-        .BYTE $0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
-        .BYTE $0A,$15,$15,$0A,$0A,$0A,$0A,$0A
-        .BYTE $0A,$0A,$0A,$0A,$FF
+        .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+        .BYTE $FF,$FF,$FF,$FF
+
+; Each line specifies the tiles to use in newLineByte1Array/newLineByte2Array for two rows of
+; 40 characters each. For example, the first line specifies a row of $40,$42 followed by a 
+; row of $41,$43.
+; Since each byte is an index into a pair of bytes in newLineByte1Array/newLineByte2Array, you
+; have to multiply it by 2 to get the appropriate starting byte in newLineByte1Array/
+; newLineByte2Array.
+bonusPhaseMapRowDefinitions   
+        .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00 ; 0
+        .BYTE $0D,$0D,$0E,$0E,$0E,$0E,$0E,$00,$00,$0B,$0B,$00,$00,$0D,$0D,$0D,$0D,$0D,$0E,$0E 
+        .BYTE $10,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$11,$10,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$11
+        .BYTE $0E,$10,$0B,$0B,$0B,$0B,$0B,$0B,$11,$0D,$0E,$10,$0B,$0B,$0B,$0B,$0B,$0B,$11,$0D
+        .BYTE $0E,$0E,$10,$0B,$0B,$0B,$0B,$11,$0D,$0D,$0E,$0E,$10,$0B,$0B,$0B,$0B,$11,$0D,$0D
+        .BYTE $0E,$0E,$0E,$00,$00,$00,$00,$0D,$0D,$0D,$0E,$0E,$0E,$00,$00,$00,$00,$0D,$0D,$0D
+        .BYTE $0E,$0E,$0E,$00,$0A,$0A,$00,$0D,$0D,$0D,$0E,$0E,$0E,$00,$0A,$0A,$00,$0D,$0D,$0D
+        .BYTE $0E,$0E,$0E,$00,$09,$09,$00,$0D,$0D,$0D,$0E,$0E,$0E,$00,$09,$09,$00,$0D,$0D,$0D
+        .BYTE $0E,$0E,$12,$0C,$0C,$0C,$0C,$13,$0D,$0D,$0E,$0E,$12,$0C,$0C,$0C,$0C,$13,$0D,$0D
+        .BYTE $0E,$07,$00,$00,$15,$15,$00,$00,$05,$0D,$0E,$07,$00,$00,$15,$15,$00,$00,$05,$0D
+        .BYTE $07,$0F,$00,$00,$15,$15,$00,$00,$0F,$05,$07,$0F,$00,$00,$15,$15,$00,$00,$0F,$05
+        .BYTE $17,$17,$00,$00,$18,$17,$00,$00,$18,$18,$17,$17,$00,$00,$18,$17,$00,$00,$18,$18
+        .BYTE $0F,$0F,$0F,$00,$00,$00,$00,$0F,$0F,$0F,$0F,$0F,$0F,$00,$00,$00,$00,$0F,$0F,$0F
+        .BYTE $00,$00,$09,$09,$00,$00,$09,$09,$00,$00,$00,$00,$09,$09,$00,$00,$09,$09,$00,$00
+        .BYTE $00,$00,$0A,$0A,$00,$00,$0A,$0A,$00,$00,$00,$00,$0A,$0A,$00,$00,$0A,$0A,$00,$00
+        .BYTE $0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$00,$00,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F,$0F ; F
+        .BYTE $14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14,$14
+        .BYTE $0F,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0E,$0D,$0D,$0D,$0D,$0D,$0D,$0D,$0D,$0D,$0F
+        .BYTE $0B,$0B,$0B,$00,$0B,$0B,$0B,$0B,$0B,$0F,$0F,$0B,$0B,$0B,$0B,$0B,$00,$0B,$0B,$0B
+        .BYTE $15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15,$15
+        .BYTE $00,$00,$00,$0F,$0F,$0F,$00,$00,$00,$0F,$0F,$00,$00,$00,$0F,$0F,$0F,$00,$00,$00
+        .BYTE $00,$10,$0B,$11,$00,$00,$10,$0B,$11,$00,$00,$10,$0B,$11,$00,$00,$10,$0B,$11,$00
+        .BYTE $00,$0E,$00,$0D,$00,$00,$0E,$00,$0D,$00,$00,$0E,$00,$0D,$00,$00,$0E,$00,$0D,$00
+        .BYTE $00,$12,$0C,$13,$00,$00,$12,$0C,$13,$00,$00,$12,$0C,$13,$00,$00,$12,$0C,$13,$00
+        .BYTE $0F,$0E,$00,$00,$00,$00,$0D,$0F,$0F,$0F,$0F,$0F,$0F,$0E,$0B,$0B,$0B,$0B,$0D,$0F
+        .BYTE $0F,$0E,$0B,$0B,$0B,$0B,$0D,$0F,$0F,$0F,$0F,$0F,$0F,$0E,$00,$00,$00,$00,$0D,$0F
+        .BYTE $0F,$0E,$00,$00,$00,$00,$0D,$0F,$0F,$0F,$0F,$0F,$0F,$0E,$00,$00,$00,$00,$0D,$0F
+        .BYTE $15,$15,$00,$00,$16,$16,$00,$00,$15,$15,$00,$00,$16,$16,$00,$00,$15,$15,$00,$00
+        .BYTE $00,$00,$16,$16,$00,$00,$15,$15,$00,$00,$16,$16,$00,$00,$15,$15,$00,$00,$16,$16
+        .BYTE $0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B,$0B
+        .BYTE $0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C,$0C
+        .BYTE $09,$09,$09,$09,$09,$09,$09,$09,$09,$15,$15,$09,$09,$09,$09,$09,$09,$09,$09,$09
+        .BYTE $0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$15,$15,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A,$0A
+        .BYTE $FF
 ;-------------------------------------------------------
-; BonusPhaseFillBottomLineAfterScrollUp
+; BonusPhaseFillBottomLineAfterScrollDown
 ;-------------------------------------------------------
-BonusPhaseFillBottomLineAfterScrollUp   
-        LDX offsetForScrollUp
+BonusPhaseFillBottomLineAfterScrollDown   
+        LDX offsetForScrollDown
         LDY bonusPhaseMapOffsetArray,X
         LDA bonusPhaseMapLoPtrArray,Y
         STA bonusPhaseMapLoPtr
@@ -740,21 +701,21 @@ bB2D5   LDA (bonusPhaseMapLoPtr),Y
         BNE bB2D5
         LDA scrollLineOffset
         BEQ bB310
-        DEC offsetForScrollUp
         DEC offsetForScrollDown
-        LDA offsetForScrollUp
+        DEC offsetForScrollUp
+        LDA offsetForScrollDown
         CMP #$FF
         BNE bB310
         LDA #$00
-        STA offsetForScrollUp
-        LDA #$0A
         STA offsetForScrollDown
+        LDA #$0A
+        STA offsetForScrollUp
 bB310   RTS 
 
 ;-------------------------------------------------------
-; BonusRoundScrollUp
+; BonusRoundScrollDown
 ;-------------------------------------------------------
-BonusRoundScrollUp   
+BonusRoundScrollDown   
         LDX #$28
 bB313   LDA SCREEN_RAM + LINE0_COL39,X
         STA SCREEN_RAM - $01,X
@@ -1048,8 +1009,8 @@ bB53B   DEY
         BNE bB539
         RTS 
 
-bB542   JSR BonusRoundScrollDown
-        JSR BonusPhaseFillTopLineAfterScrollDown
+bB542   JSR BonusRoundScrollUp
+        JSR BonusPhaseFillTopLineAfterScrollUp
 
 jB548   
         LDA aB488
@@ -1066,8 +1027,8 @@ bB559   LDA aB488
         STA aB488
         AND #$F0
         BEQ bB537
-        JSR BonusRoundScrollUp
-        JSR BonusPhaseFillBottomLineAfterScrollUp
+        JSR BonusRoundScrollDown
+        JSR BonusPhaseFillBottomLineAfterScrollDown
         JMP jB548
 
 aB570   .BYTE $04
@@ -1202,9 +1163,9 @@ bonusPhaseMapHiPtr                            = $36
 ; BonusPhaseSetUpScrollingMap
 ;-------------------------------------------------------
 BonusPhaseSetUpScrollingMap   
-        LDA #<bonusPhaseMapData
+        LDA #<bonusPhaseMapRowDefinitions
         STA bonusPhaseMapLoPtr
-        LDA #>bonusPhaseMapData
+        LDA #>bonusPhaseMapRowDefinitions
         STA bonusPhaseMapHiPtr
 
         LDX #$00
