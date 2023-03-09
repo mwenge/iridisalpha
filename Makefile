@@ -16,7 +16,7 @@ sources: src/iridisalpha.asm src/graphics/bonusphase_graphics.asm
 
 check: sources
 	echo "44c76416f7a4d16fac31ff99ef2d2272  bin/ia.prg" | md5sum -c
-	echo "46e893399dcf28100a9bbdeb343b7a78  bin/bonusphase_graphics.prg" | md5sum -c
+	echo "f003706db8951e4819e554fa94466023  bin/bonusphase_graphics.prg" | md5sum -c
 	echo "fe2afb0a14755d7bbc46855aa589ebee  bin/enemy_sprites.prg" | md5sum -c
 
 iridisalpha.prg: check

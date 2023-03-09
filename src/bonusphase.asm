@@ -499,7 +499,7 @@ bpMovementOnXAxis            .BYTE $00
 ;-------------------------------------------------------
 BonusPhaseFillTopLineAfterScrollUp   
         LDX offsetForScrollUp
-        LDY bonusPhaseMapOffsetArray,X
+        LDY bonusPhaseMapDefinition,X
         LDA bonusPhaseMapLoPtrArray,Y
         STA bonusPhaseMapLoPtr
         LDA bonusPhaseMapHiPtrArray,Y
@@ -513,9 +513,9 @@ bAEE8   LDA (bonusPhaseMapLoPtr),Y
         CLC 
         ADC scrollLineOffset
         TAY 
-        LDA newLineByte1Array,Y
+        LDA cellFirstColumnArray,Y
         STA SCREEN_RAM,X
-        LDA newLineByte2Array,Y
+        LDA cellSecondColumnArray,Y
         STA SCREEN_RAM + LINE0_COL1,X
         LDY mapOffsetTemp
         INX 
@@ -608,7 +608,7 @@ bAFA4   STA COLOR_RAM + LINE0_COL0,X
         BNE bAFA4
         RTS 
 
-newLineByte1Array
+cellFirstColumnArray
         .BYTE $40,$41,$44,$47,$48,$49,$4F,$4D
         .BYTE $50,$51,$54,$56,$5B,$59,$5C,$5D
         .BYTE $60,$61,$64,$65,$68,$69,$47,$47
@@ -616,7 +616,7 @@ newLineByte1Array
         .BYTE $5D,$45,$4B,$47,$4C,$5D,$4E,$52
         .BYTE $7C,$7D,$6C,$6D,$70,$71,$74,$75
         .BYTE $78,$79
-newLineByte2Array   
+cellSecondColumnArray   
         .BYTE $42,$43,$46,$47,$4A,$48,$4E,$4F
         .BYTE $51,$53,$56,$57,$5A,$5B,$5E,$5C
         .BYTE $61,$63,$66,$67,$6A,$6B,$47,$47
@@ -629,12 +629,12 @@ newLineByte2Array
         .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
         .BYTE $FF,$FF,$FF,$FF
 
-; Each line specifies the tiles to use in newLineByte1Array/newLineByte2Array for two rows of
+; Each line specifies the tiles to use in cellFirstColumnArray/cellSecondColumnArray for two rows of
 ; 40 characters each. For example, the first line specifies a row of $40,$42 followed by a 
 ; row of $41,$43.
-; Since each byte is an index into a pair of bytes in newLineByte1Array/newLineByte2Array, you
-; have to multiply it by 2 to get the appropriate starting byte in newLineByte1Array/
-; newLineByte2Array.
+; Since each byte is an index into a pair of bytes in cellFirstColumnArray/cellSecondColumnArray, you
+; have to multiply it by 2 to get the appropriate starting byte in cellFirstColumnArray/
+; cellSecondColumnArray.
 bonusPhaseMapRowDefinitions   
         .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00,$00 ; 0
         .BYTE $0D,$0D,$0E,$0E,$0E,$0E,$0E,$00,$00,$0B,$0B,$00,$00,$0D,$0D,$0D,$0D,$0D,$0E,$0E 
@@ -675,7 +675,7 @@ bonusPhaseMapRowDefinitions
 ;-------------------------------------------------------
 BonusPhaseFillBottomLineAfterScrollDown   
         LDX offsetForScrollDown
-        LDY bonusPhaseMapOffsetArray,X
+        LDY bonusPhaseMapDefinition,X
         LDA bonusPhaseMapLoPtrArray,Y
         STA bonusPhaseMapLoPtr
         LDA bonusPhaseMapHiPtrArray,Y
@@ -689,9 +689,9 @@ bB2D5   LDA (bonusPhaseMapLoPtr),Y
         CLC 
         ADC scrollLineOffset
         TAY 
-        LDA newLineByte1Array,Y
+        LDA cellFirstColumnArray,Y
         STA SCREEN_RAM + LINE18_COL0,X
-        LDA newLineByte2Array,Y
+        LDA cellSecondColumnArray,Y
         STA SCREEN_RAM + LINE18_COL1,X
         LDY mapOffsetTemp
         INX 
@@ -776,7 +776,7 @@ BonusRoundSetUpMapAndLoop
         STA bpCharactersToScroll
         LDX #$00
         LDA #$10
-bB3A1   STA bonusPhaseMapOffsetArray,X
+bB3A1   STA bonusPhaseMapDefinition,X
         DEX 
         BNE bB3A1
         LDA #$19
@@ -832,7 +832,7 @@ bB3F0   LDA tempBonusMapLoPtr
 bB400   PLA 
         TAX 
 bB402   LDA (tempBonusMapLoPtr),Y
-        STA bonusPhaseMapOffsetArray,X
+        STA bonusPhaseMapDefinition,X
         INY 
         INX 
         CPY #$0A
@@ -842,7 +842,7 @@ bB402   LDA (tempBonusMapLoPtr),Y
 
         LDX #$09
         LDA #$00
-bB415   STA bonusPhaseMapOffsetArray,X
+bB415   STA bonusPhaseMapDefinition,X
         DEX 
         BPL bB415
 
@@ -1186,7 +1186,7 @@ bB64C   LDA bonusPhaseMapLoPtr
 
         LDX #$00
         TXA 
-bB66B   STA bonusPhaseMapOffsetArray,X
+bB66B   STA bonusPhaseMapDefinition,X
         DEX 
         BNE bB66B
 
@@ -1246,7 +1246,7 @@ bonusPhaseMapHiPtrArray  .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
-bonusPhaseMapOffsetArray .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
+bonusPhaseMapDefinition .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
                     .BYTE $FF,$FF,$FF,$FF,$FF,$FF,$FF,$FF
