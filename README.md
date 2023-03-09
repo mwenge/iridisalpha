@@ -19,7 +19,7 @@ here](https://github.com/mwenge/iridisalpha/tree/master/src).
 
 If you want to read more about Iridis Alpha than is possibly healthy, you can try the [Scrapbook
 Edition](https://github.com/mwenge/iatheory/blob/main/out/iatheory_scrapbook.pdf) of 
-a work-in-progress ~omnium gatherium~ called [Iridis Alpha Theory](https://github.com/mwenge/iatheory).
+a work-in-progress omnium gatherium called [Iridis Alpha Theory](https://iridisalpha.com).
 
 ## Download
 
