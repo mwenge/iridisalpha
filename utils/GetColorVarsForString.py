@@ -40,7 +40,10 @@ colormap = {
     }
 
 s = """
-noBonusColorArray   .BYTE $0B,$0C,$0F,$01,$0F,$0C,$0B
+entryScreenRainbowColors   .BYTE $02,$08,$07,$05,$0E,$04,$06,$07
+        .BYTE $00,$03,$00,$05,$00,$04,$00,$02
+        .BYTE $00,$06,$00,$06,$00,$06,$04,$0E
+        .BYTE $05,$07,$08,$02
 """
 ls = re.split("([, #\n])", s)
 

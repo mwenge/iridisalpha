@@ -30,43 +30,54 @@ mapOffsetTemp = $37
 DisplayEnterBonusRoundScreen   
         LDA #$00
         STA $D015    ;Sprite display Enable
-        STA aAD23
+        STA rainbowUpdateInterval
+
         LDA #<EnterBonusPhaseInterruptHandler
         STA $0314    ;IRQ
         LDA #>EnterBonusPhaseInterruptHandler
         STA $0315    ;IRQ
+
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
+
         LDA #$30
         STA $D012    ;Raster Position
+
         LDA $D016    ;VIC Control Register 2
         AND #$E0
         ORA #$08
         STA $D016    ;VIC Control Register 2
+
         LDA #$00
         STA backgroundColorIndex
         STA $D020    ;Border Color
+
         LDA #$0F
         STA $D405    ;Voice 1: Attack / Decay Cycle Control
         STA $D40C    ;Voice 2: Attack / Decay Cycle Control
         STA $D413    ;Voice 3: Attack / Decay Cycle Control
+
         LDA #$FE
         STA $D406    ;Voice 1: Sustain / Release Cycle Control
         STA $D40D    ;Voice 2: Sustain / Release Cycle Control
         STA $D414    ;Voice 3: Sustain / Release Cycle Control
+
         LDX #$0E
 bAB49   LDA #$00
-        STA fAC3F - $01,X
+        STA previousRoundRainbowColors - $01,X
         DEX 
         BNE bAB49
-        STA aAC97
+
+        STA currentOffsetInRainbow
         LDA #$08
         STA aACCA
+
         LDA #$80
         STA $D404    ;Voice 1: Control Register
         STA $D40B    ;Voice 2: Control Register
         STA $D412    ;Voice 3: Control Register
+
         LDX #$28
 bAB66   LDA txtStandByEnterBonusPhase,X
         AND #$3F
@@ -77,7 +88,7 @@ bAB66   LDA txtStandByEnterBonusPhase,X
         BNE bAB66
         CLI 
 
-bAB77   LDA aAD23
+bAB77   LDA rainbowUpdateInterval
         BEQ bAB77
 
         JMP EnterBonusPhase
@@ -88,18 +99,22 @@ bpRasterPositionArray     .BYTE $01,$01,$01,$01,$02,$02,$02,$02
                           .BYTE $03,$03,$03,$03,$04,$04,$04,$04
                           .BYTE $05,$05,$05,$05,$06,$06,$06,$06
                           .BYTE $07,$07,$07,$07,$07,$07,$00
-enterBPBackgroundColors   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+enterBPRainbowColors      .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                           .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                           .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                           .BYTE $00,$00,$00,$00,$00,$00,$00
 backgroundColorIndex      .BYTE $00
 ;-------------------------------------------------------
 ; EnterBonusPhaseInterruptHandler   
+; Displays the rainbow effect while waiting to enter the
+; bonus phase.
 ;-------------------------------------------------------
 EnterBonusPhaseInterruptHandler   
         LDA $D019    ;VIC Interrupt Request Register (IRR)
         AND #$01
-        BNE bABF3
+        BNE BP_WaitABit
+
+        ; Clean up and return from interrupt.
         PLA 
         TAY 
         PLA 
@@ -107,22 +122,35 @@ EnterBonusPhaseInterruptHandler
         PLA 
         RTI 
 
-bABF3   LDY #$03
-bABF5   DEY 
-        BNE bABF5
+        ; Wait a bit.
+BP_WaitABit   
+        LDY #$03
+BP_WaitABitLoop   
+        DEY 
+        BNE BP_WaitABitLoop
 
+        ; The rainbow effect is controlled by setting the background
+        ; color at incremental raster interrupt positions.
         LDY backgroundColorIndex
-        LDA enterBPBackgroundColors,Y
+        LDA enterBPRainbowColors,Y
         STA $D021    ;Background Color 0
+
+        ; Check if we've reached the end of the rainbow effect.
         LDA bpRasterPositionArray,Y
-        BEQ bAC1E
+        BEQ ResetForStartOfScreen
+
+        ; Update the position of the next interrupt.
         CLC 
         ADC $D012    ;Raster Position
         STA $D012    ;Raster Position
+
+        ; Set up the interrupt.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         INC backgroundColorIndex
+
+        ; Clean up and return from interrupt.
         PLA 
         TAY 
         PLA 
@@ -130,16 +158,25 @@ bABF5   DEY
         PLA 
         RTI 
 
-bAC1E   JSR InitializeEnterBPData
+ResetForStartOfScreen   
+        JSR UpdateEntryScreenRainbow
         JSR PlayEnterBPSounds
+
+        ; Set the position of the first interrupt.
         LDA #$30
         STA $D012    ;Raster Position
-        LDA #$00
+
+        ; Set the background color back to black.
+        LDA #BLACK
         STA $D021    ;Background Color 0
         STA backgroundColorIndex
+
+        ; Set up the interrupt.
         LDA #$01
         STA $D019    ;VIC Interrupt Request Register (IRR)
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
+
+        ; Clean up and return from interrupt.
         PLA 
         TAY 
         PLA 
@@ -147,57 +184,71 @@ bAC1E   JSR InitializeEnterBPData
         PLA 
         RTI 
 
-fAC3F   .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00
-fAC5B   .BYTE $02,$08,$07,$05,$0E,$04,$06,$07
-        .BYTE $00,$03,$00,$05,$00,$04,$00,$02
-        .BYTE $00,$06,$00,$06,$00,$06,$04,$0E
-        .BYTE $05,$07,$08,$02
+previousRoundRainbowColors
+      .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+      .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+      .BYTE $00,$00,$00,$00,$00,$00,$00,$00
+      .BYTE $00,$00,$00,$00
+entryScreenRainbowColors
+      .BYTE RED,ORANGE,YELLOW,GREEN,LTBLUE,PURPLE,BLUE,YELLOW
+      .BYTE BLACK,CYAN,BLACK,GREEN,BLACK,PURPLE,BLACK,RED
+      .BYTE BLACK,BLUE,BLACK,BLUE,BLACK,BLUE,PURPLE,LTBLUE
+      .BYTE GREEN,YELLOW,ORANGE,RED
+
 ;-------------------------------------------------------
-; InitializeEnterBPData
+; UpdateEntryScreenRainbow
 ;-------------------------------------------------------
-InitializeEnterBPData   
-        LDY aAC97
+UpdateEntryScreenRainbow   
+        LDY currentOffsetInRainbow
         CPY #$1C
-        BNE bAC88
-        LDA aAD23
-        BNE bAC98
+        BNE GetPreviousColor
+        LDA rainbowUpdateInterval
+        BNE InitializeRainbowLoop
+
         LDY #$00
-        STY aAC97
-bAC88   LDA fAC3F,Y
-        BNE bAC98
+        STY currentOffsetInRainbow
+GetPreviousColor   
+        LDA previousRoundRainbowColors,Y
+        BNE InitializeRainbowLoop
         LDA #$01
-        STA fAC3F,Y
-        INC aAC97
-        BNE bAC98
+        STA previousRoundRainbowColors,Y
+        INC currentOffsetInRainbow
+        BNE InitializeRainbowLoop
 
-aAC97   .BYTE $00
+currentOffsetInRainbow
+        .BYTE $00
 
-bAC98   LDX #$00
-bAC9A   LDA fAC3F,X
-        BEQ bACC4
+InitializeRainbowLoop   
+        LDX #$00
+UpdateRainbowLoop   
+        LDA previousRoundRainbowColors,X
+        BEQ IncrementRainbowLoop
         TAY 
         CPX #$1B
-        BNE bACAE
-        LDA aAD23
-        BEQ bACAE
+        BNE MoveToNextColor
+        LDA rainbowUpdateInterval
+        BEQ MoveToNextColor
+
         LDA #$00
-        STA enterBPBackgroundColors,Y
-bACAE   INY 
+        STA enterBPRainbowColors,Y
+MoveToNextColor   
+        INY 
         CPY #$1E
-        BNE bACBA
+        BNE UpdateColor
+
         LDA #$00
-        STA fAC3F,X
-        BEQ bACC4
-bACBA   LDA fAC5B,X
-        STA enterBPBackgroundColors,Y
+        STA previousRoundRainbowColors,X
+        BEQ IncrementRainbowLoop
+UpdateColor   
+        LDA entryScreenRainbowColors,X
+        STA enterBPRainbowColors,Y
         TYA 
-        STA fAC3F,X
-bACC4   INX 
+        STA previousRoundRainbowColors,X
+IncrementRainbowLoop   
+        INX 
         CPX #$1C
-        BNE bAC9A
+        BNE UpdateRainbowLoop
+
         RTS 
 
 aACCA   .BYTE $00
@@ -206,7 +257,7 @@ aACCB   .BYTE $40
 ; PlayEnterBPSounds
 ;-------------------------------------------------------
 PlayEnterBPSounds   
-        LDA aAD23
+        LDA rainbowUpdateInterval
         BEQ bACD2
         RTS 
 
@@ -233,9 +284,9 @@ bACFB   LDA #$50
         DEC aACCA
         BNE bACFA
         LDA #$01
-        STA aAD23
+        STA rainbowUpdateInterval
         LDX #$03
-bAD0C   LDY aAD23,X
+bAD0C   LDY rainbowUpdateInterval,X
         LDA #$03
         STA $D401,Y  ;Voice 1: Frequency Control - High-Byte
         LDA #$20
@@ -246,7 +297,7 @@ bAD0C   LDY aAD23,X
         BNE bAD0C
         RTS 
 
-aAD23   .BYTE $00,$00,$07
+rainbowUpdateInterval   .BYTE $00,$00,$07
 fAD26   .BYTE $0E,$00,$06,$0C
 ;-------------------------------------------------------
 ; EnterBonusPhase
@@ -348,7 +399,7 @@ InitializeBonusPhase
         LDA bonusPhaseCounter
         BNE bADC1
         LDA #$00
-        STA currentOffsetToBonusMap
+        STA currentOffsetToSourceArray
 
 bADC1   INC bonusPhaseCounter
 
@@ -366,7 +417,7 @@ bADDA   STA fBB1E,X
         BPL bADDA
 
         JSR sC358
-        LDA currentOffsetToBonusMap
+        LDA currentOffsetToSourceArray
         STA aAEB6
         LDA #$A0
         STA bpGilbyXPos
@@ -472,11 +523,11 @@ RegisterCollisionOnLickerShips
         DEC bpAllowedCollisionsLeft
         RTS 
 
-aAEB6   =*+$01
 ;-------------------------------------------------------
 ; BP_PutRandomValueInAccumulator
 ;-------------------------------------------------------
 BP_PutRandomValueInAccumulator   
+aAEB6   =*+$01
         LDA sourceOfSeedBytes
         INC aAEB6
         RTS 
@@ -490,7 +541,7 @@ noBonusColorArray            .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,GRAY1
 
 defaultLickerShipSpriteArray .BYTE LICKER_SHIP1,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKERSHIP2,LICKERSHIP3,LICKERSHIP2,LICKER_SHIP1
 
-currentOffsetToBonusMap      .BYTE $00
+currentOffsetToSourceArray      .BYTE $00
 bpGilbyXPos                  .BYTE $A0
 bpGilbyXPosMSB               .BYTE $00
 bpMovementOnXAxis            .BYTE $00
@@ -757,89 +808,122 @@ bB313   LDA SCREEN_RAM + LINE0_COL39,X
         BNE bB313
         RTS 
 
-tempBonusMapLoPtr                              = $FD
-tempBonusMapHiPtr                               = $FE
+tempBonusMapLoPtr = $FD
+tempBonusMapHiPtr = $FE
+
+offsetSourceLoPtr = $FD
+offsetSourceHiPtr = $FE
+sectionCount      = $FF
 ;-------------------------------------------------------
 ; BonusRoundSetUpMapAndLoop
 ;-------------------------------------------------------
 BonusRoundSetUpMapAndLoop   
-        LDA currentOffsetToBonusMap
+        LDA currentOffsetToSourceArray
         AND #$07
         TAX 
         JSR BonusPhaseChangeColorScheme
-        LDA currentOffsetToBonusMap
+        LDA currentOffsetToSourceArray
         AND #$0F
         TAX 
         LDA fB499,X
         STA aB4A9
         LDA #$01
         STA bpCharactersToScroll
+
+        ; Clear the old map.
         LDX #$00
         LDA #$10
 bB3A1   STA bonusPhaseMapDefinition,X
         DEX 
         BNE bB3A1
+
+        ; Generate the new map procedurally.
         LDA #$19
-        STA tempHiPtr
-bB3AB   JSR BP_PutRandomValueInAccumulator
+        STA sectionCount
+GenerateMapLoop   
+
+        ; Get a procedural/random value for our offset
+        ; into the source array. Ensure it is between
+        ; 0 and 7.
+        JSR BP_PutRandomValueInAccumulator
         AND #$07
         PHA 
-        LDA currentOffsetToBonusMap
+
+        ; If the current offset is less than 3 then
+        ; use it.
+        LDA currentOffsetToSourceArray
         AND #$FC
         BEQ bB3BF
 
+        ; Otherwise get a new one between 0 and
+        ; 48
         PLA 
         JSR BP_PutRandomValueInAccumulator
         AND #$1F
         PHA 
+        ; Store the offset in Y.
 bB3BF   PLA 
         TAY 
-        LDA #<bonusMapOffsetSourceArray
-        STA tempBonusMapLoPtr
-        LDA #>bonusMapOffsetSourceArray
-        STA tempBonusMapHiPtr
+
+        ; Point our ptrs at the source offset array.
+        LDA #<bonusMapSegmentArray
+        STA offsetSourceLoPtr
+        LDA #>bonusMapSegmentArray
+        STA offsetSourceHiPtr
+
+        ; X is the previous offset.
         TXA 
         PHA 
         CPY #$00
         BEQ bB3DF
-bB3CF   LDA tempBonusMapLoPtr
+
+        ; Use the offset to flick our ptrs forward
+        ; in the source offset array in 10 byte
+        ; increments.
+SeekForwardInSourceArray   
+        LDA offsetSourceLoPtr
         CLC 
         ADC #$0A
-        STA tempBonusMapLoPtr
-        LDA tempBonusMapHiPtr
+        STA offsetSourceLoPtr
+        LDA offsetSourceHiPtr
         ADC #$00
-        STA tempBonusMapHiPtr
+        STA offsetSourceHiPtr
         DEY 
-        BNE bB3CF
+        BNE SeekForwardInSourceArray
 
 bB3DF   LDY #$00
-        LDA currentOffsetToBonusMap
+        LDA currentOffsetToSourceArray
         AND #$FC
         BNE bB400
-        LDA currentOffsetToBonusMap
+        LDA currentOffsetToSourceArray
         AND #$03
         BEQ bB400
+
         TAX 
-bB3F0   LDA tempBonusMapLoPtr
+bB3F0   LDA offsetSourceLoPtr
         CLC 
         ADC #$50
-        STA tempBonusMapLoPtr
-        LDA tempBonusMapHiPtr
+        STA offsetSourceLoPtr
+        LDA offsetSourceHiPtr
         ADC #$00
-        STA tempBonusMapHiPtr
+        STA offsetSourceHiPtr
         DEX 
         BNE bB3F0
+
 bB400   PLA 
         TAX 
-bB402   LDA (tempBonusMapLoPtr),Y
+bB402   LDA (offsetSourceLoPtr),Y
         STA bonusPhaseMapDefinition,X
         INY 
         INX 
         CPY #$0A
         BNE bB402
-        DEC tempHiPtr
-        BNE bB3AB
 
+        DEC sectionCount
+        BNE GenerateMapLoop
+
+        ; Set the first 9 rows of the map to
+        ; $00, i.e. the launching stage.
         LDX #$09
         LDA #$00
 bB415   STA bonusPhaseMapDefinition,X
@@ -1814,47 +1898,39 @@ BP_PlaySound
 bBD3E   RTS 
 
 bpNoteToPlay   .BYTE $00
-bonusMapOffsetSourceArray
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$15,$16,$17,$00,$00
-        .BYTE $15,$16,$17,$00,$00,$14,$14,$14
-        .BYTE $14,$14,$14,$14,$14,$00,$11,$11
-        .BYTE $11,$11,$11,$11,$11,$11,$11,$11
-        .BYTE $13,$13,$13,$13,$13,$13,$13,$13
-        .BYTE $13,$13,$12,$12,$12,$12,$12,$12
-        .BYTE $12,$12,$12,$00,$14,$14,$00,$15
-        .BYTE $16,$17,$00,$00,$14,$14,$15,$16
-        .BYTE $16,$16,$16,$16,$16,$16,$16,$17
-        .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-        .BYTE $00,$00,$00,$00,$0F,$0F,$0F,$0F
-        .BYTE $0F,$0F,$00,$00,$01,$01,$01,$01
-        .BYTE $00,$00,$01,$01,$01,$01,$00,$00
-        .BYTE $0B,$0B,$0B,$0C,$0C,$0C,$00,$00
-        .BYTE $00,$02,$03,$04,$05,$06,$07,$08
-        .BYTE $09,$0A,$02,$03,$04,$05,$05,$05
-        .BYTE $05,$0B,$0B,$0B,$00,$00,$01,$01
-        .BYTE $00,$00,$01,$01,$00,$00,$00,$00
-        .BYTE $0E,$0D,$00,$00,$0E,$0D,$00,$00
-        .BYTE $00,$02,$03,$04,$05,$08,$09,$0A
-        .BYTE $0B,$00,$00,$00,$00,$1A,$1A,$1A
-        .BYTE $18,$18,$18,$18,$00,$00,$00,$1A
-        .BYTE $1A,$1A,$19,$19,$19,$19,$00,$00
-        .BYTE $18,$18,$00,$00,$00,$00,$19,$19
-        .BYTE $00,$00,$1B,$1B,$00,$00,$15,$16
-        .BYTE $17,$00,$15,$16,$17,$1D,$1D,$15
-        .BYTE $16,$17,$1D,$1D,$14,$14,$1E,$1E
-        .BYTE $00,$00,$15,$16,$17,$00,$00,$0B
-        .BYTE $0B,$0B,$15,$16,$17,$15,$16,$17
-        .BYTE $00,$00,$1D,$1D,$1D,$1D,$1E,$1E
-        .BYTE $1E,$1E,$00,$00,$20,$1F,$20,$1F
-        .BYTE $00,$00,$11,$11,$00,$00,$20,$1F
-        .BYTE $20,$1F,$20,$1F,$20,$1F,$00,$1E
-        .BYTE $1E,$1E,$20,$1F,$1D,$1D,$1D,$00
-        .BYTE $00,$0C,$0C,$0C,$15,$16,$17,$00
-        .BYTE $00,$00,$00,$02,$03,$04,$05,$08
-        .BYTE $09,$0A,$0B,$00,$00,$00,$06,$06
-        .BYTE $06,$11,$11,$11,$00,$00,$00,$00
-        .BYTE $0F,$0F,$15,$16,$17,$15,$16,$17
+bonusMapSegmentArray
+        .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .BYTE $00,$15,$16,$17,$00,$00,$15,$16,$17,$00
+        .BYTE $00,$14,$14,$14,$14,$14,$14,$14,$14,$00
+        .BYTE $11,$11,$11,$11,$11,$11,$11,$11,$11,$11
+        .BYTE $13,$13,$13,$13,$13,$13,$13,$13,$13,$13
+        .BYTE $12,$12,$12,$12,$12,$12,$12,$12,$12,$00
+        .BYTE $14,$14,$00,$15,$16,$17,$00,$00,$14,$14
+        .BYTE $15,$16,$16,$16,$16,$16,$16,$16,$16,$17
+        .BYTE $00,$00,$00,$00,$00,$00,$00,$00,$00,$00
+        .BYTE $00,$00,$0F,$0F,$0F,$0F,$0F,$0F,$00,$00
+        .BYTE $01,$01,$01,$01,$00,$00,$01,$01,$01,$01
+        .BYTE $00,$00,$0B,$0B,$0B,$0C,$0C,$0C,$00,$00
+        .BYTE $00,$02,$03,$04,$05,$06,$07,$08,$09,$0A
+        .BYTE $02,$03,$04,$05,$05,$05,$05,$0B,$0B,$0B
+        .BYTE $00,$00,$01,$01,$00,$00,$01,$01,$00,$00
+        .BYTE $00,$00,$0E,$0D,$00,$00,$0E,$0D,$00,$00
+        .BYTE $00,$02,$03,$04,$05,$08,$09,$0A,$0B,$00
+        .BYTE $00,$00,$00,$1A,$1A,$1A,$18,$18,$18,$18
+        .BYTE $00,$00,$00,$1A,$1A,$1A,$19,$19,$19,$19
+        .BYTE $00,$00,$18,$18,$00,$00,$00,$00,$19,$19
+        .BYTE $00,$00,$1B,$1B,$00,$00,$15,$16,$17,$00
+        .BYTE $15,$16,$17,$1D,$1D,$15,$16,$17,$1D,$1D
+        .BYTE $14,$14,$1E,$1E,$00,$00,$15,$16,$17,$00
+        .BYTE $00,$0B,$0B,$0B,$15,$16,$17,$15,$16,$17
+        .BYTE $00,$00,$1D,$1D,$1D,$1D,$1E,$1E,$1E,$1E
+        .BYTE $00,$00,$20,$1F,$20,$1F,$00,$00,$11,$11
+        .BYTE $00,$00,$20,$1F,$20,$1F,$20,$1F,$20,$1F
+        .BYTE $00,$1E,$1E,$1E,$20,$1F,$1D,$1D,$1D,$00
+        .BYTE $00,$0C,$0C,$0C,$15,$16,$17,$00,$00,$00
+        .BYTE $00,$02,$03,$04,$05,$08,$09,$0A,$0B,$00
+        .BYTE $00,$00,$06,$06,$06,$11,$11,$11,$00,$00
+        .BYTE $00,$00,$0F,$0F,$15,$16,$17,$15,$16,$17
 ;-------------------------------------------------------
 ; BP_ReactToGilbyCollidingWithWall
 ;-------------------------------------------------------
@@ -2100,7 +2176,7 @@ DisplayBonusBountyScreen
         STA $0315    ;IRQ
         LDA #$00
         STA bpCurrentBonusBountyIBallColumn
-        INC currentOffsetToBonusMap
+        INC currentOffsetToSourceArray
         INC incrementLives
         STA $D010    ;Sprites 0-7 MSB of X coordinate
         LDA $D011    ;VIC Control Register 1
