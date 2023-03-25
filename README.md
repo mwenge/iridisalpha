@@ -3,7 +3,7 @@
 
 [<img src="https://img.shields.io/badge/Lastest%20Release-Windows-blue.svg">](https://github.com/mwenge/iridisalpha/releases/download/v0.2/iridisalpha.exe)
 [<img src="https://img.shields.io/badge/Lastest%20Release-C64-green.svg">](https://github.com/mwenge/iridisalpha/releases/tag/0.01)
-[<img src="https://img.shields.io/badge/Latest%20Release-Play%20Online-purple.svg">](https://iridisalpha.xyz)
+[<img src="https://img.shields.io/badge/Latest%20Release-Play%20Online-purple.svg">](https://mwenge.github.io/iridisalpha.xyz)
 
 This is the reverse-engineered and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. Following the build instructions below you can compile and run Iridis Alpha from scratch yourself on a Linux or Windows desktop. Iridis Alpha was written in 6502 assembler so might be a challenge to read and understand, even for someone who is already familiar with low-level languages such as C. The objective of providing the commented code here is to allow an interested reader to understand the techniques Minter used when coding the game and gain some insight into the workings of 6502 assembler in a then-state-of-the-art Commodore 64 game. The place to start is the [overview of the code in the src directory](https://github.com/mwenge/iridisalpha/tree/master/src).
 
@@ -22,7 +22,7 @@ Because there is so much character and
 sprite data, and because Iridis Alpha contains two sub games, it was necessary to use a compressor ([Exomizer]) to produce the final binary.
 
 Interesting findings, some analysis of the game logic and an overview of the code's structure [can be found
-here](https://github.com/mwenge/iridisalpha/tree/master/src).
+here](https://github.com/mwenge/iridisalpha/tree/master/src). But you are much better off just reading [the book!](https://iridisalpha.com).
 
 
 ## Download
@@ -36,9 +36,9 @@ wine iridisalpha.exe
 ```
 
 ### Play Online
-[<img src="https://img.shields.io/badge/Latest%20Release-Play%20Online-purple.svg">](https://iridisalpha.xyz)
+[<img src="https://img.shields.io/badge/Latest%20Release-Play%20Online-purple.svg">](https://mwenge.github.io/iridisalpha.xyz)
 
-If you just want to play the game, you can do so in your browser at https://iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.) You might find [the game's original manual](https://github.com/mwenge/iridisalpha/blob/master/OriginalGameManual.md) a useful read to try and figure out what on earth is going on!
+If you just want to play the game, you can do so in your browser at https://mwenge.github.io/iridisalpha.xyz. (Ctrl key is 'Fire', Arrow Keys to move.) You might find [the game's original manual](https://github.com/mwenge/iridisalpha/blob/master/OriginalGameManual.md) a useful read to try and figure out what on earth is going on!
 
 ### C64
 [<img src="https://img.shields.io/badge/Lastest%20Release-C64-green.svg">](https://github.com/mwenge/iridisalpha/releases/tag/0.01)
