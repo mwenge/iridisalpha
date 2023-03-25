@@ -7,6 +7,13 @@
 
 This is the reverse-engineered and [commented source code] for the 1986 Commodore 64 game Iridis Alpha by Jeff Minter. Following the build instructions below you can compile and run Iridis Alpha from scratch yourself on a Linux or Windows desktop. Iridis Alpha was written in 6502 assembler so might be a challenge to read and understand, even for someone who is already familiar with low-level languages such as C. The objective of providing the commented code here is to allow an interested reader to understand the techniques Minter used when coding the game and gain some insight into the workings of 6502 assembler in a then-state-of-the-art Commodore 64 game. The place to start is the [overview of the code in the src directory](https://github.com/mwenge/iridisalpha/tree/master/src).
 
+## Iridis Alpha: The Book
+[<img src="https://github.com/mwenge/iatheory/raw/main/docs/cover_front.png" height=300>](https://iridisalpha.com)
+
+If you want to read more about Iridis Alpha than is possibly healthy, you can try the current state of 
+a work-in-progress, omnium-gatherum called [Iridis Alpha Theory](https://iridisalpha.com).
+
+It is a deeper-than-is-possibly-sane dive into the code and assets of the game. The intended audience is anyone who is curious about how old computer games work, and the techniques required to get a cascade of colorful blasting pixels onto the screen. Hopefully you will find it both illuminating and fun.
 
 ## Current Status
 The source code is well documented at this point.
@@ -17,9 +24,6 @@ sprite data, and because Iridis Alpha contains two sub games, it was necessary t
 Interesting findings, some analysis of the game logic and an overview of the code's structure [can be found
 here](https://github.com/mwenge/iridisalpha/tree/master/src).
 
-If you want to read more about Iridis Alpha than is possibly healthy, you can try the [Scrapbook
-Edition](https://github.com/mwenge/iatheory/blob/main/out/iatheory_scrapbook.pdf) of 
-a work-in-progress omnium gatherium called [Iridis Alpha Theory](https://iridisalpha.com).
 
 ## Download
 
