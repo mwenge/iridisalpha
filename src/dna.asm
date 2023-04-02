@@ -27,7 +27,7 @@ LaunchDNA
         JSR DNA_SwapSpriteData
         JMP DNA_ClearScreenAndInit
 
-startofBonusPhaseSprites = $E400
+startOfIBallSprites = $E400
 ;----------------------------------------------------------------
 ; DNA_SwapSpriteData
 ;----------------------------------------------------------------
@@ -38,14 +38,15 @@ DNA_SwapSpriteData
 
         ; $E400 is the location of the IBALL sprites
         LDX #$00
-b0D47   LDA startofBonusPhaseSprites,X
+SwapIBallLoop   
+        LDA startOfIBallSprites,X
         PHA
         LDA beginningOfGilbySprites,X
-        STA startofBonusPhaseSprites,X
+        STA startOfIBallSprites,X
         PLA
         STA beginningOfGilbySprites,X
         DEX
-        BNE b0D47
+        BNE SwapIBallLoop
         LDA #$36
         STA RAM_ACCESS_MODE
         RTS
@@ -83,7 +84,8 @@ DNA_ClearScreenAndInit
 ;----------------------------------------------------------------
 DNA_ClearScreenMain
         LDX #$00
-b0D9C   LDA #$20
+ClearScreenMainLoop   
+        LDA #$20
         STA SCREEN_RAM,X
         STA SCREEN_RAM + LINE6_COL16,X
         STA SCREEN_RAM + LINE12_COL32,X
@@ -94,7 +96,7 @@ b0D9C   LDA #$20
         STA COLOR_RAM + LINE12_COL32,X
         STA $DB00,X
         DEX
-        BNE b0D9C
+        BNE ClearScreenMainLoop
         RTS
 
 ;----------------------------------------------------------------
@@ -107,8 +109,9 @@ DNA_Initialize
         CLI
 
         ; Loop until the player exits
-b0DC6   LDA dnaPlayerPressedExit
-        BEQ b0DC6
+LoopUntilExit   
+        LDA dnaPlayerPressedExit
+        BEQ LoopUntilExit
 
         ; Player exited, swap back in the game sprite data
         JSR DNA_SwapSpriteData
@@ -157,113 +160,161 @@ ReturnFromDNAInterruptHandler
 DNA_RunMainAnimationRoutine
         JMP DNA_MainAnimationRoutine
 
-dnaCurrentSpritesXPosArrayIndex   .BYTE $00
+dnaCurrentSpritesPosArrayIndex   .BYTE $00
 
+spriteIndexDoubled = $40
+starField2UpdateInterval = $41
 ;----------------------------------------------------------------
 ; DNA_MainAnimationRoutine
 ;----------------------------------------------------------------
 DNA_MainAnimationRoutine
-        LDX dnaCurrentSpritesXPosArrayIndex
+        ; X is the current index into the X and Y Pos arrays for
+        ; the sprites.
+        LDX dnaCurrentSpritesPosArrayIndex
+        
+        ; Y will be the index into the two sprites painted during this
+        ; raster line. So get the previous index and double it
+        ; using an arithmetic-shift-left (ASL) and store it in Y.
+        ; currentSpriteIndex loops between 1 and 3 so doubling it here
+        ; gives 2, 4, and 6 respectively at each pass. This means that
+        ; we handle sprites in pairs of 0-3, 1-4, and 2-5 one after the other.
+        ; With 16 pixels between raster lines it ensures that we never attempt
+        ; to paint the same sprite twice on the same raster line.
+        ; Sprites 6 and 7 are reserved for the starfields.
         LDY currentSpriteIndex
         TYA
-        STA currentShipWaveDataLoPtr
+        STA spriteIndexDoubled
         CLC
         ASL
         TAY
 
-        LDA dnaSpritesPreviousXPosArray,X
-        STA $CFFE,Y ; Sprite 'Y' X Pos
+        ; Update the position of the sprite on the left hand chain.
         LDA dnaSpritesXPositionsArray,X
-        STA $CFFF,Y ; Sprite 'Y' X Pos
-        STA $D005,Y  ;Sprite 2 Y Pos
+        STA $CFFE,Y ; Left Sprite X Pos
+        LDA dnaSpritesYPositionsArray,X
+        STA $CFFF,Y ; Left Sprite Y Pos
+
+        ; Update the Y Pos of the sprite on the right hand chain.
+        STA $D005,Y  ; Right Sprite Y Pos
+
+        ; Update the starfield array sprite positions for
+        ; this raster line. First set the Y position
+        ; using the same Y pos used for the IBall sprites.
         STA $D00F    ;Sprite 7 Y Pos
         STA $D00D    ;Sprite 6 Y Pos
 
-        INC dnaStarfieldSprite1Array,X
-        LDA dnaStarfieldSprite1Array,X
+        ; Always update the position of the foreground starfield.
+        INC dnaForegroundStarfieldXPosArray,X
+        LDA dnaForegroundStarfieldXPosArray,X
         STA $D00C    ;Sprite 6 X Pos
 
-        LDA currentShipWaveDataHiPtr
+        ; Update the position of the background starfield every second
+        ; pass.
+        LDA starField2UpdateInterval
         AND #$01
-        BEQ b0E3B
+        BEQ UpdateBackgroundStarFieldXPos
 
-        INC dnaStarfielSprite2Array,X
-b0E3B   LDA dnaStarfielSprite2Array,X
+        INC dnaBackgroundStarfieldXPosArray,X
+UpdateBackgroundStarFieldXPos   
+        LDA dnaBackgroundStarfieldXPosArray,X
         STA $D00E    ;Sprite 7 X Pos
 
+        ; Add in the phase to our index to the X position of the sprite on the
+        ; right hand chain. If the result is greater than the number of values
+        ; in the array subtract it out again.
+        ; This means the phase acts as an offset into the X Position array picking
+        ; up previous values of X Pos from the left hand chain.
         TXA
         PHA
         CLC
         ADC dnaCurrentPhase
         CMP #$27
-        BMI b0E4E
+        BMI UpdateXPosWithPhase
 
+        ; Back out the addition if result greater than $27.
         SEC
         SBC #$27
-b0E4E   TAX
-        LDA dnaSpritesPreviousXPosArray,X
+UpdateXPosWithPhase   
+        TAX
+        LDA dnaSpritesXPositionsArray,X
         STA $D004,Y  ;Sprite 2 X Pos
+
+        ; Restore the values of X and Y.
         PLA
         TAX
         LDY currentSpriteIndex
-        STX currentShipWaveDataLoPtr
+        STX spriteIndexDoubled
 
-        LDX dnaSpriteColor2ArrayIndex
-dnaColorScheme1LoByte   =*+$01
-dnaColorScheme1HiByte   =*+$02
-        LDA dnaSpriteColor2Array,X
-        STA $D026,Y  ;Sprite Multi-Color Register 1
-        INX
-dnaColorScheme2LoByte   =*+$01
-dnaColorScheme2HiByte   =*+$02
-        LDA dnaSpriteColor2Array,X
-        CMP #$FF
-        BNE b0E6F
-
-        LDX #$00
-b0E6F   STX dnaSpriteColor2ArrayIndex
-
-        LDX dnaCurrentSpriteColorArrayIndex
-dnaColorScheme3LoByte   =*+$01
-dnaColorScheme3HiByte   =*+$02
-        LDA dnaSpriteColorArray,X
-        STA $D029,Y  ;Sprite 2 Color
+        ; Update the colors of the sprites.
+        ; First, the left sprite.
+        LDX dnaSpriteOriginalLeftColorArrayIndex
+dnaLeftSpriteColorLoByte   =*+$01
+dnaLeftSpriteColorHiByte   =*+$02
+        LDA dnaSpriteOriginalLeftColorArray,X
+        STA $D026,Y  ; Left Sprite Color
 
         ; Increment the color array index and reset
         ; it to 00 if we've reached the end of dnaSpriteColorArray (denoted
-        ; by an $FF sentinel).
+        ; by an $FF (END_SENTINEL) sentinel).
         INX
-dnaColorScheme4LoByte   =*+$01
-dnaColorScheme4HiByte   =*+$02
-        LDA dnaSpriteColorArray,X
-        CMP #$FF
-        BNE b0E85
-        LDX #$00
-b0E85   STX dnaCurrentSpriteColorArrayIndex
+dnaLeftSpriteSentinelCheckLoByte   =*+$01
+dnaLeftSpriteSentinelCheckHiByte   =*+$02
+        LDA dnaSpriteOriginalLeftColorArray,X
+        CMP #END_SENTINEL
+        BNE DontResetColor2Index
 
-        LDX currentShipWaveDataLoPtr
+        LDX #$00
+DontResetColor2Index   
+        STX dnaSpriteOriginalLeftColorArrayIndex
+
+        ; Update the colors of the sprites.
+        ; Next, the right sprite.
+        LDX dnaCurrentSpriteColorArrayIndex
+dnaRightSpriteColorLoByte   =*+$01
+dnaRightSpriteColorHiByte   =*+$02
+        LDA dnaSpriteOriginalRightColorArray,X
+        STA $D029,Y  ; Right Sprite Color
+
+        ; Increment the color array index and reset
+        ; it to 00 if we've reached the end of dnaSpriteColorArray (denoted
+        ; by an $FF (END_SENTINEL) sentinel).
+        INX
+dnaRightSpriteSentinelCheckLoByte   =*+$01
+dnaRightSpriteSentinelCheckHiByte   =*+$02
+        LDA dnaSpriteOriginalRightColorArray,X
+        CMP #END_SENTINEL
+        BNE DontResetColorArrayIndex
+
+        LDX #$00
+DontResetColorArrayIndex   
+        STX dnaCurrentSpriteColorArrayIndex
+
+        ; Check if we should loop the sprite index back around to 01
+        ; again.
+        LDX spriteIndexDoubled
         INX
         INY
         CPY #$04
-        BNE b0E92
+        BNE DontResetSpriteIndex
 
         ; Check if we should move back to the start of the raster positions
         ; array (end of the array denoted by a sentinel value of $FF).
         LDY #$01
-b0E92   STY currentSpriteIndex
-        STX dnaCurrentSpritesXPosArrayIndex
-        LDA dnaSpritesXPositionsArray,X
-        CMP #$FF
-        BNE b0EC7
+DontResetSpriteIndex   
+        STY currentSpriteIndex
+        STX dnaCurrentSpritesPosArrayIndex
+        LDA dnaSpritesYPositionsArray,X
+        CMP #END_SENTINEL
+        BNE UpdateRasterPosition
 
         ; We've reached the end of the raster positions array (i.e. we've done
         ; a full paint of the screen) so do some book-keeping, check for input,
         ; update the sprite pointers (to achieve the blinking animation effect).
         LDX #$00
-        STX dnaCurrentSpritesXPosArrayIndex
-        JSR DNA_UpdateHeadOfPreviousXPosData
+        STX dnaCurrentSpritesPosArrayIndex
+        JSR UpdateXPosArrays
         JSR DNA_CheckKeyBoardInput
-        DEC currentShipWaveDataHiPtr
+        DEC starField2UpdateInterval
         JSR DNA_UpdateSpritePointers
         LDA #$01
         STA currentSpriteIndex
@@ -276,11 +327,12 @@ b0E92   STY currentSpriteIndex
         STA $D01A    ;VIC Interrupt Mask Register (IMR)
         JMP $EA31
 
-        LDX dnaCurrentSpritesXPosArrayIndex
+        LDX dnaCurrentSpritesPosArrayIndex
 
         ; Update the 'Raster Position' to the next position on the screen
         ; that we want to interrupt at.
-b0EC7   LDA dnaSpritesXPositionsArray,X
+UpdateRasterPosition   
+        LDA dnaSpritesYPositionsArray,X
         SEC
         SBC #$02
         STA $D012    ;Raster Position
@@ -291,18 +343,20 @@ b0EC7   LDA dnaSpritesXPositionsArray,X
 
         JMP ReturnFromDNAInterruptHandler
 
-dnaSpritesPreviousXPosArray     .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
+dnaSpritesXPositionsArray       .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
                                 .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
                                 .BYTE $C0,$C0,$C0,$C0,$C0,$C0,$C0,$C0
                                 .BYTE $00,$00,$00,$00,$00,$00,$00,$00
                                 .BYTE $00,$00,$00,$00,$00,$00,$00,$00
-dnaSpritesXPositionsArray       .BYTE $30,$38,$40,$48,$50,$58,$60,$68
+
+dnaSpritesYPositionsArray       .BYTE $30,$38,$40,$48,$50,$58,$60,$68
                                 .BYTE $70,$78,$80,$88,$90,$98,$A0,$A8
                                 .BYTE $B0,$B8,$C0,$C8,$D0,$D8,$E0,$E8
-                                .BYTE $FF
-dnaSpriteColor2Array            .BYTE RED,ORANGE,YELLOW,GREEN,PURPLE,BLUE,END_SENTINEL
-dnaSpriteColorArray             .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,END_SENTINEL
-dnaXPosDataHeadArray            .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
+                                .BYTE END_SENTINEL
+
+dnaSpriteOriginalLeftColorArray            .BYTE RED,ORANGE,YELLOW,GREEN,PURPLE,BLUE,END_SENTINEL
+dnaSpriteOriginalRightColorArray             .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,END_SENTINEL
+newXPosOffsetsArray            .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
                                 .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
                                 .BYTE $80,$7F,$7E,$7D,$7B,$78,$75,$71
                                 .BYTE $6D,$68,$63,$5E,$58,$52,$4C,$46
@@ -310,9 +364,9 @@ dnaXPosDataHeadArray            .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
                                 .BYTE $12,$0E,$0A,$07,$04,$02,$01,$00
                                 .BYTE $00,$00,$01,$02,$04,$07,$0A,$0E
                                 .BYTE $12,$17,$1C,$21,$27,$2D,$33,$39
-                                .BYTE $FF
+                                .BYTE END_SENTINEL
 dnaCurrentSpriteColorArrayIndex .BYTE $00
-dnaSpriteColor2ArrayIndex       .BYTE $00
+dnaSpriteOriginalLeftColorArrayIndex       .BYTE $00
 currentSpriteIndex              .BYTE $01
 dnaCurrentPhase                 .BYTE $05
 
@@ -321,51 +375,61 @@ dnaCurrentPhase                 .BYTE $05
 ;----------------------------------------------------------------
 DNA_PropagatePreviousXPosToTheRight
         LDX #$27
-b0F71   LDA dnaSpritesPreviousXPosArray - $01,X
-        STA dnaSpritesPreviousXPosArray,X
+b0F71   LDA dnaSpritesXPositionsArray - $01,X
+        STA dnaSpritesXPositionsArray,X
         DEX
         BNE b0F71
         RTS
 
-a0F7B   .BYTE $00
+indexToNextXPosForHead .BYTE $00
+offsetToAddToNewXPos   = $42
 ;----------------------------------------------------------------
-; DNA_UpdateHeadOfPreviousXPosData
+; UpdateXPosArrays
 ;----------------------------------------------------------------
-DNA_UpdateHeadOfPreviousXPosData
+UpdateXPosArrays
         DEC actualSpeed
-        BNE b0F8A
+        BNE CalculateNewXPosForHead
         LDA dnaCurrentSpeed
         STA actualSpeed
         JSR DNA_PropagatePreviousXPosToTheRight
 
-b0F8A   JSR DNA_CalculateValueForHeadOfPreviousXPosData
+CalculateNewXPosForHead   
+        JSR CalculateNewXPosForHeadSprite
         DEC timeToNextUpdateCounter
-        BNE b0FC3
+        BNE ReturnFromUpdatingHead
+
         LDA initialTimeToNextUpdate
         STA timeToNextUpdateCounter
-        LDX a0F7B
-        LDA dnaXPosDataHeadArray,X
-        STA tempVarStorage
+
+        LDX indexToNextXPosForHead
+        LDA newXPosOffsetsArray,X
+        STA offsetToAddToNewXPos
+
         LDY dnaWave2Enabled
-        BEQ b0FA9
+        BEQ UpdateHeadOfWave
+
         CLC
         ROR
-        STA tempVarStorage
-b0FA9   LDA newHeadOfXPosData
+        STA offsetToAddToNewXPos
+UpdateHeadOfWave   
+        LDA newHeadOfXPosData
         CLC
-        ADC tempVarStorage
-        STA dnaSpritesPreviousXPosArray
+        ADC offsetToAddToNewXPos
+        STA dnaSpritesXPositionsArray
         TXA
         CLC
         ADC incrementToXPosition
         TAX
         CPX #$40
-        BMI b0FC0
+        BMI UpdateNextXPos
+
         SEC
         SBC #$40
         TAX
-b0FC0   STX a0F7B
-b0FC3   RTS
+UpdateNextXPos   
+        STX indexToNextXPosForHead
+ReturnFromUpdatingHead   
+        RTS
 
 incrementToXPosition          .BYTE $02
 timeToNextUpdateCounter       .BYTE $01
@@ -515,40 +579,40 @@ b10C6   CMP #$06 ; F5
         BNE b10F2
 
         ; F5 pressed. Update color scheme of wave 1.
-        INC dnaCurrentColorScheme
-        LDA dnaCurrentColorScheme
+        INC dnaCurrentColorSchemeLeft
+        LDA dnaCurrentColorSchemeLeft
         CMP #$08
         BNE b10D9
         LDA #$00
-        STA dnaCurrentColorScheme
+        STA dnaCurrentColorSchemeLeft
 b10D9   TAX
         LDA dnaColorSchemeLoPtr,X
-        STA dnaColorScheme2LoByte
-        STA dnaColorScheme1LoByte
+        STA dnaLeftSpriteSentinelCheckLoByte
+        STA dnaLeftSpriteColorLoByte
         LDA dnaColorSchemeHiPtr,X
-        STA dnaColorScheme2HiByte
-        STA dnaColorScheme1HiByte
+        STA dnaLeftSpriteSentinelCheckHiByte
+        STA dnaLeftSpriteColorHiByte
         LDA #$00
-        STA dnaSpriteColor2ArrayIndex
+        STA dnaSpriteOriginalLeftColorArrayIndex
         RTS
 
 b10F2   CMP #$03 ; F7
         BNE b111D
         ;F7 pressed - change colors
-        INC dnaCurrentColorScheme2
-        LDA dnaCurrentColorScheme2
+        INC dnaCurrentColorSchemeRight
+        LDA dnaCurrentColorSchemeRight
         CMP #$08
         BNE b1105
 
         LDA #$00
-        STA dnaCurrentColorScheme2
+        STA dnaCurrentColorSchemeRight
 b1105   TAX
         LDA dnaColorSchemeLoPtr,X
-        STA dnaColorScheme4LoByte
-        STA dnaColorScheme3LoByte
+        STA dnaRightSpriteSentinelCheckLoByte
+        STA dnaRightSpriteColorLoByte
         LDA dnaColorSchemeHiPtr,X
-        STA dnaColorScheme4HiByte
-        STA dnaColorScheme3HiByte
+        STA dnaRightSpriteSentinelCheckHiByte
+        STA dnaRightSpriteColorHiByte
         LDA #$00
         STA dnaCurrentSpriteColorArrayIndex
 
@@ -561,10 +625,10 @@ b1124   RTS
 
 dnaWave2Frequency           .BYTE $12
 dnaPlayerPressedExit        .BYTE $00
-dnaStarfieldSprite1Array    .BYTE $4E,$05,$66,$FD,$12,$28,$CC,$87
+dnaForegroundStarfieldXPosArray    .BYTE $4E,$05,$66,$FD,$12,$28,$CC,$87
                             .BYTE $37,$93,$F5,$3B,$09,$9D,$A8,$7D
                             .BYTE $DD,$67,$20,$C4,$AA,$35,$02,$74
-dnaStarfielSprite2Array     .BYTE $94,$E2,$33,$38,$C6,$DF,$23,$42
+dnaBackgroundStarfieldXPosArray     .BYTE $94,$E2,$33,$38,$C6,$DF,$23,$42
                             .BYTE $71,$12,$29,$67,$7F,$EA,$A9,$34
                             .BYTE $A5,$81,$01,$4C,$29,$36,$55
                             .BYTE $98
@@ -583,10 +647,10 @@ DNA_UpdateSpritePointers
         LDA #$05
         STA dnaColorUpdateInterval
         LDX indexToSpriteColor1Array
-        LDA dnaSpriteColor1Array,X
+        LDA dnaSpriteColorArray1,X
         STA $D025    ;Sprite Multi-Color Register 0
         INX
-        LDA dnaSpriteColor1Array,X
+        LDA dnaSpriteColorArray1,X
         BPL b1176
 
         LDX #$00
@@ -623,7 +687,7 @@ b1181   DEC dnaIBallBlinkInterval
 
 b11B8   DEC currentMonochromIBallSprite
         LDA currentMonochromIBallSprite
-        CMP #$FF
+        CMP #END_SENTINEL
         BNE b11C7
         LDA #$03
         STA currentMonochromIBallSprite
@@ -637,9 +701,9 @@ incrementToXPositionForPreviousHead    .BYTE $01
 dnaWave2Enabled                        .BYTE $01
 newHeadOfXPosData                      .BYTE $00
 ;----------------------------------------------------------------
-; DNA_CalculateValueForHeadOfPreviousXPosData
+; CalculateNewXPosForHeadSprite
 ;----------------------------------------------------------------
-DNA_CalculateValueForHeadOfPreviousXPosData
+CalculateNewXPosForHeadSprite
         LDA dnaWave2Enabled
         BNE b11DA
         LDA #$40
@@ -651,7 +715,7 @@ b11DA   DEC timeToNextUpdateCounterForPreviousHead
         LDA initialTimeToNextUpdateForPreviousHead
         STA timeToNextUpdateCounterForPreviousHead
         LDX indexToXPosDataHeadArray
-        LDA dnaXPosDataHeadArray,X
+        LDA newXPosOffsetsArray,X
         CLC
         ROR
         CLC
@@ -786,25 +850,25 @@ b1336   LDA #<p200E
 
 END_SENTINEL = $FF
 dnaTextDisplayed     .BYTE $01
-dnaSpriteColor1Array .BYTE BLUE,RED,PURPLE,GREEN,CYAN,YELLOW,WHITE,YELLOW
+dnaSpriteColorArray1 .BYTE BLUE,RED,PURPLE,GREEN,CYAN,YELLOW,WHITE,YELLOW
                      .BYTE CYAN,GREEN,PURPLE,RED,BLUE,END_SENTINEL
-dnaSprite3ColorArray .BYTE BLUE,GREEN,LTBLUE,LTGREEN,CYAN,END_SENTINEL
-dnsSprite4ColorArray .BYTE BROWN,ORANGE,YELLOW,ORANGE,BROWN,END_SENTINEL
-dnaSprite5ColorArray .BYTE BLACK,BLACK,BLACK,RED,BLACK,BLACK,YELLOW,END_SENTINEL
-dnaSPrite6ColorArray .BYTE WHITE,GRAY3,LTGREEN,GRAY2,BLACK,BLACK
+dnaSpriteColorArray2 .BYTE BLUE,GREEN,LTBLUE,LTGREEN,CYAN,END_SENTINEL
+dnsSpriteColorArray3 .BYTE BROWN,ORANGE,YELLOW,ORANGE,BROWN,END_SENTINEL
+dnaSpriteColorArray4 .BYTE BLACK,BLACK,BLACK,RED,BLACK,BLACK,YELLOW,END_SENTINEL
+dnaSpriteColorArray5 .BYTE WHITE,GRAY3,LTGREEN,GRAY2,BLACK,BLACK
                      .BYTE BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,BLACK,END_SENTINEL
-dnaSPrite7ColorArray .BYTE BLUE,LTBLUE,GRAY1,RED,GREEN,END_SENTINEL
+dnaSpriteColorArray6 .BYTE BLUE,LTBLUE,GRAY1,RED,GREEN,END_SENTINEL
 
-dnaColorSchemeLoPtr .BYTE <dnaSpriteColor2Array,<dnaSpriteColorArray,<dnaSpriteColor1Array
-                    .BYTE <dnaSprite3ColorArray,<dnsSprite4ColorArray,<dnaSprite5ColorArray
-                    .BYTE <dnaSPrite6ColorArray,<dnaSPrite7ColorArray
-dnaColorSchemeHiPtr .BYTE >dnaSpriteColor2Array,>dnaSpriteColorArray,>dnaSpriteColor1Array
-                    .BYTE >dnaSprite3ColorArray,>dnsSprite4ColorArray,>dnaSprite5ColorArray
-                    .BYTE >dnaSPrite6ColorArray,>dnaSPrite7ColorArray
+dnaColorSchemeLoPtr .BYTE <dnaSpriteOriginalLeftColorArray,<dnaSpriteOriginalRightColorArray,<dnaSpriteColorArray1
+                    .BYTE <dnaSpriteColorArray2,<dnsSpriteColorArray3,<dnaSpriteColorArray4
+                    .BYTE <dnaSpriteColorArray5,<dnaSpriteColorArray6
+dnaColorSchemeHiPtr .BYTE >dnaSpriteOriginalLeftColorArray,>dnaSpriteOriginalRightColorArray,>dnaSpriteColorArray1
+                    .BYTE >dnaSpriteColorArray2,>dnsSpriteColorArray3,>dnaSpriteColorArray4
+                    .BYTE >dnaSpriteColorArray5,>dnaSpriteColorArray6
 
 
-dnaCurrentColorScheme   .BYTE $00
-dnaCurrentColorScheme2   .BYTE $01
+dnaCurrentColorSchemeLeft   .BYTE $00
+dnaCurrentColorSchemeRight   .BYTE $01
 titleTextLine1   .TEXT "    % % %  DNA  % % %   "
 titleTextLine2   .TEXT " CONCEIVED AND EXECUTED B"
 titleTextLine3   .TEXT "Y            Y A K       "
