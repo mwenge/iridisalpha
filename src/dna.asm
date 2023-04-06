@@ -105,7 +105,7 @@ ClearScreenMainLoop
 DNA_Initialize
         JSR DNA_SetInterruptHandler
         JSR DNA_DrawTitleScreen
-        JSR DNA_DrawStuff
+        JSR DNA_UpdateSettingsBasedOnFrequency
         CLI
 
         ; Loop until the player exits
@@ -354,9 +354,9 @@ dnaSpritesYPositionsArray       .BYTE $30,$38,$40,$48,$50,$58,$60,$68
                                 .BYTE $B0,$B8,$C0,$C8,$D0,$D8,$E0,$E8
                                 .BYTE END_SENTINEL
 
-dnaSpriteOriginalLeftColorArray            .BYTE RED,ORANGE,YELLOW,GREEN,PURPLE,BLUE,END_SENTINEL
-dnaSpriteOriginalRightColorArray             .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,END_SENTINEL
-newXPosOffsetsArray            .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
+dnaSpriteOriginalLeftColorArray   .BYTE RED,ORANGE,YELLOW,GREEN,PURPLE,BLUE,END_SENTINEL
+dnaSpriteOriginalRightColorArray  .BYTE GRAY1,GRAY2,GRAY3,WHITE,GRAY3,GRAY2,END_SENTINEL
+newXPosOffsetsArray             .BYTE $40,$46,$4C,$53,$58,$5E,$63,$68
                                 .BYTE $6D,$71,$75,$78,$7B,$7D,$7E,$7F
                                 .BYTE $80,$7F,$7E,$7D,$7B,$78,$75,$71
                                 .BYTE $6D,$68,$63,$5E,$58,$52,$4C,$46
@@ -375,65 +375,83 @@ dnaCurrentPhase                 .BYTE $05
 ;----------------------------------------------------------------
 DNA_PropagatePreviousXPosToTheRight
         LDX #$27
-b0F71   LDA dnaSpritesXPositionsArray - $01,X
+PropagateToRightLoop   
+        LDA dnaSpritesXPositionsArray - $01,X
         STA dnaSpritesXPositionsArray,X
         DEX
-        BNE b0F71
+        BNE PropagateToRightLoop
         RTS
 
 indexToNextXPosForHead .BYTE $00
-offsetToAddToNewXPos   = $42
+newXPosForWave1   = $42
 ;----------------------------------------------------------------
 ; UpdateXPosArrays
 ;----------------------------------------------------------------
 UpdateXPosArrays
         DEC actualSpeed
         BNE CalculateNewXPosForHead
+
+        ; The speed setting determines how quickly
+        ; the X pos values are propagated down the chains.
         LDA dnaCurrentSpeed
         STA actualSpeed
         JSR DNA_PropagatePreviousXPosToTheRight
 
 CalculateNewXPosForHead   
-        JSR CalculateNewXPosForHeadSprite
-        DEC timeToNextUpdateCounter
+        ; Get a new value for notionalNewXPosForWave2.
+        JSR CalculateNotionalValueOfNewXPosForWave2
+
+        DEC timeToNextUpdateCounterForWave1
         BNE ReturnFromUpdatingHead
 
-        LDA initialTimeToNextUpdate
-        STA timeToNextUpdateCounter
+        LDA initialTimeToNextUpdateForWave1
+        STA timeToNextUpdateCounterForWave1
 
+        ; Get newXPosForWave1, this will be
+        ; added to notionalNewXPosForWave2. Both are
+        ; sourced from the same array newXPosOffsetsArray.
         LDX indexToNextXPosForHead
         LDA newXPosOffsetsArray,X
-        STA offsetToAddToNewXPos
+        STA newXPosForWave1
 
         LDY dnaWave2Enabled
         BEQ UpdateHeadOfWave
 
+        ; Halve the offset we will use if the right
+        ; hand chain is enabled.
         CLC
-        ROR
-        STA offsetToAddToNewXPos
+        ROR 
+        STA newXPosForWave1
 UpdateHeadOfWave   
-        LDA newHeadOfXPosData
+        ; Finally add out new X Pos value, add an
+        ; offset to it and store it at the head of
+        ; dnaSpritesXPositionsArray.
+        LDA notionalNewXPosForWave2
         CLC
-        ADC offsetToAddToNewXPos
+        ADC newXPosForWave1
         STA dnaSpritesXPositionsArray
+
+        ; Get a new value for indexToNextXPosForHead
+        ; for the next time around. Ensure it
+        ; loops to start of array if greater than $40.
         TXA
         CLC
-        ADC incrementToXPosition
+        ADC xPosOffsetForWave1
         TAX
-        CPX #$40
+        CPX #XPOS_OFFSETS_ARRAY_SIZE
         BMI UpdateNextXPos
 
         SEC
-        SBC #$40
+        SBC #XPOS_OFFSETS_ARRAY_SIZE
         TAX
 UpdateNextXPos   
         STX indexToNextXPosForHead
 ReturnFromUpdatingHead   
         RTS
 
-incrementToXPosition          .BYTE $02
-timeToNextUpdateCounter       .BYTE $01
-initialTimeToNextUpdate       .BYTE $05
+xPosOffsetForWave1          .BYTE $02
+timeToNextUpdateCounterForWave1       .BYTE $01
+initialTimeToNextUpdateForWave1       .BYTE $05
 dnaCurrentSpeed               .BYTE $01
 actualSpeed                   .BYTE $01
 dnaWave1Frequency             .BYTE $11
@@ -468,14 +486,14 @@ b1018   LDA lastKeyPressed
         BNE b1027
         ; Z pressed: decrease wave frequency.
         DEC dnaWave1Frequency
-        JMP DNA_DrawStuff
+        JMP DNA_UpdateSettingsBasedOnFrequency
         ; Returns
 
 b1027   CMP #$17 ; 'X'
         BNE b1031
         ; X pressed: increase wave frequency.
         INC dnaWave1Frequency
-        JMP DNA_DrawStuff
+        JMP DNA_UpdateSettingsBasedOnFrequency
         ; Returns
 
 b1031   CMP #$0A ; 'A'
@@ -500,26 +518,26 @@ b1043   CMP #$0D ; 'S'
         ; Returns
 
 ;----------------------------------------------------------------
-; DNA_DrawStuff
+; DNA_UpdateSettingsBasedOnFrequency
 ;----------------------------------------------------------------
-DNA_DrawStuff
+DNA_UpdateSettingsBasedOnFrequency
         LDA dnaWave1Frequency
         AND #$1F
         TAX
         LDA timesToNextUpdateForFrequency,X
-        STA initialTimeToNextUpdate
-        STA timeToNextUpdateCounter
+        STA initialTimeToNextUpdateForWave1
+        STA timeToNextUpdateCounterForWave1
         LDA xPosOffsetsForFrequency,X
-        STA incrementToXPosition
+        STA xPosOffsetForWave1
 
         LDA dnaWave2Frequency
         AND #$1F
         TAX
         LDA timesToNextUpdateForFrequency,X
-        STA initialTimeToNextUpdateForPreviousHead
-        STA timeToNextUpdateCounterForPreviousHead
+        STA initialTimeToNextUpdateForWave2
+        STA timeToNextUpdateCounterForWave2
         LDA xPosOffsetsForFrequency,X
-        STA incrementToXPositionForPreviousHead
+        STA xPosOffsetForWave2
         JMP DNA_UpdateDisplayedSettings
         ; Returns
 
@@ -542,14 +560,14 @@ b108C   CMP #$14 ; C
         BNE b1096
         ; 'C' pressed. Increase wave 2 frequency.
         DEC dnaWave2Frequency
-        JMP DNA_DrawStuff
+        JMP DNA_UpdateSettingsBasedOnFrequency
         ; Returns
 
 b1096   CMP #$1F ; V
         BNE b10A0
         ; 'V' pressed. Decrease wave 2 frequency.
         INC dnaWave2Frequency
-        JMP DNA_DrawStuff
+        JMP DNA_UpdateSettingsBasedOnFrequency
         ; Returns
 
 b10A0   CMP #$3C ; Space
@@ -626,12 +644,11 @@ b1124   RTS
 dnaWave2Frequency           .BYTE $12
 dnaPlayerPressedExit        .BYTE $00
 dnaForegroundStarfieldXPosArray    .BYTE $4E,$05,$66,$FD,$12,$28,$CC,$87
-                            .BYTE $37,$93,$F5,$3B,$09,$9D,$A8,$7D
-                            .BYTE $DD,$67,$20,$C4,$AA,$35,$02,$74
-dnaBackgroundStarfieldXPosArray     .BYTE $94,$E2,$33,$38,$C6,$DF,$23,$42
-                            .BYTE $71,$12,$29,$67,$7F,$EA,$A9,$34
-                            .BYTE $A5,$81,$01,$4C,$29,$36,$55
-                            .BYTE $98
+                                   .BYTE $37,$93,$F5,$3B,$09,$9D,$A8,$7D
+                                   .BYTE $DD,$67,$20,$C4,$AA,$35,$02,$74
+dnaBackgroundStarfieldXPosArray    .BYTE $94,$E2,$33,$38,$C6,$DF,$23,$42
+                                   .BYTE $71,$12,$29,$67,$7F,$EA,$A9,$34
+                                   .BYTE $A5,$81,$01,$4C,$29,$36,$55,$98
 currentColorIBallSprite     .BYTE $00
 dnaIBallBlinkInterval       .BYTE $01
 currentMonochromIBallSprite .BYTE $04
@@ -693,42 +710,63 @@ b11B8   DEC currentMonochromIBallSprite
         STA currentMonochromIBallSprite
 b11C7   RTS
 
-indexToXPosDataHeadArray               .BYTE $00
-indexToSpriteColor1Array               .BYTE $00
-initialTimeToNextUpdateForPreviousHead .BYTE $03
-timeToNextUpdateCounterForPreviousHead .BYTE $03
-incrementToXPositionForPreviousHead    .BYTE $01
-dnaWave2Enabled                        .BYTE $01
-newHeadOfXPosData                      .BYTE $00
+indexToXPosDataArrayForWave2    .BYTE $00
+indexToSpriteColor1Array        .BYTE $00
+initialTimeToNextUpdateForWave2 .BYTE $03
+timeToNextUpdateCounterForWave2 .BYTE $03
+xPosOffsetForWave2              .BYTE $01
+dnaWave2Enabled                 .BYTE $01
+notionalNewXPosForWave2         .BYTE $00
+XPOS_OFFSETS_ARRAY_SIZE         = $40
 ;----------------------------------------------------------------
-; CalculateNewXPosForHeadSprite
+; CalculateNotionalValueOfNewXPosForWave2
+; This routine calculates a new value for 
+; notionalNewXPosForWave2.
 ;----------------------------------------------------------------
-CalculateNewXPosForHeadSprite
+CalculateNotionalValueOfNewXPosForWave2
         LDA dnaWave2Enabled
-        BNE b11DA
-        LDA #$40
-        STA newHeadOfXPosData
-b11D9   RTS
+        BNE NewXPosWhenWave2Enabled
 
-b11DA   DEC timeToNextUpdateCounterForPreviousHead
-        BNE b11D9
-        LDA initialTimeToNextUpdateForPreviousHead
-        STA timeToNextUpdateCounterForPreviousHead
-        LDX indexToXPosDataHeadArray
+        ; If wave 2 is not enabled simply set $40
+        ; as the initial X Pos (it will be incremented
+        ; later).
+        LDA #XPOS_OFFSETS_ARRAY_SIZE
+        STA notionalNewXPosForWave2
+ReturnFromNewXPos   
+        RTS
+
+NewXPosWhenWave2Enabled   
+        DEC timeToNextUpdateCounterForWave2
+        BNE ReturnFromNewXPos
+
+        LDA initialTimeToNextUpdateForWave2
+        STA timeToNextUpdateCounterForWave2
+
+        ; If the right hand chain is enabled, get 
+        ; a value from newXPosOffsetsArray which has
+        ; $40 (64) potential values. This logic uses
+        ; indexToXPosDataArrayForWave2 to get a value
+        ; from it, halves it (ROR), and adds $40.
+        LDX indexToXPosDataArrayForWave2
         LDA newXPosOffsetsArray,X
         CLC
-        ROR
+        ROR         ; Halve it.
         CLC
-        ADC #$40
-        STA newHeadOfXPosData
+        ADC #XPOS_OFFSETS_ARRAY_SIZE    ; Add $40.
+        STA notionalNewXPosForWave2
+
+        ; Add xPosOffsetForWave2 to indexToXPosDataArrayForWave2.
+        ; Ensure it loops to start of array if greater than $40. 
         TXA
         CLC
-        ADC incrementToXPositionForPreviousHead
-        CMP #$40
-        BMI b11FF
+        ADC xPosOffsetForWave2
+        CMP #XPOS_OFFSETS_ARRAY_SIZE
+        BMI NoLoopingRequired
+
         SEC
-        SBC #$40
-b11FF   STA indexToXPosDataHeadArray
+        SBC #XPOS_OFFSETS_ARRAY_SIZE
+NoLoopingRequired   
+        STA indexToXPosDataArrayForWave2
         RTS
 
 ;----------------------------------------------------------------
