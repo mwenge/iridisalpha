@@ -17,6 +17,8 @@
 ;    May you share freely, never taking more than you give.
 ;
 
+mifScreenPtrHi = planetPtrHi
+mifScreenPtrLo = planetPtrLo
 ;-----------------------------------------------------------------------------------------
 ; LaunchMIF
 ;-----------------------------------------------------------------------------------------
@@ -41,21 +43,21 @@ LaunchMIF
 
         ; Init_ScreenPointerArray
         LDA #>SCREEN_RAM
-        STA planetPtrHi
+        STA mifScreenPtrHi
         LDA #<SCREEN_RAM
-        STA planetPtrLo
+        STA mifScreenPtrLo
         LDX #$00
-b4109   LDA planetPtrLo
+b4109   LDA mifScreenPtrLo
         STA screenLinePtrLo,X
-        LDA planetPtrHi
+        LDA mifScreenPtrHi
         STA screenLinePtrHi,X
-        LDA planetPtrLo
+        LDA mifScreenPtrLo
         CLC 
         ADC #$28
-        STA planetPtrLo
-        LDA planetPtrHi
+        STA mifScreenPtrLo
+        LDA mifScreenPtrHi
         ADC #$00
-        STA planetPtrHi
+        STA mifScreenPtrHi
         INX 
         CPX #$1A
         BNE b4109
@@ -86,10 +88,10 @@ MIF_PutCharAtCurrPosInAccumulator
         LDX mifCurrentYPos
         LDY mifCurrentXPos
         LDA screenLinePtrLo,X
-        STA planetPtrLo
+        STA mifScreenPtrLo
         LDA screenLinePtrHi,X
-        STA planetPtrHi
-        LDA (planetPtrLo),Y
+        STA mifScreenPtrHi
+        LDA (mifScreenPtrLo),Y
         RTS 
 
 ;------------------------------------------------------------------------
@@ -98,18 +100,18 @@ MIF_PutCharAtCurrPosInAccumulator
 MIF_DrawCurrentCharAtCurrentPos   
         JSR MIF_PutCharAtCurrPosInAccumulator
         LDA mifCurrentChar
-        STA (planetPtrLo),Y
-        LDA planetPtrHi
+        STA (mifScreenPtrLo),Y
+        LDA mifScreenPtrHi
         PHA 
         CLC 
         ; Move to Hi ptr to Color Ram so we can paint the
         ; character's color
         ADC #$D4
-        STA planetPtrHi
+        STA mifScreenPtrHi
         LDA mifCurrentCharColor
-        STA (planetPtrLo),Y
+        STA (mifScreenPtrLo),Y
         PLA 
-        STA planetPtrHi
+        STA mifScreenPtrHi
         RTS 
 
 snakeXPosArray = *-$01
@@ -145,13 +147,15 @@ MIF_RunUntilPlayerUnpauses
         JSR MIF_DrawCountdownBarAndCredit
         JSR MIF_UpdateProgressBar
         JSR MIF_SetUpInterruptHandler
-b41B1   LDA lastKeyPressed
+MIF_MainLoop
+        LDA lastKeyPressed
         CMP #$40 ; 'No key pressed'
-        BNE b41B1
+        BNE MIF_MainLoop
 
         LDA #$00
         STA $D015    ;Sprite display Enable
 
+        ; Maybe Exit Back to Game
 b41BC   LDA lastKeyPressed
         CMP #$04 ; F1
         BNE b41C3
@@ -161,14 +165,18 @@ b41BC   LDA lastKeyPressed
 b41C3   CMP #$31; '*' Pressed
         BNE b41D8
 
-b41C7   LDA lastKeyPressed
+        ; If '*' was pressed, launch DNA.
+MIF_DoubleCheckKeyPress
+        LDA lastKeyPressed
         CMP #$40 ; 'No key pressed'
-        BNE b41C7
+        BNE MIF_DoubleCheckKeyPress
 
-        ; Launch DNA mode
+        ; Launch DNA
         LDA #$01
         STA mifDNAPauseModeActive
         JSR EnterMainTitleScreen
+
+        ; Relaunch MIF when player exits DNA.
         JMP LaunchMIF
 
 b41D8   LDA mifGameOver
@@ -310,7 +318,7 @@ MIF_ClearCharAtCurrentPosIfIsSnakeSegment
         CMP #$A0
         BNE b42BC
         LDA #$20
-        STA (planetPtrLo),Y
+        STA (mifScreenPtrLo),Y
 b42D7   RTS 
 
 mifPreviousKeyPress   .BYTE $40 
@@ -371,7 +379,7 @@ MIF_CheckSnakeCollisionWithDeflectors
         CMP #$4D
         BNE b434F
         LDA #$4E
-        STA (planetPtrLo),Y
+        STA (mifScreenPtrLo),Y
         LDA snakeXPosIncrement
         PHA 
         LDA snakeYPosIncrement
@@ -391,7 +399,7 @@ j4347
 b434F   CMP #$4E
         BNE b4379
         LDA #$4D
-        STA (planetPtrLo),Y
+        STA (mifScreenPtrLo),Y
         LDA snakeXPosIncrement
         EOR #$FF
         CLC 
@@ -415,7 +423,7 @@ b4379   CMP #$51
         LDA #$20
         STA soundControl2
         LDA #$20
-        STA (planetPtrLo),Y
+        STA (mifScreenPtrLo),Y
         LDA #$01
         STA nextOffsetToApplyToSnakePos
         INC updateTargetRate
