@@ -1166,6 +1166,8 @@ srcOfProceduralBytes   =*+$01
 .include "graphics/sprites.asm"
 
 difficultySelected   =*+$01
+
+*=$4000
 ;-------------------------------------------------------
 ; MainControlLoop
 ; Execution starts here
