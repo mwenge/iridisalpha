@@ -220,11 +220,11 @@ UpdateSnakePositionAndCheckInput
 
 b4211   LDA mifSnakeSpeed
         STA snakeAnimationRate
-        LDA a4588
+        LDA deflectorChanged
         BEQ b4224
 
         LDA #$00
-        STA a4588
+        STA deflectorChanged
         JMP j42BD
 
 b4224   LDA initialMIFXPos
@@ -241,7 +241,7 @@ b4235   LDA snakeXPosArray,X
         DEX 
         BNE b4235
 
-j4244   
+PaintNextSegmentOfSnake   
         LDA snakeXPosArray + $01
         CLC 
         ADC snakeXPosIncrement
@@ -280,7 +280,7 @@ j4282
         LDA snakeYPosArray + $01
         STA mifCurrentYPos
         JSR MIF_PutCharAtCurrPosInAccumulator
-        JSR MIF_CheckSnakeCollisionWithDeflectors
+        JSR MIF_CheckSnakeCollisionWithDeflectorsOrTarget
 
         ; Draw the rest of the snake
         LDX #$00
@@ -373,11 +373,14 @@ b4321   RTS
 
         .BYTE $01,$00,$FF,$00,$01,$00,$FF,$00
 ;------------------------------------------------------------------------
-; MIF_CheckSnakeCollisionWithDeflectors
+; MIF_CheckSnakeCollisionWithDeflectorsOrTarget
 ;------------------------------------------------------------------------
-MIF_CheckSnakeCollisionWithDeflectors   
+MIF_CheckSnakeCollisionWithDeflectorsOrTarget   
+
+CheckforLeftPaddleDeflector   
         CMP #$4D
-        BNE b434F
+        BNE CheckforRightPaddleDeflector
+
         LDA #$4E
         STA (mifScreenPtrLo),Y
         LDA snakeXPosIncrement
@@ -389,44 +392,53 @@ MIF_CheckSnakeCollisionWithDeflectors
         PLA 
         PLA 
         LDA #$01
-        STA a4588
+        STA deflectorChanged
 
-j4347   
+MIF_JumpToNextSegment   
         LDA #$04
         STA soundControl1
-        JMP j4244
+        JMP PaintNextSegmentOfSnake
 
-b434F   CMP #$4E
-        BNE b4379
+CheckforRightPaddleDeflector   
+        CMP #$4E
+        BNE CheckCollisionWithTarget
+
         LDA #$4D
         STA (mifScreenPtrLo),Y
+
         LDA snakeXPosIncrement
         EOR #$FF
         CLC 
         ADC #$01
         PHA 
+
         LDA snakeYPosIncrement
         EOR #$FF
         CLC 
         ADC #$01
         STA snakeXPosIncrement
+
         PLA 
         STA snakeYPosIncrement
-        PLA 
-        PLA 
-        LDA #$01
-        STA a4588
-        JMP j4347
 
-b4379   CMP #$51
-        BNE b439B
+        PLA 
+        PLA 
+
+        LDA #$01
+        STA deflectorChanged
+        JMP MIF_JumpToNextSegment
+
+CheckCollisionWithTarget   
+        CMP #$51
+        BNE ReturnFromCheck
+
         LDA #$20
         STA soundControl2
         LDA #$20
         STA (mifScreenPtrLo),Y
         LDA #$01
-        STA nextOffsetToApplyToSnakePos
-        INC updateTargetRate
+        STA previousSpacesBetweenSquares
+        INC targetIsExploding
         JSR CalculateProgressAndUpdateBar
         JSR MIF_DrawCountdownBarAndCredit
         RTS 
@@ -438,15 +450,16 @@ RandomValue   =*+$01
 MIF_PutRandomValueInAccumulator   
         LDA $EF00
         INC RandomValue
-b439B   RTS 
+ReturnFromCheck   
+        RTS 
 
-updateTargetRate   .BYTE $00
+targetIsExploding   .BYTE $00
 ;------------------------------------------------------------------------
 ; MIF_UpdateTarget
 ;------------------------------------------------------------------------
 MIF_UpdateTarget   
-        LDA updateTargetRate
-        BNE b43BD
+        LDA targetIsExploding
+        BNE MaybeTargetIsExploding
 
         JSR MIF_PutRandomValueInAccumulator
         AND #$1F
@@ -461,10 +474,11 @@ MIF_UpdateTarget
         STA mifRandomYPos
 
         LDA #$01
-        STA updateTargetRate
+        STA targetIsExploding
 
-b43BD   CMP #$01
-        BNE b43E7
+MaybeTargetIsExploding   
+        CMP #$01
+        BNE DoAnExplosionFrame
 
         ; Place the target
         LDA #$51
@@ -487,83 +501,86 @@ mifRandomYPos   .BYTE $00
 mifTargetCurrentColor   .BYTE $00
 
 ;------------------------------------------------------------------------
-; b43E7   
+; DoAnExplosionFrame   
 ;------------------------------------------------------------------------
-b43E7
+DoAnExplosionFrame
 		    LDA #$A0
         STA mifCurrentChar
-        LDA nextOffsetToApplyToSnakePos
-        STA offsetToApplyToSnakePos
+        LDA previousSpacesBetweenSquares
+        STA spacesBetweenSquares
         LDA #$00
         STA mifTargetCurrentColor
 
-b43F7   JSR MIF_UpdateSnakePositionOnScreen
+PopulateAStageInTheExplosionLoop   
+        JSR PopulateAStageInTheExplosion
         INC mifTargetCurrentColor
         LDA mifTargetCurrentColor
         CMP #$08
-        BEQ b4409
-        DEC offsetToApplyToSnakePos
-        BNE b43F7
+        BEQ CheckIfExplosionFinished
+        DEC spacesBetweenSquares
+        BNE PopulateAStageInTheExplosionLoop
 
-b4409   INC nextOffsetToApplyToSnakePos
-        LDA nextOffsetToApplyToSnakePos
+CheckIfExplosionFinished   
+        INC previousSpacesBetweenSquares
+        LDA previousSpacesBetweenSquares
         CMP #$30
-        BEQ b4414
+        BEQ ExplosionFinished
         RTS 
 
-b4414   LDA #$00
-        STA updateTargetRate
+ExplosionFinished   
+        LDA #$00
+        STA targetIsExploding
         RTS 
 
 ;------------------------------------------------------------------------
-; MIF_UpdateSnakePositionOnScreen
+; PopulateAStageInTheExplosion
 ;------------------------------------------------------------------------
-MIF_UpdateSnakePositionOnScreen   
+PopulateAStageInTheExplosion   
         LDX mifTargetCurrentColor
         LDA mifSnakeColorArray,X
         STA mifCurrentCharColor
         LDA mifRandomXPos
         SEC 
-        SBC offsetToApplyToSnakePos
+        SBC spacesBetweenSquares
         STA mifCurrentXPos
         LDA mifRandomYPos
         SEC 
-        SBC offsetToApplyToSnakePos
+        SBC spacesBetweenSquares
         STA mifCurrentYPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         CLC 
-        ADC offsetToApplyToSnakePos
+        ADC spacesBetweenSquares
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         CLC 
-        ADC offsetToApplyToSnakePos
+        ADC spacesBetweenSquares
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentYPos
         CLC 
-        ADC offsetToApplyToSnakePos
+        ADC spacesBetweenSquares
         STA mifCurrentYPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentYPos
         CLC 
-        ADC offsetToApplyToSnakePos
+        ADC spacesBetweenSquares
         STA mifCurrentYPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         SEC 
-        SBC offsetToApplyToSnakePos
+        SBC spacesBetweenSquares
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentXPos
         SEC 
-        SBC offsetToApplyToSnakePos
+        SBC spacesBetweenSquares
         STA mifCurrentXPos
         JSR MIF_DrawCharacterIfItsStillOnScreen
         LDA mifCurrentYPos
         SEC 
-        SBC offsetToApplyToSnakePos
+        SBC spacesBetweenSquares
         STA mifCurrentYPos
 
 ;------------------------------------------------------------------------
@@ -571,21 +588,24 @@ MIF_UpdateSnakePositionOnScreen
 ;------------------------------------------------------------------------
 MIF_DrawCharacterIfItsStillOnScreen   
         LDA mifCurrentXPos
-        BMI b449B
+        BMI CharacterIsOffScreen
         CMP #$27
-        BMI b449C
-b449B   RTS 
-
-b449C   LDA mifCurrentYPos
-        BMI b449B
-        CMP #$16
-        BMI b44A6
+        BMI CheckYPosOfCurrentChar
+CharacterIsOffScreen   
         RTS 
 
-b44A6   JMP MIF_DrawCurrentCharAtCurrentPos
+CheckYPosOfCurrentChar   
+        LDA mifCurrentYPos
+        BMI CharacterIsOffScreen
+        CMP #$16
+        BMI CharacterIsOnScreen
+        RTS 
 
-nextOffsetToApplyToSnakePos   .BYTE $00
-offsetToApplyToSnakePos   .BYTE $00
+CharacterIsOnScreen   
+        JMP MIF_DrawCurrentCharAtCurrentPos
+
+previousSpacesBetweenSquares   .BYTE $00
+spacesBetweenSquares   .BYTE $00
 ;------------------------------------------------------------------------
 ; MIF_InitializeProgressBar
 ;------------------------------------------------------------------------
@@ -612,18 +632,17 @@ b44BA   LDX mifCurrentXPos
         BNE b44BA
 
         LDA #$00
-        STA a44DF
+        STA mifPreviousXPos
         RTS 
 
-a44DF                .BYTE $00
+mifPreviousXPos                .BYTE $00
 mifProgressBarColors .BYTE RED,RED,RED,RED,RED,RED,ORANGE,ORANGE
                      .BYTE ORANGE,ORANGE,ORANGE,ORANGE,YELLOW,YELLOW,YELLOW,YELLOW
                      .BYTE YELLOW,GREEN,GREEN,GREEN,GREEN,GREEN,GREEN,GRAY1
                      .BYTE GRAY1,GRAY1,GRAY1,GRAY1,PURPLE,PURPLE,PURPLE,PURPLE
                      .BYTE PURPLE,PURPLE,BLUE,BLUE,BLUE,BLUE,BLUE,BLUE
-progressToDraw       .BYTE $00
-progressBarChars2    .BYTE $20,$65,$74,$75,$61,$F6,$EA,$E7
-                     .BYTE $A0
+explosionFramesToDraw .BYTE $00
+progressBarChars2     .BYTE $20,$65,$74,$75,$61,$F6,$EA,$E7,$A0
 ;------------------------------------------------------------------------
 ; CalculateProgressAndUpdateBar
 ;------------------------------------------------------------------------
@@ -636,31 +655,32 @@ CalculateProgressAndUpdateBar
         INX 
 
         LDA #$00
-        STA progressToDraw
-
-b4520   LDA #$05
+        STA explosionFramesToDraw
+CalculateFramesToDraw   
+        LDA #$05
         SEC 
         SBC mifSnakeSpeed
         CLC 
-        ADC progressToDraw
-        STA progressToDraw
+        ADC explosionFramesToDraw
+        STA explosionFramesToDraw
         DEX 
-        BNE b4520
+        BNE CalculateFramesToDraw
 
-b4530   JSR DrawSegmentOfPorgressBar
-        DEC progressToDraw
-        BNE b4530
+MIF_ExplosionLoop   
+        JSR DrawFrameOfExplosion
+        DEC explosionFramesToDraw
+        BNE MIF_ExplosionLoop
 
         JSR MIF_UpdateProgressBar
         RTS 
 
 ;------------------------------------------------------------------------
-; DrawSegmentOfPorgressBar
+; DrawFrameOfExplosion
 ;------------------------------------------------------------------------
-DrawSegmentOfPorgressBar   
+DrawFrameOfExplosion   
         LDA #$18
         STA mifCurrentYPos
-        LDA a44DF
+        LDA mifPreviousXPos
         STA mifCurrentXPos
         JSR MIF_PutCharAtCurrPosInAccumulator
 
@@ -684,11 +704,11 @@ j4560
         JMP MIF_DrawCurrentCharAtCurrentPos
 
 b456C   INC mifCurrentXPos
-        INC a44DF
-        LDA a44DF
+        INC mifPreviousXPos
+        LDA mifPreviousXPos
         CMP #$27
         BNE b4580
-        DEC a44DF
+        DEC mifPreviousXPos
         INC mifGameOver
         RTS 
 
@@ -696,7 +716,7 @@ b4580   LDA #$20
         STA mifCurrentChar
         JMP j4560
 
-a4588   .BYTE $00
+deflectorChanged   .BYTE $00
 ;------------------------------------------------------------------------
 ; MIF_DrawCountdownBarAndCredit
 ;------------------------------------------------------------------------
@@ -852,7 +872,7 @@ MIF_UpdateProgressBar
         LDA mifCurrentProgressIndex
         STA mifCurrentXPos
         JSR MIF_DrawCurrentCharAtCurrentPos
-        LDA a44DF
+        LDA mifPreviousXPos
         CMP mifCurrentProgressIndex
         BEQ b4710
         BPL b46EC
@@ -870,7 +890,7 @@ j46CC
         STA mifCurrentChar
         JMP MIF_DrawCurrentCharAtCurrentPos
 
-b46EC   LDA a44DF
+b46EC   LDA mifPreviousXPos
         STA mifCurrentXPos
         LDA #$18
         STA mifCurrentYPos
@@ -883,11 +903,11 @@ b46FC   CMP progressBarChars2,X
         BNE b46FC
 
 b4704   STX indexToProgressBarChars
-        LDA a44DF
+        LDA mifPreviousXPos
         STA mifCurrentProgressIndex
         JMP j46CC
 
-b4710   LDA a44DF
+b4710   LDA mifPreviousXPos
         STA mifCurrentXPos
         LDA #$18
         STA mifCurrentYPos

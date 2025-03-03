@@ -3268,34 +3268,38 @@ IncreaseEnergyBottom
 UpdateCoreEnergyLevel
         LDX currCoreEnergyLevel
         CPX #$FF
-        BNE b54DF
+        BNE UpdateCoreGraphic
         INX
         STX currCoreEnergyLevel
         LDA #$87
         STA SCREEN_RAM + LINE23_COL13
-b54DF   DEC SCREEN_RAM + LINE23_COL13,X
+UpdateCoreGraphic   
+        DEC SCREEN_RAM + LINE23_COL13,X
         LDA SCREEN_RAM + LINE23_COL13,X
         CMP #$7F
-        BNE b5508
+        BNE ReturnFromCoreEnergyLevel
         LDA #$80
         STA SCREEN_RAM + LINE23_COL13,X
         INX
         CPX #$0E
-        BEQ b54FC
+        BEQ MaybeEarnedBonusPhase
 
-j54F3
+FinalizeLevelAndReturn
         LDA #$87
         STA SCREEN_RAM + LINE23_COL13,X
         STX currCoreEnergyLevel
         RTS
 
-b54FC   LDA lowerPlanetActivated
-        BEQ b5505
+MaybeEarnedBonusPhase   
+        LDA lowerPlanetActivated
+        BEQ EarnedBonusPhase
         DEX
-        JMP j54F3
+        JMP FinalizeLevelAndReturn
 
-b5505   INC bonusPhaseEarned
-b5508   RTS
+EarnedBonusPhase   
+        INC bonusPhaseEarned
+ReturnFromCoreEnergyLevel   
+        RTS
 
 bonusPhaseEarned   .BYTE $00
 ;-------------------------------------------------------
@@ -3308,13 +3312,13 @@ IncreaseCoreEnergyLevel
         INC SCREEN_RAM + LINE23_COL13,X
         LDA SCREEN_RAM + LINE23_COL13,X
         CMP #$88
-        BNE b5508
+        BNE ReturnFromCoreEnergyLevel
         LDA #$20
         STA SCREEN_RAM + LINE23_COL13,X
         DEX
         STX currCoreEnergyLevel
         CPX #$FF
-        BNE b5508
+        BNE ReturnFromCoreEnergyLevel
 b5528   RTS
 
 temporaryStorageForXRegister   .BYTE $00
@@ -5729,7 +5733,7 @@ b6982   LDA levelRestartInProgress
         JMP EnterMainControlLoop
 
 b698A   LDA progressDisplaySelected
-        BEQ GoToBonusPhase
+        BEQ MaybeGoToBonusPhase
         SEI
 
         LDA $D016    ;VIC Control Register 2
@@ -5742,9 +5746,9 @@ b698A   LDA progressDisplaySelected
         INC shouldResetPlanetEntropy
         JMP SetUpGameScreen
 
-GoToBonusPhase
+MaybeGoToBonusPhase
         LDA bonusPhaseEarned
-        BEQ b6A02
+        BEQ ResumeMainGameAgain
         SEI
         JSR StoreStatusBarDetail
         JSR ClearScreen3
@@ -5794,7 +5798,8 @@ b69F0   LDA #$00
 
         JMP SetUpGameScreen
 
-b6A02   JSR UpdateEnemiesLeft
+ResumeMainGameAgain   
+        JSR UpdateEnemiesLeft
         JSR InitializePlanetEntropyStatus
         JSR UpdateDisplayedScoringRate
         LDA levelRestartInProgress
